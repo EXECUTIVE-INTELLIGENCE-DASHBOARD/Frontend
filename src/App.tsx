@@ -9,10 +9,12 @@ import { AcademicOverview } from "./pages/AcademicOverview/AcademicOverview";
 import { AcademicPerformance } from "./pages/AcademicPerformance/AcademicPerformance";
 import { ExecutiveOverview } from "./pages/ExecutiveOverview/ExecutiveOverview";
 import { PlaceholderPage } from "./pages/Placeholder/PlaceholderPage";
+import { StudentEnrollment } from "./pages/StudentEnrollment/StudentEnrollment";
 
 const pages: Record<string, ReactElement> = {
   overview: <ExecutiveOverview />,
   "academics-overview": <AcademicOverview />,
+  "student-enrollment": <StudentEnrollment />,
   "academic-performance": <AcademicPerformance />,
 };
 
