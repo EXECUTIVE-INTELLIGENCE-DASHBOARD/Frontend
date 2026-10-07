@@ -1,25 +1,20 @@
 import "./layout.css";
-import { DashboardTopbar } from "./components/DashboardTopbar";
+import { Hero } from "./components/Hero";
 import { Sidebar } from "./components/Sidebar";
 import { AcademicOverview } from "./pages/AcademicOverview/AcademicOverview";
-import { ThemeProvider } from "./theme/ThemeProvider";
 
 export function App() {
   return (
-    <ThemeProvider>
-      <div className="layout">
-        <Sidebar />
+    <div className="layout">
+      <Sidebar />
 
-        <div className="layout-body">
-          <div className="dashboard-shell">
-            <DashboardTopbar />
+      <div className="layout-main">
+        <Hero />
 
-            <main className="dashboard-content">
-              <AcademicOverview />
-            </main>
-          </div>
-        </div>
+        <main className="app-shell layout-content">
+          <AcademicOverview />
+        </main>
       </div>
-    </ThemeProvider>
+    </div>
   );
 }
