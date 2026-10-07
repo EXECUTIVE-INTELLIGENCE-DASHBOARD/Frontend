@@ -136,6 +136,18 @@
   color: #111827;
 }
 
+.sidebar__button--active {
+  background-color: #eff6ff;
+
+  color: #2563eb;
+
+  font-weight: 700;
+}
+
+.sidebar__button--active .sidebar__icon {
+  color: #2563eb;
+}
+
 /* Main icon */
 
 .sidebar__icon {
@@ -298,6 +310,16 @@
   background-color: #2f3f73;
 
   color: #f5f5f5;
+}
+
+[data-theme="dark"] .sidebar__button--active {
+  background-color: #2f3f73;
+
+  color: #f1ba1b;
+}
+
+[data-theme="dark"] .sidebar__button--active .sidebar__icon {
+  color: #f1ba1b;
 }
 
 /* Normal icons */

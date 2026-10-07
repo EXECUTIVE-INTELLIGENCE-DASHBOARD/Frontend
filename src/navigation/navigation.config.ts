@@ -24,6 +24,10 @@ export const navigationItems: NavigationItem[] = [
     icon: GraduationCap,
     children: [
       {
+        id: "academics-overview",
+        label: "Overview",
+      },
+      {
         id: "student-enrollment",
         label: "Student Enrollment",
       },
@@ -174,3 +178,27 @@ export const navigationItems: NavigationItem[] = [
     ],
   },
 ];
+
+/** Resolve the display label for any top-level or child navigation id. */
+export function findNavigationLabel(id: string): string | undefined {
+  for (const item of navigationItems) {
+    if (item.id === id) {
+      return item.label;
+    }
+
+    const child = item.children.find((entry) => entry.id === id);
+
+    if (child) {
+      return child.label;
+    }
+  }
+
+  return undefined;
+}
+
+/** Find the parent section id for a given child navigation id. */
+export function findNavigationParentId(id: string): string | undefined {
+  return navigationItems.find((item) =>
+    item.children.some((child) => child.id === id),
+  )?.id;
+}

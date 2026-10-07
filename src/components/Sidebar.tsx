@@ -1,18 +1,38 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import { navigationItems } from "../navigation/navigation.config";
+import {
+  navigationItems,
+  findNavigationParentId,
+} from "../navigation/navigation.config";
 import executivelogo from "../assets/executivelogo.png";
 
 import "./Sidebar.css";
 
-export function Sidebar() {
-  const [openSection, setOpenSection] = useState<string | null>(null);
-  const [activeItem, setActiveItem] = useState<string | null>(null);
+interface SidebarProps {
+  /** Currently selected navigation id (controlled). Falls back to internal state. */
+  activeItem?: string;
+  /** Called when a navigable item is selected. */
+  onSelectItem?: (id: string) => void;
+}
+
+export function Sidebar({ activeItem, onSelectItem }: SidebarProps = {}) {
+  const [openSection, setOpenSection] = useState<string | null>(() =>
+    activeItem ? (findNavigationParentId(activeItem) ?? null) : null,
+  );
+  const [internalActive, setInternalActive] = useState<string | null>(null);
+
+  const selectedItem = activeItem ?? internalActive;
+
   const handleSectionToggle = (sectionId: string) => {
     setOpenSection((currentSection) =>
       currentSection === sectionId ? null : sectionId,
     );
+  };
+
+  const handleSelect = (id: string) => {
+    setInternalActive(id);
+    onSelectItem?.(id);
   };
 
   return (
@@ -38,21 +58,27 @@ export function Sidebar() {
           const isOpen = openSection === item.id;
           const Icon = item.icon;
           const isExpandable = item.expandable !== false;
+          const isActive = selectedItem === item.id;
 
           return (
             <li className="sidebar__item" key={item.id}>
               <button
                 type="button"
-                className={
-                  isOpen
-                    ? "sidebar__button sidebar__button--open"
-                    : "sidebar__button"
-                }
+                className={[
+                  "sidebar__button",
+                  isOpen ? "sidebar__button--open" : "",
+                  !isExpandable && isActive ? "sidebar__button--active" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
                 onClick={() =>
-                  isExpandable ? handleSectionToggle(item.id) : undefined
+                  isExpandable
+                    ? handleSectionToggle(item.id)
+                    : handleSelect(item.id)
                 }
                 aria-expanded={isExpandable ? isOpen : undefined}
                 aria-controls={isExpandable ? `${item.id}-submenu` : undefined}
+                aria-current={!isExpandable && isActive ? "page" : undefined}
               >
                 <Icon className="sidebar__icon" size={20} aria-hidden="true" />
 
@@ -78,11 +104,14 @@ export function Sidebar() {
                       <button
                         type="button"
                         className={
-                          activeItem === child.id
+                          selectedItem === child.id
                             ? "sidebar__submenu-button sidebar__submenu-button--active"
                             : "sidebar__submenu-button"
                         }
-                        onClick={() => setActiveItem(child.id)}
+                        onClick={() => handleSelect(child.id)}
+                        aria-current={
+                          selectedItem === child.id ? "page" : undefined
+                        }
                       >
                         {child.label}
                       </button>

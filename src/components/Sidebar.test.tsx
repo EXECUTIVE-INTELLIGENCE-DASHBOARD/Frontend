@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { Sidebar } from "./Sidebar";
@@ -49,6 +49,22 @@ describe("Sidebar", () => {
     expect(
       screen.queryByText("Academic Overview"),
     ).not.toBeInTheDocument();
+  });
+
+  it("shows an Overview entry inside the Academics dropdown", async () => {
+    const user = userEvent.setup();
+
+    render(<Sidebar />);
+
+    await user.click(screen.getByRole("button", { name: /academics/i }));
+
+    const submenu = document.getElementById("academics-submenu");
+
+    expect(submenu).not.toBeNull();
+
+    expect(
+      within(submenu as HTMLElement).getByText("Overview"),
+    ).toBeInTheDocument();
   });
 
   it("hides Academics dropdown items when Academics is clicked again", async () => {
