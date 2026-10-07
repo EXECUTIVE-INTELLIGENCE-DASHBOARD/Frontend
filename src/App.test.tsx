@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { App } from "./App";
+import { ThemeProvider } from "./context/ThemeContext";
 
 afterEach(() => {
   cleanup();
@@ -8,7 +9,11 @@ afterEach(() => {
 
 describe("App", () => {
   it("renders the EID application shell", () => {
-    render(<App />);
+    render(
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>,
+    );
 
     expect(
       screen.getByRole("navigation", {
@@ -17,14 +22,26 @@ describe("App", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the header with the product name", () => {
-    render(<App />);
+  it("renders the dashboard hero", () => {
+    render(
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>,
+    );
 
-    expect(screen.getByRole("banner")).toHaveTextContent("GreenHill EID");
+    expect(
+      screen.getByRole("heading", {
+        name: "Dashboard",
+      }),
+    ).toBeInTheDocument();
   });
 
   it("renders a main content area", () => {
-    render(<App />);
+    render(
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>,
+    );
 
     expect(screen.getByRole("main")).toBeInTheDocument();
   });

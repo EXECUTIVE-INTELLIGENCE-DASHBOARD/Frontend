@@ -24,10 +24,6 @@ export const navigationItems: NavigationItem[] = [
     icon: GraduationCap,
     children: [
       {
-        id: "academic-overview",
-        label: "Academic Overview",
-      },
-      {
         id: "student-enrollment",
         label: "Student Enrollment",
       },
@@ -56,10 +52,6 @@ export const navigationItems: NavigationItem[] = [
     icon: Landmark,
     children: [
       {
-        id: "operational-overview",
-        label: "Operational Overview",
-      },
-      {
         id: "facilities-maintenance",
         label: "Facilities & Maintenance",
       },
@@ -87,10 +79,6 @@ export const navigationItems: NavigationItem[] = [
     label: "Services",
     icon: AlertTriangle,
     children: [
-      {
-        id: "service-overview",
-        label: "Service Overview",
-      },
       {
         id: "open-incidents",
         label: "Open Incidents",
@@ -123,10 +111,6 @@ export const navigationItems: NavigationItem[] = [
     label: "Finance & Procurement",
     icon: WalletCards,
     children: [
-      {
-        id: "financial-overview",
-        label: "Financial Overview",
-      },
       {
         id: "revenue-fee-collection",
         label: "Revenue & Fee Collection",
@@ -161,15 +145,12 @@ export const navigationItems: NavigationItem[] = [
       },
     ],
   },
+
   {
     id: "strategic-insights",
     label: "Strategic KPIs",
     icon: Target,
     children: [
-      {
-        id: "strategic-overview",
-        label: "Strategic Overview",
-      },
       {
         id: "kpi-framework-management",
         label: "KPI Framework & Management",
