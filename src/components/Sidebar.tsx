@@ -28,7 +28,7 @@ export function Sidebar() {
         <div className="sidebar-brand__content">
           <span className="sidebar-brand__name">GREENHILL</span>
 
-          <span className="sidebar-brand__subtitle">EXECUTIVE ITELLIGENCE</span>
+          <span className="sidebar-brand__subtitle">EXECUTIVE INTELLIGENCE</span>
         </div>
       </div>
 

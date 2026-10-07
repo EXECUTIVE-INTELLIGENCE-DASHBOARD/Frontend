@@ -1,8 +1,9 @@
 .hero {
-  height: 60px;
+  min-height: 60px;
   width: 100%;
   display: flex;
   align-items: center;
+  gap: 24px;
   padding: 0 32px;
   background: #ffffff;
   border-bottom: 1px solid #d3d4d6;
@@ -13,7 +14,7 @@
 -------------------------------------------------- */
 
 .hero__page-info {
-  flex: 0 0 150px;
+  flex: 0 0 auto;
   min-width: 150px;
 }
 
@@ -41,7 +42,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-left: 150px;
   flex-shrink: 0;
 }
 
@@ -104,7 +104,9 @@
   flex: 1;
   display: flex;
   align-items: center;
-  margin-left: 95px;
+  justify-content: flex-end;
+  gap: 16px;
+  min-width: 0;
 }
 
 /* --------------------------------------------------
@@ -117,7 +119,7 @@
   align-items: center;
   gap: 2px;
   padding: 3px;
-  margin-left: 100px;
+  flex-shrink: 0;
   border: 1px solid #d3d4d6;
   border-radius: 18px;
   background: #ffffff;
@@ -155,7 +157,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-left: auto;
   padding: 3px 12px 3px 5px;
   flex-shrink: 0;
   border: 1px solid #d3d4d6;
@@ -211,16 +212,20 @@
 -------------------------------------------------- */
 
 .hero__profile-arrow {
-  color: #733089;
+  color: #94a3b8;
 }
 
 /* --------------------------------------------------
    DARK THEME
 -------------------------------------------------- */
 
+/* Dark values are aligned to the shared navigation navy (#17285a) with
+   #2f3f73 borders, so the header blends with the sidebar instead of
+   sitting on a different shade. */
+
 [data-theme="dark"] .hero {
-  background: #203468;
-  border-bottom-color: #d3d4d6;
+  background: #17285a;
+  border-bottom-color: #2f3f73;
 }
 
 [data-theme="dark"] .hero__title {
@@ -232,8 +237,8 @@
 }
 
 [data-theme="dark"] .hero__search {
-  background: #203468;
-  border-color: #d3d4d6;
+  background: #17285a;
+  border-color: #2f3f73;
 }
 
 [data-theme="dark"] .hero__search-input {
@@ -245,14 +250,14 @@
 }
 
 [data-theme="dark"] .hero__search-mic {
-  background: #203468;
-  border-color: #d3d4d6;
+  background: #17285a;
+  border-color: #2f3f73;
   color: #2aa4dd;
 }
 
 [data-theme="dark"] .hero__theme-toggle {
-  background: #203468;
-  border-color: #d3d4d6;
+  background: #17285a;
+  border-color: #2f3f73;
 }
 
 /* Keep the theme switch neutral — no yellow/blue/purple here */
@@ -262,17 +267,17 @@
 
 [data-theme="dark"] .hero__theme-button--active {
   background: #d3d4d6;
-  color: #203468;
+  color: #17285a;
 }
 
 [data-theme="dark"] .hero__profile {
-  background: #203468;
-  border-color: #d3d4d6;
+  background: #17285a;
+  border-color: #2f3f73;
 }
 
 [data-theme="dark"] .hero__avatar {
   background: #f5f5f5;
-  color: #203468;
+  color: #17285a;
 }
 
 [data-theme="dark"] .hero__user-name {
@@ -288,35 +293,46 @@
 }
 
 /* --------------------------------------------------
-   RESPONSIVE THEME ACTION
+   RESPONSIVE
 -------------------------------------------------- */
 
+/* The header shares a row with a fixed 260px sidebar, so the content it
+   actually gets is much narrower than the viewport. These breakpoints are
+   sized for the content, not the viewport. */
+
+@media (max-width: 1280px) {
+  .hero {
+    gap: 16px;
+    padding: 0 20px;
+  }
+}
+
 @media (max-width: 1100px) {
-  .hero__actions {
-    margin-left: 40px;
+  .hero__search {
+    width: 130px;
   }
 
-  .hero__theme-toggle {
-    margin-left: 40px;
+  .hero__avatar {
+    display: none;
   }
 }
 
 @media (max-width: 900px) {
-  .hero__actions {
-    margin-left: 20px;
+  .hero__date {
+    display: none;
   }
 
-  .hero__theme-toggle {
-    margin-left: 20px;
+  .hero__user-info {
+    display: none;
+  }
+
+  .hero__profile {
+    padding: 5px;
   }
 }
 
-@media (max-width: 700px) {
-  .hero__actions {
-    margin-left: 0;
-  }
-
-  .hero__theme-toggle {
-    margin-left: 0;
+@media (max-width: 768px) {
+  .hero__search-wrapper {
+    display: none;
   }
 }

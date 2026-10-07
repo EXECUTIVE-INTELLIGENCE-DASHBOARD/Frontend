@@ -1,7 +1,13 @@
 .sidebar {
   width: 260px;
 
-  min-height: 100vh;
+  flex-shrink: 0;
+
+  position: sticky;
+
+  top: 0;
+
+  height: 100vh;
 
   background-color: #ffffff;
 
@@ -12,6 +18,8 @@
   box-sizing: border-box;
 
   overflow-y: auto;
+
+  overscroll-behavior: contain;
 }
 
 .sidebar-brand {
@@ -163,10 +171,13 @@
 
 /* Submenu */
 
-.sidebar__submenu {
+/* Scoped with the parent so it outranks the `.sidebar ul` reset below
+   without needing `!important`. */
+
+.sidebar .sidebar__submenu {
   margin: 4px 0 8px 20px;
 
-  padding-left: 14px !important;
+  padding-left: 14px;
 
   border-left: 1px solid #e5e7eb;
 }
@@ -252,11 +263,11 @@
 [data-theme="dark"] .sidebar {
   background-color: #17285a;
 
-  border-right-color: #d3d4d6;
+  border-right-color: #2f3f73;
 }
 
 [data-theme="dark"] .sidebar-brand {
-  border-bottom-color: #d3d4d6;
+  border-bottom-color: #2f3f73;
 }
 
 [data-theme="dark"] .sidebar-brand__name {
