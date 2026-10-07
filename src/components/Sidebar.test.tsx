@@ -39,7 +39,7 @@ describe("Sidebar", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText("Parent Access (My Child's Progress)"),
+      screen.getByText("My Child's Progress"),
     ).toBeInTheDocument();
 
     expect(
@@ -97,7 +97,7 @@ describe("Sidebar", () => {
     ).not.toBeInTheDocument();
 
     expect(
-      screen.queryByText("Parent Access (My Child's Progress)"),
+      screen.queryByText("My Child's Progress"),
     ).not.toBeInTheDocument();
 
     expect(

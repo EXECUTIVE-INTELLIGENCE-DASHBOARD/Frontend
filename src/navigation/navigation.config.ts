@@ -41,7 +41,7 @@ export const navigationItems: NavigationItem[] = [
       },
       {
         id: "parent-access",
-        label: "Parent Access (My Child's Progress)",
+        label: "My Child's Progress",
       },
       {
         id: "library-resource-usage",
