@@ -10,9 +10,9 @@ import {
 import type { RetentionTone } from "./academicOverview.types";
 
 const toneColors: Record<RetentionTone, string> = {
-  navy: "#1e3a8a",
-  blue: "#3b82f6",
-  sky: "#7dd3fc",
+  navy: "var(--chart-navy)",
+  blue: "var(--chart-blue)",
+  sky: "var(--chart-sky)",
 };
 
 export function StudentRetention() {

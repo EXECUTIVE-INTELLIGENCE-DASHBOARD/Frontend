@@ -55,11 +55,11 @@ export function DonutChart({
                 cy={size / 2}
                 r={radius}
                 fill="none"
-                stroke={segment.color}
                 strokeWidth={thickness}
                 strokeDasharray={`${dash} ${circumference - dash}`}
                 strokeDashoffset={offset}
                 strokeLinecap="round"
+                style={{ stroke: segment.color }}
               />
             );
           })}

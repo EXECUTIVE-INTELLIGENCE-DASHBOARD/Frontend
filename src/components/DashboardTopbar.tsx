@@ -1,10 +1,13 @@
-import { Bell, ChevronDown, Mic, Search, Sun } from "lucide-react";
+import { Bell, ChevronDown, Mic, Moon, Search, Sun } from "lucide-react";
 
 import executivelogo from "../assets/executivelogo.png";
+import { useTheme } from "../theme/ThemeProvider";
 
 import "./DashboardTopbar.css";
 
 export function DashboardTopbar() {
+  const { isDark, toggleTheme } = useTheme();
+
   return (
     <header className="topbar" role="banner">
       <span className="sr-only">GreenHill EID</span>
@@ -37,9 +40,17 @@ export function DashboardTopbar() {
         <button
           type="button"
           className="topbar__icon-button"
-          aria-label="Switch appearance"
+          onClick={toggleTheme}
+          aria-label={
+            isDark ? "Switch to light appearance" : "Switch to dark appearance"
+          }
+          aria-pressed={isDark}
         >
-          <Sun size={18} aria-hidden="true" />
+          {isDark ? (
+            <Moon size={18} aria-hidden="true" />
+          ) : (
+            <Sun size={18} aria-hidden="true" />
+          )}
         </button>
 
         <button

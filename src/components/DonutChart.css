@@ -27,7 +27,7 @@
 }
 
 .donut__value {
-  color: #102a43;
+  color: var(--color-heading);
   font-size: 30px;
   font-weight: 700;
   line-height: 1;
@@ -37,7 +37,7 @@
 .donut__label {
   margin-top: 4px;
 
-  color: #7b8aa1;
+  color: var(--color-text-soft);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.04em;
