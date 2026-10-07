@@ -3,14 +3,13 @@ import { describe, expect, it } from "vitest";
 import { App } from "./App";
 
 describe("App", () => {
-  it("renders the project foundation shell", () => {
+  it("renders the EID application shell", () => {
     render(<App />);
 
     expect(
-      screen.getByRole("heading", { name: "Frontend foundation", level: 1 }),
+      screen.getByRole("navigation", {
+        name: "Main navigation",
+      }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/approved Enterprise Incident and Service Management requirements/i))
-      .toBeInTheDocument();
   });
 });
-

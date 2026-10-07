@@ -19,18 +19,26 @@ body {
   margin: 0;
 }
 
-.app-shell {
-  width: min(100% - 2rem, 48rem);
-  margin: 12vh auto;
-  padding: clamp(1.5rem, 5vw, 3rem);
-  border: 1px solid #d7e1ee;
-  border-radius: 1rem;
-  background: #fff;
-  box-shadow: 0 1rem 3rem rgb(22 50 79 / 8%);
+button {
+  font: inherit;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.app-content {
+  flex: 1;
+  min-width: 0;
+  padding: 40px;
+  background: #f4f7fb;
 }
 
 .eyebrow {
-  color: #087f8c;
+  margin: 0 0 8px;
+  color: #0b1f4d;
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -38,9 +46,10 @@ body {
 }
 
 h1 {
-  margin: 0 0 1rem;
-  font-size: clamp(2rem, 6vw, 3.25rem);
-  line-height: 1.08;
+  margin: 0 0 16px;
+  color: #16324f;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
 }
 
 p {
@@ -48,10 +57,3 @@ p {
   color: #4b6076;
   line-height: 1.65;
 }
-
-.next-step {
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e3eaf2;
-}
-
