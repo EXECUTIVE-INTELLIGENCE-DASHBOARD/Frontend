@@ -50,10 +50,6 @@ export const summaryMetrics: SummaryMetric[] = [
   },
 ];
 
-export const prototypeNote =
-  "Prototype: attendance, results and support figures are illustrative. " +
-  "Nothing on this view is a confirmed school record.";
-
 /* ------------------------------------------------------- Child identification */
 
 export const childName = "Mwi R";

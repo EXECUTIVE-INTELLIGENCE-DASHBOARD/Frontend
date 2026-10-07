@@ -1,10 +1,6 @@
 import { RefreshCw } from "lucide-react";
 
-import {
-  filterControls,
-  prototypeNote,
-  summaryMetrics,
-} from "./myChildProgress.data";
+import { filterControls, summaryMetrics } from "./myChildProgress.data";
 import { FilterCard } from "./FilterCard";
 import { SummaryMetricCard } from "./SummaryMetricCard";
 import { ChildBanner } from "./ChildBanner";
@@ -66,8 +62,6 @@ export function MyChildProgress() {
           ))}
         </div>
       </div>
-
-      <p className="mc-note">{prototypeNote}</p>
 
       <ChildBanner />
 
