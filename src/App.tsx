@@ -7,10 +7,11 @@ import { Sidebar } from "./components/Sidebar";
 import { findNavigationLabel } from "./navigation/navigation.config";
 import { AcademicOverview } from "./pages/AcademicOverview/AcademicOverview";
 import { AcademicPerformance } from "./pages/AcademicPerformance/AcademicPerformance";
+import { ExecutiveOverview } from "./pages/ExecutiveOverview/ExecutiveOverview";
 import { PlaceholderPage } from "./pages/Placeholder/PlaceholderPage";
 
 const pages: Record<string, ReactElement> = {
-  overview: <AcademicOverview />,
+  overview: <ExecutiveOverview />,
   "academics-overview": <AcademicOverview />,
   "academic-performance": <AcademicPerformance />,
 };
