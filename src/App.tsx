@@ -12,6 +12,7 @@ import { LibraryResourceUsage } from "./pages/LibraryResourceUsage/LibraryResour
 import { MyChildProgress } from "./pages/MyChildProgress/MyChildProgress";
 import { PlaceholderPage } from "./pages/Placeholder/PlaceholderPage";
 import { StudentEnrollment } from "./pages/StudentEnrollment/StudentEnrollment";
+import { AttendanceRates } from "./pages/AttendanceRates/AttendanceRates";
 
 const pages: Record<string, ReactElement> = {
   overview: <ExecutiveOverview />,
@@ -20,6 +21,7 @@ const pages: Record<string, ReactElement> = {
   "academic-performance": <AcademicPerformance />,
   "parent-access": <MyChildProgress />,
   "library-resource-usage": <LibraryResourceUsage />,
+  "attendance-rates": <AttendanceRates />,
 };
 
 const defaultPageId = "academic-performance";

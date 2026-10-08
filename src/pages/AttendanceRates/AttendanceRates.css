@@ -1,0 +1,716 @@
+.ar-page {
+  --ar-heading: var(--color-heading);
+  --ar-muted: var(--color-text-muted);
+  --ar-soft: var(--color-text-soft);
+  --ar-border: var(--color-border);
+
+  /* Status colours reuse the app theme, so dark mode works automatically. */
+  --ar-green: var(--color-positive);
+  --ar-amber: var(--color-warning);
+  --ar-red: var(--color-critical);
+  --ar-blue: var(--color-accent);
+  --ar-slate: var(--color-text-soft);
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* --------------------------------------------------------------- Heading */
+
+.ar-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ar-breadcrumb__item {
+  color: var(--ar-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.ar-breadcrumb__item--current {
+  color: var(--ar-heading);
+  font-weight: 700;
+}
+
+.ar-breadcrumb__sep {
+  color: var(--ar-soft);
+  font-size: 12px;
+}
+
+.ar-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.ar-page .ar-heading__title {
+  margin: 0;
+
+  color: var(--ar-heading);
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.ar-page .ar-heading__subtitle {
+  max-width: 46rem;
+  margin: 8px 0 0;
+
+  color: var(--ar-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.ar-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+
+  border: 1px solid var(--ar-border);
+  border-radius: 10px;
+
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.ar-icon-button:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-hover);
+  color: var(--ar-heading);
+}
+
+/* --------------------------------------------------------------- Filters */
+
+.ar-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.ar-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  min-width: 220px;
+}
+
+.ar-filter__label {
+  color: var(--ar-soft);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ar-filter__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ar-filter__select {
+  appearance: none;
+
+  width: 100%;
+  height: 42px;
+  padding: 0 38px 0 16px;
+
+  border: 1px solid var(--ar-border);
+  border-radius: 12px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  color: var(--ar-heading);
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.25s ease;
+}
+
+.ar-filter__select:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-pop);
+}
+
+.ar-filter__select:focus-visible {
+  outline: 2px solid var(--ar-blue);
+  outline-offset: 2px;
+}
+
+.ar-filter__caret {
+  position: absolute;
+  right: 14px;
+
+  color: var(--ar-muted);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------- Metrics */
+
+.ar-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ar-metric {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 16px 18px;
+
+  border: 1px solid var(--ar-border);
+  border-radius: 14px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.ar-metric__icon {
+  display: grid;
+  place-items: center;
+
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+
+  border-radius: 12px;
+}
+
+.ar-metric__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ar-metric__label {
+  color: var(--ar-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.ar-metric__value {
+  color: var(--ar-heading);
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.ar-metric__caption {
+  color: var(--ar-soft);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Tone helpers: soft tinted background, solid text colour. */
+
+.ar-tone--green {
+  background: color-mix(in srgb, var(--ar-green) 14%, transparent);
+  color: var(--ar-green);
+}
+
+.ar-tone--amber {
+  background: color-mix(in srgb, var(--ar-amber) 16%, transparent);
+  color: var(--ar-amber);
+}
+
+.ar-tone--red {
+  background: color-mix(in srgb, var(--ar-red) 14%, transparent);
+  color: var(--ar-red);
+}
+
+.ar-tone--blue {
+  background: color-mix(in srgb, var(--ar-blue) 14%, transparent);
+  color: var(--ar-blue);
+}
+
+.ar-tone--slate {
+  background: color-mix(in srgb, var(--ar-slate) 18%, transparent);
+  color: var(--color-text-secondary);
+}
+
+/* ------------------------------------------------------- Prototype note */
+
+.ar-page .ar-note {
+  max-width: none;
+  margin: 0;
+  padding: 12px 16px;
+
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 12px;
+
+  background: var(--color-surface-tint);
+  color: var(--color-text-secondary);
+
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+
+.ar-page .ar-footnote {
+  max-width: none;
+  margin: 0;
+
+  color: var(--ar-soft);
+  font-size: 11px;
+}
+
+/* ----------------------------------------------------------------- Grid */
+
+.ar-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* ---------------------------------------------------------------- Cards */
+
+.ar-card {
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid var(--ar-border);
+  border-radius: 16px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+
+  overflow: hidden;
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.ar-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--ar-border);
+}
+
+.ar-card__title {
+  margin: 0;
+
+  color: var(--color-heading-alt);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.ar-page .ar-card__subtitle {
+  max-width: none;
+  margin: 4px 0 0;
+
+  color: var(--ar-soft);
+  font-size: 11.5px;
+}
+
+.ar-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+
+  padding: 14px 18px 16px;
+}
+
+/* --------------------------------------------------------------- Legend */
+
+.ar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.ar-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: var(--ar-muted);
+  font-size: 11.5px;
+}
+
+.ar-legend__swatch {
+  width: 18px;
+  height: 3px;
+
+  border-radius: 2px;
+  background: var(--swatch);
+}
+
+.ar-legend__swatch--primary,
+.ar-legend__swatch--present {
+  --swatch: var(--ar-green);
+}
+
+.ar-legend__swatch--target,
+.ar-legend__swatch--late {
+  --swatch: var(--ar-blue);
+}
+
+.ar-legend__swatch--previous,
+.ar-legend__swatch--absent {
+  --swatch: var(--ar-slate);
+}
+
+.ar-legend__swatch--target {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--swatch) 0 5px,
+    transparent 5px 8px
+  );
+}
+
+/* ---------------------------------------------------------------- Charts */
+
+.ar-chart {
+  display: block;
+
+  width: 100%;
+  height: auto;
+}
+
+.ar-chart__grid {
+  stroke: var(--color-border-soft);
+  stroke-width: 1;
+}
+
+.ar-chart__tick {
+  fill: var(--ar-soft);
+  font-size: 11px;
+  text-anchor: end;
+}
+
+.ar-chart__label {
+  fill: var(--ar-soft);
+  font-size: 11px;
+  text-anchor: middle;
+}
+
+.ar-chart__row-label {
+  fill: var(--color-text-secondary);
+  font-size: 11px;
+  text-anchor: end;
+}
+
+.ar-chart__line {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ar-chart__line--primary {
+  --line: var(--ar-green);
+}
+
+.ar-chart__line--target {
+  --line: var(--ar-blue);
+  stroke-dasharray: 5 4;
+}
+
+.ar-chart__line--previous {
+  --line: var(--ar-slate);
+}
+
+.ar-chart__point {
+  fill: var(--point);
+}
+
+.ar-chart__point--primary {
+  --point: var(--ar-green);
+}
+
+.ar-chart__point--target {
+  --point: var(--ar-blue);
+}
+
+.ar-chart__point--previous {
+  --point: var(--ar-slate);
+}
+
+.ar-chart__bar--present {
+  fill: var(--ar-green);
+}
+
+.ar-chart__bar--late {
+  fill: var(--ar-blue);
+}
+
+.ar-chart__bar--absent {
+  fill: var(--ar-slate);
+}
+
+.ar-page .ar-chart__note {
+  max-width: none;
+  margin: 0;
+
+  color: var(--ar-soft);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------- Select */
+
+.ar-mini-select {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+
+  color: var(--ar-muted);
+}
+
+.ar-mini-select__select {
+  appearance: none;
+
+  height: 32px;
+  padding: 0 28px 0 12px;
+
+  border: 1px solid var(--ar-border);
+  border-radius: 8px;
+
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.ar-mini-select__select:focus-visible {
+  outline: 2px solid var(--ar-blue);
+  outline-offset: 2px;
+}
+
+.ar-mini-select svg {
+  position: absolute;
+  right: 9px;
+
+  pointer-events: none;
+}
+
+.ar-ghost-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  height: 32px;
+  padding: 0 12px;
+  flex-shrink: 0;
+
+  border: 1px solid var(--ar-border);
+  border-radius: 8px;
+
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.ar-ghost-button:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-hover);
+}
+
+/* ---------------------------------------------------------------- Tables */
+
+.ar-table-wrap {
+  overflow-x: auto;
+}
+
+.ar-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  font-size: 12.5px;
+}
+
+.ar-table thead th {
+  padding: 10px 16px;
+
+  border-bottom: 1px solid var(--ar-border);
+
+  background: var(--color-surface-subtle);
+  color: var(--ar-soft);
+
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ar-table tbody td {
+  padding: 12px 16px;
+
+  border-bottom: 1px solid var(--color-border-soft);
+
+  color: var(--color-text);
+  vertical-align: middle;
+}
+
+.ar-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.ar-table tbody tr:hover {
+  background: var(--color-surface-hover);
+}
+
+.ar-table .ar-num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.ar-strong {
+  color: var(--ar-heading);
+  font-weight: 600;
+}
+
+.ar-stack {
+  display: flex;
+  flex-direction: column;
+
+  line-height: 1.3;
+}
+
+.ar-stack__meta {
+  color: var(--ar-soft);
+  font-size: 11px;
+}
+
+.ar-kind {
+  display: inline-block;
+
+  padding: 2px 8px;
+
+  border-radius: 6px;
+
+  background: var(--color-surface-tint);
+  color: var(--color-text-secondary);
+
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.ar-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  font-weight: 600;
+}
+
+.ar-delta--up {
+  color: var(--ar-green);
+}
+
+.ar-delta--down {
+  color: var(--ar-red);
+}
+
+.ar-delta--flat {
+  color: var(--ar-muted);
+}
+
+.ar-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 3px 10px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ar-badge::before {
+  content: "";
+
+  width: 5px;
+  height: 5px;
+
+  border-radius: 999px;
+  background: currentColor;
+}
+
+/* ------------------------------------------------------------ Responsive */
+
+@media (max-width: 1180px) {
+  .ar-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .ar-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ar-card__header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+}
