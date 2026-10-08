@@ -273,13 +273,15 @@
 -------------------------------------------------- */
 
 [data-theme="dark"] .sidebar {
-  background-color: #17285a;
+  /* Brand indigo navy — matches the dark page background so the shell reads
+     as one surface. */
+  background-color: #263278;
 
-  border-right-color: #2f3f73;
+  border-right-color: #3f4b92;
 }
 
 [data-theme="dark"] .sidebar-brand {
-  border-bottom-color: #2f3f73;
+  border-bottom-color: #3f4b92;
 }
 
 [data-theme="dark"] .sidebar-brand__name {
@@ -301,19 +303,19 @@
 }
 
 [data-theme="dark"] .sidebar__button:hover {
-  background-color: #2f3f73;
+  background-color: #3f4b92;
 
   color: #f5f5f5;
 }
 
 [data-theme="dark"] .sidebar__button--open {
-  background-color: #2f3f73;
+  background-color: #3f4b92;
 
   color: #f5f5f5;
 }
 
 [data-theme="dark"] .sidebar__button--active {
-  background-color: #2f3f73;
+  background-color: #3f4b92;
 
   color: #f1ba1b;
 }
@@ -367,13 +369,13 @@
 }
 
 [data-theme="dark"] .sidebar__submenu-button:hover {
-  background-color: #2f3f73;
+  background-color: #3f4b92;
 
   color: #f5f5f5;
 }
 
 [data-theme="dark"] .sidebar__submenu-button--active {
-  background-color: #2f3f73;
+  background-color: #3f4b92;
 
   color: #f5f5f5;
 

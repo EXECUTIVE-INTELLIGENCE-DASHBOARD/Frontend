@@ -694,7 +694,7 @@
 }
 
 [data-theme="dark"] .lr-status--replacement {
-  background: #24356b;
+  background: #2d3c8f;
   color: #9adcf5;
 }
 
@@ -741,7 +741,7 @@
 }
 
 [data-theme="dark"] .lr-signal--promote {
-  background: #24356b;
+  background: #2d3c8f;
   color: #9adcf5;
 }
 
@@ -813,7 +813,7 @@
 }
 
 [data-theme="dark"] .lr-callout--blue {
-  --tone-bg: #24356b;
+  --tone-bg: #2d3c8f;
   --tone-border: rgba(154, 220, 245, 0.28);
 }
 
