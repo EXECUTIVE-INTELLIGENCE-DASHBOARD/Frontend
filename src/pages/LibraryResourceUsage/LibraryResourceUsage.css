@@ -163,8 +163,8 @@
   position: relative;
 
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 14px;
 
   padding: 16px 18px;
 
@@ -194,26 +194,61 @@
 
 .lr-metric--blue {
   --tone: #2563eb;
+  --tone-soft: #e8f0fe;
+  --tone-text: #1d4ed8;
 }
 
 .lr-metric--green {
   --tone: #16a34a;
+  --tone-soft: #e6f7ee;
+  --tone-text: #15803d;
 }
 
 .lr-metric--amber {
   --tone: #f59e0b;
+  --tone-soft: #fef3e2;
+  --tone-text: #b45309;
 }
 
 [data-theme="dark"] .lr-metric--blue {
   --tone: #5b9bff;
+  --tone-soft: #14294a;
+  --tone-text: #8bb6ff;
 }
 
 [data-theme="dark"] .lr-metric--green {
   --tone: #22c55e;
+  --tone-soft: #0f3320;
+  --tone-text: #4ade80;
 }
 
 [data-theme="dark"] .lr-metric--amber {
   --tone: #f59e0b;
+  --tone-soft: #3a2a10;
+  --tone-text: #fbbf24;
+}
+
+.lr-metric__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  background: var(--tone-soft);
+  color: var(--tone-text);
+}
+
+.lr-metric__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-width: 0;
 }
 
 .lr-metric__label {

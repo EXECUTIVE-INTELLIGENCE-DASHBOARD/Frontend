@@ -206,8 +206,12 @@ p {
 
 /* A single uniform blue icon chip, as in the reference */
 :root:not([data-theme="dark"]) .stat-card__icon,
+:root:not([data-theme="dark"]) .ap-metric__icon,
 :root:not([data-theme="dark"]) .ar-metric__icon,
-:root:not([data-theme="dark"]) .eo-metric__icon {
+:root:not([data-theme="dark"]) .eo-metric__icon,
+:root:not([data-theme="dark"]) .lr-metric__icon,
+:root:not([data-theme="dark"]) .mc-metric__icon,
+:root:not([data-theme="dark"]) .se-metric__icon {
   border-radius: 12px;
   background: #dcebff;
   color: #2f6fe4;
