@@ -1,3 +1,5 @@
+import { academicYearOptions } from "../../lib/organisation";
+
 import type {
   AttendanceStat,
   ChildTab,
@@ -8,21 +10,28 @@ import type {
   SummaryMetric,
 } from "./myChildProgress.types";
 
+export const reportPeriodOptions = ["Term 1", "Term 2", "Term 3"];
+
+export const childOptions = ["Mwi R · Year 6", "Naledi R · Year 3"];
+
 export const filterControls: FilterControl[] = [
   {
     id: "academic-year",
     label: "Select Academic Year",
-    value: "AY 2025/2026",
+    value: academicYearOptions[0],
+    options: academicYearOptions,
   },
   {
     id: "reporting-period",
     label: "Reporting Period",
     value: "Term 3",
+    options: reportPeriodOptions,
   },
   {
     id: "child",
     label: "Child",
-    value: "Mwi R · Year 6",
+    value: childOptions[0],
+    options: childOptions,
   },
 ];
 

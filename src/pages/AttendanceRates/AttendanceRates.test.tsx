@@ -78,8 +78,10 @@ describe("AttendanceRates", () => {
 
     expect(campus).toHaveValue("All Campuses");
 
-    fireEvent.change(campus, { target: { value: "Greenhill North" } });
+    fireEvent.change(campus, {
+      target: { value: "GreenHill Academy Primary Buwaate" },
+    });
 
-    expect(campus).toHaveValue("Greenhill North");
+    expect(campus).toHaveValue("GreenHill Academy Primary Buwaate");
   });
 });

@@ -1,3 +1,5 @@
+import { academicYearOptions, campusOptions } from "../../lib/organisation";
+
 import type {
   ClassComparisonRow,
   FilterControl,
@@ -14,12 +16,12 @@ export const filterControls: FilterControl[] = [
   {
     id: "academic-year",
     label: "Select Academic Year",
-    options: ["AY 2025/2026", "AY 2024/2025", "AY 2023/2024"],
+    options: academicYearOptions,
   },
   {
     id: "campus",
     label: "Select Campus",
-    options: ["All Campuses", "Greenhill Main", "Greenhill North"],
+    options: campusOptions,
   },
 ];
 

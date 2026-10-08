@@ -46,9 +46,18 @@ describe("StudentEnrollment", () => {
       screen.getByRole("heading", { name: /Student Group Comparison/i }),
     ).toBeInTheDocument();
 
-    // "AY 2025/2026" also appears in the academic year filter control.
-    expect(screen.getAllByText("AY 2025/2026").length).toBeGreaterThan(0);
-    expect(screen.getByText("AY 2024/2025")).toBeInTheDocument();
+    // The year filter is a real dropdown now, so year labels also appear as
+    // <option> text. Scope the check to the trend card's own legend.
+    const trendCard = screen
+      .getByRole("heading", { name: /Enrollment Changes Over Time/i })
+      .closest("section");
+
+    expect(trendCard).not.toBeNull();
+
+    const legend = within(trendCard as HTMLElement);
+
+    expect(legend.getAllByText("AY 2025/2026").length).toBeGreaterThan(0);
+    expect(legend.getByText("AY 2024/2025")).toBeInTheDocument();
   });
 
   it("renders the capacity plan and the attention table", () => {

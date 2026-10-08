@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
+import { academicYearOptions } from "../../lib/organisation";
 import { academicYear, metrics } from "./academicOverview.data";
 import { StatCard } from "./StatCard";
 import { StudentRetention } from "./StudentRetention";
@@ -9,6 +11,8 @@ import { SupportRadar } from "./SupportRadar";
 import "./AcademicOverview.css";
 
 export function AcademicOverview() {
+  const [year, setYear] = useState(academicYear);
+
   return (
     <div className="academic-overview">
       <div className="ao-heading">
@@ -20,14 +24,29 @@ export function AcademicOverview() {
           </p>
         </div>
 
-        <button type="button" className="ao-year">
-          <span className="ao-year__label">Select Academic Year</span>
+        <div className="ao-year">
+          <span className="ao-year__label" aria-hidden="true">
+            Select Academic Year
+          </span>
 
-          <span className="ao-year__value">
-            {academicYear}
+          <span className="ao-year__value" aria-hidden="true">
+            {year}
             <ChevronDown size={16} aria-hidden="true" />
           </span>
-        </button>
+
+          <select
+            className="ao-year__select"
+            aria-label="Select Academic Year"
+            value={year}
+            onChange={(event) => setYear(event.target.value)}
+          >
+            {academicYearOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <section className="ao-metrics" aria-label="Key academic metrics">
