@@ -1,5 +1,5 @@
 import "./Hero.css";
-import { Search, Mic, Sun, Moon, ChevronRight } from "lucide-react";
+import { Search, Mic, Bell, Sun, Moon, ChevronRight } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
 export function Hero() {
@@ -43,6 +43,17 @@ export function Hero() {
 
       {/* Actions */}
       <div className="hero__actions">
+        {/* Notifications */}
+        <button
+          className="hero__notify"
+          type="button"
+          aria-label="Notifications"
+        >
+          <Bell size={15} aria-hidden="true" />
+
+          <span className="hero__notify-badge" aria-hidden="true" />
+        </button>
+
         {/* Theme toggle */}
         <div className="hero__theme-toggle">
           <button

@@ -6,7 +6,7 @@
   gap: 24px;
   padding: 0 32px;
   background: #ffffff;
-  border-bottom: 1px solid #d3d4d6;
+  border-bottom: 1px solid var(--color-border);
 }
 
 /* --------------------------------------------------
@@ -23,7 +23,7 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 20px;
-  color: #203468;
+  color: var(--color-heading);
 }
 
 .hero__date {
@@ -31,7 +31,7 @@
   font-size: 9px;
   font-weight: 400;
   line-height: 14px;
-  color: #64748b;
+  color: var(--color-text-soft);
 }
 
 /* --------------------------------------------------
@@ -52,14 +52,14 @@
   align-items: center;
   padding: 0 8px;
   flex-shrink: 0;
-  border: 1px solid #d3d4d6;
+  border: 1px solid #e6eefb;
   border-radius: 18px;
-  background: #ffffff;
+  background: #f6faff;
 }
 
 .hero__search-icon {
   flex-shrink: 0;
-  color: #2aa4dd;
+  color: var(--color-accent);
 }
 
 .hero__search-input {
@@ -70,11 +70,11 @@
   font-size: 9px;
   font-family: inherit;
   background: transparent;
-  color: #203468;
+  color: var(--color-heading);
 }
 
 .hero__search-input::placeholder {
-  color: #64748b;
+  color: #9aa7bd;
 }
 
 /* --------------------------------------------------
@@ -89,11 +89,44 @@
   justify-content: center;
   flex-shrink: 0;
   padding: 0;
-  border: 1px solid #d3d4d6;
+  border: 1px solid #e6eefb;
   border-radius: 50%;
   background: #ffffff;
-  color: #2aa4dd;
+  color: var(--color-accent);
   cursor: pointer;
+}
+
+/* --------------------------------------------------
+   NOTIFICATIONS
+-------------------------------------------------- */
+
+.hero__notify {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  border: 1px solid #e6eefb;
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.hero__notify-badge {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+  background: #f36b6b;
+  border: 1.5px solid #ffffff;
 }
 
 /* --------------------------------------------------
@@ -120,9 +153,9 @@
   gap: 2px;
   padding: 3px;
   flex-shrink: 0;
-  border: 1px solid #d3d4d6;
+  border: 1px solid #e6eefb;
   border-radius: 18px;
-  background: #ffffff;
+  background: #f6faff;
 }
 
 /* --------------------------------------------------
@@ -139,13 +172,13 @@
   border: none;
   border-radius: 50%;
   background: transparent;
-  color: #203468;
+  color: var(--color-text-muted);
   cursor: pointer;
 }
 
 .hero__theme-button--active {
-  background: #d3d4d6;
-  color: #203468;
+  background: var(--color-accent);
+  color: #ffffff;
 }
 
 /* --------------------------------------------------
@@ -159,7 +192,7 @@
   gap: 10px;
   padding: 3px 12px 3px 5px;
   flex-shrink: 0;
-  border: 1px solid #d3d4d6;
+  border: 1px solid #e6eefb;
   border-radius: 20px;
   background: #ffffff;
   cursor: pointer;
@@ -177,8 +210,8 @@
   justify-content: center;
   flex-shrink: 0;
   border-radius: 50%;
-  background: #203468;
-  color: #f5f5f5;
+  background: var(--color-accent);
+  color: #ffffff;
   font-size: 11px;
   font-weight: 600;
 }
@@ -197,14 +230,14 @@
 .hero__user-name {
   font-size: 9px;
   font-weight: 600;
-  color: #203468;
+  color: var(--color-heading);
 }
 
 .hero__user-role {
   margin-top: 3px;
   font-size: 7px;
   font-weight: 400;
-  color: #64748b;
+  color: var(--color-text-soft);
 }
 
 /* --------------------------------------------------
@@ -212,7 +245,7 @@
 -------------------------------------------------- */
 
 .hero__profile-arrow {
-  color: #94a3b8;
+  color: #b3bed0;
 }
 
 /* --------------------------------------------------
@@ -253,6 +286,16 @@
   background: #17285a;
   border-color: #2f3f73;
   color: #2aa4dd;
+}
+
+[data-theme="dark"] .hero__notify {
+  background: #17285a;
+  border-color: #2f3f73;
+  color: #d3d4d6;
+}
+
+[data-theme="dark"] .hero__notify-badge {
+  border-color: #17285a;
 }
 
 [data-theme="dark"] .hero__theme-toggle {
