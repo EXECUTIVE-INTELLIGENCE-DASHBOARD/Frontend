@@ -22,33 +22,19 @@ describe("Sidebar", () => {
 
     render(<Sidebar />);
 
-    await user.click(
-      screen.getByRole("button", { name: /academics/i }),
-    );
+    await user.click(screen.getByRole("button", { name: /academics/i }));
 
-    expect(
-      screen.getByText("Student Enrollment"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Student Enrollment")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Attendance Rates"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Attendance Rates")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Academic Performance"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Academic Performance")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("My Child's Progress"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("My Child's Progress")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Library & Resource Usage"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Library & Resource Usage")).toBeInTheDocument();
 
-    expect(
-      screen.queryByText("Academic Overview"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Academic Overview")).not.toBeInTheDocument();
   });
 
   it("shows an Overview entry inside the Academics dropdown", async () => {
@@ -78,27 +64,17 @@ describe("Sidebar", () => {
 
     await user.click(academicsButton);
 
-    expect(
-      screen.getByText("Student Enrollment"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Student Enrollment")).toBeInTheDocument();
 
     await user.click(academicsButton);
 
-    expect(
-      screen.queryByText("Student Enrollment"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Student Enrollment")).not.toBeInTheDocument();
 
-    expect(
-      screen.queryByText("Attendance Rates"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Attendance Rates")).not.toBeInTheDocument();
 
-    expect(
-      screen.queryByText("Academic Performance"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Academic Performance")).not.toBeInTheDocument();
 
-    expect(
-      screen.queryByText("My Child's Progress"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("My Child's Progress")).not.toBeInTheDocument();
 
     expect(
       screen.queryByText("Library & Resource Usage"),
@@ -110,33 +86,19 @@ describe("Sidebar", () => {
 
     render(<Sidebar />);
 
-    await user.click(
-      screen.getByRole("button", { name: /operational/i }),
-    );
+    await user.click(screen.getByRole("button", { name: /operational/i }));
 
-    expect(
-      screen.getByText("Facilities & Maintenance"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Facilities & Maintenance")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Fleet & Transport"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Fleet & Transport")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("ICT Systems"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("ICT Systems")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Asset Management"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Asset Management")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Work Orders"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Work Orders")).toBeInTheDocument();
 
-    expect(
-      screen.queryByText("Operational Overview"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Operational Overview")).not.toBeInTheDocument();
   });
 
   it("shows Services dropdown items when Services is clicked", async () => {
@@ -144,37 +106,21 @@ describe("Sidebar", () => {
 
     render(<Sidebar />);
 
-    await user.click(
-      screen.getByRole("button", { name: /services/i }),
-    );
+    await user.click(screen.getByRole("button", { name: /services/i }));
 
-    expect(
-      screen.getByText("Open Incidents"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Open Incidents")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Open Service Requests"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Open Service Requests")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("SLA Compliance"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("SLA Compliance")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Resolution Times"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Resolution Times")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Escalation Rates"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Escalation Rates")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Customer Satisfaction"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Customer Satisfaction")).toBeInTheDocument();
 
-    expect(
-      screen.queryByText("Service Overview"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Service Overview")).not.toBeInTheDocument();
   });
 
   it("closes the current section when another section is opened", async () => {
@@ -192,30 +138,18 @@ describe("Sidebar", () => {
 
     await user.click(academicsButton);
 
-    expect(
-      screen.getByText("Student Enrollment"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Student Enrollment")).toBeInTheDocument();
 
     await user.click(operationalButton);
 
-    expect(
-      screen.queryByText("Student Enrollment"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Student Enrollment")).not.toBeInTheDocument();
 
-    expect(
-      screen.queryByText("Academic Performance"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Academic Performance")).not.toBeInTheDocument();
 
-    expect(
-      screen.getByText("Facilities & Maintenance"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Facilities & Maintenance")).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Fleet & Transport"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Fleet & Transport")).toBeInTheDocument();
 
-    expect(
-      screen.queryByText("Operational Overview"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Operational Overview")).not.toBeInTheDocument();
   });
 });
