@@ -1,0 +1,68 @@
+
+.liabilities-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 16px 40px;
+
+  /* Follow the active theme */
+  background: var(--color-bg);
+  color: var(--color-heading);
+
+  box-sizing: border-box;
+}
+
+.liabilities-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.liabilities-page__filter {
+  flex-shrink: 0;
+}
+
+.liabilities-page__summary {
+  width: 100%;
+  min-width: 0;
+}
+
+
+.liabilities-page__details {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: stretch;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+
+.liabilities-page__details > * {
+  min-width: 0;
+}
+
+@media (max-width: 1200px) {
+  .liabilities-page__details {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .liabilities-page {
+    padding: 20px 16px 32px;
+    gap: 20px;
+  }
+
+  .liabilities-page__header {
+    justify-content: flex-end;
+  }
+
+  .liabilities-page__details {
+    gap: 20px;
+  }
+}
