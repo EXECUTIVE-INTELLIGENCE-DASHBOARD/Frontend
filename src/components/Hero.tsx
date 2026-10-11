@@ -1,7 +1,7 @@
 import "./Hero.css";
 import { useEffect, useRef, useState } from "react";
-import { Search, Mic, Bell, Sun, Moon, ChevronRight } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
+import { Search, Mic, Sun, Moon, ChevronRight } from "lucide-react";
 import { userProfile } from "../lib/userProfile";
 import { searchNavigation } from "../navigation/navigation.search";
 
@@ -82,11 +82,7 @@ export function Hero({ onSelectPage }: HeroProps) {
       {/* Search */}
       <div className="hero__search-wrapper" ref={searchRef}>
         <div className="hero__search">
-          <Search
-            className="hero__search-icon"
-            size={15}
-            aria-hidden="true"
-          />
+          <Search className="hero__search-icon" size={15} aria-hidden="true" />
 
           <input
             className="hero__search-input"
@@ -165,15 +161,6 @@ export function Hero({ onSelectPage }: HeroProps) {
       {/* Actions */}
       <div className="hero__actions">
         {/* Notifications */}
-        <button
-          className="hero__notify"
-          type="button"
-          aria-label="Notifications"
-        >
-          <Bell size={15} aria-hidden="true" />
-
-          <span className="hero__notify-badge" aria-hidden="true" />
-        </button>
 
         {/* Theme toggle */}
         <div className="hero__theme-toggle">
@@ -244,26 +231,18 @@ export function Hero({ onSelectPage }: HeroProps) {
                 </span>
 
                 <span className="hero__profile-identity">
-                  <span className="hero__profile-name">
-                    {userProfile.name}
-                  </span>
+                  <span className="hero__profile-name">{userProfile.name}</span>
 
-                  <span className="hero__profile-role">
-                    {userProfile.role}
-                  </span>
+                  <span className="hero__profile-role">{userProfile.role}</span>
                 </span>
               </div>
 
               <dl className="hero__profile-fields">
                 {userProfile.fields.map((field) => (
                   <div className="hero__profile-field" key={field.id}>
-                    <dt className="hero__profile-field-label">
-                      {field.label}
-                    </dt>
+                    <dt className="hero__profile-field-label">{field.label}</dt>
 
-                    <dd className="hero__profile-field-value">
-                      {field.value}
-                    </dd>
+                    <dd className="hero__profile-field-value">{field.value}</dd>
                   </div>
                 ))}
               </dl>

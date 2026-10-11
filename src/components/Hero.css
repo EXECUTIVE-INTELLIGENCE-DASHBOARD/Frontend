@@ -1,23 +1,19 @@
+
 .hero {
   min-height: 60px;
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 24px;
-  padding: 0 32px;
+  gap: 16px;
+  padding: 0 24px;
   background: #ffffff;
   border-bottom: 1px solid var(--color-border);
 }
 
-/* --------------------------------------------------
-   PAGE INFORMATION
--------------------------------------------------- */
-
 .hero__page-info {
-  flex: 0 0 auto;
-  min-width: 150px;
+  flex: 0 0 150px;
+  min-width: 0;
 }
-
 .hero__title {
   margin: 0;
   font-size: 14px;
@@ -34,26 +30,25 @@
   color: var(--color-text-soft);
 }
 
-/* --------------------------------------------------
-   SEARCH
--------------------------------------------------- */
-
 .hero__search-wrapper {
   position: relative;
-
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-shrink: 0;
+  flex: 0 1 240px;
+  min-width: 0;
+  margin-left: 100px;
 }
 
 .hero__search {
-  width: 160px;
+  width: 100%;
+  max-width: 200px;
+  min-width: 120px;
   height: 32px;
   display: flex;
   align-items: center;
   padding: 0 8px;
-  flex-shrink: 0;
+  flex: 1 1 auto;
   border: 1px solid #e6eefb;
   border-radius: 18px;
   background: #f6faff;
@@ -66,6 +61,7 @@
 
 .hero__search-input {
   width: 100%;
+  min-width: 0;
   border: none;
   outline: none;
   padding: 0 7px;
@@ -79,24 +75,20 @@
   color: #9aa7bd;
 }
 
-/* --------------------------------------------------
-   SEARCH RESULTS
--------------------------------------------------- */
+/* SEARCH RESULTS */
 
 .hero__search-results {
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
   z-index: 40;
-
   width: 268px;
+  max-width: min(268px, calc(100vw - 32px));
   max-height: 292px;
   overflow-y: auto;
   padding: 10px;
-
   border: 1px solid #e6eefb;
   border-radius: 14px;
-
   background: #ffffff;
   box-shadow: var(--shadow-elevated);
 }
@@ -104,7 +96,6 @@
 .hero__search-results-title {
   margin: 0 0 6px;
   padding: 0 8px;
-
   color: #9aa7bd;
   font-size: 9px;
   font-weight: 700;
@@ -116,33 +107,26 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-
   margin: 0;
   padding: 0;
-
   list-style: none;
 }
 
 .hero__search-result {
   width: 100%;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-
   padding: 8px;
-
   border: none;
   border-radius: 10px;
   background: transparent;
-
   color: var(--color-heading);
   font-family: inherit;
   font-size: 11px;
   font-weight: 600;
   text-align: left;
-
   cursor: pointer;
 }
 
@@ -152,7 +136,6 @@
 
 .hero__search-result-group {
   flex-shrink: 0;
-
   color: #9aa7bd;
   font-size: 9px;
   font-weight: 600;
@@ -161,14 +144,11 @@
 .hero__search-empty {
   margin: 0;
   padding: 6px 8px;
-
   color: #9aa7bd;
   font-size: 10px;
 }
 
-/* --------------------------------------------------
-   MICROPHONE
--------------------------------------------------- */
+/* MICROPHONE */
 
 .hero__search-mic {
   width: 32px;
@@ -185,9 +165,7 @@
   cursor: pointer;
 }
 
-/* --------------------------------------------------
-   NOTIFICATIONS
--------------------------------------------------- */
+/* NOTIFICATIONS */
 
 .hero__notify {
   position: relative;
@@ -209,31 +187,22 @@
   position: absolute;
   top: 4px;
   right: 5px;
-
   width: 7px;
   height: 7px;
-
   border-radius: 50%;
   background: #f36b6b;
   border: 1.5px solid #ffffff;
 }
-
-/* --------------------------------------------------
-   ACTIONS
--------------------------------------------------- */
-
 .hero__actions {
-  flex: 1;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 16px;
+  justify-content: flex-start;
+  gap: 12px;
+  flex: 0 0 auto;
   min-width: 0;
+  margin-left: auto;
+  padding-left: 10px;
 }
-
-/* --------------------------------------------------
-   THEME TOGGLE
--------------------------------------------------- */
 
 .hero__theme-toggle {
   height: 32px;
@@ -245,11 +214,10 @@
   border: 1px solid #e6eefb;
   border-radius: 18px;
   background: #f6faff;
+  transform: translateX(-80px);
 }
 
-/* --------------------------------------------------
-   THEME BUTTONS
--------------------------------------------------- */
+/* THEME BUTTONS */
 
 .hero__theme-button {
   width: 25px;
@@ -270,23 +238,17 @@
   color: #ffffff;
 }
 
-/* --------------------------------------------------
-   PROFILE
--------------------------------------------------- */
-
-/* --------------------------------------------------
-   PROFILE MENU
--------------------------------------------------- */
+/* PROFILE MENU */
 
 .hero__profile-menu {
   position: relative;
-
   display: flex;
-  flex-shrink: 0;
+  flex: 0 0 auto;
+  margin-left: 0;
 }
 
 .hero__profile {
-  height: 38px;
+  min-height: 38px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -298,9 +260,7 @@
   cursor: pointer;
 }
 
-/* --------------------------------------------------
-   AVATAR
--------------------------------------------------- */
+/* AVATAR */
 
 .hero__avatar {
   width: 29px;
@@ -316,9 +276,7 @@
   font-weight: 600;
 }
 
-/* --------------------------------------------------
-   USER INFORMATION
--------------------------------------------------- */
+/* USER INFORMATION */
 
 .hero__user-info {
   display: flex;
@@ -340,13 +298,11 @@
   color: var(--color-text-soft);
 }
 
-/* --------------------------------------------------
-   PROFILE ARROW
--------------------------------------------------- */
+/* PROFILE ARROW */
 
 .hero__profile-arrow {
+  flex-shrink: 0;
   color: #b3bed0;
-
   transition: transform 0.2s ease;
 }
 
@@ -354,22 +310,18 @@
   transform: rotate(90deg);
 }
 
-/* --------------------------------------------------
-   PROFILE PANEL
--------------------------------------------------- */
+/* PROFILE PANEL */
 
 .hero__profile-panel {
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
   z-index: 40;
-
   width: 268px;
+  max-width: calc(100vw - 32px);
   padding: 14px;
-
   border: 1px solid #e6eefb;
   border-radius: 16px;
-
   background: #ffffff;
   box-shadow: var(--shadow-elevated);
 }
@@ -378,7 +330,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-
   padding-bottom: 12px;
   border-bottom: 1px solid #eef3fb;
 }
@@ -386,16 +337,13 @@
 .hero__profile-avatar {
   width: 38px;
   height: 38px;
-
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-
   border-radius: 50%;
   background: var(--color-accent);
   color: #ffffff;
-
   font-size: 14px;
   font-weight: 600;
 }
@@ -404,7 +352,6 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
-
   min-width: 0;
 }
 
@@ -423,7 +370,6 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-
   margin: 12px 0 0;
 }
 
@@ -435,7 +381,6 @@
 
 .hero__profile-field-label {
   margin: 0;
-
   color: #9aa7bd;
   font-size: 9px;
   font-weight: 700;
@@ -445,146 +390,59 @@
 
 .hero__profile-field-value {
   margin: 0;
-
   color: var(--color-heading);
   font-size: 11px;
   font-weight: 600;
 }
-
-/* --------------------------------------------------
-   DARK THEME
--------------------------------------------------- */
-
-/* Dark values follow the shared indigo navy (#263278) with #3f4b92 borders,
-   so the header blends with the sidebar instead of sitting on a different
-   shade. */
-
-[data-theme="dark"] .hero {
-  background: #263278;
-  border-bottom-color: #3f4b92;
+[data-theme="dark"] {
+  --color-bg: #152244;
+  --color-surface: #1c2c52;
+  --color-surface-hover: #263a64;
+  --color-accent-soft: #263a64;
+  --color-border: #34466f;
+  --color-border-strong: #435783;
 }
-
-[data-theme="dark"] .hero__title {
-  color: #f5f5f5;
-}
-
-[data-theme="dark"] .hero__date {
-  color: #d3d4d6;
-}
-
-[data-theme="dark"] .hero__search {
-  background: #263278;
-  border-color: #3f4b92;
-}
-
-[data-theme="dark"] .hero__search-input {
-  color: #f5f5f5;
-}
-
-[data-theme="dark"] .hero__search-input::placeholder {
-  color: #d3d4d6;
-}
-
-[data-theme="dark"] .hero__search-mic {
-  background: #263278;
-  border-color: #3f4b92;
-  color: #2aa4dd;
-}
-
-[data-theme="dark"] .hero__notify {
-  background: #263278;
-  border-color: #3f4b92;
-  color: #d3d4d6;
-}
-
-[data-theme="dark"] .hero__notify-badge {
-  border-color: #263278;
-}
-
-[data-theme="dark"] .hero__theme-toggle {
-  background: #263278;
-  border-color: #3f4b92;
-}
-
-/* Keep the theme switch neutral — no yellow/blue/purple here */
-[data-theme="dark"] .hero__theme-button {
-  color: #f5f5f5;
-}
-
-[data-theme="dark"] .hero__theme-button--active {
-  background: #d3d4d6;
-  color: #263278;
-}
-
-[data-theme="dark"] .hero__profile {
-  background: #263278;
-  border-color: #3f4b92;
-}
-
-[data-theme="dark"] .hero__avatar {
-  background: #f5f5f5;
-  color: #263278;
-}
-
-[data-theme="dark"] .hero__user-name {
-  color: #f5f5f5;
-}
-
-[data-theme="dark"] .hero__user-role {
-  color: #d3d4d6;
-}
-
-[data-theme="dark"] .hero__profile-arrow {
-  color: #d3d4d6;
-}
-
-[data-theme="dark"] .hero__search-results,
-[data-theme="dark"] .hero__profile-panel {
-  background: #2d3c8f;
-  border-color: #3f4b92;
-}
-
-[data-theme="dark"] .hero__search-results-title,
-[data-theme="dark"] .hero__search-result-group,
-[data-theme="dark"] .hero__search-empty,
-[data-theme="dark"] .hero__profile-field-label {
-  color: #d3d4d6;
-}
-
-[data-theme="dark"] .hero__search-result {
-  color: #f5f5f5;
-}
-
-[data-theme="dark"] .hero__search-result:hover {
-  background: #3f4b92;
-}
-
-[data-theme="dark"] .hero__profile-head {
-  border-bottom-color: #3f4b92;
-}
-
-/* --------------------------------------------------
-   RESPONSIVE
--------------------------------------------------- */
-
-/* The header shares a row with a fixed 260px sidebar, so the content it
-   actually gets is much narrower than the viewport. These breakpoints are
-   sized for the content, not the viewport. */
+/* RESPONSIVE */
 
 @media (max-width: 1280px) {
   .hero {
     gap: 16px;
     padding: 0 20px;
   }
+
+  .hero__page-info {
+    flex-basis: 135px;
+  }
+
+  .hero__search-wrapper {
+    flex-basis: 200px;
+  }
 }
 
 @media (max-width: 1100px) {
+  .hero {
+    gap: 12px;
+    padding: 0 16px;
+  }
+
+  .hero__page-info {
+    flex-basis: 120px;
+  }
+
+  .hero__search-wrapper {
+    flex-basis: 170px;
+  }
+
   .hero__search {
-    width: 130px;
+    min-width: 100px;
   }
 
   .hero__avatar {
     display: none;
+  }
+
+  .hero__actions {
+    gap: 12px;
   }
 }
 
@@ -600,10 +458,106 @@
   .hero__profile {
     padding: 5px;
   }
+
+  .hero__profile-arrow {
+    display: none;
+  }
 }
 
 @media (max-width: 768px) {
+  .hero {
+    min-height: 56px;
+    gap: 10px;
+    padding: 0 12px;
+  }
+
+  .hero__page-info {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
   .hero__search-wrapper {
     display: none;
   }
+
+  .hero__actions {
+    flex: 0 0 auto;
+    gap: 10px;
+    margin-left: auto;
+  }
+
+  .hero__profile {
+    min-height: 34px;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero {
+    padding: 0 8px;
+  }
+
+  .hero__actions {
+    gap: 6px;
+  }
+
+  .hero__theme-toggle {
+    height: 30px;
+  }
+
+  .hero__theme-button {
+    width: 23px;
+    height: 23px;
+  }
+}
+/* FIX: Keep hero controls dark in dark mode */
+
+[data-theme="dark"] .hero__search,
+[data-theme="dark"] .hero__search-mic,
+[data-theme="dark"] .hero__notify,
+[data-theme="dark"] .hero__theme-toggle,
+[data-theme="dark"] .hero__profile {
+  background-color: #1c2c52 !important;
+  border-color: #34466f !important;
+  color: #dce5f7;
+}
+
+/* Search input */
+[data-theme="dark"] .hero__search-input {
+  background: transparent;
+  color: #f5f7ff;
+}
+
+[data-theme="dark"] .hero__search-input::placeholder {
+  color: #91a3c2;
+}
+
+/* Theme toggle buttons */
+[data-theme="dark"] .hero__theme-button {
+  background: transparent;
+  color: #dce5f7;
+}
+
+[data-theme="dark"] .hero__theme-button--active {
+  background-color: #263a64 !important;
+  color: #f5f7ff;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Profile text and avatar */
+[data-theme="dark"] .hero__user-name,
+[data-theme="dark"] .hero__profile-name {
+  color: #f5f7ff;
+}
+
+[data-theme="dark"] .hero__user-role,
+[data-theme="dark"] .hero__profile-role,
+[data-theme="dark"] .hero__profile-arrow {
+  color: #a5b5d1;
+}
+
+[data-theme="dark"] .hero__avatar,
+[data-theme="dark"] .hero__profile-avatar {
+  background-color: #263a64;
+  color: #f5f7ff;
 }
