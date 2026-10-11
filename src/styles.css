@@ -1,18 +1,18 @@
 :root {
   color-scheme: light;
 
-  /* Surfaces — soft blue canvas with white floating cards */
-  --color-bg: #eaf2fe;
+  /* Surfaces — near-white canvas with independent white cards */
+  --color-bg: #f3f6fb;
   --color-surface: #ffffff;
-  --color-surface-subtle: #f5f9ff;
-  --color-surface-muted: #f6faff;
-  --color-surface-hover: #f0f6ff;
-  --color-surface-tint: #eef5ff;
+  --color-surface-subtle: #f8fafc;
+  --color-surface-muted: #f8fafc;
+  --color-surface-hover: #f1f5f9;
+  --color-surface-tint: #f3f7fc;
 
-  /* Borders — barely-there cool greys */
-  --color-border: #e9f0fb;
-  --color-border-soft: #eef4fd;
-  --color-border-strong: #d7e4f8;
+  /* Borders — subtle cool greys */
+  --color-border: #e9eef5;
+  --color-border-soft: #edf1f6;
+  --color-border-strong: #d7e1ee;
 
   /* Text */
   --color-heading: #17233d;
@@ -33,12 +33,12 @@
   --color-warning-soft: #fef3e2;
   --color-critical: #e05b5b;
   --color-danger: #dc4b4b;
-  --color-track: #eef4fd;
+  --color-track: #eef2f7;
 
-  /* Elevation — soft blue-tinted glows so cards float on the canvas */
-  --shadow-card: 0 6px 16px rgba(37, 78, 150, 0.06);
-  --shadow-pop: 0 12px 26px rgba(37, 78, 150, 0.1);
-  --shadow-elevated: 0 20px 44px rgba(37, 78, 150, 0.12);
+  /* Elevation — soft shadows for independent floating cards */
+  --shadow-card: 0 2px 4px rgba(37, 55, 90, 0.035);
+  --shadow-pop: 0 6px 16px rgba(37, 55, 90, 0.07);
+  --shadow-elevated: 0 12px 30px rgba(37, 55, 90, 0.1);
 
   /* Charts */
   --chart-navy: #2f6fe4;
@@ -46,9 +46,19 @@
   --chart-sky: #8ec0ff;
   --chart-gradient-from: #5b9bff;
   --chart-gradient-to: #2f6fe4;
+  --color-chart-grid: #eaf0f7;
+  --color-chart-axis: #cbd5e1;
+  --color-chart-realized: #172447;
+  --color-chart-forecast: #f0f4f9;
 
-  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
+  font-family:
+    "Poppins",
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
   color: var(--color-text);
   background: var(--color-bg);
   font-synthesis: none;
@@ -93,97 +103,105 @@ p {
   color: var(--color-text-muted);
   line-height: 1.65;
 }
-
-/* --------------------------------------------------
-   DARK THEME
--------------------------------------------------- */
+/* GLOBAL DARK THEME — ALL PAGES */
 
 [data-theme="dark"] {
   color-scheme: dark;
 
-  /* Surfaces — one indigo ramp built on the brand navy.
-     `--color-bg` is exactly #263278 = hsl(231 52% 31%).
-     Every step keeps the same relative spacing as before, so cards still sit
-     clearly above the page instead of sinking into it. */
-  --color-bg: #263278;
-  --color-surface: #2d3c8f;
-  --color-surface-subtle: #2a3784;
-  --color-surface-muted: #2a3784;
-  --color-surface-hover: #31419b;
-  --color-surface-tint: #31419b;
+  --color-bg: #152244;
+  --color-surface: #1c2c52;
+  --color-surface-subtle: #192849;
+  --color-surface-muted: #192849;
+  --color-surface-hover: #263a64;
+  --color-surface-tint: #263a64;
 
-  /* Borders */
-  --color-border: #3f4b92;
-  --color-border-soft: #394484;
-  --color-border-strong: #4b5aaf;
+  --color-border: #34466f;
+  --color-border-soft: #2c3d63;
+  --color-border-strong: #435783;
 
-  /* Text */
-  --color-heading: #f5f5f5;
-  --color-heading-alt: #d3d4d6;
-  --color-text: #d3d4d6;
-  --color-text-secondary: #c3c6c9;
-  --color-text-muted: #a9adb3;
-  --color-text-soft: #969aa1;
+  --color-heading: #f5f7ff;
+  --color-heading-alt: #dce5f7;
+  --color-text: #dce5f7;
+  --color-text-secondary: #c2cfe7;
+  --color-text-muted: #a5b5d1;
+  --color-text-soft: #91a3c2;
 
-  /* Accent */
-  --color-accent: #2aa4dd;
-  --color-accent-strong: #4fb8e8;
-  --color-accent-soft: #2d3c8f;
+  --color-accent: #4a86f7;
+  --color-accent-strong: #6a9bff;
+  --color-accent-soft: #263a64;
 
-  /* Feedback */
-  --color-positive: #4ade80;
-  --color-warning: #f1ba1b;
-  --color-warning-soft: #3a2f10;
-  --color-critical: #f87171;
-  --color-danger: #f87171;
-  --color-track: #2d3c8f;
+  --color-track: #263a64;
 
-  /* Elevation */
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow-pop: 0 6px 16px rgba(0, 0, 0, 0.35);
-  --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-pop: 0 6px 16px rgba(0, 0, 0, 0.25);
+  --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.35);
 
-  /* Charts */
-  --chart-navy: #2aa4dd;
-  --chart-blue: #4fb8e8;
-  --chart-sky: #9adcf5;
-  --chart-gradient-from: #4fb8e8;
-  --chart-gradient-to: #2aa4dd;
-
-  color: #f5f5f5;
-  background: #263278;
+  --chart-navy: #4a86f7;
+  --chart-blue: #6a9bff;
+  --chart-sky: #9bc5ff;
+  --chart-gradient-from: #6a9bff;
+  --chart-gradient-to: #2f6fe4;
+  /* Revenue graph — dark theme */
+  --color-chart-grid: #2c3d63;
+  --color-chart-axis: #435783;
+  --color-chart-realized: #263a64;
+  --color-chart-forecast: #1c2c52;
+  color: var(--color-text);
+  background: var(--color-bg);
 }
 
 [data-theme="dark"] body {
-  background: #263278;
-  color: #f5f5f5;
+  background: var(--color-bg);
+  color: var(--color-heading);
+}
+/* GLOBAL DARK THEME — SHARED COMPONENT COLORS */
+
+[data-theme="dark"] .hero,
+[data-theme="dark"] .sidebar {
+  background: var(--color-bg);
+  color: var(--color-heading);
+  border-color: var(--color-border);
 }
 
-/* Existing application shell.
-   These follow the surface tokens so light and dark stay in step. */
+/* Shared cards and panels */
 
-[data-theme="dark"] .layout-content {
-  color: #f5f5f5;
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .ap-metric,
+[data-theme="dark"] .ar-metric,
+[data-theme="dark"] .eo-metric,
+[data-theme="dark"] .lr-metric,
+[data-theme="dark"] .mc-metric,
+[data-theme="dark"] .se-metric {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
 }
 
-/* Main heading */
+/* Shared headings */
 
-[data-theme="dark"] h1 {
-  color: #f5f5f5;
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3 {
+  color: var(--color-heading);
 }
 
-/* Paragraph text */
+/* Shared form controls */
 
-[data-theme="dark"] p {
-  color: #d3d4d6;
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: var(--color-surface);
+  color: var(--color-heading);
+  border-color: var(--color-border);
 }
 
-/* --------------------------------------------------
-   LIGHT METRIC CARDS — matched to the reference screen.
-   Every small stat card shares one soft-blue tint with no
-   coloured accent borders, and a single blue icon chip.
-   Scoped to light only so the dark palette is untouched.
--------------------------------------------------- */
+/* Shared dropdown menus and popups */
+
+[data-theme="dark"] .hero__search-results,
+[data-theme="dark"] .hero__profile-panel {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
 
 :root:not([data-theme="dark"]) .stat-card,
 :root:not([data-theme="dark"]) .ap-metric,
@@ -198,6 +216,7 @@ p {
 }
 
 /* Remove the coloured left accent bar (the "different colour" borders) */
+
 :root:not([data-theme="dark"]) .stat-card::before,
 :root:not([data-theme="dark"]) .ap-metric::before,
 :root:not([data-theme="dark"]) .eo-metric::before,
@@ -208,6 +227,7 @@ p {
 }
 
 /* A single uniform blue icon chip, as in the reference */
+
 :root:not([data-theme="dark"]) .stat-card__icon,
 :root:not([data-theme="dark"]) .ap-metric__icon,
 :root:not([data-theme="dark"]) .ar-metric__icon,
@@ -277,6 +297,7 @@ p {
 }
 
 /* The overlay select is invisible, so surface focus on the card itself. */
+
 .ap-filter:focus-within,
 .lr-filter:focus-within,
 .mc-filter:focus-within,
@@ -286,4 +307,40 @@ p {
   box-shadow: var(--shadow-pop);
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+/* Dark mode: remove unwanted light-blue traces */
+[data-theme="dark"] .hero {
+  border-bottom: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+[data-theme="dark"] .sidebar {
+  border-right: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Remove the blue vertical line beside sidebar submenus */
+[data-theme="dark"] .sidebar a::before,
+[data-theme="dark"] .sidebar button::before {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Remove blue outlines from selected sidebar items */
+[data-theme="dark"] .sidebar a:focus,
+[data-theme="dark"] .sidebar button:focus,
+[data-theme="dark"] .sidebar a:focus-visible,
+[data-theme="dark"] .sidebar button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Keep dashboard cards subtle in dark mode */
+[data-theme="dark"] .card,
+[data-theme="dark"] .metric-card,
+[data-theme="dark"] .dashboard-card {
+  border-color: #293958 !important;
+  box-shadow: none !important;
 }
