@@ -116,36 +116,24 @@ export const navigationItems: NavigationItem[] = [
     icon: WalletCards,
     children: [
       {
+        id: "liabilities-management",
+        label: "Liabilities Management",
+      },
+      {
+        id: "budget-management",
+        label: "Budget Management",
+      },
+      {
         id: "revenue-fee-collection",
-        label: "Revenue & Fee Collection",
+        label: "Revenue & Arrears",
       },
       {
-        id: "budget-planning",
-        label: "Budget & Planning",
+        id: "costs-concessions",
+        label: "Costs & Concessions",
       },
       {
-        id: "expenditure-cost-centres",
-        label: "Expenditure & Cost Centres",
-      },
-      {
-        id: "financial-forecasting",
-        label: "Financial Forecasting",
-      },
-      {
-        id: "payments-financial-commitments",
-        label: "Payments & Financial Commitments",
-      },
-      {
-        id: "procurement-management",
-        label: "Procurement Management",
-      },
-      {
-        id: "suppliers-delivery",
-        label: "Suppliers & Delivery",
-      },
-      {
-        id: "inventory-procurement-resources",
-        label: "Inventory & Procurement Resources",
+        id: "requisitions-orders",
+        label: "Requisitions & Orders",
       },
     ],
   },
