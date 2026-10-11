@@ -6,7 +6,7 @@
   gap: 24px;
   padding: 0 32px;
   background: #ffffff;
-  border-bottom: 1px solid #d3d4d6;
+  border-bottom: 1px solid var(--color-border);
 }
 
 /* --------------------------------------------------
@@ -23,7 +23,7 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 20px;
-  color: #203468;
+  color: var(--color-heading);
 }
 
 .hero__date {
@@ -31,7 +31,7 @@
   font-size: 9px;
   font-weight: 400;
   line-height: 14px;
-  color: #64748b;
+  color: var(--color-text-soft);
 }
 
 /* --------------------------------------------------
@@ -39,6 +39,8 @@
 -------------------------------------------------- */
 
 .hero__search-wrapper {
+  position: relative;
+
   display: flex;
   align-items: center;
   gap: 8px;
@@ -52,14 +54,14 @@
   align-items: center;
   padding: 0 8px;
   flex-shrink: 0;
-  border: 1px solid #d3d4d6;
+  border: 1px solid #e6eefb;
   border-radius: 18px;
-  background: #ffffff;
+  background: #f6faff;
 }
 
 .hero__search-icon {
   flex-shrink: 0;
-  color: #2aa4dd;
+  color: var(--color-accent);
 }
 
 .hero__search-input {
@@ -70,11 +72,98 @@
   font-size: 9px;
   font-family: inherit;
   background: transparent;
-  color: #203468;
+  color: var(--color-heading);
 }
 
 .hero__search-input::placeholder {
-  color: #64748b;
+  color: #9aa7bd;
+}
+
+/* --------------------------------------------------
+   SEARCH RESULTS
+-------------------------------------------------- */
+
+.hero__search-results {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 40;
+
+  width: 268px;
+  max-height: 292px;
+  overflow-y: auto;
+  padding: 10px;
+
+  border: 1px solid #e6eefb;
+  border-radius: 14px;
+
+  background: #ffffff;
+  box-shadow: var(--shadow-elevated);
+}
+
+.hero__search-results-title {
+  margin: 0 0 6px;
+  padding: 0 8px;
+
+  color: #9aa7bd;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero__search-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.hero__search-result {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 8px;
+
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+
+  color: var(--color-heading);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.hero__search-result:hover {
+  background: #f0f6ff;
+}
+
+.hero__search-result-group {
+  flex-shrink: 0;
+
+  color: #9aa7bd;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.hero__search-empty {
+  margin: 0;
+  padding: 6px 8px;
+
+  color: #9aa7bd;
+  font-size: 10px;
 }
 
 /* --------------------------------------------------
@@ -89,11 +178,44 @@
   justify-content: center;
   flex-shrink: 0;
   padding: 0;
-  border: 1px solid #d3d4d6;
+  border: 1px solid #e6eefb;
   border-radius: 50%;
   background: #ffffff;
-  color: #2aa4dd;
+  color: var(--color-accent);
   cursor: pointer;
+}
+
+/* --------------------------------------------------
+   NOTIFICATIONS
+-------------------------------------------------- */
+
+.hero__notify {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  border: 1px solid #e6eefb;
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.hero__notify-badge {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+  background: #f36b6b;
+  border: 1.5px solid #ffffff;
 }
 
 /* --------------------------------------------------
@@ -120,9 +242,9 @@
   gap: 2px;
   padding: 3px;
   flex-shrink: 0;
-  border: 1px solid #d3d4d6;
+  border: 1px solid #e6eefb;
   border-radius: 18px;
-  background: #ffffff;
+  background: #f6faff;
 }
 
 /* --------------------------------------------------
@@ -139,18 +261,29 @@
   border: none;
   border-radius: 50%;
   background: transparent;
-  color: #203468;
+  color: var(--color-text-muted);
   cursor: pointer;
 }
 
 .hero__theme-button--active {
-  background: #d3d4d6;
-  color: #203468;
+  background: var(--color-accent);
+  color: #ffffff;
 }
 
 /* --------------------------------------------------
    PROFILE
 -------------------------------------------------- */
+
+/* --------------------------------------------------
+   PROFILE MENU
+-------------------------------------------------- */
+
+.hero__profile-menu {
+  position: relative;
+
+  display: flex;
+  flex-shrink: 0;
+}
 
 .hero__profile {
   height: 38px;
@@ -159,7 +292,7 @@
   gap: 10px;
   padding: 3px 12px 3px 5px;
   flex-shrink: 0;
-  border: 1px solid #d3d4d6;
+  border: 1px solid #e6eefb;
   border-radius: 20px;
   background: #ffffff;
   cursor: pointer;
@@ -177,8 +310,8 @@
   justify-content: center;
   flex-shrink: 0;
   border-radius: 50%;
-  background: #203468;
-  color: #f5f5f5;
+  background: var(--color-accent);
+  color: #ffffff;
   font-size: 11px;
   font-weight: 600;
 }
@@ -197,14 +330,14 @@
 .hero__user-name {
   font-size: 9px;
   font-weight: 600;
-  color: #203468;
+  color: var(--color-heading);
 }
 
 .hero__user-role {
   margin-top: 3px;
   font-size: 7px;
   font-weight: 400;
-  color: #64748b;
+  color: var(--color-text-soft);
 }
 
 /* --------------------------------------------------
@@ -212,20 +345,123 @@
 -------------------------------------------------- */
 
 .hero__profile-arrow {
-  color: #94a3b8;
+  color: #b3bed0;
+
+  transition: transform 0.2s ease;
+}
+
+.hero__profile-arrow--open {
+  transform: rotate(90deg);
+}
+
+/* --------------------------------------------------
+   PROFILE PANEL
+-------------------------------------------------- */
+
+.hero__profile-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 40;
+
+  width: 268px;
+  padding: 14px;
+
+  border: 1px solid #e6eefb;
+  border-radius: 16px;
+
+  background: #ffffff;
+  box-shadow: var(--shadow-elevated);
+}
+
+.hero__profile-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eef3fb;
+}
+
+.hero__profile-avatar {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.hero__profile-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.hero__profile-name {
+  color: var(--color-heading);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.hero__profile-role {
+  color: var(--color-text-soft);
+  font-size: 10px;
+}
+
+.hero__profile-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  margin: 12px 0 0;
+}
+
+.hero__profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero__profile-field-label {
+  margin: 0;
+
+  color: #9aa7bd;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hero__profile-field-value {
+  margin: 0;
+
+  color: var(--color-heading);
+  font-size: 11px;
+  font-weight: 600;
 }
 
 /* --------------------------------------------------
    DARK THEME
 -------------------------------------------------- */
 
-/* Dark values are aligned to the shared navigation navy (#17285a) with
-   #2f3f73 borders, so the header blends with the sidebar instead of
-   sitting on a different shade. */
+/* Dark values follow the shared indigo navy (#263278) with #3f4b92 borders,
+   so the header blends with the sidebar instead of sitting on a different
+   shade. */
 
 [data-theme="dark"] .hero {
-  background: #17285a;
-  border-bottom-color: #2f3f73;
+  background: #263278;
+  border-bottom-color: #3f4b92;
 }
 
 [data-theme="dark"] .hero__title {
@@ -237,8 +473,8 @@
 }
 
 [data-theme="dark"] .hero__search {
-  background: #17285a;
-  border-color: #2f3f73;
+  background: #263278;
+  border-color: #3f4b92;
 }
 
 [data-theme="dark"] .hero__search-input {
@@ -250,14 +486,24 @@
 }
 
 [data-theme="dark"] .hero__search-mic {
-  background: #17285a;
-  border-color: #2f3f73;
+  background: #263278;
+  border-color: #3f4b92;
   color: #2aa4dd;
 }
 
+[data-theme="dark"] .hero__notify {
+  background: #263278;
+  border-color: #3f4b92;
+  color: #d3d4d6;
+}
+
+[data-theme="dark"] .hero__notify-badge {
+  border-color: #263278;
+}
+
 [data-theme="dark"] .hero__theme-toggle {
-  background: #17285a;
-  border-color: #2f3f73;
+  background: #263278;
+  border-color: #3f4b92;
 }
 
 /* Keep the theme switch neutral — no yellow/blue/purple here */
@@ -267,17 +513,17 @@
 
 [data-theme="dark"] .hero__theme-button--active {
   background: #d3d4d6;
-  color: #17285a;
+  color: #263278;
 }
 
 [data-theme="dark"] .hero__profile {
-  background: #17285a;
-  border-color: #2f3f73;
+  background: #263278;
+  border-color: #3f4b92;
 }
 
 [data-theme="dark"] .hero__avatar {
   background: #f5f5f5;
-  color: #17285a;
+  color: #263278;
 }
 
 [data-theme="dark"] .hero__user-name {
@@ -290,6 +536,31 @@
 
 [data-theme="dark"] .hero__profile-arrow {
   color: #d3d4d6;
+}
+
+[data-theme="dark"] .hero__search-results,
+[data-theme="dark"] .hero__profile-panel {
+  background: #2d3c8f;
+  border-color: #3f4b92;
+}
+
+[data-theme="dark"] .hero__search-results-title,
+[data-theme="dark"] .hero__search-result-group,
+[data-theme="dark"] .hero__search-empty,
+[data-theme="dark"] .hero__profile-field-label {
+  color: #d3d4d6;
+}
+
+[data-theme="dark"] .hero__search-result {
+  color: #f5f5f5;
+}
+
+[data-theme="dark"] .hero__search-result:hover {
+  background: #3f4b92;
+}
+
+[data-theme="dark"] .hero__profile-head {
+  border-bottom-color: #3f4b92;
 }
 
 /* --------------------------------------------------

@@ -1,3 +1,5 @@
+import { academicYearOptions } from "../../lib/organisation";
+
 import type {
   Metric,
   RetentionSegment,
@@ -6,7 +8,7 @@ import type {
   SupportRow,
 } from "./academicOverview.types";
 
-export const academicYear = "AY 2025/2026";
+export const academicYear = academicYearOptions[0];
 
 export const metrics: Metric[] = [
   {

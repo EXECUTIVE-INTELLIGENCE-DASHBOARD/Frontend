@@ -1,3 +1,5 @@
+import { academicYearOptions, campusOptions } from "../../lib/organisation";
+
 import type {
   AcquisitionCallout,
   ConditionRow,
@@ -13,12 +15,14 @@ export const filterControls: FilterControl[] = [
   {
     id: "academic-year",
     label: "Select Academic Year",
-    value: "AY 2025/2026",
+    value: academicYearOptions[0],
+    options: academicYearOptions,
   },
   {
     id: "campus",
     label: "Select Campus",
-    value: "All Campuses",
+    value: campusOptions[0],
+    options: campusOptions,
   },
 ];
 

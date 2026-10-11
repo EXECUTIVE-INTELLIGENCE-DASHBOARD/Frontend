@@ -1,0 +1,14 @@
+# Render Blueprint — GreenHill EID dashboard frontend.
+# Vite + React single-page app built with `npm run build` and served as a static site.
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: greenhill-eid-frontend
+    runtime: static
+    branch: Dev
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: "24"

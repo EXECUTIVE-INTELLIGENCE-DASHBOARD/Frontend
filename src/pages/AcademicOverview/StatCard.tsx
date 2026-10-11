@@ -25,22 +25,22 @@ export function StatCard({ metric }: StatCardProps) {
 
   return (
     <article className={`stat-card stat-card--${metric.tone}`}>
-      <div className="stat-card__head">
+      <span className="stat-card__icon" aria-hidden="true">
+        <Icon size={18} />
+      </span>
+
+      <span className="stat-card__body">
         <span className="stat-card__label">{metric.label}</span>
 
-        <span className="stat-card__icon" aria-hidden="true">
-          <Icon size={18} />
+        <span className="stat-card__value">{metric.value}</span>
+
+        <span
+          className={`stat-card__delta stat-card__delta--${metric.deltaDirection}`}
+        >
+          <TrendIcon size={14} aria-hidden="true" />
+          <span className="stat-card__delta-value">{metric.delta}</span>
+          <span className="stat-card__delta-context">{metric.context}</span>
         </span>
-      </div>
-
-      <span className="stat-card__value">{metric.value}</span>
-
-      <span
-        className={`stat-card__delta stat-card__delta--${metric.deltaDirection}`}
-      >
-        <TrendIcon size={14} aria-hidden="true" />
-        <span className="stat-card__delta-value">{metric.delta}</span>
-        <span className="stat-card__delta-context">{metric.context}</span>
       </span>
     </article>
   );
