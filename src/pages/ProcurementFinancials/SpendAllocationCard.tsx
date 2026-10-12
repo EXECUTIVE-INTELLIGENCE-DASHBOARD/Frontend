@@ -33,11 +33,11 @@ export function SpendAllocationCard() {
             value: category.spend,
             color: COLORS[category.id],
           }))}
-          centerValue={formatUgx(totalSpend)}
-          centerLabel="Total outflow"
+          centerValue={`${totalSpend.toFixed(1)}M`}
+          centerLabel="UGX total"
           ariaLabel="Spend allocation by category"
-          size={188}
-          thickness={24}
+          size={148}
+          thickness={20}
         />
 
         <ul className="pf-allocation__list">

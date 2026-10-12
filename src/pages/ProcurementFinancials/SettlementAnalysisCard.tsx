@@ -1,11 +1,11 @@
 import { settlementSeries, spendCategories } from "./procurementFinancials.data";
 
-const WIDTH = 620;
-const HEIGHT = 300;
-const PAD = { top: 26, right: 16, bottom: 34, left: 64 };
+const WIDTH = 760;
+const HEIGHT = 240;
+const PAD = { top: 22, right: 14, bottom: 30, left: 62 };
 const MAX = 200;
 const TICKS = [0, 50, 100, 150, 200];
-const BAR_WIDTH = 36;
+const BAR_WIDTH = 34;
 const BAR_GAP = 8;
 
 const plotWidth = WIDTH - PAD.left - PAD.right;
