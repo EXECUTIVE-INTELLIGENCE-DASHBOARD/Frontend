@@ -71,14 +71,7 @@ export const navigationItems: NavigationItem[] = [
         id: "expense-management",
         label: "Expense Management",
       },
-      {
-        id: "requisitions-orders",
-        label: "Requisitions & Orders",
-      },
-      {
-        id: "costs-concessions",
-        label: "Costs & Concessions",
-      },
+
       {
         id: "budget-management",
         label: "Budget Management",
