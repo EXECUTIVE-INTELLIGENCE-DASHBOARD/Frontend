@@ -42,7 +42,7 @@
 }
 
 .liability-metric--total .liability-metric__icon {
-  background: #172448;
+  background:#0ea5e9;
 }
 
 .liability-metric--due .liability-metric__icon {
@@ -50,7 +50,7 @@
 }
 
 .liability-metric--overdue .liability-metric__icon {
-  background: #f59e0b;
+  background:  #0ea5e9;
 }
 
 .liability-metric__amount {
