@@ -116,6 +116,10 @@ export const navigationItems: NavigationItem[] = [
     icon: WalletCards,
     children: [
       {
+        id: "procurement-financials",
+        label: "Procurement Financials",
+      },
+      {
         id: "liabilities-management",
         label: "Liabilities Management",
       },
