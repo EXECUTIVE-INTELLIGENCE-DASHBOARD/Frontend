@@ -1,3 +1,7 @@
+/* Brand typography (Greenhill brand guidelines 2026): Montserrat.
+   Loaded here so it only affects this page. */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
 .pf-page {
   --pf-heading: var(--color-heading);
   --pf-muted: var(--color-text-muted);
@@ -12,7 +16,12 @@
 
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
+
+  /* Headline: Bold. Subhead: Semibold. Body copy: Regular. */
+  font-family: "Montserrat", Inter, ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  font-weight: 400;
 }
 
 /* --------------------------------------------------------------- Heading */
@@ -20,42 +29,51 @@
 .pf-breadcrumb {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .pf-breadcrumb__item {
   color: var(--pf-muted);
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 400;
 }
 
 .pf-breadcrumb__item--current {
   color: var(--pf-heading);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .pf-breadcrumb__sep {
   color: var(--pf-soft);
-  font-size: 12px;
+  font-size: 11px;
+}
+
+.pf-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px 20px;
 }
 
 .pf-page .pf-heading__title {
   margin: 0;
 
   color: var(--pf-heading);
-  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-size: clamp(1.2rem, 1.7vw, 1.45rem);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
 .pf-page .pf-heading__subtitle {
-  max-width: 46rem;
-  margin: 8px 0 0;
+  max-width: 42rem;
+  margin: 4px 0 0;
 
   color: var(--pf-muted);
-  font-size: 0.9rem;
-  line-height: 1.55;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 /* ---------------------------------------------------------------- Filter */
@@ -63,15 +81,15 @@
 .pf-filter {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 
-  width: 240px;
+  width: 200px;
   max-width: 100%;
 }
 
 .pf-filter__label {
   color: var(--pf-soft);
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -87,19 +105,19 @@
   appearance: none;
 
   width: 100%;
-  height: 42px;
-  padding: 0 38px 0 16px;
+  height: 36px;
+  padding: 0 34px 0 12px;
 
   border: 1px solid var(--pf-border);
-  border-radius: 12px;
+  border-radius: 10px;
 
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
   color: var(--pf-heading);
 
   font-family: inherit;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 12.5px;
+  font-weight: 600;
 
   cursor: pointer;
 }
@@ -115,7 +133,7 @@
 
 .pf-filter__caret {
   position: absolute;
-  right: 14px;
+  right: 11px;
 
   color: var(--pf-muted);
   pointer-events: none;
@@ -126,18 +144,18 @@
 .pf-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: 12px;
 }
 
 .pf-metric {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 
-  padding: 16px 18px;
+  padding: 12px 14px;
 
   border: 1px solid var(--pf-border);
-  border-radius: 14px;
+  border-radius: 12px;
 
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
@@ -147,41 +165,41 @@
   display: grid;
   place-items: center;
 
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
 
-  border-radius: 12px;
+  border-radius: 10px;
 }
 
 .pf-metric__body {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 3px;
   min-width: 0;
 }
 
 .pf-metric__label {
   color: var(--pf-muted);
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  line-height: 1.5;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
   text-transform: uppercase;
 }
 
 .pf-metric__value {
   color: var(--pf-heading);
-  font-size: 1.7rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .pf-metric__caption {
   color: var(--pf-soft);
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 10.5px;
+  font-weight: 400;
 }
 
 /* Tone helpers: soft tinted background, solid text colour. */
@@ -204,16 +222,17 @@
 .pf-page .pf-note {
   max-width: none;
   margin: 0;
-  padding: 12px 16px;
+  padding: 7px 12px;
 
   border: 1px dashed var(--color-border-strong);
-  border-radius: 12px;
+  border-radius: 10px;
 
   background: var(--color-surface-tint);
   color: var(--color-text-secondary);
 
-  font-size: 11.5px;
-  line-height: 1.6;
+  font-size: 10.5px;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 /* ----------------------------------------------------------------- Grid */
@@ -221,7 +240,7 @@
 .pf-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 16px;
+  gap: 12px;
   align-items: stretch;
 }
 
@@ -232,7 +251,7 @@
   flex-direction: column;
 
   border: 1px solid var(--pf-border);
-  border-radius: 16px;
+  border-radius: 14px;
 
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
@@ -246,7 +265,7 @@
   justify-content: space-between;
   gap: 12px;
 
-  padding: 14px 18px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--pf-border);
 }
 
@@ -254,33 +273,34 @@
   margin: 0;
 
   color: var(--color-heading-alt);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
   line-height: 1.4;
   text-transform: uppercase;
 }
 
 .pf-page .pf-card__subtitle {
   max-width: none;
-  margin: 4px 0 0;
+  margin: 2px 0 0;
 
   color: var(--pf-soft);
-  font-size: 11.5px;
+  font-size: 11px;
+  font-weight: 400;
 }
 
 .pf-card__body {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 
-  padding: 14px 18px 16px;
+  padding: 10px 16px 12px;
 }
 
 .pf-card__footer {
   margin-top: auto;
-  padding: 12px 18px;
+  padding: 9px 16px;
 
   border-top: 1px solid var(--pf-border);
 }
@@ -297,8 +317,8 @@
   color: var(--pf-works);
 
   font-family: inherit;
-  font-size: 12.5px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
 
   cursor: pointer;
 }
@@ -327,11 +347,11 @@
 
 .pf-vendor {
   display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) auto auto;
+  grid-template-columns: 28px minmax(0, 1fr) auto auto;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 
-  padding: 12px 18px;
+  padding: 8px 16px;
 
   border-bottom: 1px solid var(--color-border-soft);
 }
@@ -346,15 +366,15 @@
 
 .pf-vendor__rank {
   color: var(--pf-soft);
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .pf-vendor__name {
   overflow: hidden;
 
   color: var(--pf-heading);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -362,7 +382,7 @@
 
 .pf-vendor__amount {
   color: var(--pf-heading);
-  font-size: 13px;
+  font-size: 12.5px;
   font-variant-numeric: tabular-nums;
   font-weight: 700;
   text-align: right;
@@ -373,12 +393,12 @@
   display: inline-flex;
   align-items: center;
 
-  padding: 3px 10px;
+  padding: 2px 9px;
 
   border-radius: 999px;
 
-  font-size: 10.5px;
-  font-weight: 700;
+  font-size: 9.5px;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -392,15 +412,29 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 24px;
+  gap: 18px;
 
-  padding: 18px;
+  padding: 12px 16px;
+}
+
+/* The shared donut uses a 30px centre value, which is too big for a
+   compact ring. Scale it down here without touching the shared component. */
+.pf-allocation .donut__value {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.pf-allocation .donut__label {
+  margin-top: 3px;
+
+  font-size: 9px;
+  font-weight: 600;
 }
 
 .pf-allocation__list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 
   margin: 0;
   padding: 0;
@@ -411,12 +445,12 @@
 .pf-allocation__item {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 9px;
 }
 
 .pf-allocation__dot {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   margin-top: 4px;
   flex-shrink: 0;
 
@@ -426,19 +460,20 @@
 .pf-allocation__text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .pf-allocation__name {
   color: var(--pf-heading);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .pf-allocation__meta {
   color: var(--pf-muted);
-  font-size: 12px;
+  font-size: 11.5px;
   font-variant-numeric: tabular-nums;
+  font-weight: 400;
 }
 
 /* --------------------------------------------------------------- Legend */
@@ -446,7 +481,7 @@
 .pf-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 14px;
 
   margin: 0;
   padding: 0;
@@ -457,15 +492,16 @@
 .pf-legend__item {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
 
   color: var(--pf-muted);
-  font-size: 11.5px;
+  font-size: 11px;
+  font-weight: 400;
 }
 
 .pf-legend__swatch {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 
   border-radius: 3px;
   background: var(--swatch);
@@ -485,11 +521,14 @@
 
 /* ---------------------------------------------------------------- Chart */
 
+/* Cap the height so a wide screen can't stretch the chart into a tall block.
+   The chart keeps its proportions and stays centred. */
 .pf-chart {
   display: block;
 
   width: 100%;
   height: auto;
+  max-height: 240px;
 }
 
 .pf-chart__grid {
@@ -542,8 +581,12 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .pf-filter {
+    width: 100%;
+  }
+
   .pf-vendor {
-    grid-template-columns: 28px minmax(0, 1fr) auto;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
   }
 
   .pf-vendor .pf-badge {

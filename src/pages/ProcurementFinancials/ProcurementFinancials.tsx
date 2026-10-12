@@ -34,38 +34,40 @@ export function ProcurementFinancials() {
       </nav>
 
       <div className="pf-heading">
-        <h1 className="pf-heading__title">Procurement Financials</h1>
+        <div className="pf-heading__text">
+          <h1 className="pf-heading__title">Procurement Financials</h1>
 
-        <p className="pf-heading__subtitle">
-          Track procurement spend, top vendors and settlement status across
-          works, services and goods.
-        </p>
-      </div>
+          <p className="pf-heading__subtitle">
+            Track procurement spend, top vendors and settlement status across
+            works, services and goods.
+          </p>
+        </div>
 
-      <div className="pf-filter">
-        <label className="pf-filter__label" htmlFor="pf-campus-filter">
-          Select Campus
-        </label>
+        <div className="pf-filter">
+          <label className="pf-filter__label" htmlFor="pf-campus-filter">
+            Select Campus
+          </label>
 
-        <div className="pf-filter__control">
-          <select
-            id="pf-campus-filter"
-            className="pf-filter__select"
-            value={campus}
-            onChange={(event) => setCampus(event.target.value)}
-          >
-            {campusOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+          <div className="pf-filter__control">
+            <select
+              id="pf-campus-filter"
+              className="pf-filter__select"
+              value={campus}
+              onChange={(event) => setCampus(event.target.value)}
+            >
+              {campusOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
 
-          <ChevronDown
-            className="pf-filter__caret"
-            size={16}
-            aria-hidden="true"
-          />
+            <ChevronDown
+              className="pf-filter__caret"
+              size={16}
+              aria-hidden="true"
+            />
+          </div>
         </div>
       </div>
 
