@@ -1,0 +1,558 @@
+/* ========================================
+   REVENUE DETAILS LAYOUT
+======================================== */
+
+.revenue-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  color: var(--color-heading, #17233d);
+  background: transparent;
+  box-sizing: border-box;
+}
+
+/* ========================================
+   SUMMARY CARDS
+======================================== */
+
+.revenue-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+}
+
+.revenue-summary__card {
+  min-width: 0;
+  padding: 20px 22px;
+  box-sizing: border-box;
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border-soft, #eef1f5);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgb(23 35 61 / 2%);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.revenue-summary__card:hover {
+  border-color: var(--color-border, #e9edf3);
+  box-shadow: 0 2px 4px rgb(23 35 61 / 3%);
+}
+
+.revenue-summary__title {
+  margin: 0 0 14px;
+  color: var(--color-text-soft, #91a0b8);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.25px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.revenue-summary__content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.revenue-summary__icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  color: #ffffff;
+  border-radius: 11px;
+}
+
+.revenue-summary__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.revenue-summary__icon--billed {
+  background: #172448;
+}
+
+.revenue-summary__icon--collections {
+  background: #0ea5e9;
+}
+
+.revenue-summary__icon--arrears {
+  background: #f59e0b;
+}
+
+.revenue-summary__amount {
+  min-width: 0;
+  margin: 0;
+  color: var(--color-heading, #111a30);
+  font-size: clamp(18px, 1.55vw, 24px);
+  font-weight: 750;
+  letter-spacing: -0.5px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+/* ========================================
+   CAMPUS BREAKDOWN AND REVENUE STREAMS
+======================================== */
+
+.revenue-breakdown {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+}
+
+.revenue-panel {
+  min-width: 0;
+  padding: 22px;
+  box-sizing: border-box;
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border-soft, #eef1f5);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgb(23 35 61 / 2%);
+}
+
+/* ========================================
+   PANEL HEADINGS
+======================================== */
+
+.revenue-panel__heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.revenue-panel__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  color: #0284c7;
+  background: #f0f8ff;
+  border-radius: 10px;
+}
+
+.revenue-panel__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.revenue-panel__heading h2,
+.streams-panel__title h2 {
+  margin: 0;
+  color: var(--color-heading, #10203e);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+/* ========================================
+   CAMPUS TABLE
+======================================== */
+
+.campus-table-wrapper {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.campus-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.campus-table th {
+  padding: 11px 8px;
+  color: var(--color-text-soft, #91a0b8);
+  background: var(--color-surface-subtle, #f8fafc);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  line-height: 1.45;
+  vertical-align: middle;
+}
+
+.campus-table td {
+  padding: 12px 8px;
+  color: var(--color-text-muted, #8495af);
+  border-bottom: 1px solid var(--color-border-soft, #edf1f6);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.campus-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.campus-table th:first-child,
+.campus-table td:first-child {
+  min-width: 115px;
+  text-align: left;
+}
+
+.campus-table th:not(:first-child),
+.campus-table td:not(:first-child) {
+  text-align: center;
+}
+
+.campus-table__name {
+  color: var(--color-heading, #101b32) !important;
+  font-weight: 650 !important;
+}
+
+/* ========================================
+   REVENUE STREAMS HEADING
+======================================== */
+
+.streams-panel__heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.streams-panel__title {
+  flex: 1;
+  min-width: 0;
+}
+
+.streams-panel__title p {
+  margin: 4px 0 0;
+  color: var(--color-text-muted, #8da0bd);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.streams-panel__total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  min-width: 0;
+}
+
+.streams-panel__total span {
+  color: var(--color-text-soft, #91a0b8);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.streams-panel__total strong {
+  color: var(--color-text-muted, #91a0b8);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+/* ========================================
+   REVENUE STREAM ITEMS
+======================================== */
+
+.streams-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stream-item {
+  min-width: 0;
+}
+
+.stream-item__details {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 7px;
+}
+
+.stream-item__name {
+  min-width: 0;
+  color: var(--color-heading, #101b32);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.stream-item__amount {
+  flex-shrink: 0;
+  color: var(--color-text-muted, #8495af);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: right;
+}
+
+.stream-item__track {
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  background: var(--color-track, #f0f4f8);
+  border-radius: 999px;
+}
+
+.stream-item__fill {
+  height: 100%;
+  border-radius: inherit;
+}
+
+.stream-item__fill--tuition {
+  background: #172448;
+}
+
+.stream-item__fill--clubs {
+  background: #5da0ff;
+}
+
+.stream-item__fill--admission {
+  background: #94a3b8;
+}
+
+.stream-item__fill--transport {
+  background: #0ea5e9;
+}
+
+.stream-item__fill--donations {
+  background: #818cf8;
+}
+
+.stream-item__fill--alumni {
+  background: #8b5cf6;
+}
+
+/* ========================================
+   MEDIUM SCREENS
+======================================== */
+
+@media (max-width: 1200px) {
+  .revenue-details {
+    gap: 18px;
+  }
+
+  .revenue-summary {
+    gap: 14px;
+  }
+
+  .revenue-summary__card {
+    padding: 18px 16px;
+  }
+
+  .revenue-summary__content {
+    gap: 9px;
+  }
+
+  .revenue-summary__icon {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    border-radius: 10px;
+  }
+
+  .revenue-summary__icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .revenue-summary__amount {
+    font-size: clamp(16px, 1.7vw, 21px);
+  }
+
+  .revenue-breakdown {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+}
+
+/* ========================================
+   TABLETS AND MOBILE
+======================================== */
+
+@media (max-width: 700px) {
+  .revenue-details {
+    gap: 16px;
+  }
+
+  .revenue-summary {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .revenue-summary__card {
+    padding: 16px;
+    border-radius: 13px;
+  }
+
+  .revenue-summary__title {
+    margin-bottom: 10px;
+    font-size: 10px;
+  }
+
+  .revenue-summary__amount {
+    font-size: 20px;
+  }
+
+  .revenue-panel {
+    padding: 16px;
+    border-radius: 13px;
+  }
+
+  .revenue-panel__heading {
+    gap: 9px;
+    margin-bottom: 14px;
+  }
+
+  .revenue-panel__heading h2,
+  .streams-panel__title h2 {
+    font-size: 13px;
+  }
+
+  .campus-table {
+    min-width: 540px;
+  }
+
+  .campus-table th {
+    padding: 10px 7px;
+    font-size: 10px;
+  }
+
+  .campus-table td {
+    padding: 11px 7px;
+    font-size: 11px;
+  }
+
+  .streams-panel__heading {
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+
+  .streams-panel__total {
+    margin-left: auto;
+  }
+
+  .streams-list {
+    gap: 14px;
+  }
+
+  .stream-item__amount {
+    white-space: normal;
+  }
+}
+
+/* ========================================
+   SMALL MOBILE SCREENS
+======================================== */
+
+@media (max-width: 400px) {
+  .revenue-summary__card {
+    padding: 14px;
+  }
+
+  .revenue-summary__amount {
+    font-size: 18px;
+  }
+
+  .revenue-panel {
+    padding: 13px;
+  }
+
+  .streams-panel__total strong {
+    font-size: 12px;
+  }
+
+  .stream-item__details {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .stream-item__amount {
+    text-align: left;
+  }
+}
+
+/* ========================================
+   DARK THEME
+======================================== */
+
+[data-theme="dark"] .revenue-summary__card,
+[data-theme="dark"] .revenue-panel {
+  background: var(--color-surface, #2d3c8f);
+  border-color: var(--color-border, #3f4b92);
+  box-shadow: var(--shadow-card, 0 1px 2px rgb(0 0 0 / 20%));
+}
+
+[data-theme="dark"] .revenue-summary__card:hover {
+  border-color: var(--color-border-strong, #4b5aaf);
+  box-shadow: var(--shadow-pop, 0 6px 16px rgb(0 0 0 / 25%));
+}
+
+[data-theme="dark"] .revenue-summary__title,
+[data-theme="dark"] .streams-panel__total span,
+[data-theme="dark"] .streams-panel__total strong {
+  color: var(--color-text-soft, #969aa1);
+}
+
+[data-theme="dark"] .revenue-summary__amount,
+[data-theme="dark"] .revenue-panel__heading h2,
+[data-theme="dark"] .streams-panel__title h2,
+[data-theme="dark"] .stream-item__name {
+  color: var(--color-heading, #f5f5f5);
+}
+
+[data-theme="dark"] .revenue-panel__icon {
+  background: var(--color-surface-tint, #31419b);
+  color: var(--color-accent-strong, #4fb8e8);
+}
+
+[data-theme="dark"] .campus-table th {
+  background: var(--color-surface-subtle, #2a3784);
+  color: var(--color-text-soft, #969aa1);
+}
+
+[data-theme="dark"] .campus-table td {
+  border-bottom-color: var(--color-border-soft, #394484);
+  color: var(--color-text-muted, #a9adb3);
+}
+
+[data-theme="dark"] .campus-table__name {
+  color: var(--color-heading, #f5f5f5) !important;
+}
+
+[data-theme="dark"] .streams-panel__title p {
+  color: var(--color-text-muted, #a9adb3);
+}
+
+[data-theme="dark"] .stream-item__amount {
+  color: var(--color-text-muted, #a9adb3);
+}
+
+[data-theme="dark"] .stream-item__track {
+  background: var(--color-track, #2d3c8f);
+}
+
+/* ========================================
+   REDUCED MOTION
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .revenue-summary__card {
+    transition: none;
+  }
+}

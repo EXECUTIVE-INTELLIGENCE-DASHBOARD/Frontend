@@ -1,0 +1,154 @@
+/* ========================================
+   REVENUE PAGE
+   Transparent layout — no outer card
+======================================== */
+
+.revenue-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 12px 24px 24px;
+  box-sizing: border-box;
+
+  /* The page itself is the background, not a card */
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.revenue-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.revenue-page__title {
+  margin: 0;
+  color: #111827;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.revenue-page__description {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.revenue-page__filters {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* ========================================
+   REVENUE DETAILS
+   No outer card around the child cards
+======================================== */
+
+.revenue-page__details {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ========================================
+   REVENUE GRAPH
+   Its own independent panel
+======================================== */
+
+.revenue-page__graph {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+======================================== */
+
+@media (max-width: 768px) {
+  .revenue-page {
+    gap: 14px;
+    padding: 10px 16px 16px;
+  }
+
+  .revenue-page__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .revenue-page__title {
+    font-size: 23px;
+  }
+
+  .revenue-page__description {
+    font-size: 13px;
+  }
+
+  .revenue-page__filters {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+/* ========================================
+   SMALL MOBILE SCREENS
+======================================== */
+
+@media (max-width: 480px) {
+  .revenue-page {
+    gap: 12px;
+    padding: 8px 12px 12px;
+  }
+
+  .revenue-page__title {
+    font-size: 21px;
+  }
+
+  .revenue-page__description {
+    font-size: 12px;
+  }
+}

@@ -1,14 +1,53 @@
+import { useState } from "react";
+import type { ReactElement } from "react";
+
+import "./layout.css";
+import { Hero } from "./components/Hero";
+import { Sidebar } from "./components/Sidebar";
+import { findNavigationLabel } from "./navigation/navigation.config";
+import { AcademicOverview } from "./pages/AcademicOverview/AcademicOverview";
+import { AcademicPerformance } from "./pages/AcademicPerformance/AcademicPerformance";
+import { ExecutiveOverview } from "./pages/ExecutiveOverview/ExecutiveOverview";
+import { LibraryResourceUsage } from "./pages/LibraryResourceUsage/LibraryResourceUsage";
+import { MyChildProgress } from "./pages/MyChildProgress/MyChildProgress";
+import { PlaceholderPage } from "./pages/Placeholder/PlaceholderPage";
+import { StudentEnrollment } from "./pages/StudentEnrollment/StudentEnrollment";
+import { AttendanceRates } from "./pages/AttendanceRates/AttendanceRates";
+import { Revenue } from "./pages/Revenue";
+import { Liabilities } from "./pages/Liabilities/Liabilities";
+
+const pages: Record<string, ReactElement> = {
+  overview: <ExecutiveOverview />,
+  "academics-overview": <AcademicOverview />,
+  "student-enrollment": <StudentEnrollment />,
+  "academic-performance": <AcademicPerformance />,
+  "parent-access": <MyChildProgress />,
+  "library-resource-usage": <LibraryResourceUsage />,
+  "attendance-rates": <AttendanceRates />,
+   // Finance
+  "revenue-fee-collection": <Revenue />,
+"liabilities-management": <Liabilities />,
+};
+
+const defaultPageId = "academic-performance";
+
 export function App() {
+  const [activePage, setActivePage] = useState(defaultPageId);
+
+  const currentPage = pages[activePage];
+  const pageLabel = findNavigationLabel(activePage) ?? "Dashboard";
+
   return (
-    <main className="app-shell">
-      <p className="eyebrow">GreenHill EID</p>
-      <h1>Frontend foundation</h1>
-      <p>
-        The application shell is ready for the approved Enterprise Incident and Service
-        Management requirements.
-      </p>
-      <p className="next-step">Next: implement reviewed product workflows and connect the API.</p>
-    </main>
+    <div className="layout">
+      <Sidebar activeItem={activePage} onSelectItem={setActivePage} />
+
+      <div className="layout-main">
+        <Hero onSelectPage={setActivePage} />
+
+        <main className="app-shell layout-content">
+          {currentPage ?? <PlaceholderPage title={pageLabel} />}
+        </main>
+      </div>
+    </div>
   );
 }
-

@@ -1,0 +1,376 @@
+.sidebar {
+  width: 260px;
+
+  flex-shrink: 0;
+
+  position: sticky;
+
+  top: 0;
+
+  height: 100vh;
+
+  background-color: #ffffff;
+
+  border-right: 1px solid var(--color-border);
+
+  padding: 20px 14px;
+
+  box-sizing: border-box;
+
+  overflow-y: auto;
+
+  overscroll-behavior: contain;
+}
+
+.sidebar-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 10px 10px 28px;
+
+  margin-bottom: 18px;
+
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sidebar-brand__logo {
+  width: 57px;
+
+  height: 69px;
+
+  flex-shrink: 0;
+
+  object-fit: contain;
+}
+
+.sidebar-brand__content {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.sidebar-brand__name {
+  color: var(--color-heading);
+
+  font-size: 20px;
+
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  letter-spacing: 0.2px;
+}
+
+.sidebar-brand__subtitle {
+  margin-top: 5px;
+
+  color: var(--color-text-soft);
+
+  font-size: 11px;
+
+  font-weight: 500;
+
+  line-height: 1.2;
+}
+
+.sidebar ul {
+  list-style: none;
+
+  margin: 0;
+
+  padding: 0;
+}
+
+.sidebar__item {
+  margin-bottom: 4px;
+}
+
+/* Main navigation button */
+
+.sidebar__button {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 11px 12px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background-color: transparent;
+
+  color: #56637a;
+
+  font: inherit;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.sidebar__button:hover {
+  background-color: #f1f6ff;
+
+  color: var(--color-heading);
+}
+
+.sidebar__button--open {
+  background-color: #eef5ff;
+
+  color: var(--color-accent-strong);
+}
+
+.sidebar__button--active {
+  background-color: var(--color-accent);
+
+  color: #ffffff;
+
+  font-weight: 600;
+}
+
+.sidebar__button--active .sidebar__icon {
+  color: #ffffff;
+}
+
+/* Main icon */
+
+.sidebar__icon {
+  flex-shrink: 0;
+
+  color: #8e9cb3;
+}
+
+.sidebar__button:hover .sidebar__icon,
+.sidebar__button--open .sidebar__icon {
+  color: var(--color-accent);
+}
+
+/* Navigation label */
+
+.sidebar__label {
+  flex: 1;
+}
+
+/* Chevron */
+
+.sidebar__chevron {
+  flex-shrink: 0;
+
+  color: #b3bed0;
+
+  transition: transform 0.2s ease;
+}
+
+.sidebar__chevron--open {
+  transform: rotate(180deg);
+}
+
+/* Submenu */
+
+/* Scoped with the parent so it outranks the `.sidebar ul` reset below
+   without needing `!important`. */
+
+.sidebar .sidebar__submenu {
+  margin: 4px 0 8px 20px;
+
+  padding-left: 14px;
+
+  border-left: 1px solid var(--color-border);
+}
+
+/* Submenu item */
+
+.sidebar__submenu-item {
+  margin-bottom: 2px;
+}
+
+/* Submenu button */
+
+.sidebar__submenu-button {
+  width: 100%;
+
+  display: block;
+
+  padding: 9px 10px;
+
+  border: none;
+
+  border-radius: 6px;
+
+  background-color: transparent;
+
+  color: var(--color-text-muted);
+
+  font: inherit;
+
+  font-size: 13px;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.sidebar__submenu-button:hover {
+  background-color: #f5f9ff;
+
+  color: var(--color-accent-strong);
+}
+
+/* Active submenu */
+
+.sidebar__submenu-button--active {
+  background-color: var(--color-accent-soft);
+
+  color: var(--color-accent-strong);
+
+  font-weight: 600;
+}
+
+/* Scrollbar */
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #dbe6f7;
+
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: #c2d2ea;
+}
+
+/* --------------------------------------------------
+   DARK THEME
+-------------------------------------------------- */
+
+[data-theme="dark"] .sidebar {
+  background-color: var(--color-bg);
+  border-right: none;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .sidebar-brand {
+  border-bottom-color: transparent;
+}
+
+[data-theme="dark"] .sidebar-brand__name {
+  color: var(--color-heading);
+}
+
+[data-theme="dark"] .sidebar-brand__subtitle {
+  color: var(--color-text-soft);
+}
+
+/* Main navigation */
+
+[data-theme="dark"] .sidebar__button {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .sidebar__button:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-heading);
+}
+
+[data-theme="dark"] .sidebar__button--open {
+  background-color: var(--color-surface-hover);
+  color: var(--color-heading);
+}
+
+[data-theme="dark"] .sidebar__button--active {
+  background-color: var(--color-accent-soft);
+  color: var(--color-heading);
+}
+
+[data-theme="dark"] .sidebar__button--active .sidebar__icon {
+  color: #f1ba1b;
+}
+
+/* Icons */
+
+[data-theme="dark"] .sidebar__icon {
+  color: var(--color-text-muted);
+}
+
+[data-theme="dark"] .sidebar__button--open .sidebar__icon,
+[data-theme="dark"] .sidebar__button:hover .sidebar__icon {
+  color: #f1ba1b;
+}
+
+/* Chevrons */
+
+[data-theme="dark"] .sidebar__chevron {
+  color: var(--color-text-muted);
+}
+
+[data-theme="dark"] .sidebar__button--open .sidebar__chevron {
+  color: #f1ba1b;
+}
+
+/* Submenu */
+
+[data-theme="dark"] .sidebar .sidebar__submenu {
+  border-left-color: transparent;
+}
+
+[data-theme="dark"] .sidebar__submenu-button {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .sidebar__submenu-button:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-heading);
+}
+
+/* Selected submenu: dark navy, no bright-blue outline */
+
+[data-theme="dark"] .sidebar__submenu-button--active {
+  background-color: #263a64;
+  color: var(--color-heading);
+  border: none;
+  outline: none;
+  box-shadow: none;
+  font-weight: 700;
+}
+
+/* Dark scrollbar */
+
+[data-theme="dark"] .sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-theme="dark"] .sidebar::-webkit-scrollbar-thumb {
+  background-color: #34466f;
+  border-radius: 10px;
+}
+
+[data-theme="dark"] .sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: #435783;
+}
