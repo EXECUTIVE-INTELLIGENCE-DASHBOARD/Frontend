@@ -1,0 +1,840 @@
+/*
+ * Expense Management page styles.
+ *
+ * Every class here is prefixed `exp-` so it can never collide with another
+ * page's styles. The prefix matches the file name and the `exp-` groups in
+ * `src/styles.css` that handle theme plumbing.
+ *
+ * Colours are never hard-coded. They come from the shared custom properties
+ * declared in `src/styles.css`, which already hold separate light- and
+ * dark-theme values. The small `--exp-*` aliases below map the generic tokens
+ * onto page-specific names, so a single edit here can retheme the whole page.
+ */
+
+.exp-page {
+  /* Page-local aliases. Keeping them in one place means the rules below read
+     `.exp-heading` instead of `--color-heading`, which makes it obvious the
+     value is a deliberate local decision rather than an arbitrary global one. */
+  --exp-heading: var(--color-heading);
+  --exp-muted: var(--color-text-muted);
+  --exp-soft: var(--color-text-soft);
+  --exp-border: var(--color-border);
+  --exp-accent: var(--color-accent);
+
+  /* The page is a vertical stack of blocks; the gap here is the global
+     rhythm between breadcrumb, heading, controls and the card rows. */
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* --------------------------------------------------------------- Heading */
+
+.exp-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exp-breadcrumb__item {
+  color: var(--exp-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.exp-breadcrumb__item--current {
+  color: var(--exp-heading);
+  font-weight: 700;
+}
+
+.exp-breadcrumb__sep {
+  color: var(--exp-soft);
+  font-size: 12px;
+}
+
+.exp-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.exp-page .exp-heading__title {
+  margin: 0;
+
+  color: var(--exp-heading);
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.exp-page .exp-heading__subtitle {
+  max-width: 46rem;
+  margin: 8px 0 0;
+
+  color: var(--exp-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.exp-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+
+  border: 1px solid var(--exp-border);
+  border-radius: 10px;
+
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.exp-icon-button:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-hover);
+  color: var(--exp-heading);
+}
+/* ------------------------------------------------- Controls (filters) */
+
+/*
+ * Two columns: a fixed 236px filter rail on the left, then the four KPI cards
+ * filling whatever width is left. `minmax(0, 1fr)` on the second column is
+ * what stops long card captions from forcing the grid wider than its container.
+ */
+.exp-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 236px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* Filters stack vertically, so they line up with the two rows of KPI cards. */
+.exp-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/*
+ * The visible filter card. The real control is the absolutely positioned
+ * `<select>` added further down — this element only paints the label and the
+ * selected value.
+ */
+.exp-filter {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+
+  padding: 12px 16px;
+
+  border: 1px solid var(--exp-border);
+  border-radius: 12px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+
+  cursor: pointer;
+  text-align: left;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.25s ease;
+}
+
+.exp-filter:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-pop);
+}
+
+.exp-filter__label {
+  color: var(--exp-soft);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.exp-filter__value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  width: 100%;
+
+  color: var(--exp-heading);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* -------------------------------------------------- Overhead KPI cards */
+
+/* Two cards per row by default; four per row on very wide screens. */
+.exp-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/*
+ * A single KPI card. `position: relative` is required so the `::before`
+ * accent bar below can anchor to its left edge, and `overflow: hidden`
+ * clips that bar to the card's rounded corners.
+ */
+.exp-metric {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 16px 18px;
+
+  border: 1px solid var(--exp-border);
+  border-radius: 14px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+
+  overflow: hidden;
+
+  /* Only colour properties transition — no movement or lift on hover. */
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/*
+ * Tone bar pinned down the left edge.
+ *
+ * `--tone` is not defined here: each `.exp-metric--<tone>` block below sets it.
+ * In *light* mode `src/styles.css` overrides this to `display: none` for a
+ * flatter, tinted-card look; the bar only shows in dark mode.
+ */
+.exp-metric::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 4px;
+
+  background: var(--tone);
+}
+
+/* Per-tone palette. `--tone` colours the accent bar, `--tone-soft` tints the
+   icon chip and `--tone-text` colours the icon glyph itself. */
+.exp-metric--blue {
+  --tone: #2563eb;
+  --tone-soft: #e8f0fe;
+  --tone-text: #1d4ed8;
+}
+
+.exp-metric--green {
+  --tone: #16a34a;
+  --tone-soft: #e6f7ee;
+  --tone-text: #15803d;
+}
+
+.exp-metric--amber {
+  --tone: #f59e0b;
+  --tone-soft: #fef3e2;
+  --tone-text: #b45309;
+}
+
+.exp-metric--violet {
+  --tone: #7c3aed;
+  --tone-soft: #f1e9fe;
+  --tone-text: #6d28d9;
+}
+
+[data-theme="dark"] .exp-metric--blue {
+  --tone: #5b9bff;
+  --tone-soft: #14294a;
+  --tone-text: #8bb6ff;
+}
+
+[data-theme="dark"] .exp-metric--green {
+  --tone: #22c55e;
+  --tone-soft: #0f3320;
+  --tone-text: #4ade80;
+}
+
+[data-theme="dark"] .exp-metric--amber {
+  --tone: #f59e0b;
+  --tone-soft: #3a2a10;
+  --tone-text: #fbbf24;
+}
+
+[data-theme="dark"] .exp-metric--violet {
+  --tone: #a78bfa;
+  --tone-soft: #2a1f4d;
+  --tone-text: #c4b5fd;
+}
+
+.exp-metric__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  background: var(--tone-soft);
+  color: var(--tone-text);
+}
+
+.exp-metric__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-width: 0;
+}
+
+/* Uppercase category label, e.g. "WAGES & SALARIES". */
+.exp-metric__label {
+  color: var(--exp-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+/* The headline figure. `line-height: 1` and negative letter-spacing keep a
+   long string like "UGX 412.0M" tight on one line. */
+.exp-metric__value {
+  color: var(--exp-heading);
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+/* "16.0% of overheads · +2.4% vs budget". `flex-wrap` lets the two halves
+   stack on a narrow card instead of overflowing. */
+.exp-metric__caption {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+
+  color: var(--exp-soft);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.exp-metric__delta {
+  font-weight: 600;
+}
+
+/* Over budget reads as a warning; under budget reads as a positive. */
+.exp-metric__delta--over {
+  color: var(--color-warning);
+}
+
+.exp-metric__delta--under {
+  color: var(--color-positive);
+}
+
+/* ------------------------------------------------------------------ Cards */
+
+/*
+ * A row of two cards: a narrow one on the left, a wider one on the right.
+ * `align-items: stretch` (the default) makes both cards the same height, so
+ * the two rows line up even when their contents differ in length.
+ * Collapses to a single column at <=1180px — see the media query at the end.
+ */
+.exp-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.9fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+/*
+ * Shared shell for all four detail cards. Note the colour properties
+ * (background, border, radius, shadow) are also listed in `src/styles.css`
+ * under the light/dark theme groups — those rules win on specificity, which
+ * is how the cards pick up the tinted light-mode look and the darker
+ * dark-mode surface without any media queries here.
+ */
+.exp-card {
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid var(--exp-border);
+  border-radius: 16px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+
+  overflow: hidden;
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.exp-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--exp-border);
+}
+
+.exp-card__title {
+  margin: 0;
+
+  color: var(--color-heading-alt);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.exp-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+
+  min-width: 0;
+  padding: 14px 18px 16px;
+}
+
+/* ------------------------------------------------------- Spend composition */
+
+.exp-card__subtitle {
+  margin: 4px 0 0;
+
+  color: var(--exp-muted);
+  font-size: 11.5px;
+  font-weight: 400;
+}
+
+.exp-allocation {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+
+  padding: 16px 18px;
+}
+
+/* The shared donut uses a 30px centre value, which is too big for a
+   compact ring. Scale it down here without touching the shared component. */
+.exp-allocation .donut__value {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.exp-allocation .donut__label {
+  margin-top: 3px;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.exp-allocation__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.exp-allocation__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+.exp-allocation__dot {
+  width: 9px;
+  height: 9px;
+  margin-top: 4px;
+  flex-shrink: 0;
+
+  border-radius: 999px;
+}
+
+.exp-allocation__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.exp-allocation__name {
+  color: var(--exp-heading);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.exp-allocation__meta {
+  color: var(--exp-muted);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------- Trend chart */
+
+.exp-legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.exp-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  color: var(--exp-muted);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.exp-legend__dot {
+  width: 9px;
+  height: 9px;
+
+  border-radius: 50%;
+  background: var(--chart-blue);
+}
+
+.exp-legend__dash {
+  width: 16px;
+  height: 0;
+
+  border-top: 2px dashed var(--color-text-soft);
+}
+
+.exp-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.exp-chart__grid {
+  stroke: var(--color-border-soft);
+  stroke-width: 1;
+}
+
+.exp-chart__tick {
+  fill: var(--exp-soft);
+  font-size: 10px;
+  text-anchor: end;
+}
+
+.exp-chart__area {
+  fill: url(#exp-trend-fill);
+}
+
+.exp-chart__line {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.exp-chart__line--actual {
+  stroke: var(--chart-blue);
+}
+
+.exp-chart__line--budget {
+  stroke: var(--color-text-soft);
+  stroke-width: 2;
+  stroke-dasharray: 5 5;
+}
+
+.exp-chart__point {
+  fill: var(--color-surface);
+  stroke: var(--chart-blue);
+  stroke-width: 2;
+}
+
+.exp-chart__label {
+  fill: var(--exp-soft);
+  font-size: 10px;
+  text-anchor: middle;
+}
+
+.exp-page .exp-chart__caption {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  max-width: none;
+  margin: 0;
+
+  color: var(--exp-muted);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+/* -------------------------------------------------------- Campus bars */
+
+.exp-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.exp-bars__row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.exp-bars__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.exp-bars__label {
+  color: var(--exp-heading);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.exp-bars__value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+
+  color: var(--exp-heading);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.exp-bars__share {
+  color: var(--exp-soft);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.exp-bars__track {
+  width: 100%;
+  height: 8px;
+
+  border-radius: 999px;
+  background: var(--color-surface-tint);
+  overflow: hidden;
+}
+
+.exp-bars__fill {
+  display: block;
+  height: 100%;
+
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--chart-blue), var(--chart-navy));
+
+  transition: width 0.6s ease;
+}
+
+.exp-page .exp-bars__caption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  max-width: none;
+  margin: 0;
+
+  color: var(--exp-muted);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+/* ----------------------------------------------------------- Table */
+
+.exp-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.exp-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.exp-table th {
+  padding: 10px 18px;
+
+  border-bottom: 1px solid var(--exp-border);
+
+  color: var(--exp-soft);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.exp-table td {
+  padding: 12px 18px;
+
+  border-bottom: 1px solid var(--color-border-soft);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.exp-table tbody tr:last-child td {
+  border-bottom: 1px solid var(--exp-border);
+}
+
+.exp-table tfoot td {
+  border-bottom: 0;
+  background: var(--color-surface-subtle);
+}
+
+.exp-table__name {
+  color: var(--exp-heading);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.exp-table__amount {
+  color: var(--exp-heading);
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.exp-table__delta {
+  font-size: 12.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.exp-table__delta--over {
+  color: var(--color-warning);
+}
+
+.exp-table__delta--under {
+  color: var(--color-positive);
+}
+
+.exp-table__share {
+  color: var(--exp-muted);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.exp-pill {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.exp-pill--over {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.exp-pill--under {
+  background: var(--color-positive-soft);
+  color: var(--color-positive);
+}
+
+.exp-pill--on-track {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+/* ------------------------------------------------------------- Responsive */
+
+/* One row of four once the viewport can seat them without cramping. */
+@media (min-width: 1600px) {
+  .exp-metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  /* The columns are narrower here, so step the figure down to keep it on one line. */
+  .exp-metric__value {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 1180px) {
+  .exp-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .exp-filters {
+    flex-direction: row;
+  }
+
+  .exp-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .exp-allocation {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .exp-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .exp-filters {
+    flex-direction: column;
+  }
+}

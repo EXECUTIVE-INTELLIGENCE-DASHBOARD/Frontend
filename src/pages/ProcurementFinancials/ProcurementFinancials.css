@@ -1,0 +1,595 @@
+/* Brand typography (Greenhill brand guidelines 2026): Montserrat.
+   Loaded here so it only affects this page. */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+.pf-page {
+  --pf-heading: var(--color-heading);
+  --pf-muted: var(--color-text-muted);
+  --pf-soft: var(--color-text-soft);
+  --pf-border: var(--color-border);
+
+  /* Category and status colours reuse the app theme, so dark mode works. */
+  --pf-works: var(--color-accent);
+  --pf-services: var(--color-warning);
+  --pf-goods: var(--color-positive);
+  --pf-unpaid: var(--color-critical);
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  /* Headline: Bold. Subhead: Semibold. Body copy: Regular. */
+  font-family: "Montserrat", Inter, ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------------- Heading */
+
+.pf-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pf-breadcrumb__item {
+  color: var(--pf-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.pf-breadcrumb__item--current {
+  color: var(--pf-heading);
+  font-weight: 600;
+}
+
+.pf-breadcrumb__sep {
+  color: var(--pf-soft);
+  font-size: 11px;
+}
+
+.pf-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px 20px;
+}
+
+.pf-page .pf-heading__title {
+  margin: 0;
+
+  color: var(--pf-heading);
+  font-size: clamp(1.2rem, 1.7vw, 1.45rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.pf-page .pf-heading__subtitle {
+  max-width: 42rem;
+  margin: 4px 0 0;
+
+  color: var(--pf-muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------- Filter */
+
+.pf-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  width: 200px;
+  max-width: 100%;
+}
+
+.pf-filter__label {
+  color: var(--pf-soft);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pf-filter__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pf-filter__select {
+  appearance: none;
+
+  width: 100%;
+  height: 36px;
+  padding: 0 34px 0 12px;
+
+  border: 1px solid var(--pf-border);
+  border-radius: 10px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  color: var(--pf-heading);
+
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.pf-filter__select:hover {
+  border-color: var(--color-border-strong);
+}
+
+.pf-filter__select:focus-visible {
+  outline: 2px solid var(--pf-works);
+  outline-offset: 2px;
+}
+
+.pf-filter__caret {
+  position: absolute;
+  right: 11px;
+
+  color: var(--pf-muted);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------- Metrics */
+
+.pf-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.pf-metric {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 12px 14px;
+
+  border: 1px solid var(--pf-border);
+  border-radius: 12px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.pf-metric__icon {
+  display: grid;
+  place-items: center;
+
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+
+  border-radius: 10px;
+}
+
+.pf-metric__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.pf-metric__label {
+  color: var(--pf-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.pf-metric__value {
+  color: var(--pf-heading);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.pf-metric__caption {
+  color: var(--pf-soft);
+  font-size: 10.5px;
+  font-weight: 400;
+}
+
+/* Tone helpers: soft tinted background, solid text colour. */
+
+.pf-tone--works {
+  background: color-mix(in srgb, var(--pf-works) 14%, transparent);
+  color: var(--pf-works);
+}
+
+.pf-tone--services {
+  background: color-mix(in srgb, var(--pf-services) 16%, transparent);
+  color: var(--pf-services);
+}
+
+.pf-tone--goods {
+  background: color-mix(in srgb, var(--pf-goods) 14%, transparent);
+  color: var(--pf-goods);
+}
+
+.pf-page .pf-note {
+  max-width: none;
+  margin: 0;
+  padding: 7px 12px;
+
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 10px;
+
+  background: var(--color-surface-tint);
+  color: var(--color-text-secondary);
+
+  font-size: 10.5px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* ----------------------------------------------------------------- Grid */
+
+.pf-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* ---------------------------------------------------------------- Cards */
+
+.pf-card {
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid var(--pf-border);
+  border-radius: 14px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+
+  overflow: hidden;
+}
+
+.pf-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--pf-border);
+}
+
+.pf-card__title {
+  margin: 0;
+
+  color: var(--color-heading-alt);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.pf-page .pf-card__subtitle {
+  max-width: none;
+  margin: 2px 0 0;
+
+  color: var(--pf-soft);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.pf-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+
+  padding: 10px 16px 12px;
+}
+
+.pf-card__footer {
+  margin-top: auto;
+  padding: 9px 16px;
+
+  border-top: 1px solid var(--pf-border);
+}
+
+.pf-link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+  color: var(--pf-works);
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.pf-link-button:hover {
+  text-decoration: underline;
+}
+
+.pf-link-button:focus-visible {
+  outline: 2px solid var(--pf-works);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------- Vendors */
+
+.pf-vendors {
+  display: flex;
+  flex-direction: column;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.pf-vendor {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+
+  padding: 8px 16px;
+
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.pf-vendor:last-child {
+  border-bottom: 0;
+}
+
+.pf-vendor:hover {
+  background: var(--color-surface-hover);
+}
+
+.pf-vendor__rank {
+  color: var(--pf-soft);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.pf-vendor__name {
+  overflow: hidden;
+
+  color: var(--pf-heading);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pf-vendor__amount {
+  color: var(--pf-heading);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.pf-badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 2px 9px;
+
+  border-radius: 999px;
+
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------- Allocation */
+
+.pf-allocation {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+
+  padding: 12px 16px;
+}
+
+/* The shared donut uses a 30px centre value, which is too big for a
+   compact ring. Scale it down here without touching the shared component. */
+.pf-allocation .donut__value {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.pf-allocation .donut__label {
+  margin-top: 3px;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.pf-allocation__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.pf-allocation__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+.pf-allocation__dot {
+  width: 9px;
+  height: 9px;
+  margin-top: 4px;
+  flex-shrink: 0;
+
+  border-radius: 999px;
+}
+
+.pf-allocation__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pf-allocation__name {
+  color: var(--pf-heading);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pf-allocation__meta {
+  color: var(--pf-muted);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------------- Legend */
+
+.pf-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.pf-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  color: var(--pf-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.pf-legend__swatch {
+  width: 10px;
+  height: 10px;
+
+  border-radius: 3px;
+  background: var(--swatch);
+}
+
+.pf-legend__swatch--paid {
+  --swatch: var(--pf-goods);
+}
+
+.pf-legend__swatch--committed {
+  --swatch: var(--pf-works);
+}
+
+.pf-legend__swatch--outstanding {
+  --swatch: var(--pf-unpaid);
+}
+
+/* ---------------------------------------------------------------- Chart */
+
+/* Cap the height so a wide screen can't stretch the chart into a tall block.
+   The chart keeps its proportions and stays centred. */
+.pf-chart {
+  display: block;
+
+  width: 100%;
+  height: auto;
+  max-height: 240px;
+}
+
+.pf-chart__grid {
+  stroke: var(--color-border-soft);
+  stroke-width: 1;
+}
+
+.pf-chart__tick {
+  fill: var(--pf-soft);
+  font-size: 10.5px;
+  text-anchor: end;
+}
+
+.pf-chart__label {
+  fill: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+.pf-chart__value {
+  fill: var(--color-text-secondary);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+.pf-chart__bar--paid {
+  fill: var(--pf-goods);
+}
+
+.pf-chart__bar--committed {
+  fill: var(--pf-works);
+}
+
+.pf-chart__bar--outstanding {
+  fill: var(--pf-unpaid);
+}
+
+/* ------------------------------------------------------------ Responsive */
+
+@media (max-width: 1180px) {
+  .pf-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .pf-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pf-filter {
+    width: 100%;
+  }
+
+  .pf-vendor {
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+  }
+
+  .pf-vendor .pf-badge {
+    display: none;
+  }
+}

@@ -74,7 +74,7 @@ const revenueStreams = [
     color: "admission",
   },
   {
-    name: "Transport & Shuttle Services",
+    name: "Minimart",
     amount: "UGX 85.0M",
     percentage: 10.0,
     color: "transport",

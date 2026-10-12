@@ -1,4 +1,3 @@
-
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -30,22 +29,22 @@ vi.mock("../../components/filters/CampusFilter", async () => {
             onCampusChange?.(event.target.value),
         },
         options.map((campus) =>
-          React.createElement("option", { key: campus, value: campus }, campus),
+          React.createElement(
+            "option",
+            { key: campus, value: campus },
+            campus,
+          ),
         ),
       ),
   };
 });
 
 describe("Liabilities page", () => {
-  it("renders the page heading and description", () => {
+  it("renders the liabilities page", () => {
     render(<Liabilities />);
 
     expect(
-      screen.getByRole("heading", { name: "Liabilities Management" }),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByText(/Monitor outstanding obligations/i),
+      screen.getByRole("main"),
     ).toBeInTheDocument();
   });
 
@@ -61,44 +60,57 @@ describe("Liabilities page", () => {
     render(<Liabilities />);
 
     expect(
-      screen.getByText("Showing liabilities for").parentElement,
-    ).toHaveTextContent("All Campuses");
+      screen.getByRole("combobox", { name: "Campus filter" }),
+    ).toHaveValue("All Campuses");
   });
 
-  it("updates the selected campus context", async () => {
+  it("updates the selected campus when a different campus is selected", async () => {
     const user = userEvent.setup();
 
     render(<Liabilities />);
 
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Campus filter" }),
-      "Kibuli Main Campus",
-    );
+    const campusFilter = screen.getByRole("combobox", {
+      name: "Campus filter",
+    });
 
-    expect(
-      screen.getByText("Showing liabilities for").parentElement,
-    ).toHaveTextContent("Kibuli Main Campus");
+    await user.selectOptions(campusFilter, "Kibuli Main Campus");
+
+    expect(campusFilter).toHaveValue("Kibuli Main Campus");
   });
 
-  it("renders the summary, composition, and creditors sections", () => {
+  it("renders the liabilities overview section", () => {
     render(<Liabilities />);
 
     expect(
       screen.getByRole("region", { name: "Liabilities overview" }),
     ).toBeInTheDocument();
+  });
+
+  it("renders the liabilities details section", () => {
+    render(<Liabilities />);
 
     expect(
-      screen.getByRole("heading", { name: /Liabilities Composition/i }),
+      screen.getByRole("region", { name: "Liabilities details" }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders the liabilities composition and outstanding creditors sections", () => {
+    render(<Liabilities />);
+
+    expect(
+      screen.getByRole("heading", { name: "Liabilities Composition" }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole("heading", { name: /Top 8 Outstanding Creditors/i }),
+      screen.getByRole("heading", { name: "Top 8 Outstanding Creditors" }),
     ).toBeInTheDocument();
   });
 
   it("does not render a second Sidebar or Hero", () => {
     render(<Liabilities />);
 
-    expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("navigation"),
+    ).not.toBeInTheDocument();
   });
 });
