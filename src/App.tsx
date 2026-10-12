@@ -15,6 +15,7 @@ import { StudentEnrollment } from "./pages/StudentEnrollment/StudentEnrollment";
 import { AttendanceRates } from "./pages/AttendanceRates/AttendanceRates";
 import { Revenue } from "./pages/Revenue";
 import { Liabilities } from "./pages/Liabilities/Liabilities";
+import { Expenses } from "./pages/Expenses/Expenses";
 
 const pages: Record<string, ReactElement> = {
   overview: <ExecutiveOverview />,
@@ -27,6 +28,7 @@ const pages: Record<string, ReactElement> = {
    // Finance
   "revenue-fee-collection": <Revenue />,
 "liabilities-management": <Liabilities />,
+"expenses": < Expenses />,
 };
 
 const defaultPageId = "academic-performance";

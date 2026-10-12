@@ -256,12 +256,17 @@ p {
 .ao-year {
   position: relative;
 }
+.exp-filter {          /* ← add */
+  position: relative;
+}
 
 .ap-filter__label,
 .ap-filter__value,
 .lr-filter__label,
 .lr-filter__value,
 .mc-filter__label,
+.exp-filter__label,    /* ← add */
+.exp-filter__value,
 .mc-filter__value,
 .se-filter__label,
 .se-filter__value,
@@ -274,7 +279,8 @@ p {
 .lr-filter__select,
 .mc-filter__select,
 .se-filter__select,
-.ao-year__select {
+.ao-year__select,
+.exp-filter__select {
   position: absolute;
   inset: 0;
 
@@ -302,7 +308,8 @@ p {
 .lr-filter:focus-within,
 .mc-filter:focus-within,
 .se-filter:focus-within,
-.ao-year:focus-within {
+.ao-year:focus-within,
+.exp-filter:focus-within {
   border-color: var(--color-border-strong);
   box-shadow: var(--shadow-pop);
   outline: 2px solid var(--color-accent);

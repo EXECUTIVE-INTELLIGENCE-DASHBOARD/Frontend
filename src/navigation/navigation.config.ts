@@ -132,6 +132,10 @@ export const navigationItems: NavigationItem[] = [
         label: "Costs & Concessions",
       },
       {
+        id: "expenses",
+        label: "Expenses",
+      },
+      {
         id: "requisitions-orders",
         label: "Requisitions & Orders",
       },
