@@ -15,8 +15,12 @@ import { StudentEnrollment } from "./pages/StudentEnrollment/StudentEnrollment";
 import { AttendanceRates } from "./pages/AttendanceRates/AttendanceRates";
 import { Revenue } from "./pages/Revenue";
 import { Liabilities } from "./pages/Liabilities/Liabilities";
+import { ProcurementFinancials } from "./pages/ProcurementFinancials/ProcurementFinancials";
+import { ExpenseManagement } from "./pages/ExpenseManagement/ExpenseManagement";
+import { CoCurricularActivities } from "./pages/CoCurricularActivities/CoCurricularActivities";
 
 const pages: Record<string, ReactElement> = {
+  /* Overview + academic group */
   overview: <ExecutiveOverview />,
   "academics-overview": <AcademicOverview />,
   "student-enrollment": <StudentEnrollment />,
@@ -24,9 +28,14 @@ const pages: Record<string, ReactElement> = {
   "parent-access": <MyChildProgress />,
   "library-resource-usage": <LibraryResourceUsage />,
   "attendance-rates": <AttendanceRates />,
-   // Finance
+  "co-curricular-activities": <CoCurricularActivities />,
+
+  /* Finance & Procurement group — the ids must match the `id`s used in
+     `navigation.config.ts`, or the sidebar entry renders a placeholder. */
+  "liabilities-management": <Liabilities />,
   "revenue-fee-collection": <Revenue />,
-"liabilities-management": <Liabilities />,
+  "procurement-financials": <ProcurementFinancials />,
+  "expense-management": <ExpenseManagement />,
 };
 
 const defaultPageId = "academic-performance";

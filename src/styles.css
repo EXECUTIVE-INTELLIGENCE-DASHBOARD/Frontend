@@ -29,6 +29,11 @@
 
   /* Feedback */
   --color-positive: #16a34a;
+
+  /* Tinted fill for "good" pills and badges (e.g. the "Under budget" status
+     pill on Expense Management). Pairs with --color-positive for the text. */
+  --color-positive-soft: #e6f7ee;
+
   --color-warning: #b45309;
   --color-warning-soft: #fef3e2;
   --color-critical: #e05b5b;
@@ -44,6 +49,12 @@
   --chart-navy: #2f6fe4;
   --chart-blue: #4a86f7;
   --chart-sky: #8ec0ff;
+
+  /* Lightest step of the single-hue chart ramp. Used as the 4th slice in
+     multi-category charts (e.g. the Expense Management donut) where more
+     than three series colours are needed. */
+  --chart-mist: #c3dbff;
+
   --chart-gradient-from: #5b9bff;
   --chart-gradient-to: #2f6fe4;
   --color-chart-grid: #eaf0f7;
@@ -139,6 +150,9 @@ p {
   --chart-navy: #4a86f7;
   --chart-blue: #6a9bff;
   --chart-sky: #9bc5ff;
+  /* Dark counterpart of the light --chart-mist above. Darker and less
+     saturated so the 4th chart slice stays distinct on the navy surface. */
+  --chart-mist: #6d8fc4;
   --chart-gradient-from: #6a9bff;
   --chart-gradient-to: #2f6fe4;
   /* Revenue graph — dark theme */
@@ -163,7 +177,37 @@ p {
   border-color: var(--color-border);
 }
 
-/* Shared cards and panels */
+/* ==================================================================
+   METRIC-CARD REGISTRATION — READ THIS BEFORE ADDING A NEW PAGE
+   ==================================================================
+
+   The next four rules are what give every KPI card in this app its
+   signature look: a tinted card with no coloured accent bar and one
+   uniform blue icon chip in light mode, and a solid surface with a
+   coloured accent bar in dark mode.
+
+   Each is written as a long selector *list*, and every card class in the
+   app must appear in ALL FOUR:
+
+     A. [data-theme="dark"] <prefix>-metric            -> dark card surface
+     B. :root:not([data-theme="dark"]) <prefix>-metric -> light tinted card
+     C. ... <prefix>-metric::before                    -> hides the accent bar
+     D. ... <prefix>-metric__icon                      -> uniform blue icon chip
+
+   If a new class is missing from these lists the page still renders, but
+   its cards silently fall back to the plain white look defined in the
+   page's own stylesheet — no error, just cards that do not match the rest
+   of the dashboard.
+
+   A page stylesheet cannot fix this on its own: these selectors have
+   specificity (0,2,0), which beats a plain `.my-metric` rule (0,1,0)
+   regardless of which file is imported first.
+
+   When adding a page: append its metric class to A, B, C and D, and its
+   metric icon class to D.
+   ================================================================== */
+
+/* A — dark theme card surface */
 
 [data-theme="dark"] .stat-card,
 [data-theme="dark"] .ap-metric,
@@ -171,7 +215,8 @@ p {
 [data-theme="dark"] .eo-metric,
 [data-theme="dark"] .lr-metric,
 [data-theme="dark"] .mc-metric,
-[data-theme="dark"] .se-metric {
+[data-theme="dark"] .se-metric,
+[data-theme="dark"] .exp-metric {
   background: var(--color-surface);
   border-color: var(--color-border);
   color: var(--color-text);
@@ -203,30 +248,37 @@ p {
   border-color: var(--color-border);
 }
 
+/* B — light theme tinted card. `:root:not([data-theme="dark"])` is what makes
+   these rules outrank the page stylesheet's plain class selectors. */
+
 :root:not([data-theme="dark"]) .stat-card,
 :root:not([data-theme="dark"]) .ap-metric,
 :root:not([data-theme="dark"]) .ar-metric,
 :root:not([data-theme="dark"]) .eo-metric,
 :root:not([data-theme="dark"]) .lr-metric,
 :root:not([data-theme="dark"]) .mc-metric,
-:root:not([data-theme="dark"]) .se-metric {
+:root:not([data-theme="dark"]) .se-metric,
+:root:not([data-theme="dark"]) .exp-metric {
   border: 1px solid #e4effc;
   border-radius: 16px;
   background: #eef7ff;
 }
 
-/* Remove the coloured left accent bar (the "different colour" borders) */
+/* C — in light mode the coloured left accent bar is removed entirely, so the
+   cards read as one uniform family (the "different colour" borders). */
 
 :root:not([data-theme="dark"]) .stat-card::before,
 :root:not([data-theme="dark"]) .ap-metric::before,
 :root:not([data-theme="dark"]) .eo-metric::before,
 :root:not([data-theme="dark"]) .lr-metric::before,
 :root:not([data-theme="dark"]) .mc-metric::before,
-:root:not([data-theme="dark"]) .se-metric::before {
+:root:not([data-theme="dark"]) .se-metric::before,
+:root:not([data-theme="dark"]) .exp-metric::before {
   display: none;
 }
 
-/* A single uniform blue icon chip, as in the reference */
+/* D — a single uniform blue icon chip in place of the per-tone chips, so every
+   card's icon matches. */
 
 :root:not([data-theme="dark"]) .stat-card__icon,
 :root:not([data-theme="dark"]) .ap-metric__icon,
@@ -234,7 +286,8 @@ p {
 :root:not([data-theme="dark"]) .eo-metric__icon,
 :root:not([data-theme="dark"]) .lr-metric__icon,
 :root:not([data-theme="dark"]) .mc-metric__icon,
-:root:not([data-theme="dark"]) .se-metric__icon {
+:root:not([data-theme="dark"]) .se-metric__icon,
+:root:not([data-theme="dark"]) .exp-metric__icon {
   border-radius: 12px;
   background: #dcebff;
   color: #2f6fe4;
@@ -253,7 +306,8 @@ p {
 .lr-filter,
 .mc-filter,
 .se-filter,
-.ao-year {
+.ao-year,
+.exp-filter {
   position: relative;
 }
 
@@ -263,6 +317,8 @@ p {
 .lr-filter__value,
 .mc-filter__label,
 .mc-filter__value,
+.exp-filter__label,
+.exp-filter__value,
 .se-filter__label,
 .se-filter__value,
 .ao-year__label,
@@ -274,7 +330,8 @@ p {
 .lr-filter__select,
 .mc-filter__select,
 .se-filter__select,
-.ao-year__select {
+.ao-year__select,
+.exp-filter__select {
   position: absolute;
   inset: 0;
 
@@ -302,7 +359,8 @@ p {
 .lr-filter:focus-within,
 .mc-filter:focus-within,
 .se-filter:focus-within,
-.ao-year:focus-within {
+.ao-year:focus-within,
+.exp-filter:focus-within {
   border-color: var(--color-border-strong);
   box-shadow: var(--shadow-pop);
   outline: 2px solid var(--color-accent);

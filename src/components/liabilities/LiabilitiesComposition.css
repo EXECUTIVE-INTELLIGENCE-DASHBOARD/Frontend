@@ -97,9 +97,9 @@
 
 .liability-breakdown__details h3 {
   margin: 0 0 4px;
-  color: var(--color-heading);
+  color: #26344d;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1.4;
 }
 

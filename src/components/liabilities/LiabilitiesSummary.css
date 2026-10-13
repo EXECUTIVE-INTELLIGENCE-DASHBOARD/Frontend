@@ -17,8 +17,8 @@
 .liability-metric__title {
   margin: 0 0 14px;
   color: var(--color-text-soft);
-  font-size: 10px;
-  font-weight: 400;
+  font-size: 11px;
+  font-weight: 800;
   letter-spacing: 0.2px;
   line-height: 1.5;
 }
@@ -42,7 +42,7 @@
 }
 
 .liability-metric--total .liability-metric__icon {
-  background: #172448;
+  background:#0ea5e9;
 }
 
 .liability-metric--due .liability-metric__icon {
@@ -50,7 +50,7 @@
 }
 
 .liability-metric--overdue .liability-metric__icon {
-  background: #f59e0b;
+  background:  #0ea5e9;
 }
 
 .liability-metric__amount {

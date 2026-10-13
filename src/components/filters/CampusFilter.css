@@ -1,61 +1,71 @@
+/* Campus Filter Container */
 .campus-filter {
   position: relative;
-  width: 165px;
+  width: 210px;
   min-width: 0;
-  max-width: 165px;
-  flex: 0 0 165px;
+  flex-shrink: 0;
   font-family: inherit;
-  z-index: 20;
 }
 
-/* Closed dropdown */
+/* Dropdown Trigger */
 .campus-filter__trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-
+  gap: 12px;
   width: 100%;
-  height: 36px;
-  min-height: 36px;
-  padding: 0 9px;
+  min-height: 46px;
+  padding: 0 14px;
   box-sizing: border-box;
 
-  background: transparent;
-  border: 1px solid #d1d5db;
-  border-radius: 7px;
+  border: 1px solid var(--color-border, #dce3ed);
+  border-radius: 12px;
+  background: var(--color-surface, #ffffff);
+  color: var(--color-text, #475569);
 
-  color: #374151;
   font-family: inherit;
   font-size: 13px;
   font-weight: 400;
   line-height: 1.4;
   text-align: left;
+
   cursor: pointer;
-  box-shadow: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
-.campus-filter__trigger:hover,
-.campus-filter__trigger:focus-visible,
-.campus-filter__trigger--open {
-  border-color: #94a3b8;
-  outline: none;
-  box-shadow: none;
-}
-
-.campus-filter__trigger > span {
+/* Selected Campus Text */
+.campus-filter__trigger span {
   min-width: 0;
   overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Dropdown arrow */
+/* Trigger Hover */
+.campus-filter__trigger:hover {
+  border-color: #b8cce5;
+  background: var(--color-surface-subtle, #fbfdff);
+}
+
+/* Keyboard Focus */
+.campus-filter__trigger:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+/* Open Trigger */
+.campus-filter__trigger--open {
+  border-color: #93baf5;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+}
+
+/* Dropdown Chevron */
 .campus-filter__chevron {
-  width: 14px;
-  height: 14px;
   flex-shrink: 0;
-  color: #64748b;
+  color: var(--color-text-muted, #71839e);
   transition: transform 0.2s ease;
 }
 
@@ -63,107 +73,149 @@
   transform: rotate(180deg);
 }
 
-/* Open dropdown menu */
+/* Dropdown Options Container */
 .campus-filter__options {
   position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
+  top: calc(100% + 7px);
   right: 0;
+  z-index: 100;
+
+  width: 100%;
+  max-height: 260px;
+  overflow-y: auto;
+  box-sizing: border-box;
 
   margin: 0;
-  padding: 3px 0;
+  padding: 5px;
   list-style: none;
 
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 7px;
-  box-shadow: 0 3px 8px rgb(15 23 42 / 8%);
-  z-index: 21;
+  border: 1px solid var(--color-border-soft, #e2e8f0);
+  border-radius: 12px;
+  background: var(--color-surface, #ffffff);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.09);
+
+  animation: campus-filter-dropdown-in 0.16s ease-out;
 }
 
-.campus-filter__options li {
-  margin: 0;
-  padding: 0;
-}
-
-/* Individual dropdown options */
+/* Individual Dropdown Option */
 .campus-filter__option {
   display: block;
   width: 100%;
-  min-height: 30px;
-  padding: 6px 9px;
+  padding: 10px 11px;
   box-sizing: border-box;
 
   border: none;
-  border-radius: 0;
-  background: #ffffff;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text, #475569);
 
-  color: #374151;
   font-family: inherit;
   font-size: 12px;
   font-weight: 400;
-  line-height: 1.4;
+  line-height: 1.5;
   text-align: left;
+  overflow-wrap: anywhere;
+
   cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
-.campus-filter__option:hover,
-.campus-filter__option:focus-visible,
-.campus-filter__option--selected {
-  background: #f1f5f9;
+/* Option Hover */
+.campus-filter__option:hover {
+  background: #f1f7ff;
   color: #1d4ed8;
-  outline: none;
 }
 
-/* Mobile screens */
-@media (max-width: 480px) {
-  .campus-filter {
-    width: 165px;
-    max-width: 165px;
-    flex: 0 0 165px;
+/* Currently Selected Option */
+.campus-filter__option--selected {
+  background: #eff6ff;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+/* Keyboard Focus on Options */
+.campus-filter__option:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: -2px;
+}
+
+/* Dropdown Entrance */
+@keyframes campus-filter-dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
   }
 
-  .campus-filter__trigger {
-    height: 34px;
-    min-height: 34px;
-    font-size: 12px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Campus filter — dark mode */
-
+/* Dark Theme */
 [data-theme="dark"] .campus-filter__trigger {
-  background-color: #1c2c52;
-  border-color: #34466f;
-  color: #f5f7ff;
+  border-color: var(--color-border, #334155);
+  background: var(--color-surface, #172033);
+  color: var(--color-text, #e2e8f0);
 }
 
-[data-theme="dark"] .campus-filter__trigger:hover,
-[data-theme="dark"] .campus-filter__trigger:focus-visible,
+[data-theme="dark"] .campus-filter__trigger:hover {
+  border-color: #526987;
+}
+
 [data-theme="dark"] .campus-filter__trigger--open {
-  background-color: #263a64;
-  border-color: #6a9bff;
-  color: #ffffff;
-}
-
-[data-theme="dark"] .campus-filter__chevron {
-  color: #cbd5e1;
+  border-color: #60a5fa;
 }
 
 [data-theme="dark"] .campus-filter__options {
-  background-color: #1c2c52;
-  border-color: #34466f;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 25%);
+  border-color: var(--color-border-soft, #334155);
+  background: var(--color-surface, #172033);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 [data-theme="dark"] .campus-filter__option {
-  background-color: #1c2c52;
-  color: #e2e8f0;
+  color: var(--color-text, #e2e8f0);
 }
 
-[data-theme="dark"] .campus-filter__option:hover,
-[data-theme="dark"] .campus-filter__option:focus-visible,
+[data-theme="dark"] .campus-filter__option:hover {
+  background: rgba(59, 130, 246, 0.14);
+  color: #93c5fd;
+}
+
 [data-theme="dark"] .campus-filter__option--selected {
-  background-color: #263a64;
-  color: #9bc5ff;
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
+}
+
+/* Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .campus-filter__trigger,
+  .campus-filter__chevron,
+  .campus-filter__option {
+    transition: none;
+  }
+
+  .campus-filter__options {
+    animation: none;
+  }
+}
+
+/* Tablet and Mobile */
+@media (max-width: 600px) {
+  .campus-filter {
+    width: 190px;
+  }
+
+  .campus-filter__trigger {
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 37px;
+    font-size: 12px;
+  }
+
+  .campus-filter__options {
+    border-radius: 10px;
+  }
 }

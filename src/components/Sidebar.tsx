@@ -5,7 +5,7 @@ import {
   navigationItems,
   findNavigationParentId,
 } from "../navigation/navigation.config";
-import executivelogo from "../assets/executivelogo.png";
+import eidlogo from "../assets/eidlogo.png";
 
 import "./Sidebar.css";
 
@@ -40,7 +40,7 @@ export function Sidebar({ activeItem, onSelectItem }: SidebarProps = {}) {
       {/* Sidebar branding */}
       <div className="sidebar-brand">
         <img
-          src={executivelogo}
+          src={eidlogo}
           alt="GreenHill logo"
           className="sidebar-brand__logo"
         />

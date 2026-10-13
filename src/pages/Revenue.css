@@ -10,7 +10,7 @@
   width: 100%;
   min-width: 0;
   margin: 0;
-  padding: 12px 24px 24px;
+  padding: 0 0 40px;
   box-sizing: border-box;
 
   /* The page itself is the background, not a card */
@@ -22,18 +22,36 @@
 
 .revenue-page__header {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 16px;
   width: 100%;
   min-width: 0;
   margin: 0;
   padding: 0;
-
   background: transparent;
   border: none;
   border-radius: 0;
   box-shadow: none;
+}
+.revenue-page__intro {
+  margin-right: auto;
+  min-width: 0;
+}
+
+.revenue-page__intro h2 {
+  margin: 0 0 6px;
+  color: var(--color-heading, #16324f);
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.revenue-page__intro p {
+  margin: 0;
+  color: var(--color-text-muted, #64748b);
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 .revenue-page__title {
@@ -55,12 +73,11 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  flex-shrink: 0;
-  width: 100%;
+  flex: 0 0 auto;
+  width: auto;
   min-width: 0;
-  margin: 0;
+  margin-left: auto;
   padding: 0;
-
   background: transparent;
   border: none;
   box-shadow: none;

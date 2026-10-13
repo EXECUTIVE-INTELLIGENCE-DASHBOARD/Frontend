@@ -44,8 +44,40 @@ export const navigationItems: NavigationItem[] = [
         label: "My Child's Progress",
       },
       {
+        id: "co-curricular-activities",
+        label: "Co-Curricular Activities",
+      },
+      {
         id: "library-resource-usage",
         label: "Library & Resource Usage",
+      },
+    ],
+  },
+
+  {
+    id: "finance-procurement",
+    label: "Finance & Procurement",
+    icon: WalletCards,
+    children: [
+      {
+        id: "liabilities-management",
+        label: "Liabilities Management",
+      },
+      {
+        id: "revenue-fee-collection",
+        label: "Revenue",
+      },
+      {
+        id: "procurement-financials",
+        label: "Procurement Financials",
+      },
+      {
+        id: "expense-management",
+        label: "Expense Management",
+      },
+      {
+        id: "budget-management",
+        label: "Budget Management",
       },
     ],
   },
@@ -106,34 +138,6 @@ export const navigationItems: NavigationItem[] = [
       {
         id: "customer-satisfaction",
         label: "Customer Satisfaction",
-      },
-    ],
-  },
-
-  {
-    id: "finance-procurement",
-    label: "Finance & Procurement",
-    icon: WalletCards,
-    children: [
-      {
-        id: "liabilities-management",
-        label: "Liabilities Management",
-      },
-      {
-        id: "budget-management",
-        label: "Budget Management",
-      },
-      {
-        id: "revenue-fee-collection",
-        label: "Revenue & Arrears",
-      },
-      {
-        id: "costs-concessions",
-        label: "Costs & Concessions",
-      },
-      {
-        id: "requisitions-orders",
-        label: "Requisitions & Orders",
       },
     ],
   },

@@ -1,4 +1,3 @@
-
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
@@ -39,8 +38,14 @@ describe("RevenueDetails", () => {
     const table = screen.getByRole("table");
 
     expect(table).toBeInTheDocument();
-    expect(within(table).getByText("Kibuli Main Campus")).toBeInTheDocument();
-    expect(within(table).getByText("Buwaate Campus")).toBeInTheDocument();
+
+    expect(
+      within(table).getByText("Kibuli Main Campus"),
+    ).toBeInTheDocument();
+
+    expect(
+      within(table).getByText("Buwaate Campus"),
+    ).toBeInTheDocument();
 
     expect(
       within(table).getByText("Annex / Preschool Branch"),
@@ -70,9 +75,7 @@ describe("RevenueDetails", () => {
       screen.getByText("Admission & Registration"),
     ).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Transport & Shuttle Services"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Minimart")).toBeInTheDocument();
 
     expect(screen.getByText("Donations")).toBeInTheDocument();
 
@@ -92,7 +95,7 @@ describe("RevenueDetails", () => {
 
     expect(
       screen.getByRole("progressbar", {
-        name: "Transport & Shuttle Services contribution",
+        name: "Minimart contribution",
       }),
     ).toHaveAttribute("aria-valuenow", "10");
   });

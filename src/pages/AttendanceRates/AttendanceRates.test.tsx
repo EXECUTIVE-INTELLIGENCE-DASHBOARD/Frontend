@@ -4,17 +4,12 @@ import { describe, expect, it } from "vitest";
 import { AttendanceRates } from "./AttendanceRates";
 
 describe("AttendanceRates", () => {
-  it("renders the page heading", () => {
+    it("renders the campus filter and refresh button", () => {
     render(<AttendanceRates />);
 
+    expect(screen.getByLabelText("Select Campus")).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Attendance Rates" }),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByText(
-        /Monitor student attendance and identify classes and learners needing follow-up\./,
-      ),
+      screen.getByRole("button", { name: "Refresh attendance data" }),
     ).toBeInTheDocument();
   });
 
