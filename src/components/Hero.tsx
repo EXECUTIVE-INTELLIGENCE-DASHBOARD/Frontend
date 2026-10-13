@@ -4,6 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import { Search, Mic, Sun, Moon, ChevronRight } from "lucide-react";
 import {
   getCurrentUserProfile,
+  startGreenHillSignIn,
   type UserProfile,
 } from "../lib/userProfile";
 import { searchNavigation } from "../navigation/navigation.search";
@@ -368,6 +369,15 @@ useEffect(() => {
                   </div>
                 ))}
               </dl>
+                            {userProfile.role === "Sign-in required" && (
+                <button
+                  className="hero__sign-in-button"
+                  type="button"
+                  onClick={startGreenHillSignIn}
+                >
+                  Sign in with GreenHill
+                </button>
+              )}
             </div>
           )}
         </div>

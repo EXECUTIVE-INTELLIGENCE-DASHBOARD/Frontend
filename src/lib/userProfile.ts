@@ -68,3 +68,14 @@ export async function getCurrentUserProfile(): Promise<UserProfile> {
     ],
   };
 }
+
+
+export function startGreenHillSignIn(): void {
+  const apiBaseUrl = apiClient.defaults.baseURL?.replace(/\/+$/, "");
+
+  if (!apiBaseUrl) {
+    throw new Error("The EID API URL is not configured.");
+  }
+
+  window.location.assign(`${apiBaseUrl}/auth/login/`);
+}
