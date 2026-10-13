@@ -3,10 +3,10 @@
  *
  * Two things shape how these tests are written:
  *
- * 1. **The same figure appears in several places on purpose.** "UGX 96.4M" is
- *    the rent KPI card, one entry in the Spend Composition list and the Actual
- *    cell of the rent table row. The page is *supposed* to repeat itself —
- *    that is how a reader cross-checks the three cuts of the data — so an
+ * 1. **The same figure appears in several places on purpose.** "UGX 540.0M" is
+ *    the Total YTD KPI card, the donut's centre label is "UGX 540M", and the
+ *    four legend rows are the parts of it. The page is *supposed* to repeat
+ *    itself — that is how a reader cross-checks the cuts of the data — so an
  *    unscoped `screen.getByText` would be ambiguous. Every value assertion
  *    below is therefore scoped with `within(...)` to the card, row or section
  *    it belongs to.
@@ -38,15 +38,19 @@ describe("ExpenseManagement", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(/Tracks operating spend across rent, wages/i),
+      screen.getByText(/Operating and capital expenditure across departments/i),
     ).toBeInTheDocument();
 
     // Scoped to the breadcrumb: the current crumb repeats the page title, so a
     // document-wide query for "Expense Management" would match the h1 as well.
     const breadcrumb = screen.getByRole("navigation", { name: "Breadcrumb" });
 
-    expect(within(breadcrumb).getByText("Finance & Procurement")).toBeInTheDocument();
-    expect(within(breadcrumb).getByText("Expense Management")).toBeInTheDocument();
+    expect(
+      within(breadcrumb).getByText("Finance & Procurement"),
+    ).toBeInTheDocument();
+    expect(
+      within(breadcrumb).getByText("Expense Management"),
+    ).toBeInTheDocument();
   });
 
   it("offers a refresh action", () => {
@@ -65,146 +69,106 @@ describe("ExpenseManagement", () => {
     expect(container.querySelector("main")).toBeNull();
   });
 
-  it("renders the four overhead KPI cards with figures and variances", () => {
+  it("renders the three headline KPI cards", () => {
     render(<ExpenseManagement />);
 
     const cards = screen.getAllByRole("article");
 
-    expect(cards).toHaveLength(4);
+    expect(cards).toHaveLength(3);
 
-    // [label, actual spend, share caption, variance caption] — in the order
-    // the `overheads` array declares them, which is the render order.
-    const expected: Array<[string, string, string, string]> = [
-      ["Rent & Facilities", "UGX 96.4M", "16.0% of overheads", "+2.4% vs budget"],
-      ["Wages & Salaries", "UGX 412.0M", "68.5% of overheads", "+1.8% vs budget"],
-      ["Utilities", "UGX 58.7M", "9.8% of overheads", "−4.1% vs budget"],
-      [
-        "Marketing & Admissions",
-        "UGX 34.2M",
-        "5.7% of overheads",
-        "+6.2% vs budget",
-      ],
+    // [label, figure] in the order `summaryMetrics` declares them, which is
+    // the render order across the row.
+    const expected: Array<[string, string]> = [
+      ["Total YTD Expenditure", "UGX 540.0M"],
+      ["Campus Operational Spend", "UGX 380.0M"],
+      ["Pending Expense Approvals", "UGX 65.5M"],
     ];
 
-    expected.forEach(([label, amount, share, variance], index) => {
+    expected.forEach(([label, amount], index) => {
       const card = cards[index];
 
       expect(within(card).getByText(label)).toBeInTheDocument();
       expect(within(card).getByText(amount)).toBeInTheDocument();
-      expect(card).toHaveTextContent(share);
-      expect(card).toHaveTextContent(variance);
     });
   });
 
-  it("paints over-budget KPI captions amber and under-budget captions green", () => {
-    render(<ExpenseManagement />);
-
-    const cards = screen.getAllByRole("article");
-
-    // Rent (+2.4%), wages (+1.8%) and marketing (+6.2%) are at or over budget.
-    // Utilities (−4.1%) is under.
-    const tone = (index: number) =>
-      cards[index].querySelector(".exp-metric__delta")?.className ?? "";
-
-    expect(tone(0)).toContain("exp-metric__delta--over");
-    expect(tone(1)).toContain("exp-metric__delta--over");
-    expect(tone(2)).toContain("exp-metric__delta--under");
-    expect(tone(3)).toContain("exp-metric__delta--over");
-  });
-
-  it("renders the three filter controls with their defaults", () => {
+  it("renders the single campus filter with its default", () => {
     render(<ExpenseManagement />);
 
     // The visible layer is a styled span, so the select is what carries the
-    // accessible label. Defaults are always the "All ..." option.
-    expect(screen.getByLabelText("Select Campus")).toHaveValue("All Campuses");
-    expect(screen.getByLabelText("Department")).toHaveValue("All Departments");
-    expect(screen.getByLabelText("Cost Centre")).toHaveValue("All Cost Centres");
+    // accessible label. The default is always the "All ..." option.
+    expect(screen.getByLabelText("Campus")).toHaveValue("All Campuses");
+
+    // Campus is the only cut the page offers.
+    const rail = document.querySelector(".exp-filters") as HTMLElement;
+
+    expect(rail.querySelectorAll(".exp-filter")).toHaveLength(1);
   });
 
-  it("updates a filter's visible value when another option is picked", () => {
+  it("updates the filter's visible value when another option is picked", () => {
     render(<ExpenseManagement />);
 
-    const department = screen.getByLabelText("Department");
+    const campus = screen.getByLabelText("Campus");
+    const option = campus.querySelector("option:nth-child(2)") as HTMLOptionElement;
 
-    fireEvent.change(department, { target: { value: "Finance" } });
+    fireEvent.change(campus, { target: { value: option.value } });
 
-    expect(department).toHaveValue("Finance");
+    expect(campus).toHaveValue(option.value);
 
     // The value the user actually sees is the aria-hidden span drawn under the
     // invisible select, so it has to be checked separately.
-    const filter = department.closest(".exp-filter") as HTMLElement;
+    const filter = campus.closest(".exp-filter") as HTMLElement;
 
-    expect(filter).toHaveTextContent("Finance");
+    expect(filter).toHaveTextContent(option.value);
   });
 
-  it("renders the spend composition donut and allocation list", () => {
+  it("renders the expense distribution donut and its legend", () => {
     render(<ExpenseManagement />);
 
-    const card = cardFor("Spend Composition");
-
-    expect(
-      within(card).getByText("Total overheads UGX 601.3M"),
-    ).toBeInTheDocument();
+    const card = cardFor("Expense Distribution");
 
     expect(
       within(card).getByRole("img", {
-        name: "Operating overheads split by category",
+        name: "Operating expenses split by category",
       }),
     ).toBeInTheDocument();
 
-    // Centre of the ring.
-    expect(within(card).getByText("601.3M")).toBeInTheDocument();
-    expect(within(card).getByText("UGX total")).toBeInTheDocument();
+    // Centre of the ring: the same total the "Total YTD Expenditure" KPI shows.
+    expect(within(card).getByText("UGX 540M")).toBeInTheDocument();
+    expect(within(card).getByText("Total OpEx")).toBeInTheDocument();
 
-    // The list restates the same four categories, largest first, which is a
-    // different order from the KPI row above.
+    // The legend lists the same four categories the ring is cut into, largest
+    // first.
     const names = within(card)
       .getAllByRole("listitem")
       .map((item) => item.querySelector(".exp-allocation__name")?.textContent);
 
     expect(names).toEqual([
-      "Wages & Salaries",
-      "Rent & Facilities",
-      "Utilities",
-      "Marketing & Admissions",
+      "Salaries & Allowances",
+      "Utilities & Maintenance",
+      "Instructional Materials",
+      "Co-curricular & Ops",
     ]);
+
+    // Each legend row restates its share of the 540M total.
+    const legend = card.querySelector(".exp-allocation__list") as HTMLElement;
+
+    expect(legend).toHaveTextContent("UGX 280.0M (51.9%)");
+    expect(legend).toHaveTextContent("UGX 115.0M (21.3%)");
+    expect(legend).toHaveTextContent("UGX 90.0M (16.7%)");
+    expect(legend).toHaveTextContent("UGX 55.0M (10.2%)");
   });
 
-  it("renders the monthly trend chart with its reconciliation caption", () => {
+  it("renders a budget and an expenditure bar per department", () => {
     render(<ExpenseManagement />);
 
-    const card = cardFor("Monthly Spend Against Budget");
+    const card = cardFor("Departmental Budget vs. Actual Expenditure");
 
-    expect(
-      within(card).getByRole("img", {
-        name: /Monthly operating spend compared with the monthly budget/i,
-      }),
-    ).toBeInTheDocument();
-
-    expect(within(card).getByText("Actual")).toBeInTheDocument();
-    expect(within(card).getByText("Budget")).toBeInTheDocument();
-
-    // The caption must reconcile with the KPI cards — the twelve monthly
-    // actuals sum to the same 601.3M as the four overhead cards.
-    const caption = card.querySelector(".exp-chart__caption") as HTMLElement;
-
-    expect(caption).toHaveTextContent("UGX 601.3M");
-    expect(caption).toHaveTextContent("UGX 598.0M");
-    expect(caption).toHaveTextContent("+3.3M");
-    expect(caption).toHaveTextContent("peak in Sep");
-  });
-
-  it("renders one bar per campus", () => {
-    render(<ExpenseManagement />);
-
-    const card = cardFor("Spend by Campus");
     const bars = within(card).getAllByRole("progressbar");
 
-    expect(bars).toHaveLength(6);
+    // Seven departments, two bars each.
+    expect(bars).toHaveLength(14);
 
-    // Read the bar labels from the list itself: the caption underneath repeats
-    // the leading campus name, so a plain text query would match twice.
     const list = card.querySelector(".exp-bars") as HTMLElement;
 
     const labels = within(list)
@@ -212,86 +176,89 @@ describe("ExpenseManagement", () => {
       .map((item) => item.querySelector(".exp-bars__label")?.textContent);
 
     expect(labels).toEqual([
-      "Nursery Kibuli",
-      "Primary Kibuli",
-      "Secondary Kibuli",
-      "Nursery Buwaate",
-      "Primary Buwaate",
-      "International School",
+      "Academics",
+      "Boarding",
+      "Admin & HR",
+      "Transport",
+      "ICT / Tech",
+      "Sports",
+      "Health",
     ]);
 
-    expect(within(card).getByText("UGX 196.2M")).toBeInTheDocument();
+    // Values are shown per department, budget first.
+    expect(list).toHaveTextContent("240M");
+    expect(list).toHaveTextContent("110M");
+    expect(list).toHaveTextContent("38.5M");
+    expect(list).toHaveTextContent("21.5M");
 
-    const top = within(card).getByRole("progressbar", {
-      name: "Secondary Kibuli share of spend",
+    // Both bars share one scale, so the largest budget fills its track.
+    const academicsBudget = within(card).getByRole("progressbar", {
+      name: "Academics budget",
     });
 
-    expect(top).toHaveAttribute("aria-valuenow", "32.6");
-    expect(top).toHaveAttribute("aria-valuemax", "100");
+    expect(academicsBudget).toHaveAttribute("aria-valuenow", "240");
+    expect(academicsBudget).toHaveAttribute("aria-valuemax", "240");
 
-    // The card's takeaway line names the same campus the bars rank first.
+    const academicsActual = within(card).getByRole("progressbar", {
+      name: "Academics expenditure",
+    });
+
+    expect(academicsActual).toHaveAttribute("aria-valuenow", "110");
+
+    // The caption reconciles the two columns of the chart.
     expect(card.querySelector(".exp-bars__caption")).toHaveTextContent(
-      "Secondary Kibuli carries 32.6% of all operating spend.",
+      "UGX 334.5M spent against UGX 655.5M budgeted across 7 departments.",
     );
   });
 
-  it("renders the budget variance table with a totals row", () => {
+  it("renders the pending requisitions table", () => {
     render(<ExpenseManagement />);
 
-    const table = screen.getByRole("table");
+    const card = cardFor("High-Value Requisitions Pending Approval");
+    const table = within(card).getByRole("table");
 
-    expect(within(table).getByRole("columnheader", { name: "Category" })).toBeInTheDocument();
-    expect(within(table).getByRole("columnheader", { name: "Variance" })).toBeInTheDocument();
+    [
+      "Requisition ID",
+      "Item / Vendor Description",
+      "Amount",
+      "Campus",
+      "Approval Status",
+    ].forEach((heading) => {
+      expect(
+        within(table).getByRole("columnheader", { name: heading }),
+      ).toBeInTheDocument();
+    });
 
-    // One header row, four category rows, one totals row.
-    expect(within(table).getAllByRole("row")).toHaveLength(6);
+    // One header row plus three requisitions.
+    expect(within(table).getAllByRole("row")).toHaveLength(4);
 
-    const rent = within(table).getByRole("row", { name: /Rent & Facilities/ });
+    const uneb = within(table).getByRole("row", { name: /PO-2028-089/ });
 
-    expect(within(rent).getByText("UGX 94.1M")).toBeInTheDocument();
-    expect(within(rent).getByText("UGX 96.4M")).toBeInTheDocument();
-    expect(within(rent).getByText("16.0%")).toBeInTheDocument();
-    expect(within(rent).getByText("+2.4%")).toBeInTheDocument();
-    expect(within(rent).getByText("Over budget")).toHaveClass("exp-pill--over");
+    expect(
+      within(uneb).getByText("UNEB Exam Registration & Stationery Materials"),
+    ).toBeInTheDocument();
+    expect(within(uneb).getByText("UGX 32.5M")).toBeInTheDocument();
+    expect(within(uneb).getByText("Kibuli Main")).toBeInTheDocument();
+    expect(
+      within(uneb).getByText("Pending CFO Clearance"),
+    ).toHaveClass("exp-pill--attention");
   });
 
-  it("bands the variance status so a small overspend is not an alert", () => {
+  it("tones each approval status pill from the data", () => {
     render(<ExpenseManagement />);
 
     const table = screen.getByRole("table");
 
-    // Wages is +1.8%, inside the ±2% dead band, so it reads "On track".
-    expect(
-      within(within(table).getByRole("row", { name: /Wages & Salaries/ })).getByText(
-        "On track",
-      ),
-    ).toHaveClass("exp-pill--on-track");
-
-    // Utilities is −4.1%, comfortably under.
-    expect(
-      within(within(table).getByRole("row", { name: /^Utilities/ })).getByText(
-        "Under budget",
-      ),
-    ).toHaveClass("exp-pill--under");
-
-    // Marketing is +6.2%, well over.
     expect(
       within(
-        within(table).getByRole("row", { name: /Marketing & Admissions/ }),
-      ).getByText("Over budget"),
-    ).toHaveClass("exp-pill--over");
-  });
+        within(table).getByRole("row", { name: /PO-2028-092/ }),
+      ).getByText("Pending Procurement Verification"),
+    ).toHaveClass("exp-pill--review");
 
-  it("totals the variance table from the grand totals, not the row average", () => {
-    render(<ExpenseManagement />);
-
-    const table = screen.getByRole("table");
-    const total = within(table).getByRole("row", { name: /Total overheads/ });
-
-    expect(within(total).getByText("UGX 592.2M")).toBeInTheDocument();
-    expect(within(total).getByText("UGX 601.3M")).toBeInTheDocument();
-    expect(within(total).getByText("+1.5%")).toBeInTheDocument();
-    expect(within(total).getByText("100.0%")).toBeInTheDocument();
-    expect(within(total).getByText("On track")).toHaveClass("exp-pill--on-track");
+    expect(
+      within(
+        within(table).getByRole("row", { name: /PO-2028-095/ }),
+      ).getByText("Queued for Board Approval"),
+    ).toHaveClass("exp-pill--queued");
   });
 });

@@ -4,263 +4,216 @@
  * This module is the single source of truth for every number the page shows.
  * Components never hard-code values — they import the constants from here and
  * call the helper functions. That matters because the page presents the same
- * spend in three different cuts (by category, by month, by campus), and going
- * through one module is what keeps those three views agreeing with each other.
+ * spend in three different cuts (headline KPIs, by category, by department),
+ * and going through one module is what keeps those three views agreeing.
  *
  * All money values are plain numbers of **UGX millions**; run them through
- * `formatUgx` only when rendering.
+ * `formatUgx` or `formatMillions` only when rendering.
  */
 
 import { campusOptions } from "../../lib/organisation";
 
 import type {
-  CampusSpendRow,
+  DepartmentSpend,
+  DistributionSlice,
   FilterControl,
-  Overhead,
-  SpendPoint,
+  Requisition,
+  SummaryMetric,
 } from "./expenseManagement.types";
+
+/* ---------------------------------------------------------------- Formatting */
+
+/** Formats an amount held in UGX millions, e.g. 540 -> "UGX 540.0M". */
+export const formatUgx = (millions: number) => `UGX ${millions.toFixed(1)}M`;
+
+/**
+ * Formats an amount held in UGX millions without the currency prefix or a
+ * trailing zero, e.g. 240 -> "240M" and 38.5 -> "38.5M".
+ *
+ * Used where several figures sit on one line — the bar labels in the
+ * departmental chart — and "UGX" repeated seven times would be noise.
+ */
+export const formatMillions = (millions: number) => `${millions}M`;
 
 /* ----------------------------------------------------------- Filter options */
 
 /**
- * Departments available in the Department dropdown. `departmentOptions[0]` is
- * the default selection, which is why "All Departments" must stay first.
- */
-export const departmentOptions = [
-  "All Departments",
-  "Academics",
-  "Administration",
-  "Finance",
-  "Facilities",
-  "Human Resources",
-  "ICT",
-  "Marketing & Admissions",
-  "Catering & Boarding",
-  "Transport",
-];
-
-/** Cost-centre codes available in the Cost Centre dropdown. */
-export const costCentreOptions = [
-  "All Cost Centres",
-  "CC-100 Teaching",
-  "CC-200 Facilities",
-  "CC-300 Welfare",
-  "CC-400 Admin",
-  "CC-500 Transport",
-  "CC-600 Marketing",
-];
-
-/**
  * The filter rail on the left of the page, in top-to-bottom order.
  *
- * Campus comes first because it is the broadest cut of the data. Note that the
- * campus list is imported from `src/lib/organisation.ts` rather than typed out
- * here — that shared module is the repo-wide source for campus names, so this
- * page and the other dashboard pages can never disagree about how a campus is
- * spelled. `campusOptions[0]` is "All Campuses".
+ * Campus is the only cut the page offers: every card below reports the same
+ * "All Campuses" position, and narrowing to a single campus is what the
+ * control is for. The campus list is imported from `src/lib/organisation.ts`
+ * rather than typed out here — that shared module is the repo-wide source for
+ * campus names, so this page and the other dashboard pages can never disagree
+ * about how a campus is spelled. `campusOptions[0]` is "All Campuses".
  */
 export const filterControls: FilterControl[] = [
   {
     id: "campus",
-    label: "Select Campus",
+    label: "Campus",
     value: campusOptions[0],
     options: campusOptions,
   },
-  {
-    id: "department",
-    label: "Department",
-    value: departmentOptions[0],
-    options: departmentOptions,
-  },
-  {
-    id: "cost-centre",
-    label: "Cost Centre",
-    value: costCentreOptions[0],
-    options: costCentreOptions,
-  },
 ];
 
-/* ------------------------------------------------ Overheads (the four KPIs) */
+/* ------------------------------------------------------------ Headline KPIs */
 
 /**
- * The four overhead categories that drive the KPI cards and the variance
- * table. Actual spend across all four is 601.3M; total budget is 592.2M.
+ * The three figures across the top of the page.
+ *
+ * `pending-approvals` (65.5M) is a subset of `total-ytd`, not a fourth slice of
+ * it: it is money already committed but not yet released. It is therefore
+ * shown beside the total rather than added into it, which is also why the
+ * three do not sum to anything meaningful.
  */
-export const overheads: Overhead[] = [
+export const summaryMetrics: SummaryMetric[] = [
   {
-    id: "rent",
-    label: "Rent & Facilities",
-    amount: 96.4,
-    budget: 94.1,
+    id: "total-ytd",
+    label: "Total YTD Expenditure",
+    amount: 540.0,
     tone: "blue",
   },
   {
-    id: "wages",
-    label: "Wages & Salaries",
-    amount: 412.0,
-    budget: 404.7,
+    id: "campus-opex",
+    label: "Campus Operational Spend",
+    amount: 380.0,
     tone: "green",
   },
   {
-    id: "utilities",
-    label: "Utilities",
-    amount: 58.7,
-    budget: 61.2,
+    id: "pending-approvals",
+    label: "Pending Expense Approvals",
+    amount: 65.5,
     tone: "amber",
   },
+];
+
+/* ------------------------------------------------------ Expense distribution */
+
+/**
+ * The four categories the donut splits total spend into, largest first.
+ *
+ * These add up to 540.0M — the same figure the "Total YTD Expenditure" KPI
+ * shows — which is the point of the card: a reader must be able to tally the
+ * legend and land on the headline number.
+ */
+export const expenseDistribution: DistributionSlice[] = [
   {
-    id: "marketing",
-    label: "Marketing & Admissions",
-    amount: 34.2,
-    budget: 32.2,
-    tone: "violet",
+    id: "salaries",
+    label: "Salaries & Allowances",
+    amount: 280.0,
+    tone: "navy",
+  },
+  {
+    id: "utilities",
+    label: "Utilities & Maintenance",
+    amount: 115.0,
+    tone: "blue",
+  },
+  {
+    id: "materials",
+    label: "Instructional Materials",
+    amount: 90.0,
+    tone: "sky",
+  },
+  {
+    id: "cocurricular",
+    label: "Co-curricular & Ops",
+    amount: 55.0,
+    tone: "mist",
   },
 ];
 
-/* ------------------------------------------------------- Derived figures */
-
-/** Formats an amount held in UGX millions, e.g. 412 -> "UGX 412.0M". */
-export const formatUgx = (millions: number) => `UGX ${millions.toFixed(1)}M`;
-
 /**
- * Total actual overhead spend across every category, in UGX millions.
+ * Total spend across the four distribution categories, in UGX millions.
  *
- * Used as the centre of the composition donut and as the denominator of
- * `overheadShare`. Currently 601.3M.
+ * Equals the "Total YTD Expenditure" KPI (540.0M) by design, and is what the
+ * donut's centre label shows.
  */
-export const totalOverheads = overheads.reduce(
-  (sum, overhead) => sum + overhead.amount,
+export const totalDistribution = expenseDistribution.reduce(
+  (sum, slice) => sum + slice.amount,
   0,
 );
 
-/**
- * Total budgeted overhead spend across every category, in UGX millions.
- *
- * The comparison figure for the "total" row of the variance table. Currently
- * 592.2M.
- */
-export const totalOverheadBudget = overheads.reduce(
-  (sum, overhead) => sum + overhead.budget,
-  0,
-);
+/** Share of total spend, as a percentage (e.g. 51.8 for salaries). */
+export const distributionShare = (millions: number) =>
+  (millions / totalDistribution) * 100;
 
-/** Share of total overhead spend, as a percentage (e.g. 68.5 for wages). */
-export const overheadShare = (millions: number) =>
-  (millions / totalOverheads) * 100;
+/* ---------------------------------------- Departmental budget vs. actual */
 
 /**
- * Movement against budget for one category, as a percentage.
+ * Budget and actual spend per department, in the order the chart plots them.
  *
- * Positive means over budget, negative means under budget. Every variance
- * shown on the page — on the KPI cards and in the table — comes from here, so
- * the two can never disagree.
+ * The order is budget size descending, so the grouped bars step down the card
+ * and it reads as a ranking without needing a sort control.
  */
-export const overheadVariance = (overhead: Overhead) =>
-  ((overhead.amount - overhead.budget) / overhead.budget) * 100;
-
-/**
- * Budget variance with an explicit direction, e.g. "+2.4%" or "−4.1%".
- *
- * Uses a real minus sign (U+2212) rather than a hyphen so it lines up with the
- * digits and does not look like a dash.
- */
-export const formatVariance = (percent: number) =>
-  `${percent >= 0 ? "+" : "−"}${Math.abs(percent).toFixed(1)}%`;
-
-/* ------------------------------------------------- Monthly spend trend */
-
-/**
- * Actual vs budgeted spend for each month of the academic year (Jul → Jun).
- *
- * The twelve `actual` values deliberately add up to the same 601.3M as the
- * four `overheads` above, and the twelve `budget` values add up to 598.0M.
- * That is on purpose: a viewer who tallies the monthly chart must arrive at
- * the same figure the KPI cards show, otherwise the page looks untrustworthy.
- */
-export const spendTrend: SpendPoint[] = [
-  { id: "jul", label: "Jul", actual: 48.2, budget: 49.0 },
-  { id: "aug", label: "Aug", actual: 49.0, budget: 48.0 },
-  { id: "sep", label: "Sep", actual: 57.0, budget: 53.0 },
-  { id: "oct", label: "Oct", actual: 50.8, budget: 51.0 },
-  { id: "nov", label: "Nov", actual: 49.9, budget: 50.0 },
-  { id: "dec", label: "Dec", actual: 44.3, budget: 46.0 },
-  { id: "jan", label: "Jan", actual: 55.0, budget: 52.0 },
-  { id: "feb", label: "Feb", actual: 50.4, budget: 51.0 },
-  { id: "mar", label: "Mar", actual: 54.0, budget: 52.0 },
-  { id: "apr", label: "Apr", actual: 49.2, budget: 50.0 },
-  { id: "may", label: "May", actual: 47.8, budget: 49.0 },
-  { id: "jun", label: "Jun", actual: 45.7, budget: 47.0 },
+export const departmentSpend: DepartmentSpend[] = [
+  { id: "academics", department: "Academics", budget: 240, actual: 110 },
+  { id: "boarding", department: "Boarding", budget: 145, actual: 55 },
+  { id: "admin-hr", department: "Admin & HR", budget: 98, actual: 52 },
+  { id: "transport", department: "Transport", budget: 57, actual: 43 },
+  { id: "ict", department: "ICT / Tech", budget: 51, actual: 34 },
+  { id: "sports", department: "Sports", budget: 38.5, actual: 21.5 },
+  { id: "health", department: "Health", budget: 26, actual: 19 },
 ];
 
-/**
- * Total actual spend across the monthly trend, in UGX millions.
- *
- * Equals `totalOverheads` (601.3M) by design — see the note on `spendTrend`.
- */
-export const trendActualTotal = spendTrend.reduce(
-  (sum, point) => sum + point.actual,
+/** Total budgeted spend across every department, in UGX millions (655.5M). */
+export const totalDepartmentBudget = departmentSpend.reduce(
+  (sum, row) => sum + row.budget,
+  0,
+);
+
+/** Total actual spend across every department, in UGX millions (334.5M). */
+export const totalDepartmentActual = departmentSpend.reduce(
+  (sum, row) => sum + row.actual,
   0,
 );
 
 /**
- * Total budgeted spend across the monthly trend, in UGX millions.
+ * The largest single departmental budget, in UGX millions.
  *
- * Shown in the chart caption next to the actual total. Currently 598.0M.
+ * Bars are scaled against this rather than against the sum of all budgets, so
+ * the widest bar always fills its track completely. Scaling against the total
+ * would leave every bar under half full and hard to compare by eye.
  */
-export const trendBudgetTotal = spendTrend.reduce(
-  (sum, point) => sum + point.budget,
-  0,
+export const peakDepartmentBudget = Math.max(
+  ...departmentSpend.map((row) => row.budget),
 );
 
-/**
- * The month with the highest actual spend.
- *
- * `reduce` walks the list keeping the running maximum, so no sorting or index
- * bookkeeping is needed. Sep (57.0M) wins for the current figures.
- */
-export const peakSpendMonth = spendTrend.reduce((peak, point) =>
-  point.actual > peak.actual ? point : peak,
-);
-
-/* --------------------------------------------------- Spend by campus */
+/* -------------------------------------- Requisitions pending approval */
 
 /**
- * Annual spend per campus — the same 601.3M total, split six ways.
+ * The highest-value requisitions still waiting on a signature.
  *
- * Campus names are shortened here ("Secondary Kibuli") because this list feeds
- * horizontal bar labels, where the full official name from
- * `src/lib/organisation.ts` would be too wide.
+ * Ordered by amount descending so the biggest commitment is read first. Every
+ * one of these sits inside `total-ytd` already — the money is committed, which
+ * is why the table is headed "pending approval" rather than "requested".
  */
-export const campusSpend: CampusSpendRow[] = [
-  { id: "nursery-kibuli", campus: "Nursery Kibuli", amount: 58.4 },
-  { id: "primary-kibuli", campus: "Primary Kibuli", amount: 142.8 },
-  { id: "secondary-kibuli", campus: "Secondary Kibuli", amount: 196.2 },
-  { id: "nursery-buwaate", campus: "Nursery Buwaate", amount: 41.7 },
-  { id: "primary-buwaate", campus: "Primary Buwaate", amount: 87.6 },
-  { id: "international", campus: "International School", amount: 74.6 },
+export const pendingRequisitions: Requisition[] = [
+  {
+    id: "po-2028-089",
+    code: "PO-2028-089",
+    description: "UNEB Exam Registration & Stationery Materials",
+    amount: 32.5,
+    campus: "Kibuli Main",
+    status: "Pending CFO Clearance",
+    tone: "attention",
+  },
+  {
+    id: "po-2028-092",
+    code: "PO-2028-092",
+    description: "Quarterly Generator Diesel Bulk Purchase (Shell Uganda)",
+    amount: 18.0,
+    campus: "Buwaate",
+    status: "Pending Procurement Verification",
+    tone: "review",
+  },
+  {
+    id: "po-2028-095",
+    code: "PO-2028-095",
+    description: "Sports Complex Grass & Facilities Renovation",
+    amount: 15.0,
+    campus: "All Campuses",
+    status: "Queued for Board Approval",
+    tone: "queued",
+  },
 ];
-
-/**
- * Total actual spend across every campus, in UGX millions.
- *
- * Equals `totalOverheads` (601.3M) by design, so the campus bars reconcile
- * with the KPI cards and the monthly chart.
- */
-export const totalCampusSpend = campusSpend.reduce(
-  (sum, row) => sum + row.amount,
-  0,
-);
-
-/**
- * The campus carrying the largest share of spend.
- *
- * Same reduce-as-running-maximum trick as `peakSpendMonth`. Secondary Kibuli
- * (196.2M) is the current leader.
- */
-export const topCampus = campusSpend.reduce((top, row) =>
-  row.amount > top.amount ? row : top,
-);
-
-/** Share of total campus spend, as a percentage (e.g. 32.6 for Secondary). */
-export const campusShare = (millions: number) =>
-  (millions / totalCampusSpend) * 100;
