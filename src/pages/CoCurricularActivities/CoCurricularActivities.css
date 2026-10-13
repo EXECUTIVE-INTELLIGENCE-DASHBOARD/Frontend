@@ -1,0 +1,505 @@
+/* Brand typography (Greenhill brand guidelines 2026): Montserrat.
+   Loaded here so it only affects this page. */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+.cc-page {
+  --cc-heading: var(--color-heading);
+  --cc-muted: var(--color-text-muted);
+  --cc-soft: var(--color-text-soft);
+  --cc-border: var(--color-border);
+
+  /* Colours reuse the app theme, so dark mode works automatically. */
+  --cc-accent: var(--color-accent);
+  --cc-warning: var(--color-warning);
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  /* Headline: Bold. Subhead: Semibold. Body copy: Regular. */
+  font-family: "Montserrat", Inter, ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------------- Heading */
+
+.cc-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cc-breadcrumb__item {
+  color: var(--cc-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.cc-breadcrumb__item--current {
+  color: var(--cc-heading);
+  font-weight: 600;
+}
+
+.cc-breadcrumb__sep {
+  color: var(--cc-soft);
+  font-size: 11px;
+}
+
+.cc-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px 20px;
+}
+
+.cc-page .cc-heading__title {
+  margin: 0;
+
+  color: var(--cc-heading);
+  font-size: clamp(1.2rem, 1.7vw, 1.45rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.cc-page .cc-heading__subtitle {
+  max-width: 42rem;
+  margin: 4px 0 0;
+
+  color: var(--cc-muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------- Campus filter */
+
+.cc-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  width: 220px;
+  max-width: 100%;
+}
+
+.cc-filter__label {
+  color: var(--cc-soft);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cc-filter__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cc-filter__select {
+  appearance: none;
+
+  width: 100%;
+  height: 36px;
+  padding: 0 34px 0 12px;
+
+  border: 1px solid var(--cc-border);
+  border-radius: 10px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  color: var(--cc-heading);
+
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.cc-filter__select:hover {
+  border-color: var(--color-border-strong);
+}
+
+.cc-filter__select:focus-visible {
+  outline: 2px solid var(--cc-accent);
+  outline-offset: 2px;
+}
+
+.cc-filter__caret {
+  position: absolute;
+  right: 11px;
+
+  color: var(--cc-muted);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------- Metrics */
+
+.cc-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.cc-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  padding: 12px 14px;
+
+  border: 1px solid var(--cc-border);
+  border-radius: 12px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.cc-metric__top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cc-metric__icon {
+  display: grid;
+  place-items: center;
+
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+
+  border-radius: 9px;
+}
+
+.cc-metric__label {
+  color: var(--cc-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.cc-metric__value {
+  color: var(--cc-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.cc-metric__track {
+  height: 5px;
+
+  border-radius: 999px;
+  background: var(--color-border-soft);
+
+  overflow: hidden;
+}
+
+.cc-metric__fill {
+  height: 100%;
+
+  border-radius: 999px;
+
+  transition: width 0.3s ease;
+}
+
+/* Tone helpers for the icon chips and the progress bars. */
+
+.cc-tone--accent {
+  background: color-mix(in srgb, var(--cc-accent) 14%, transparent);
+  color: var(--cc-accent);
+}
+
+.cc-tone--navy {
+  background: color-mix(in srgb, var(--cc-heading) 12%, transparent);
+  color: var(--cc-heading);
+}
+
+.cc-tone--warning {
+  background: color-mix(in srgb, var(--cc-warning) 16%, transparent);
+  color: var(--cc-warning);
+}
+
+.cc-fill--accent {
+  background: var(--cc-accent);
+}
+
+.cc-fill--navy {
+  background: var(--cc-heading);
+}
+
+.cc-fill--warning {
+  background: var(--cc-warning);
+}
+
+.cc-page .cc-note {
+  max-width: none;
+  margin: 0;
+  padding: 7px 12px;
+
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 10px;
+
+  background: var(--color-surface-tint);
+  color: var(--color-text-secondary);
+
+  font-size: 10.5px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------- Card */
+
+.cc-card {
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid var(--cc-border);
+  border-radius: 14px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+
+  overflow: hidden;
+}
+
+.cc-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 12px;
+
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--cc-border);
+}
+
+.cc-card__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin: 0;
+
+  color: var(--color-heading-alt);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.cc-card__dot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 999px;
+  background: var(--cc-accent);
+}
+
+.cc-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.cc-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  height: 32px;
+  padding: 0 10px;
+
+  border: 1px solid var(--cc-border);
+  border-radius: 10px;
+
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+
+.cc-select:focus-within {
+  outline: 2px solid var(--cc-accent);
+  outline-offset: 2px;
+}
+
+.cc-select__field {
+  appearance: none;
+
+  border: 0;
+  background: transparent;
+  color: inherit;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.cc-select__field:focus-visible {
+  outline: none;
+}
+
+.cc-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  height: 32px;
+  padding: 0 12px;
+
+  border: 1px solid transparent;
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: filter 0.2s ease;
+}
+
+.cc-button--primary {
+  background: var(--cc-accent);
+  color: #fff;
+}
+
+.cc-button--primary:hover {
+  filter: brightness(0.93);
+}
+
+.cc-button:focus-visible {
+  outline: 2px solid var(--cc-accent);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- Table */
+
+.cc-table-wrap {
+  overflow-x: auto;
+}
+
+.cc-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  font-size: 12px;
+}
+
+.cc-table thead th {
+  padding: 8px 14px;
+
+  border-bottom: 1px solid var(--cc-border);
+
+  background: var(--color-surface-subtle);
+  color: var(--cc-soft);
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cc-table tbody td {
+  padding: 9px 14px;
+
+  border-bottom: 1px solid var(--color-border-soft);
+
+  color: var(--color-text);
+  vertical-align: middle;
+}
+
+.cc-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.cc-table tbody tr:hover {
+  background: var(--color-surface-hover);
+}
+
+.cc-table .cc-num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.cc-muted {
+  color: var(--cc-muted);
+}
+
+.cc-strong {
+  color: var(--cc-heading);
+  font-weight: 700;
+}
+
+.cc-girls {
+  color: var(--cc-accent);
+  font-weight: 600;
+}
+
+.cc-boys {
+  color: var(--cc-warning);
+  font-weight: 600;
+}
+
+.cc-activity {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cc-activity__icon {
+  display: grid;
+  place-items: center;
+
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+
+  border-radius: 8px;
+
+  background: color-mix(in srgb, var(--cc-accent) 12%, transparent);
+  color: var(--cc-accent);
+}
+
+.cc-activity__name {
+  color: var(--cc-heading);
+  font-weight: 600;
+}
+
+.cc-pill {
+  display: inline-block;
+
+  min-width: 30px;
+  padding: 2px 9px;
+
+  border-radius: 999px;
+
+  background: var(--color-surface-tint);
+  color: var(--color-text-secondary);
+
+  font-size: 11.5px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------ Responsive */
+
+@media (max-width: 860px) {
+  .cc-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cc-filter {
+    width: 100%;
+  }
+}
