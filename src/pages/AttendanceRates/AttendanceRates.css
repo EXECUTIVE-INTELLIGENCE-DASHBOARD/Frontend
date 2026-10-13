@@ -216,6 +216,23 @@
   color: var(--color-text-secondary);
 }
 
+/* Summary card chips use the shared palette. The status badges in the tables
+   keep their green, amber and red, because those colours carry meaning. */
+.ar-metric__icon.ar-tone--green {
+  background: var(--pal-sky);
+  color: #fff;
+}
+
+.ar-metric__icon.ar-tone--amber {
+  background: var(--color-heading);
+  color: var(--color-surface);
+}
+
+.ar-metric__icon.ar-tone--red {
+  background: var(--pal-amber);
+  color: #fff;
+}
+
 /* ------------------------------------------------------- Prototype note */
 
 /* ----------------------------------------------------------------- Grid */
@@ -315,18 +332,18 @@
 }
 
 .ar-legend__swatch--primary,
-.ar-legend__swatch--present {
-  --swatch: var(--ar-green);
+.ar-legend__swatch--absent {
+  --swatch: var(--color-heading);
 }
 
 .ar-legend__swatch--target,
-.ar-legend__swatch--late {
-  --swatch: var(--ar-blue);
+.ar-legend__swatch--present {
+  --swatch: var(--pal-sky);
 }
 
 .ar-legend__swatch--previous,
-.ar-legend__swatch--absent {
-  --swatch: var(--ar-slate);
+.ar-legend__swatch--late {
+  --swatch: var(--pal-amber);
 }
 
 .ar-legend__swatch--target {
@@ -378,16 +395,16 @@
 }
 
 .ar-chart__line--primary {
-  --line: var(--ar-green);
+  --line: var(--color-heading);
 }
 
 .ar-chart__line--target {
-  --line: var(--ar-blue);
+  --line: var(--pal-sky);
   stroke-dasharray: 5 4;
 }
 
 .ar-chart__line--previous {
-  --line: var(--ar-slate);
+  --line: var(--pal-amber);
 }
 
 .ar-chart__point {
@@ -395,27 +412,27 @@
 }
 
 .ar-chart__point--primary {
-  --point: var(--ar-green);
+  --point: var(--color-heading);
 }
 
 .ar-chart__point--target {
-  --point: var(--ar-blue);
+  --point: var(--pal-sky);
 }
 
 .ar-chart__point--previous {
-  --point: var(--ar-slate);
+  --point: var(--pal-amber);
 }
 
 .ar-chart__bar--present {
-  fill: var(--ar-green);
+  fill: var(--pal-sky);
 }
 
 .ar-chart__bar--late {
-  fill: var(--ar-blue);
+  fill: var(--pal-amber);
 }
 
 .ar-chart__bar--absent {
-  fill: var(--ar-slate);
+  fill: var(--color-heading);
 }
 
 .ar-page .ar-chart__note {
@@ -478,11 +495,11 @@
   padding: 0 12px;
   flex-shrink: 0;
 
-  border: 1px solid var(--ar-border);
+  border: 1px solid var(--color-heading);
   border-radius: 8px;
 
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
+  background: var(--color-heading);
+  color: var(--color-surface);
 
   font-family: inherit;
   font-size: 12px;
@@ -490,14 +507,11 @@
 
   cursor: pointer;
 
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease;
+  transition: filter 0.2s ease;
 }
 
 .ar-ghost-button:hover {
-  border-color: var(--color-border-strong);
-  background: var(--color-surface-hover);
+  filter: brightness(1.2);
 }
 
 /* ---------------------------------------------------------------- Tables */
@@ -551,7 +565,8 @@
   text-align: right;
 }
 
-.ar-strong {
+.ar-strong,
+.ar-table tbody td.ar-strong {
   color: var(--ar-heading);
   font-weight: 600;
 }
