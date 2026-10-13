@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 
 import { AllVendorsDialog } from "./AllVendorsDialog";
@@ -14,6 +14,15 @@ const categoryLabel = (id: string) =>
 
 export function TopVendorsCard() {
   const [showAll, setShowAll] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  // Close the dialog and give keyboard focus back to the button that opened
+  // it. This works even when the click did not focus the button itself, as
+  // happens in Safari and Firefox on a Mac.
+  const closeAllVendors = () => {
+    setShowAll(false);
+    triggerRef.current?.focus();
+  };
 
   return (
     <section className="pf-card">
@@ -42,6 +51,7 @@ export function TopVendorsCard() {
 
       <div className="pf-card__footer">
         <button
+          ref={triggerRef}
           type="button"
           className="pf-link-button"
           aria-haspopup="dialog"
@@ -52,7 +62,7 @@ export function TopVendorsCard() {
         </button>
       </div>
 
-      <AllVendorsDialog open={showAll} onClose={() => setShowAll(false)} />
+      <AllVendorsDialog open={showAll} onClose={closeAllVendors} />
     </section>
   );
 }
