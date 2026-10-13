@@ -22,7 +22,7 @@ import {
 
 export function DepartmentBudgetCard() {
   return (
-    <section className="exp-card">
+    <section className="exp-card exp-card--navy">
       <div className="exp-card__header">
         <h2 className="exp-card__title">
           Departmental Budget vs. Actual Expenditure
@@ -34,7 +34,7 @@ export function DepartmentBudgetCard() {
           <li className="exp-legend__item">
             <span
               className="exp-legend__dot"
-              style={{ background: "var(--chart-mist)" }}
+              style={{ background: "var(--exp-grey)" }}
               aria-hidden="true"
             />
             Budget
@@ -43,7 +43,7 @@ export function DepartmentBudgetCard() {
           <li className="exp-legend__item">
             <span
               className="exp-legend__dot"
-              style={{ background: "var(--chart-navy)" }}
+              style={{ background: "var(--exp-navy)" }}
               aria-hidden="true"
             />
             Expenditure

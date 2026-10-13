@@ -12,7 +12,7 @@
  */
 
 /**
- * One dropdown in the filter rail on the left of the page.
+ * One dropdown in the compact filter row above the KPI cards.
  *
  * `value` is the currently selected option and always has to be one of
  * `options` — the first entry of each option list is the "All ..." default.
@@ -32,10 +32,13 @@ export interface FilterControl {
  * Colour family for a headline KPI card.
  *
  * The tone drives the `--tone` custom property that CSS uses for the card's
- * left accent bar. Because the value is a union (not `string`), TypeScript
- * rejects a typo such as `"gren"` at the call site.
+ * accent bar and its icon chip. The three names are brand-palette names, not
+ * hues: `navy`, `cyan` and `gold` are mapped to hex values once, in
+ * `ExpenseManagement.css`, so re-tinting the row never means touching
+ * TypeScript. Because the value is a union (not `string`), TypeScript rejects
+ * a typo such as `"gren"` at the call site.
  */
-export type MetricTone = "blue" | "green" | "amber";
+export type MetricTone = "navy" | "cyan" | "gold";
 
 /**
  * One headline figure in the KPI row at the top of the page.
@@ -57,12 +60,12 @@ export interface SummaryMetric {
 /**
  * Colour family for a donut slice.
  *
- * This is a four-stop blue ramp (navy, blue, sky, mist) rather than the three
- * KPI tones: a ring with green and amber slices would look like it belonged to
- * three different charts, and the legend labels already carry the meaning. Hue
- * therefore only has to encode rank.
+ * Four distinct brand-palette colours rather than a single-hue ramp: the four
+ * categories are unrelated spending lines, so the slice colours only have to
+ * separate them, and drawing them from the palette keeps the page on brand.
+ * The legend labels already carry the meaning.
  */
-export type SliceTone = "navy" | "blue" | "sky" | "mist";
+export type SliceTone = "navy" | "cyan" | "purple" | "gold";
 
 /** One slice of the "Expense Distribution" donut. */
 export interface DistributionSlice {

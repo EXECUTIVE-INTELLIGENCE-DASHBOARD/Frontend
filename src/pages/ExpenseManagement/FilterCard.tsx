@@ -1,5 +1,5 @@
 /**
- * A single filter in the left-hand rail.
+ * A single filter in the compact row above the KPI cards.
  *
  * The visible "control" is a styled `<div>`; the real, accessible control is a
  * native `<select>` stretched invisibly over it (`.exp-filter__select` in

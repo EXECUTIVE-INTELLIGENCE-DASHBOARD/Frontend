@@ -16,14 +16,15 @@ import {
 import type { SliceTone } from "./expenseManagement.types";
 
 /**
- * Slice tone -> ring colour. These are theme-aware `--chart-*` tokens, so the
- * ring re-colours itself in dark mode without any code change here.
+ * Slice tone -> ring colour. These are the page-local brand tokens declared
+ * on `.exp-page`, so the ring and the legend dots always agree and a palette
+ * change only has to happen in `ExpenseManagement.css`.
  */
 const COLORS: Record<SliceTone, string> = {
-  navy: "var(--chart-navy)",
-  blue: "var(--chart-blue)",
-  sky: "var(--chart-sky)",
-  mist: "var(--chart-mist)",
+  navy: "var(--exp-navy)",
+  cyan: "var(--exp-cyan)",
+  purple: "var(--exp-purple)",
+  gold: "var(--exp-gold)",
 };
 
 /**
@@ -34,7 +35,7 @@ const ranked = [...expenseDistribution].sort((a, b) => b.amount - a.amount);
 
 export function ExpenseDistributionCard() {
   return (
-    <section className="exp-card">
+    <section className="exp-card exp-card--cyan">
       <div className="exp-card__header">
         <h2 className="exp-card__title">Expense Distribution</h2>
       </div>

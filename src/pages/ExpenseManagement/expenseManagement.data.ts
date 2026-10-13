@@ -9,6 +9,10 @@
  *
  * All money values are plain numbers of **UGX millions**; run them through
  * `formatUgx` or `formatMillions` only when rendering.
+ *
+ * Tone names (`navy`, `cyan`, `gold`, `purple`) refer to the brand palette.
+ * The hex values live in `ExpenseManagement.css`, so the colours can be
+ * adjusted without editing this module.
  */
 
 import { campusOptions } from "../../lib/organisation";
@@ -38,7 +42,8 @@ export const formatMillions = (millions: number) => `${millions}M`;
 /* ----------------------------------------------------------- Filter options */
 
 /**
- * The filter rail on the left of the page, in top-to-bottom order.
+ * The filters shown in the compact row above the KPI cards, in left-to-right
+ * order.
  *
  * Campus is the only cut the page offers: every card below reports the same
  * "All Campuses" position, and narrowing to a single campus is what the
@@ -71,19 +76,19 @@ export const summaryMetrics: SummaryMetric[] = [
     id: "total-ytd",
     label: "Total YTD Expenditure",
     amount: 540.0,
-    tone: "blue",
+    tone: "navy",
   },
   {
     id: "campus-opex",
     label: "Campus Operational Spend",
     amount: 380.0,
-    tone: "green",
+    tone: "cyan",
   },
   {
     id: "pending-approvals",
     label: "Pending Expense Approvals",
     amount: 65.5,
-    tone: "amber",
+    tone: "gold",
   },
 ];
 
@@ -107,19 +112,19 @@ export const expenseDistribution: DistributionSlice[] = [
     id: "utilities",
     label: "Utilities & Maintenance",
     amount: 115.0,
-    tone: "blue",
+    tone: "cyan",
   },
   {
     id: "materials",
     label: "Instructional Materials",
     amount: 90.0,
-    tone: "sky",
+    tone: "purple",
   },
   {
     id: "cocurricular",
     label: "Co-curricular & Ops",
     amount: 55.0,
-    tone: "mist",
+    tone: "gold",
   },
 ];
 

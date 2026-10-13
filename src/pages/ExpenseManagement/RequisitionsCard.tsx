@@ -10,7 +10,7 @@ import { formatUgx, pendingRequisitions } from "./expenseManagement.data";
 
 export function RequisitionsCard() {
   return (
-    <section className="exp-card">
+    <section className="exp-card exp-card--navy">
       <div className="exp-card__header">
         <h2 className="exp-card__title">
           High-Value Requisitions Pending Approval
