@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 
+import { AllVendorsDialog } from "./AllVendorsDialog";
 import {
   formatUgx,
   spendCategories,
@@ -11,6 +13,8 @@ const categoryLabel = (id: string) =>
   spendCategories.find((category) => category.id === id)?.shortLabel ?? id;
 
 export function TopVendorsCard() {
+  const [showAll, setShowAll] = useState(false);
+
   return (
     <section className="pf-card">
       <div className="pf-card__header">
@@ -37,11 +41,18 @@ export function TopVendorsCard() {
       </ol>
 
       <div className="pf-card__footer">
-        <button type="button" className="pf-link-button">
+        <button
+          type="button"
+          className="pf-link-button"
+          aria-haspopup="dialog"
+          onClick={() => setShowAll(true)}
+        >
           View All {totalVendorCount} Vendors
           <ArrowRight size={15} aria-hidden="true" />
         </button>
       </div>
+
+      <AllVendorsDialog open={showAll} onClose={() => setShowAll(false)} />
     </section>
   );
 }
