@@ -86,7 +86,7 @@
 }
 
 .creditor-name strong {
-  color: #26344d;
+  color: var(--color-heading-alt);
   font-size: 13px;
   font-weight: 500;
   line-height: 1.35;
@@ -112,7 +112,7 @@
 }
 
 .outstanding-creditors__amount {
-  color: #202020;
+  color: var(--color-heading);
   font-size: 13px;
   font-weight: 400;
   text-align: right;

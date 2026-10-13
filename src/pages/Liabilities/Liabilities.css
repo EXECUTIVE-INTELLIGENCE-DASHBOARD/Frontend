@@ -1,12 +1,11 @@
-
 .liabilities-page {
   display: flex;
   flex-direction: column;
   gap: 24px;
   width: 100%;
   min-width: 0;
-  padding: 4px 16px 40px;
-
+  padding: 0 0 40px;
+  margin: 0;
   /* Follow the active theme */
   background: var(--color-bg);
   color: var(--color-heading);
@@ -30,7 +29,6 @@
   min-width: 0;
 }
 
-
 .liabilities-page__details {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
@@ -40,7 +38,6 @@
   min-width: 0;
   box-sizing: border-box;
 }
-
 
 .liabilities-page__details > * {
   min-width: 0;
