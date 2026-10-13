@@ -1,11 +1,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import {
-  campusOptions,
-  prototypeNote,
-  spendCategories,
-} from "./procurementFinancials.data";
+import { campusOptions, spendCategories } from "./procurementFinancials.data";
 import { SpendSummaryCard } from "./SpendSummaryCard";
 import { TopVendorsCard } from "./TopVendorsCard";
 import { SpendAllocationCard } from "./SpendAllocationCard";
@@ -18,31 +14,7 @@ export function ProcurementFinancials() {
 
   return (
     <div className="pf-page">
-      <nav className="pf-breadcrumb" aria-label="Breadcrumb">
-        <span className="pf-breadcrumb__item">Finance &amp; Procurement</span>
-
-        <span className="pf-breadcrumb__sep" aria-hidden="true">
-          /
-        </span>
-
-        <span
-          className="pf-breadcrumb__item pf-breadcrumb__item--current"
-          aria-current="page"
-        >
-          Procurement Financials
-        </span>
-      </nav>
-
-      <div className="pf-heading">
-        <div className="pf-heading__text">
-          <h1 className="pf-heading__title">Procurement Financials</h1>
-
-          <p className="pf-heading__subtitle">
-            Track procurement spend, top vendors and settlement status across
-            works, services and goods.
-          </p>
-        </div>
-
+      <div className="pf-toolbar">
         <div className="pf-filter">
           <label className="pf-filter__label" htmlFor="pf-campus-filter">
             Select Campus
@@ -76,8 +48,6 @@ export function ProcurementFinancials() {
           <SpendSummaryCard key={category.id} category={category} />
         ))}
       </div>
-
-      <p className="pf-note">{prototypeNote}</p>
 
       <div className="pf-grid">
         <TopVendorsCard />
