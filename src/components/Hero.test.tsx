@@ -1,36 +1,10 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { getCurrentUserProfile } from "../lib/userProfile";
 import { Hero } from "./Hero";
 import { ThemeProvider } from "../context/ThemeContext";
 
-vi.mock("../lib/userProfile", () => ({
-  getCurrentUserProfile: vi.fn(),
-}));
-
 describe("Hero", () => {
-  beforeEach(() => {
-    vi.mocked(getCurrentUserProfile).mockResolvedValue({
-      name: "Maruf Hossen",
-      role: "UI Designer",
-      email: "maruf.hossen@greenhill.ac.ug",
-      initials: "MH",
-      fields: [
-        {
-          id: "email",
-          label: "Email",
-          value: "maruf.hossen@greenhill.ac.ug",
-        },
-        {
-          id: "staff-id",
-          label: "Staff ID",
-          value: "GH-STAFF-0284",
-        },
-      ],
-    });
-  });
-
   const renderHero = (onSelectPage?: (pageId: string) => void) =>
     render(
       <ThemeProvider>
@@ -86,14 +60,14 @@ describe("Hero", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the user profile", async () => {
+  it("renders the hardcoded user profile", () => {
     renderHero();
 
     expect(
       screen.getByRole("button", { name: "Open user profile" }),
     ).toBeInTheDocument();
 
-    expect(await screen.findByText("Maruf Hossen")).toBeInTheDocument();
+    expect(screen.getByText("Maruf Hossen")).toBeInTheDocument();
     expect(screen.getByText("UI Designer")).toBeInTheDocument();
   });
 
@@ -127,15 +101,16 @@ describe("Hero", () => {
     expect(screen.getByText(/No pages match/i)).toBeInTheDocument();
   });
 
-  it("reveals the signed-in user's details from the profile", async () => {
+    it("reveals the hardcoded user's details from the profile", async () => {
     renderHero();
 
-    // Profile details should be hidden initially.
     expect(
       screen.queryByText("maruf.hossen@greenhill.ac.ug"),
     ).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Open user profile" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Open user profile" }),
+    );
 
     expect(
       await screen.findByText("maruf.hossen@greenhill.ac.ug"),
