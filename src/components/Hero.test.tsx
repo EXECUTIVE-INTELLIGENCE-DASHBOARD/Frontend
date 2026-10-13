@@ -23,9 +23,13 @@ describe("Hero", () => {
   it("renders the current date", () => {
     renderHero();
 
-    expect(
-      screen.getByText("01 August, 2026"),
-    ).toBeInTheDocument();
+    const expectedDate = new Date().toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+
+    expect(screen.getByText(expectedDate)).toBeInTheDocument();
   });
 
   it("renders the search field", () => {
