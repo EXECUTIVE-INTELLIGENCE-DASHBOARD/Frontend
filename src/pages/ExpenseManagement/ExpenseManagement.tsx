@@ -9,8 +9,9 @@
  * Layout, top to bottom:
  *   1. breadcrumb       — where we are in the nav tree
  *   2. heading          — title, subtitle, refresh action
- *   3. `.exp-controls`  — filter rail (left) beside the four overhead KPIs
- *   4. `.exp-split` x2  — donut + trend chart, then campus bars + variance table
+ *   3. `.exp-controls`  — campus filter (left) beside the three headline KPIs
+ *   4. `.exp-split`     — expense distribution donut + departmental budget bars
+ *   5. requisitions     — full-width table of spend awaiting approval
  *
  * Note: the component must not render a `<main>` element of its own. `App.tsx`
  * already wraps every page in `<main className="app-shell layout-content">`,
@@ -18,13 +19,12 @@
  */
 import { RefreshCw } from "lucide-react";
 
-import { filterControls, overheads } from "./expenseManagement.data";
+import { filterControls, summaryMetrics } from "./expenseManagement.data";
 import { FilterCard } from "./FilterCard";
-import { OverheadCard } from "./OverheadCard";
-import { SpendBreakdownCard } from "./SpendBreakdownCard";
-import { SpendTrendCard } from "./SpendTrendCard";
-import { CampusSpendCard } from "./CampusSpendCard";
-import { BudgetVarianceCard } from "./BudgetVarianceCard";
+import { SummaryMetricCard } from "./SummaryMetricCard";
+import { ExpenseDistributionCard } from "./ExpenseDistributionCard";
+import { DepartmentBudgetCard } from "./DepartmentBudgetCard";
+import { RequisitionsCard } from "./RequisitionsCard";
 
 import "./ExpenseManagement.css";
 
@@ -51,7 +51,7 @@ export function ExpenseManagement() {
           <h1 className="exp-heading__title">Expense Management</h1>
 
           <p className="exp-heading__subtitle">
-            Tracks operating spend across rent, wages, utilities and marketing.
+            Operating and capital expenditure across departments and campuses.
           </p>
         </div>
 
@@ -65,7 +65,7 @@ export function ExpenseManagement() {
       </div>
 
       {/* Either list below can grow without editing this file: the rail is
-          driven by `filterControls` and the KPI row by `overheads`. */}
+          driven by `filterControls` and the KPI row by `summaryMetrics`. */}
       <div className="exp-controls">
         <div className="exp-filters">
           {filterControls.map((control) => (
@@ -74,8 +74,8 @@ export function ExpenseManagement() {
         </div>
 
         <div className="exp-metrics">
-          {overheads.map((overhead) => (
-            <OverheadCard key={overhead.id} overhead={overhead} />
+          {summaryMetrics.map((metric) => (
+            <SummaryMetricCard key={metric.id} metric={metric} />
           ))}
         </div>
       </div>
@@ -83,14 +83,13 @@ export function ExpenseManagement() {
       {/* `.exp-split` is a two-column grid: a narrow card on the left and a
           wide one on the right. At <=1180px CSS collapses it to one column. */}
       <div className="exp-split">
-        <SpendBreakdownCard />
-        <SpendTrendCard />
+        <ExpenseDistributionCard />
+        <DepartmentBudgetCard />
       </div>
 
-      <div className="exp-split">
-        <CampusSpendCard />
-        <BudgetVarianceCard />
-      </div>
+      {/* Full width, unlike the split above: the table has five columns and
+          needs the whole content area to avoid scrolling sideways. */}
+      <RequisitionsCard />
     </div>
   );
 }

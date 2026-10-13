@@ -186,10 +186,11 @@
 
 /* -------------------------------------------------- Overhead KPI cards */
 
-/* Two cards per row by default; four per row on very wide screens. */
+/* Three headline figures per row, collapsing to two then one as the page
+   narrows. */
 .exp-metrics {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -795,19 +796,60 @@
   color: var(--color-accent);
 }
 
-/* ------------------------------------------------------------- Responsive */
+/* ----------------------------------------------- Requisition table */
 
-/* One row of four once the viewport can seat them without cramping. */
-@media (min-width: 1600px) {
-  .exp-metrics {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
+/* The description is the only column allowed to wrap. The other four hold
+   short, fixed-shape values, and letting them wrap as well would leave every
+   row a different height for no benefit. */
+.exp-table__item {
+  display: block;
+  max-width: 340px;
 
-  /* The columns are narrower here, so step the figure down to keep it on one line. */
-  .exp-metric__value {
-    font-size: 1.5rem;
-  }
+  color: var(--exp-heading);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: normal;
 }
+
+.exp-table__campus {
+  color: var(--exp-muted);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+/*
+ * Approval-chain pills. `attention` borrows the warning colour because that
+ * row is the one waiting on a signature; `queued` is deliberately quiet,
+ * since nothing is expected of anyone yet.
+ */
+.exp-pill--attention {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.exp-pill--review {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.exp-pill--queued {
+  background: var(--color-surface-tint);
+  color: var(--exp-muted);
+}
+
+/* -------------------------------------------- Departmental budget bars */
+
+/* Each row stacks two tracks: budget on top, expenditure underneath. The
+   budget bar is the lighter of the two, so the eye lands on actual spend. */
+.exp-bars__fill--budget {
+  background: var(--chart-mist);
+}
+
+.exp-bars__fill--actual {
+  background: linear-gradient(90deg, var(--chart-blue), var(--chart-navy));
+}
+
+/* ------------------------------------------------------------- Responsive */
 
 @media (max-width: 1180px) {
   .exp-controls {
