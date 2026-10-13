@@ -79,7 +79,7 @@ export function LiabilitiesComposition() {
 
         <div className="liabilities-composition__chart-center">
           <strong>UGX 142.5M</strong>
-          <span>TOTAL LIAB</span>
+          <span>TOTAL LIABILITIES</span>
         </div>
       </div>
 

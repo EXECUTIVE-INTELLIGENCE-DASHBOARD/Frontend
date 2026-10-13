@@ -141,14 +141,16 @@ export function RevenueGraph() {
             />
 
             <Tooltip
-              formatter={(value, name) => [
-                `UGX ${Number(value ?? 0).toFixed(1)}M`,
-                name === "realized"
-                  ? "Realized"
-                  : name === "forecast"
-                    ? "Forecast"
-                    : "Target / budget",
-              ]}
+              formatter={(value, name) => {
+                const label =
+                  name === "Realized"
+                    ? "Realized"
+                    : name === "Forecast"
+                      ? "Forecast"
+                      : "Target / budget";
+
+                return [`UGX ${Number(value ?? 0).toFixed(1)}M`, label];
+              }}
               contentStyle={{
                 backgroundColor: "var(--color-surface)",
                 color: "var(--color-text)",
@@ -156,20 +158,6 @@ export function RevenueGraph() {
                 borderRadius: 8,
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.12)",
                 fontSize: 12,
-              }}
-            />
-
-            <ReferenceLine
-              x="Aug"
-              stroke="var(--color-text-muted)"
-              strokeDasharray="2 4"
-              strokeWidth={1.2}
-              label={{
-                value: "FORECAST",
-                position: "insideTopRight",
-                fill: "var(--color-text-muted)",
-                fontSize: 11,
-                fontWeight: 600,
               }}
             />
 

@@ -92,10 +92,10 @@
 .revenue-summary__amount {
   min-width: 0;
   margin: 0;
-  color: var(--color-heading, #111a30);
-  font-size: clamp(18px, 1.55vw, 24px);
-  font-weight: 750;
-  letter-spacing: -0.5px;
+  color: #202020;
+  font-size: clamp(16px, 1.3vw, 20px);
+  font-weight: 400;
+  letter-spacing: -0.2px;
   line-height: 1.25;
   overflow-wrap: anywhere;
 }
@@ -321,23 +321,23 @@
 }
 
 .stream-item__fill--clubs {
-  background: #5da0ff;
+  background: #172448;
 }
 
 .stream-item__fill--admission {
-  background: #94a3b8;
+  background: #172448;
 }
 
 .stream-item__fill--transport {
-  background: #0ea5e9;
+  background: #172448;
 }
 
 .stream-item__fill--donations {
-  background: #818cf8;
+  background: #172448;
 }
 
 .stream-item__fill--alumni {
-  background: #8b5cf6;
+  background: #172448;
 }
 
 /* ========================================

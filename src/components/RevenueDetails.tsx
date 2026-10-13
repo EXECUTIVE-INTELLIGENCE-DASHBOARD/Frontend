@@ -33,21 +33,21 @@ const summaryCards = [
 const campusRows = [
   {
     campus: "Kibuli Main Campus",
-    enrollment: "1,250 Students",
+    enrollment: "1,250 ",
     realized: "UGX 380.0M",
     arrears: "UGX 95.0M",
     collection: 80.0,
   },
   {
     campus: "Buwaate Campus",
-    enrollment: "850 Students",
+    enrollment: "850 ",
     realized: "UGX 210.5M",
     arrears: "UGX 114.5M",
     collection: 64.8,
   },
   {
     campus: "Annex / Preschool Branch",
-    enrollment: "100 Students",
+    enrollment: "100 ",
     realized: "UGX 30.0M",
     arrears: "UGX 20.0M",
     collection: 60.0,
