@@ -19,17 +19,6 @@ describe("CoCurricularActivities", () => {
     vi.restoreAllMocks();
   });
 
-  it("renders the page heading", () => {
-    render(<CoCurricularActivities />);
-
-    expect(
-      screen.getByRole("heading", {
-        name: "Co-Curricular Activities",
-        level: 1,
-      }),
-    ).toBeInTheDocument();
-  });
-
   it("renders the three headline cards for all campuses", () => {
     render(<CoCurricularActivities />);
 
@@ -79,14 +68,25 @@ describe("CoCurricularActivities", () => {
     expect(screen.getAllByRole("row")).toHaveLength(6);
   });
 
+  it("shows the shared campus filter", () => {
+    render(<CoCurricularActivities />);
+
+    expect(
+      screen.getByRole("button", { name: "Campus: All Campuses" }),
+    ).toBeInTheDocument();
+  });
+
   it("changes the figures when a campus is selected", () => {
     render(<CoCurricularActivities />);
 
-    const campus = screen.getByLabelText("Select Campus");
+    fireEvent.click(screen.getByRole("button", { name: "Campus: All Campuses" }));
+    fireEvent.click(
+      within(screen.getByRole("listbox")).getByText("Kibuli Main Campus"),
+    );
 
-    expect(campus).toHaveValue(allCampusesLabel);
-
-    fireEvent.change(campus, { target: { value: "Kibuli Main Campus" } });
+    expect(
+      screen.getByRole("button", { name: "Campus: Kibuli Main Campus" }),
+    ).toBeInTheDocument();
 
     const cards = screen.getAllByRole("article");
 
@@ -108,7 +108,12 @@ describe("CoCurricularActivities", () => {
       "12",
     ]);
 
-    fireEvent.change(campus, { target: { value: allCampusesLabel } });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Campus: Kibuli Main Campus" }),
+    );
+    fireEvent.click(
+      within(screen.getByRole("listbox")).getByText("All Campuses"),
+    );
 
     expect(
       within(screen.getAllByRole("article")[0]).getByText("94.2%"),

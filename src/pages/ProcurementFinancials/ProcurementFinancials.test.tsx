@@ -2,14 +2,13 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { ProcurementFinancials } from "./ProcurementFinancials";
+import { allVendors, vendorsTotalSpend } from "./procurementFinancials.data";
 
 describe("ProcurementFinancials", () => {
-  it("renders the page heading", () => {
+  it("renders the campus filter", () => {
     render(<ProcurementFinancials />);
 
-    expect(
-      screen.getByRole("heading", { name: "Procurement Financials", level: 1 }),
-    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Select Campus")).toBeInTheDocument();
   });
 
   it("renders the three spend category cards", () => {
@@ -102,5 +101,93 @@ describe("ProcurementFinancials", () => {
     fireEvent.change(campus, { target: { value: "Kibuli Main Campus" } });
 
     expect(campus).toHaveValue("Kibuli Main Campus");
+  });
+});
+
+describe("all vendors dialog", () => {
+  const openDialog = () => {
+    render(<ProcurementFinancials />);
+
+    const trigger = screen.getByRole("button", {
+      name: /View All 34 Vendors/i,
+    });
+
+    fireEvent.click(trigger);
+
+    return trigger;
+  };
+
+  it("is closed until View All Vendors is clicked", () => {
+    render(<ProcurementFinancials />);
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("lists all 34 vendors and their total", () => {
+    openDialog();
+
+    const dialog = screen.getByRole("dialog", { name: "All 34 Vendors" });
+
+    // One header row plus 34 vendors.
+    expect(within(dialog).getAllByRole("row")).toHaveLength(35);
+    expect(
+      within(dialog).getByText("Scholastic Publishers Ltd"),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByText("Wakiso Garden Services"),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByText(/34 vendors · UGX 480\.0M total spend/),
+    ).toBeInTheDocument();
+  });
+
+  it("closes with Escape and returns focus to the button", () => {
+    const trigger = openDialog();
+
+    expect(
+      screen.getByRole("button", { name: "Close vendor list" }),
+    ).toHaveFocus();
+
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
+  it("closes with the close button", () => {
+    openDialog();
+
+    fireEvent.click(screen.getByRole("button", { name: "Close vendor list" }));
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("closes when the backdrop is clicked, but not when the panel is", () => {
+    openDialog();
+
+    fireEvent.click(screen.getByRole("dialog"));
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("vendors-backdrop"));
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+});
+
+describe("vendor data", () => {
+  it("has 34 vendors that add up to the UGX 480.0M outflow", () => {
+    expect(allVendors).toHaveLength(34);
+    expect(vendorsTotalSpend).toBeCloseTo(480, 5);
+  });
+
+  it("ranks vendors from highest to lowest spend", () => {
+    allVendors.forEach((vendor, index) => {
+      expect(vendor.rank).toBe(index + 1);
+
+      if (index > 0) {
+        expect(vendor.spend).toBeLessThanOrEqual(allVendors[index - 1].spend);
+      }
+    });
   });
 });

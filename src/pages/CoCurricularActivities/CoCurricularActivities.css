@@ -22,119 +22,12 @@
   font-weight: 400;
 }
 
-/* --------------------------------------------------------------- Heading */
+/* --------------------------------------------------------------- Toolbar */
 
-.cc-breadcrumb {
+/* The campus dropdown is the shared CampusFilter component. */
+.cc-toolbar {
   display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.cc-breadcrumb__item {
-  color: var(--cc-muted);
-  font-size: 11px;
-  font-weight: 400;
-}
-
-.cc-breadcrumb__item--current {
-  color: var(--cc-heading);
-  font-weight: 600;
-}
-
-.cc-breadcrumb__sep {
-  color: var(--cc-soft);
-  font-size: 11px;
-}
-
-.cc-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 10px 20px;
-}
-
-.cc-page .cc-heading__title {
-  margin: 0;
-
-  color: var(--cc-heading);
-  font-size: clamp(1.2rem, 1.7vw, 1.45rem);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-}
-
-.cc-page .cc-heading__subtitle {
-  max-width: 42rem;
-  margin: 4px 0 0;
-
-  color: var(--cc-muted);
-  font-size: 0.8rem;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-/* ---------------------------------------------------------- Campus filter */
-
-.cc-filter {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  width: 220px;
-  max-width: 100%;
-}
-
-.cc-filter__label {
-  color: var(--cc-soft);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.cc-filter__control {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.cc-filter__select {
-  appearance: none;
-
-  width: 100%;
-  height: 36px;
-  padding: 0 34px 0 12px;
-
-  border: 1px solid var(--cc-border);
-  border-radius: 10px;
-
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
-  color: var(--cc-heading);
-
-  font-family: inherit;
-  font-size: 12.5px;
-  font-weight: 600;
-
-  cursor: pointer;
-}
-
-.cc-filter__select:hover {
-  border-color: var(--color-border-strong);
-}
-
-.cc-filter__select:focus-visible {
-  outline: 2px solid var(--cc-accent);
-  outline-offset: 2px;
-}
-
-.cc-filter__caret {
-  position: absolute;
-  right: 11px;
-
-  color: var(--cc-muted);
-  pointer-events: none;
+  justify-content: flex-end;
 }
 
 /* --------------------------------------------------------------- Metrics */
@@ -237,22 +130,6 @@
 
 .cc-fill--warning {
   background: var(--cc-warning);
-}
-
-.cc-page .cc-note {
-  max-width: none;
-  margin: 0;
-  padding: 7px 12px;
-
-  border: 1px dashed var(--color-border-strong);
-  border-radius: 10px;
-
-  background: var(--color-surface-tint);
-  color: var(--color-text-secondary);
-
-  font-size: 10.5px;
-  font-weight: 400;
-  line-height: 1.5;
 }
 
 /* ---------------------------------------------------------------- Card */
@@ -497,9 +374,5 @@
 @media (max-width: 860px) {
   .cc-metrics {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .cc-filter {
-    width: 100%;
   }
 }
