@@ -44,6 +44,10 @@ export const navigationItems: NavigationItem[] = [
         label: "My Child's Progress",
       },
       {
+        id: "co-curricular-activities",
+        label: "Co-Curricular Activities",
+      },
+      {
         id: "library-resource-usage",
         label: "Library & Resource Usage",
       },
