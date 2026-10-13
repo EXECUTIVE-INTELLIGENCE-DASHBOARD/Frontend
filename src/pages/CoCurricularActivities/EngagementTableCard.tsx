@@ -22,6 +22,9 @@ import type {
 } from "./coCurricularActivities.types";
 import { buildCsv, csvFileName, downloadCsv } from "./exportCsv";
 
+import "../../palette.css";
+import "./coCurricularPalette.css";
+
 const ICONS: Record<ActivityIcon, LucideIcon> = {
   globe: Globe,
   cpu: Cpu,
@@ -118,7 +121,10 @@ export function EngagementTableCard({
                 <tr key={row.id}>
                   <td>
                     <span className="cc-activity">
-                      <span className="cc-activity__icon" aria-hidden="true">
+                      <span
+                        className={`cc-activity__icon cc-activity__icon--${row.icon}`}
+                        aria-hidden="true"
+                      >
                         <Icon size={14} />
                       </span>
 
