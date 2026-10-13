@@ -17,6 +17,7 @@ import { Revenue } from "./pages/Revenue";
 import { Liabilities } from "./pages/Liabilities/Liabilities";
 import { ProcurementFinancials } from "./pages/ProcurementFinancials/ProcurementFinancials";
 import { ExpenseManagement } from "./pages/ExpenseManagement/ExpenseManagement";
+import { CoCurricularActivities } from "./pages/CoCurricularActivities/CoCurricularActivities";
 
 const pages: Record<string, ReactElement> = {
   /* Overview + academic group */
@@ -27,6 +28,7 @@ const pages: Record<string, ReactElement> = {
   "parent-access": <MyChildProgress />,
   "library-resource-usage": <LibraryResourceUsage />,
   "attendance-rates": <AttendanceRates />,
+  "co-curricular-activities": <CoCurricularActivities />,
 
   /* Finance & Procurement group — the ids must match the `id`s used in
      `navigation.config.ts`, or the sidebar entry renders a placeholder. */
