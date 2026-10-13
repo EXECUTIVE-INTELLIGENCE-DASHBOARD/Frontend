@@ -7,15 +7,17 @@ import "./Revenue.css";
 export function Revenue() {
   return (
     <main className="revenue-page">
-
       {/* Page heading and campus filter */}
       <header className="revenue-page__header">
-        
+        <section className="revenue-page__intro">
+          <h2>Strategic Insight. Measurable Progress.</h2>
+          <p>
+            Bringing clarity and direction to institutional financial
+            operations.
+          </p>
+        </section>
 
-        <section
-          className="revenue-page__filters"
-          aria-label="Revenue filters"
-        >
+        <section className="revenue-page__filters" aria-label="Revenue filters">
           <CampusFilter />
         </section>
       </header>
@@ -29,13 +31,9 @@ export function Revenue() {
       </section>
 
       {/* Revenue graph at the bottom */}
-      <section
-        className="revenue-page__graph"
-        aria-label="Revenue trend"
-      >
+      <section className="revenue-page__graph" aria-label="Revenue trend">
         <RevenueGraph />
       </section>
-
     </main>
   );
 }

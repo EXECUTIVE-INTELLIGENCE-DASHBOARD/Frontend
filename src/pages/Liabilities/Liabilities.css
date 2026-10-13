@@ -12,16 +12,32 @@
 
   box-sizing: border-box;
 }
-
 .liabilities-page__header {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   width: 100%;
+  gap: 16px;
+}
+
+.liabilities-page__intro {
+  margin-right: auto;
+}
+
+.liabilities-page__intro h2 {
+  margin: 0 0 6px;
+  font-size:1rem;
+  font-weight: 400;
+}
+
+.liabilities-page__intro p {
+  margin: 0;
+  font-size: 0.9rem;
 }
 
 .liabilities-page__filter {
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .liabilities-page__summary {

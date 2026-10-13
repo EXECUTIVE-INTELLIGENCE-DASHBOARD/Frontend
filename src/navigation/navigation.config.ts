@@ -65,7 +65,7 @@ export const navigationItems: NavigationItem[] = [
       },
       {
         id: "revenue-fee-collection",
-        label: "Revenue & Arrears",
+        label: "Revenue",
       },
       {
         id: "procurement-financials",
