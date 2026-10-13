@@ -2,7 +2,10 @@ import "./Hero.css";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { Search, Mic, Sun, Moon, ChevronRight } from "lucide-react";
-import { userProfile } from "../lib/userProfile";
+import {
+  getCurrentUserProfile,
+  type UserProfile,
+} from "../lib/userProfile";
 import { searchNavigation } from "../navigation/navigation.search";
 interface HeroProps {
   /** Lets the header jump to another screen from the search results. */
@@ -13,6 +16,21 @@ export function Hero({ onSelectPage }: HeroProps) {
   const { theme, setTheme } = useTheme();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isListening, setIsListening] = useState(false);
+  const [query, setQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  
+const [userProfile, setUserProfile] = useState<UserProfile>({
+  name: "Loading profile...",
+  role: "Loading...",
+  email: "",
+  initials: "U",
+  fields: [
+    { id: "email", label: "Email", value: "Loading..." },
+  ],
+});
+
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -22,9 +40,6 @@ export function Hero({ onSelectPage }: HeroProps) {
     return () => clearInterval(timer);
   }, []);
 
-  const [query, setQuery] = useState("");
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
 
   const searchRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -32,6 +47,40 @@ export function Hero({ onSelectPage }: HeroProps) {
   const isDark = theme === "dark";
   const results = searchNavigation(query);
   const showResults = searchOpen && query.trim().length > 0;
+
+  
+useEffect(() => {
+  let active = true;
+
+  getCurrentUserProfile()
+    .then((profile) => {
+      if (active) {
+        setUserProfile(profile);
+      }
+    })
+    .catch(() => {
+      if (active) {
+        setUserProfile({
+          name: "Profile unavailable",
+          role: "Sign-in required",
+          email: "",
+          initials: "U",
+          fields: [
+            {
+              id: "email",
+              label: "Email",
+              value: "Unable to load profile",
+            },
+          ],
+        });
+      }
+    });
+
+  return () => {
+    active = false;
+  };
+}, []);
+
 
   function startVoiceSearch() {
     type SpeechRecognitionInstance = {

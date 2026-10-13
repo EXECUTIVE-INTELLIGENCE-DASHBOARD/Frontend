@@ -1,3 +1,4 @@
+
 import axios from "axios";
 
 const fallbackApiBaseUrl = "http://localhost:8000/api";
@@ -7,5 +8,5 @@ export const apiClient = axios.create({
   headers: {
     Accept: "application/json",
   },
+  withCredentials: true,
 });
-
