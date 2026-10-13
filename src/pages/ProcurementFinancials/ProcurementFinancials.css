@@ -9,10 +9,13 @@
   --pf-border: var(--color-border);
 
   /* Category and status colours reuse the app theme, so dark mode works. */
-  --pf-works: var(--color-accent);
-  --pf-services: var(--color-warning);
-  --pf-goods: var(--color-positive);
-  --pf-unpaid: var(--color-critical);
+  --pf-works: var(--color-heading);
+  --pf-services: var(--pal-steel);
+  --pf-goods: var(--pal-amber);
+  --pf-unpaid: var(--color-heading);
+  --pf-paid: var(--pal-sky);
+  --pf-committed: var(--pal-amber);
+  --pf-link: var(--pal-steel);
 
   display: flex;
   flex-direction: column;
@@ -82,7 +85,7 @@
 }
 
 .pf-filter__select:focus-visible {
-  outline: 2px solid var(--pf-works);
+  outline: 2px solid var(--pf-link);
   outline-offset: 2px;
 }
 
@@ -174,6 +177,29 @@
   color: var(--pf-goods);
 }
 
+/* Summary card icon chips: slate, lavender and green, as in the reference. */
+.pf-metric__icon.pf-tone--services {
+  background: color-mix(in srgb, var(--pal-purple) 14%, transparent);
+  color: var(--pal-purple);
+}
+
+.pf-metric__icon.pf-tone--goods {
+  background: color-mix(in srgb, var(--pal-green) 14%, transparent);
+  color: var(--pal-green);
+}
+
+/* Vendor badges: solid navy for goods and works, soft blue for services. */
+.pf-badge.pf-tone--works,
+.pf-badge.pf-tone--goods {
+  background: var(--color-heading);
+  color: var(--color-surface);
+}
+
+.pf-badge.pf-tone--services {
+  background: color-mix(in srgb, var(--pal-steel) 16%, transparent);
+  color: var(--color-heading);
+}
+
 /* ----------------------------------------------------------------- Grid */
 
 .pf-grid {
@@ -253,7 +279,7 @@
 
   border: 0;
   background: transparent;
-  color: var(--pf-works);
+  color: var(--pf-link);
 
   font-family: inherit;
   font-size: 12px;
@@ -267,7 +293,7 @@
 }
 
 .pf-link-button:focus-visible {
-  outline: 2px solid var(--pf-works);
+  outline: 2px solid var(--pf-link);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -447,11 +473,11 @@
 }
 
 .pf-legend__swatch--paid {
-  --swatch: var(--pf-goods);
+  --swatch: var(--pf-paid);
 }
 
 .pf-legend__swatch--committed {
-  --swatch: var(--pf-works);
+  --swatch: var(--pf-committed);
 }
 
 .pf-legend__swatch--outstanding {
@@ -495,12 +521,24 @@
   text-anchor: middle;
 }
 
+.pf-chart__value--paid {
+  fill: var(--pal-steel);
+}
+
+.pf-chart__value--committed {
+  fill: var(--pal-amber-ink);
+}
+
+.pf-chart__value--outstanding {
+  fill: var(--color-text-secondary);
+}
+
 .pf-chart__bar--paid {
-  fill: var(--pf-goods);
+  fill: var(--pf-paid);
 }
 
 .pf-chart__bar--committed {
-  fill: var(--pf-works);
+  fill: var(--pf-committed);
 }
 
 .pf-chart__bar--outstanding {
@@ -542,9 +580,10 @@
   --pf-muted: var(--color-text-muted);
   --pf-soft: var(--color-text-soft);
   --pf-border: var(--color-border);
-  --pf-works: var(--color-accent);
-  --pf-services: var(--color-warning);
-  --pf-goods: var(--color-positive);
+  --pf-works: var(--color-heading);
+  --pf-services: var(--pal-steel);
+  --pf-goods: var(--pal-amber);
+  --pf-link: var(--pal-steel);
 
   position: fixed;
   inset: 0;
@@ -628,7 +667,7 @@
 
 .pf-dialog__close:focus-visible,
 .pf-dialog__scroll:focus-visible {
-  outline: 2px solid var(--pf-works);
+  outline: 2px solid var(--pf-link);
   outline-offset: -2px;
 }
 
@@ -690,19 +729,19 @@
   white-space: nowrap;
 }
 
-.pf-dialog__rank {
+.pf-dialog__table tbody td.pf-dialog__rank {
   width: 52px;
 
   color: var(--pf-soft);
   font-weight: 600;
 }
 
-.pf-dialog__name {
+.pf-dialog__table tbody td.pf-dialog__name {
   color: var(--pf-heading);
   font-weight: 600;
 }
 
-.pf-dialog__amount {
+.pf-dialog__table tbody td.pf-dialog__amount {
   color: var(--pf-heading);
   font-weight: 700;
 }

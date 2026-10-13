@@ -9,6 +9,7 @@ import { GroupAttendanceCard } from "./GroupAttendanceCard";
 import { ClassComparisonCard } from "./ClassComparisonCard";
 import { InterventionQueueCard } from "./InterventionQueueCard";
 
+import "../../palette.css";
 import "./AttendanceRates.css";
 
 export function AttendanceRates() {

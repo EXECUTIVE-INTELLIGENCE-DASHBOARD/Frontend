@@ -90,7 +90,7 @@ export function SettlementAnalysisCard() {
                         <title>{`${category.shortLabel}, ${series.label}: UGX ${value.toFixed(1)}M`}</title>
                       </rect>
                       <text
-                        className="pf-chart__value"
+                        className={`pf-chart__value pf-chart__value--${series.id}`}
                         x={x + BAR_WIDTH / 2}
                         y={y - 6}
                       >

@@ -1,0 +1,29 @@
+/*
+ * Shared chart and chip colours, taken from the design references.
+ *
+ * Navy is not defined here: it is the app's heading colour
+ * (var(--color-heading)), so it already flips to a light tone in dark mode.
+ * Text that sits on a navy fill uses var(--color-surface).
+ *
+ * Pages read these tokens, so a colour changes in one place.
+ */
+
+:root {
+  --pal-steel: #4f86c6;
+  --pal-sky: #5ea2e6;
+  --pal-amber: #dfa13a;
+  --pal-amber-ink: #a8691c;
+  --pal-indigo: #5b5fd6;
+  --pal-purple: #8b5cd6;
+  --pal-green: #3f9d6a;
+}
+
+[data-theme="dark"] {
+  --pal-steel: #7aa6dc;
+  --pal-sky: #7ab8f2;
+  --pal-amber: #e9b254;
+  --pal-amber-ink: #e9b254;
+  --pal-indigo: #8f93ee;
+  --pal-purple: #b394ee;
+  --pal-green: #5ec28c;
+}
