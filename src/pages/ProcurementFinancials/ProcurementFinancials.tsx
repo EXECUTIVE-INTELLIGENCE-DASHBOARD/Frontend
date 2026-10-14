@@ -7,6 +7,7 @@ import { TopVendorsCard } from "./TopVendorsCard";
 import { SpendAllocationCard } from "./SpendAllocationCard";
 import { SettlementAnalysisCard } from "./SettlementAnalysisCard";
 
+import "../../palette.css";
 import "./ProcurementFinancials.css";
 
 export function ProcurementFinancials() {

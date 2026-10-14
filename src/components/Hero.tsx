@@ -311,7 +311,7 @@ export function Hero({ onSelectPage }: HeroProps) {
               </div>
 
               <dl className="hero__profile-fields">
-                {userProfile.fields.map((field) => (
+              {userProfile.fields.map((field: { id: string; label: string; value: string }) => (
                   <div className="hero__profile-field" key={field.id}>
                     <dt className="hero__profile-field-label">{field.label}</dt>
 

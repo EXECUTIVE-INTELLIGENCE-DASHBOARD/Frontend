@@ -9,7 +9,8 @@
  * Layout, top to bottom:
  *   1. breadcrumb       — where we are in the nav tree
  *   2. heading          — title, subtitle, refresh action
- *   3. `.exp-controls`  — campus filter (left) beside the three headline KPIs
+ *   3. `.exp-controls`  — a compact, right-aligned campus filter row above
+ *                         the three headline KPI cards
  *   4. `.exp-split`     — expense distribution donut + departmental budget bars
  *   5. requisitions     — full-width table of spend awaiting approval
  *
@@ -64,8 +65,10 @@ export function ExpenseManagement() {
         </button>
       </div>
 
-      {/* Either list below can grow without editing this file: the rail is
-          driven by `filterControls` and the KPI row by `summaryMetrics`. */}
+      {/* Either list below can grow without editing this file: the filter row
+          is driven by `filterControls` and the KPI row by `summaryMetrics`.
+          The filter is first in the DOM because it controls everything under
+          it, and CSS floats that row to the right of the page. */}
       <div className="exp-controls">
         <div className="exp-filters">
           {filterControls.map((control) => (

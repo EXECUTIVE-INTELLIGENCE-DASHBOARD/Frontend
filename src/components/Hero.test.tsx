@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { Hero } from "./Hero";
@@ -60,7 +60,7 @@ describe("Hero", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the user profile", () => {
+  it("renders the hardcoded user profile", () => {
     renderHero();
 
     expect(
@@ -101,20 +101,23 @@ describe("Hero", () => {
     expect(screen.getByText(/No pages match/i)).toBeInTheDocument();
   });
 
-  it("reveals the signed-in user's details from the profile", () => {
+    it("reveals the hardcoded user's details from the profile", async () => {
     renderHero();
 
-    // Closed by default.
     expect(
       screen.queryByText("maruf.hossen@greenhill.ac.ug"),
     ).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Open user profile" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Open user profile" }),
+    );
 
     expect(
-      screen.getByText("maruf.hossen@greenhill.ac.ug"),
+      await screen.findByText("maruf.hossen@greenhill.ac.ug"),
     ).toBeInTheDocument();
 
-    expect(screen.getByText("GH-STAFF-0284")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("GH-STAFF-0284")).toBeInTheDocument();
+    });
   });
 });

@@ -6,10 +6,11 @@ import {
   totalSpend,
 } from "./procurementFinancials.data";
 
+/* Navy, steel blue and amber, as in the design reference. */
 const COLORS = {
-  works: "var(--color-accent)",
-  services: "var(--color-warning)",
-  goods: "var(--color-positive)",
+  works: "var(--color-heading)",
+  services: "var(--pal-steel)",
+  goods: "var(--pal-amber)",
 } as const;
 
 const ranked = [...spendCategories].sort((a, b) => b.spend - a.spend);

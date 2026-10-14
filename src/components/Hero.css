@@ -852,3 +852,25 @@
     padding-right: 5px;
   }
 }
+
+.hero__sign-in-button {
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #d81b75;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hero__sign-in-button:hover {
+  opacity: 0.9;
+}
+
+.hero__sign-in-button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
