@@ -17,13 +17,6 @@ export function Liabilities() {
   return (
     <main className="liabilities-page">
       <header className="liabilities-page__header">
-        <section className="liabilities-page__intro">
-          <h2>Managing Liabilities with Precision.</h2>
-          <p>
-            Maintaining transparency and control over outstanding liabilities.
-          </p>
-        </section>
-
         <div className="liabilities-page__filter">
           <CampusFilter onCampusChange={setSelectedCampus} />
         </div>

@@ -9,14 +9,6 @@ export function Revenue() {
     <main className="revenue-page">
       {/* Page heading and campus filter */}
       <header className="revenue-page__header">
-        <section className="revenue-page__intro">
-          <h2>Strategic Insight. Measurable Progress.</h2>
-          <p>
-            Bringing clarity and direction to institutional financial
-            operations.
-          </p>
-        </section>
-
         <section className="revenue-page__filters" aria-label="Revenue filters">
           <CampusFilter />
         </section>
