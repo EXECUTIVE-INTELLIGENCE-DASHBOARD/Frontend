@@ -49,11 +49,11 @@
 /* Girls in blue, boys in amber. The table cell colour rule is more specific
    than a single class, so these repeat "tbody td". */
 .cc-page .cc-table tbody td.cc-girls {
-  color: var(--pal-sky);
+  color: var(--color-heading);
 }
 
 .cc-page .cc-table tbody td.cc-boys {
-  color: var(--pal-amber);
+  color: var(--color-heading);
 }
 
 .cc-page .cc-table tbody td.cc-strong {

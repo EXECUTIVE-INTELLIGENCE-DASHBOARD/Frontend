@@ -59,8 +59,10 @@
 }
 
 .cc-metric__icon {
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
 
   width: 32px;
   height: 32px;
@@ -76,6 +78,7 @@
   letter-spacing: 0.06em;
   line-height: 1.4;
   text-transform: uppercase;
+  align-items: center;
 }
 
 .cc-metric__value {
@@ -88,7 +91,7 @@
 
 .cc-metric__track {
   height: 5px;
-
+  
   border-radius: 999px;
   background: var(--color-border-soft);
 
@@ -277,10 +280,10 @@
   border-bottom: 1px solid var(--cc-border);
 
   background: var(--color-surface-subtle);
-  color: var(--cc-soft);
+  color: var(--cc-heading);
 
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 650;
   letter-spacing: 0.06em;
   text-align: left;
   text-transform: uppercase;
@@ -310,22 +313,22 @@
 }
 
 .cc-muted {
-  color: var(--cc-muted);
+  color: var(--cc-heading);
 }
 
 .cc-strong {
   color: var(--cc-heading);
-  font-weight: 700;
+  font-weight: 200;
 }
 
 .cc-girls {
-  color: var(--cc-accent);
-  font-weight: 600;
+  color: var(--cc-heading);
+  font-weight: 200;
 }
 
 .cc-boys {
-  color: var(--cc-warning);
-  font-weight: 600;
+  color: var(--cc-heading);
+  font-weight: 200;
 }
 
 .cc-activity {
@@ -350,7 +353,7 @@
 
 .cc-activity__name {
   color: var(--cc-heading);
-  font-weight: 600;
+  font-weight: 200;
 }
 
 .cc-pill {
@@ -362,10 +365,10 @@
   border-radius: 999px;
 
   background: var(--color-surface-tint);
-  color: var(--color-text-secondary);
+  color: var(--cc-heading);
 
   font-size: 11.5px;
-  font-weight: 600;
+  font-weight: 200;
   text-align: center;
 }
 
