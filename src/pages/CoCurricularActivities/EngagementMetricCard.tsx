@@ -5,8 +5,6 @@ interface EngagementMetricCardProps {
   value: string;
   icon: LucideIcon;
   tone: "accent" | "navy" | "warning";
-  /** Bar fill, 0 to 100. */
-  progress: number;
 }
 
 export function EngagementMetricCard({
@@ -14,10 +12,7 @@ export function EngagementMetricCard({
   value,
   icon: Icon,
   tone,
-  progress,
 }: EngagementMetricCardProps) {
-  const fill = Math.min(100, Math.max(0, progress));
-
   return (
     <article className="cc-metric">
       <div className="cc-metric__top">
@@ -29,20 +24,6 @@ export function EngagementMetricCard({
       </div>
 
       <span className="cc-metric__value">{value}</span>
-
-      <div
-        className="cc-metric__track"
-        role="progressbar"
-        aria-label={label}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={fill}
-      >
-        <div
-          className={`cc-metric__fill cc-fill--${tone}`}
-          style={{ width: `${fill}%` }}
-        />
-      </div>
     </article>
   );
 }
