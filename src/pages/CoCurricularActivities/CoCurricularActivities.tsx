@@ -29,7 +29,7 @@ export function CoCurricularActivities() {
           value={`${summary.coverageRate.toFixed(1)}%`}
           icon={Globe}
           tone="accent"
-          progress={summary.progress.coverage}
+         
         />
 
         <EngagementMetricCard
@@ -37,7 +37,7 @@ export function CoCurricularActivities() {
           value={`${summary.events} Events`}
           icon={CalendarDays}
           tone="navy"
-          progress={summary.progress.events}
+          
         />
 
         <EngagementMetricCard
@@ -45,7 +45,7 @@ export function CoCurricularActivities() {
           value={`${summary.nonParticipating} Students`}
           icon={UserX}
           tone="warning"
-          progress={summary.progress.nonParticipating}
+         
         />
       </div>
 
