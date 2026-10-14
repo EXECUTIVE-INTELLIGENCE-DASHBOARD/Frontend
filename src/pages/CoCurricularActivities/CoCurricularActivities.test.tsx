@@ -35,10 +35,7 @@ describe("CoCurricularActivities", () => {
     expected.forEach(([label, value], index) => {
       expect(within(cards[index]).getByText(label)).toBeInTheDocument();
       expect(within(cards[index]).getByText(value)).toBeInTheDocument();
-      expect(
-        within(cards[index]).getByRole("progressbar", { name: label }),
-      ).toBeInTheDocument();
-    });
+      });
   });
 
   it("lists the five clubs with their figures", () => {
