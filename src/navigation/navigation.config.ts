@@ -32,6 +32,14 @@ export const navigationItems: NavigationItem[] = [
         label: "Student Enrollment",
       },
       {
+        id: "student-retention",
+        label: "Student Retention",
+      },
+      {
+        id: "co-curricular-activities",
+        label: "Co-Curricular Activities",
+      },
+      {
         id: "attendance-rates",
         label: "Attendance Rates",
       },
@@ -42,10 +50,6 @@ export const navigationItems: NavigationItem[] = [
       {
         id: "parent-access",
         label: "My Child's Progress",
-      },
-      {
-        id: "co-curricular-activities",
-        label: "Co-Curricular Activities",
       },
       {
         id: "library-resource-usage",
