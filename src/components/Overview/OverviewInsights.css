@@ -1,0 +1,282 @@
+/* Two insight panels displayed side by side */
+.overview-insights {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Shared panel styles */
+.overview-insight-card {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  min-height: 230px;
+  padding: 19px 17px 16px;
+  box-sizing: border-box;
+
+  /* Theme-aware panel background and border */
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+}
+
+/* Panel heading */
+.overview-insight-card__heading {
+  margin: 0 0 13px;
+
+  color: var(--color-heading);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Incidents list */
+.overview-incidents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.overview-incident {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.overview-incident__details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.overview-incident__label {
+  overflow: hidden;
+
+  color: var(--color-heading);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overview-incident__figures {
+  flex-shrink: 0;
+
+  color: var(--color-text-secondary);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.overview-incident__figures strong {
+  color: var(--color-heading);
+  font-weight: 700;
+}
+
+/* Incident threshold progress track */
+.overview-incident__track {
+  width: 100%;
+  height: 7px;
+  overflow: hidden;
+
+  /* Adapts to the active theme */
+  background: var(--color-track);
+  border-radius: 999px;
+}
+
+.overview-incident__fill {
+  height: 100%;
+
+  /* Keep the blue indicator visible in both themes */
+  background: #13a8ed;
+  border-radius: 999px;
+
+  transition: width 200ms ease;
+}
+
+/* Legend at the bottom of the incidents panel */
+.overview-incidents-legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.overview-incidents-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  color: var(--color-text-secondary);
+  font-size: 9px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.overview-incidents-legend__swatch {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 1px;
+}
+
+.overview-incidents-legend__swatch--actual {
+  background: #13a8ed;
+}
+
+.overview-incidents-legend__swatch--threshold {
+  background: var(--color-border-strong);
+}
+
+/* Capital projects list */
+.overview-projects-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: 16px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* Individual capital project */
+.overview-project {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.overview-project__details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.overview-project__name {
+  overflow: hidden;
+
+  color: var(--color-heading);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overview-project__percentage {
+  flex-shrink: 0;
+
+  color: var(--color-accent-strong);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Capital project progress track */
+.overview-project__track {
+  width: 100%;
+  height: 6px;
+  overflow: hidden;
+
+  background: var(--color-track);
+  border-radius: 999px;
+}
+
+.overview-project__fill {
+  height: 100%;
+
+  /* Preserve the original project progress gradient */
+  background: linear-gradient(
+    90deg,
+    #18264b 0%,
+    #168fe0 65%,
+    #39c1ff 100%
+  );
+
+  border-radius: 999px;
+
+  transition: width 200ms ease;
+}
+
+/* Medium screens */
+@media (max-width: 900px) {
+  .overview-insights {
+    gap: 12px;
+  }
+
+  .overview-insight-card {
+    padding: 16px 13px;
+  }
+
+  .overview-incident__details {
+    flex-wrap: wrap;
+    gap: 3px 8px;
+  }
+
+  .overview-incidents-legend {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+}
+
+/* Small screens */
+@media (max-width: 650px) {
+  .overview-insights {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .overview-insight-card {
+    min-height: 220px;
+    padding: 18px 16px;
+  }
+
+  .overview-insight-card__heading {
+    font-size: 13px;
+  }
+
+  .overview-incident__label,
+  .overview-incident__figures,
+  .overview-project__name {
+    font-size: 11px;
+  }
+
+  .overview-incident__details {
+    flex-wrap: nowrap;
+  }
+
+  .overview-incidents-legend {
+    flex-wrap: nowrap;
+    margin-top: 24px;
+  }
+
+  .overview-incidents-legend__item {
+    font-size: 9px;
+  }
+
+  .overview-project__percentage {
+    font-size: 10px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .overview-incident__fill,
+  .overview-project__fill {
+    transition: none;
+  }
+}

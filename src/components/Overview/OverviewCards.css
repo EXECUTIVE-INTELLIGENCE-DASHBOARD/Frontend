@@ -1,0 +1,112 @@
+/* Three KPI cards arranged in one horizontal row */
+.overview-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Individual white metric card */
+.overview-metric-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  min-width: 0;
+  min-height: 79px;
+  padding: 15px 17px;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+
+  box-sizing: border-box;
+}
+
+/* Bright blue square containing the icon */
+.overview-metric-card__icon {
+  display: flex;
+  flex: 0 0 35px;
+  align-items: center;
+  justify-content: center;
+
+  width: 35px;
+  height: 35px;
+
+  color: #ffffff;
+  background: #2eb5f5;
+  border-radius: 6px;
+}
+
+/* Text container */
+.overview-metric-card__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+
+  min-width: 0;
+  gap: 2px;
+}
+
+/* KPI card headings */
+.overview-metric-card__label {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.35px;
+  text-transform: uppercase;
+}
+
+/* Large metric value */
+.overview-metric-card__value {
+  margin: 0;
+
+  color: var(--color-heading);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Medium screens */
+@media (max-width: 900px) {
+  .overview-cards {
+    gap: 12px;
+  }
+
+  .overview-metric-card {
+    gap: 9px;
+    padding: 13px 12px;
+  }
+
+  .overview-metric-card__value {
+    font-size: 21px;
+  }
+}
+
+/* Small screens */
+@media (max-width: 600px) {
+  .overview-cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .overview-metric-card {
+    min-height: 78px;
+    padding: 14px 16px;
+  }
+
+  .overview-metric-card__label {
+    font-size: 9px;
+  }
+
+  .overview-metric-card__value {
+    font-size: 24px;
+  }
+}
