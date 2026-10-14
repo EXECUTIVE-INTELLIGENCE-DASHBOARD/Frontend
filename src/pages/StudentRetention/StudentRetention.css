@@ -1,0 +1,372 @@
+/* Brand typography (Greenhill brand guidelines 2026): Montserrat.
+   Loaded here so it only affects this page. */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+.sr-page {
+  --sr-heading: var(--color-heading);
+  --sr-muted: var(--color-text-muted);
+  --sr-soft: var(--color-text-soft);
+  --sr-border: var(--color-border);
+
+  /* Navy is the app heading colour. Sky blue and amber come from palette.css. */
+  --sr-navy: var(--color-heading);
+  --sr-sky: var(--pal-sky);
+  --sr-amber: var(--pal-amber);
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  /* Headline: Bold. Subhead: Semibold. Body copy: Regular. */
+  font-family: "Montserrat", Inter, ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------------- Toolbar */
+
+/* The dropdown is the shared CampusFilter component. */
+.sr-toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* --------------------------------------------------------------- Metrics */
+
+.sr-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.sr-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  padding: 12px 14px;
+
+  border: 1px solid var(--sr-border);
+  border-radius: 12px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.sr-metric__top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sr-metric__icon {
+  display: grid;
+  place-items: center;
+
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+
+  border-radius: 9px;
+}
+
+/* Solid chips with white icons, as in the design reference. */
+.sr-chip--navy {
+  background: var(--sr-navy);
+  color: var(--color-surface);
+}
+
+.sr-chip--sky {
+  background: var(--sr-sky);
+  color: #fff;
+}
+
+.sr-chip--amber {
+  background: var(--sr-amber);
+  color: #fff;
+}
+
+.sr-metric__label {
+  color: var(--sr-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.sr-metric__value {
+  color: var(--sr-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* ----------------------------------------------------------------- Grid */
+
+.sr-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* ---------------------------------------------------------------- Cards */
+
+.sr-card {
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid var(--sr-border);
+  border-radius: 14px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+
+  overflow: hidden;
+}
+
+.sr-card__header {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--sr-border);
+}
+
+.sr-card__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin: 0;
+
+  color: var(--color-heading-alt);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.sr-card__dot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 999px;
+}
+
+.sr-card__dot--navy {
+  background: var(--sr-navy);
+}
+
+.sr-card__dot--sky {
+  background: var(--sr-sky);
+}
+
+/* ---------------------------------------------------------------- Table */
+
+.sr-table-wrap {
+  overflow-x: auto;
+}
+
+.sr-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  font-size: 12px;
+}
+
+.sr-table thead th {
+  padding: 8px 16px;
+
+  border-bottom: 1px solid var(--sr-border);
+
+  background: var(--color-surface-subtle);
+  color: var(--sr-soft);
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.sr-table tbody td {
+  padding: 9px 16px;
+
+  border-bottom: 1px solid var(--color-border-soft);
+
+  color: var(--color-text);
+  vertical-align: middle;
+}
+
+.sr-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.sr-table tbody tr:hover {
+  background: var(--color-surface-hover);
+}
+
+.sr-table .sr-num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* The table cell colour rule is more specific than a single class,
+   so these repeat "tbody td". */
+.sr-table tbody td.sr-muted {
+  color: var(--sr-muted);
+}
+
+.sr-table tbody td.sr-strong {
+  color: var(--sr-heading);
+  font-weight: 700;
+}
+
+.sr-table tbody td.sr-empty {
+  padding: 28px 16px;
+
+  color: var(--sr-muted);
+  text-align: center;
+}
+
+.sr-nationality {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sr-nationality__dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+
+  border-radius: 999px;
+  background: var(--sr-navy);
+}
+
+.sr-nationality__name {
+  color: var(--sr-heading);
+  font-weight: 600;
+}
+
+/* Rate and share pills: grey by default, blue when on target. */
+.sr-pill {
+  display: inline-block;
+
+  min-width: 52px;
+  padding: 2px 9px;
+
+  border-radius: 8px;
+
+  background: var(--color-surface-tint);
+  color: var(--color-text-secondary);
+
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: center;
+}
+
+.sr-pill--good {
+  background: color-mix(in srgb, var(--sr-sky) 16%, transparent);
+  color: var(--sr-sky);
+}
+
+/* --------------------------------------------------------- Gender card */
+
+.sr-gender__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+
+  padding: 12px 16px 14px;
+}
+
+.sr-page .sr-gender__intro {
+  max-width: none;
+  margin: 0;
+
+  color: var(--sr-muted);
+  font-size: 11.5px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.sr-gender__chart {
+  display: flex;
+  justify-content: center;
+}
+
+/* The shared donut uses a 30px centre value, which is too big for a compact
+   ring. Scale it down here without touching the shared component. */
+.sr-gender .donut__value {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.sr-gender .donut__label {
+  margin-top: 3px;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.sr-gender__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.sr-gender__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+
+  padding: 8px 12px;
+
+  border: 1px solid var(--color-border-soft);
+  border-radius: 10px;
+
+  background: var(--color-surface-subtle);
+}
+
+.sr-gender__dot {
+  width: 10px;
+  height: 10px;
+
+  border-radius: 999px;
+}
+
+.sr-gender__label {
+  color: var(--sr-heading);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sr-gender__count {
+  color: var(--sr-heading);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------ Responsive */
+
+@media (max-width: 1100px) {
+  .sr-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .sr-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
