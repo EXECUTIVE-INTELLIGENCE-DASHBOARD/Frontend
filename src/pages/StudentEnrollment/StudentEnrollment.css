@@ -19,6 +19,9 @@
   --se-chip-pale-ink: #3b6ea8;
   --se-girls-text: #3b6ea8;
 
+  /* Metric cards are plain white (not the tinted theme surface). */
+  --se-metric-bg: #ffffff;
+
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -31,6 +34,7 @@
 
 [data-theme="dark"] .se-page {
   --se-girls-text: #8fc4f8;
+  --se-metric-bg: var(--color-surface);
 }
 
 /* --------------------------------------------------------------- Toolbar */
@@ -136,7 +140,7 @@
   border: 1px solid var(--se-border);
   border-radius: 14px;
 
-  background: var(--color-surface);
+  background: var(--se-metric-bg);
   box-shadow: var(--shadow-card);
 }
 
@@ -482,4 +486,17 @@
   .se-toolbar {
     justify-content: space-between;
   }
+}
+
+/* Beat the global light-theme tint in styles.css (rules B and D, specificity
+   0,3,0) for this page only. Dark mode is left to the global dark rules. */
+:root:not([data-theme="dark"]) .se-page .se-metric {
+  background: var(--se-metric-bg);
+  border: 1px solid var(--se-border);
+  border-radius: 14px;
+}
+
+:root:not([data-theme="dark"]) .se-page .se-metric__icon {
+  background: var(--se-chip);
+  color: #ffffff;
 }
