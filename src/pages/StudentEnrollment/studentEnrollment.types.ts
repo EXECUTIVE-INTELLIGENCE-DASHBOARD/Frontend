@@ -1,62 +1,43 @@
-export type MetricTone = "blue" | "green" | "amber";
+export type CampusId = "kibuli" | "buwaate" | "annex";
 
-export type SeriesTone = "current" | "previous";
+export type TierId = "nursery" | "primary" | "olevel" | "alevel";
 
-export type AttentionTone = "closing" | "planning" | "monitor";
+export interface CampusRecord {
+  id: CampusId;
+  name: string;
+  boys: number;
+  girls: number;
+  capacity: number;
+  /** Percentage of applicants who went on to enrol, 0 to 100. */
+  admissionsConversion: number;
+  /** Students in each educational tier. They add up to boys + girls. */
+  tiers: Record<TierId, number>;
+}
 
-export interface FilterControl {
-  id: string;
+export interface TierFigure {
+  id: TierId;
   label: string;
-  value: string;
-  options: string[];
+  value: number;
+  /** Share of the selected enrolment, 0 to 100. */
+  share: number;
 }
 
-export interface SummaryMetric {
-  id: string;
+export interface TierLegendItem {
   label: string;
-  value: string;
-  caption: string;
-  tone: MetricTone;
+  tone: TierId;
 }
 
-export interface EnrollmentSeries {
-  id: string;
-  label: string;
-  tone: SeriesTone;
-  values: number[];
-}
-
-export interface ComparisonStat {
-  id: string;
-  label: string;
-  value: string;
-  note?: string;
-}
-
-export interface CohortRow {
-  id: string;
-  group: string;
-  sciences: string;
-  arts: string;
-  total: string;
-}
-
-export interface CapacityRow {
-  id: string;
-  group: string;
-  enrolled: string;
-  capacity: string;
-  placesLeft: string;
-  utilization: string;
-  owner: string;
-}
-
-export interface AttentionRow {
-  id: string;
-  area: string;
-  change: string;
-  followUp: string;
-  owner: string;
-  status: string;
-  tone: AttentionTone;
+export interface EnrollmentSummary {
+  /** The campuses being shown: one when a campus is picked, otherwise all. */
+  records: CampusRecord[];
+  isAll: boolean;
+  total: number;
+  boys: number;
+  girls: number;
+  boysShare: number;
+  girlsShare: number;
+  conversion: number;
+  utilization: number;
+  tiers: TierFigure[];
+  scopeText: string;
 }

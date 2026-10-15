@@ -1,33 +1,33 @@
-import { Gauge, TrendingUp, Users, type LucideIcon } from "lucide-react";
-
-import type { SummaryMetric } from "./studentEnrollment.types";
-
-const METRIC_ICONS: Record<string, LucideIcon> = {
-  enrollment: Users,
-  capacity: Gauge,
-  change: TrendingUp,
-};
+import type { LucideIcon } from "lucide-react";
 
 interface SummaryMetricCardProps {
-  metric: SummaryMetric;
+  label: string;
+  value: string;
+  /** Smaller text after the number, for example "Students". */
+  unit?: string;
+  icon: LucideIcon;
 }
 
-export function SummaryMetricCard({ metric }: SummaryMetricCardProps) {
-  const Icon = METRIC_ICONS[metric.id] ?? Users;
-
+export function SummaryMetricCard({
+  label,
+  value,
+  unit,
+  icon: Icon,
+}: SummaryMetricCardProps) {
   return (
-    <article className={`se-metric se-metric--${metric.tone}`}>
-      <span className="se-metric__icon" aria-hidden="true">
-        <Icon size={18} />
-      </span>
+    <article className="se-metric">
+      <div className="se-metric__icon">
+        <Icon size={22} aria-hidden="true" />
+      </div>
 
-      <span className="se-metric__body">
-        <span className="se-metric__label">{metric.label}</span>
+      <div className="se-metric__text">
+        <span className="se-metric__label">{label}</span>
 
-        <span className="se-metric__value">{metric.value}</span>
-
-        <span className="se-metric__caption">{metric.caption}</span>
-      </span>
+        <span className="se-metric__value">
+          {value}
+          {unit ? <span className="se-metric__unit"> {unit}</span> : null}
+        </span>
+      </div>
     </article>
   );
 }

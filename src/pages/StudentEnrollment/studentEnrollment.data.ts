@@ -1,199 +1,143 @@
-import { academicYearOptions, campusOptions } from "../../lib/organisation";
-
 import type {
-  AttentionRow,
-  CapacityRow,
-  CohortRow,
-  ComparisonStat,
-  EnrollmentSeries,
-  FilterControl,
-  SummaryMetric,
+  CampusRecord,
+  EnrollmentSummary,
+  TierFigure,
+  TierId,
+  TierLegendItem,
 } from "./studentEnrollment.types";
 
-export const filterControls: FilterControl[] = [
+export const academicYearLabel = "AY 2026/27";
+export const allCampusesLabel = "All Campuses";
+
+/*
+ * Sample data until the enrolment API exists.
+ *
+ * From the design: the campus totals and the boys/girls split
+ * (1,250 + 850 + 700 = 2,800 students, 1,430 boys, 1,370 girls).
+ *
+ * Placeholders chosen to add up to the design's headline figures: capacity,
+ * admissions conversion and the tier split of each campus. Together they give
+ * 91.2% capacity utilisation, 84.5% admissions conversion (weighted by
+ * enrolment) and 450 / 1,450 / 650 / 250 students across the four tiers.
+ */
+export const campuses: CampusRecord[] = [
   {
-    id: "academic-year",
-    label: "Select Academic Year",
-    value: academicYearOptions[0],
-    options: academicYearOptions,
+    id: "kibuli",
+    name: "Kibuli Main",
+    boys: 640,
+    girls: 610,
+    capacity: 1340,
+    admissionsConversion: 85.8,
+    tiers: { nursery: 90, primary: 620, olevel: 400, alevel: 140 },
   },
   {
-    id: "campus",
-    label: "Select Campus",
-    value: campusOptions[0],
-    options: campusOptions,
+    id: "buwaate",
+    name: "Buwaate",
+    boys: 430,
+    girls: 420,
+    capacity: 940,
+    admissionsConversion: 84.4,
+    tiers: { nursery: 60, primary: 430, olevel: 250, alevel: 110 },
+  },
+  {
+    id: "annex",
+    name: "Annex Preschool",
+    boys: 360,
+    girls: 340,
+    capacity: 790,
+    admissionsConversion: 82.3,
+    tiers: { nursery: 300, primary: 400, olevel: 0, alevel: 0 },
   },
 ];
 
-export const summaryMetrics: SummaryMetric[] = [
-  {
-    id: "enrollment",
-    label: "Current Enrollment",
-    value: "3,420",
-    caption: "3,500 total capacity",
-    tone: "blue",
-  },
-  {
-    id: "capacity",
-    label: "Capacity Used",
-    value: "97.7%",
-    caption: "80 places available · derived",
-    tone: "amber",
-  },
-  {
-    id: "change",
-    label: "Net Period Change",
-    value: "+120",
-    caption: "+3.6% vs term 3 last year · illustrative",
-    tone: "green",
-  },
+export const campusOptions: string[] = [
+  allCampusesLabel,
+  ...campuses.map((campus) => campus.name),
 ];
 
-export const prototypeNote =
-  "Prototype: enrolled 3,420 / 3,500 capacity from the seating guideline. " +
-  "All other figures, comparisons and actions are illustrative.";
-
-export const trendTerms = ["Term 1", "Term 2", "Term 3"];
-
-export const trendPeriodLabel = "Term 3";
-
-export const enrollmentSeries: EnrollmentSeries[] = [
-  {
-    id: "ay-2025",
-    label: "AY 2025/2026",
-    tone: "current",
-    values: [3190, 3160, 3420],
-  },
-  {
-    id: "ay-2024",
-    label: "AY 2024/2025",
-    tone: "previous",
-    values: [3040, 3020, 3300],
-  },
+const tierLabels: { id: TierId; label: string }[] = [
+  { id: "nursery", label: "Nursery" },
+  { id: "primary", label: "Primary" },
+  { id: "olevel", label: "O-Level" },
+  { id: "alevel", label: "A-Level" },
 ];
 
-export const trendCaptionLead = "Term 3 3,420 vs 3,300 last year";
-
-export const trendCaptionHighlight = "+3.6%";
-
-export const trendCaptionTail =
-  "Year-on-year comparison is illustrative.";
-
-export const comparisonStats: ComparisonStat[] = [
-  {
-    id: "total",
-    label: "Total Enrolment",
-    value: "3,420 students",
-  },
-  {
-    id: "new-students",
-    label: "New Students",
-    value: "1,840 students",
-    note: "53.8% of enrolment",
-  },
+export const tierLegend: TierLegendItem[] = [
+  { label: "Core (Primary)", tone: "primary" },
+  { label: "Secondary / Prep", tone: "olevel" },
+  { label: "Sixth Form (A-L)", tone: "alevel" },
 ];
 
-export const cohortRows: CohortRow[] = [
-  {
-    id: "new",
-    group: "New students",
-    sciences: "1,000",
-    arts: "840",
-    total: "1,840",
-  },
-  {
-    id: "continuing",
-    group: "Continuing",
-    sciences: "840",
-    arts: "740",
-    total: "1,580",
-  },
-  {
-    id: "all",
-    group: "All students",
-    sciences: "1,840",
-    arts: "1,580",
-    total: "3,420",
-  },
-];
+const sum = (values: number[]) =>
+  values.reduce((total, value) => total + value, 0);
 
-export const cohortNote =
-  "Movement: 1,840 new students + 1,580 continuing = 3,420 enrolled.";
+export const formatNumber = (value: number) => value.toLocaleString("en-US");
 
-export const capacityNote =
-  "80 places remain — allocate and resource against planning options, not signed seats.";
+export const formatPercent = (value: number) => `${value.toFixed(1)}%`;
 
-export const capacityRows: CapacityRow[] = [
-  {
-    id: "sciences",
-    group: "Sciences",
-    enrolled: "1,840",
-    capacity: "1,880",
-    placesLeft: "40",
-    utilization: "97.9%",
-    owner: "Review lab allocation and equipment access · Science lead",
-  },
-  {
-    id: "arts",
-    group: "Arts",
-    enrolled: "1,580",
-    capacity: "1,620",
-    placesLeft: "40",
-    utilization: "97.5%",
-    owner: "Assess an additional teaching space · Academic office",
-  },
-  {
-    id: "all",
-    group: "Total",
-    enrolled: "3,420",
-    capacity: "3,500",
-    placesLeft: "80",
-    utilization: "97.7%",
-    owner: "Validate room and teacher availability before new intake",
-  },
-];
+/*
+ * Picks a tidy chart axis with at most four steps, so a peak of 640 gives
+ * 0 to 800 in steps of 200 and a peak of 1,450 gives 0 to 1,600 in steps of
+ * 400, the same as the design.
+ */
+const AXIS_STEPS = [10, 20, 50, 100, 200, 400, 500, 1000, 2000];
 
-export const attentionNote =
-  "Descriptive early signals; validate before committing staffing or capacity.";
+export function axisFor(peak: number) {
+  const step =
+    AXIS_STEPS.find((candidate) => Math.ceil(peak / candidate) <= 4) ?? 2000;
+  const top = Math.max(1, Math.ceil(peak / step)) * step;
+  const ticks: number[] = [];
 
-export const attentionRows: AttentionRow[] = [
-  {
-    id: "arts-intake",
-    area: "Arts intake",
-    change: "30 places requested; 6 in the same enrolment scenario",
-    followUp: "Check additional classroom availability",
-    owner: "Academic office",
-    status: "Closing",
-    tone: "closing",
-  },
-  {
-    id: "science-growth",
-    area: "Science growth",
-    change: "+50 since last year; largest group increase",
-    followUp: "Map lab timetable and teaching loads",
-    owner: "Science lead",
-    status: "Planning",
-    tone: "planning",
-  },
-  {
-    id: "applied-arts",
-    area: "Applied arts",
-    change: "20 seats vs 20 in Sciences; same intake window",
-    followUp: "Review resources and context set-up",
-    owner: "Admissions lead",
-    status: "Planning",
-    tone: "planning",
-  },
-  {
-    id: "next-intake",
-    area: "Next intake",
-    change: "Demand shown may exceed remaining capacity",
-    followUp: "Briefing forecast after admissions review",
-    owner: "Registrar",
-    status: "Monitor",
-    tone: "monitor",
-  },
-];
+  for (let value = 0; value <= top; value += step) {
+    ticks.push(value);
+  }
 
-export const attentionFootnote =
-  "Signals are descriptive and illustrative; they are not approved changes.";
+  return { top, step, ticks };
+}
+
+export function recordsFor(campus: string): CampusRecord[] {
+  const match = campuses.filter((record) => record.name === campus);
+
+  return match.length > 0 ? match : campuses;
+}
+
+export function summaryFor(campus: string): EnrollmentSummary {
+  const records = recordsFor(campus);
+  const isAll = records.length === campuses.length;
+
+  const boys = sum(records.map((record) => record.boys));
+  const girls = sum(records.map((record) => record.girls));
+  const total = boys + girls;
+  const capacity = sum(records.map((record) => record.capacity));
+
+  const conversion =
+    sum(
+      records.map(
+        (record) => record.admissionsConversion * (record.boys + record.girls),
+      ),
+    ) / total;
+
+  const tiers: TierFigure[] = tierLabels.map(({ id, label }) => {
+    const value = sum(records.map((record) => record.tiers[id]));
+
+    return { id, label, value, share: (value / total) * 100 };
+  });
+
+  const scope = records.map((record) => record.name).join(", ");
+
+  return {
+    records,
+    isAll,
+    total,
+    boys,
+    girls,
+    boysShare: (boys / total) * 100,
+    girlsShare: (girls / total) * 100,
+    conversion,
+    utilization: (total / capacity) * 100,
+    tiers,
+    scopeText: isAll
+      ? `Aggregate ${formatNumber(total)} students`
+      : `${scope} ${formatNumber(total)} students`,
+  };
+}
