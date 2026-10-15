@@ -1,5 +1,5 @@
 /* Brand typography (Greenhill brand guidelines 2026): Montserrat.
-   Loaded here so it only affects this page, the same as Co-Curricular. */
+   Loaded here so it only affects this page. */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
 
 .se-page {
@@ -7,17 +7,13 @@
   --se-muted: var(--color-text-muted);
   --se-soft: var(--color-text-soft);
   --se-border: var(--color-border);
-  --se-accent: var(--color-accent);
 
-  /* Colours sampled from the design reference. Navy is the app's heading
-     colour, so it flips to a light tone in dark mode. */
-  --se-chip: #64a4e3;
-  --se-sky: #78b7f7;
-  --se-pale: #93c5f8;
-  --se-amber: #ecbb6f;
-  --se-chip-pale: #d6e9fc;
-  --se-chip-pale-ink: #3b6ea8;
-  --se-girls-text: #3b6ea8;
+  /* Navy is the app heading colour. The blues and amber come from palette.css. */
+  --se-navy: var(--color-heading);
+  --se-sky: var(--pal-sky);
+  --se-sky-ink: var(--pal-steel);
+  --se-sky-light: color-mix(in srgb, var(--pal-sky) 45%, var(--color-surface));
+  --se-amber: var(--pal-amber);
 
   display: flex;
   flex-direction: column;
@@ -29,93 +25,33 @@
   font-weight: 400;
 }
 
-[data-theme="dark"] .se-page {
-  --se-girls-text: #8fc4f8;
-}
-
 /* --------------------------------------------------------------- Toolbar */
 
+/* The campus dropdown is the shared CampusFilter component. */
 .se-toolbar {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 10px;
 }
 
 .se-year {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 
-  height: 36px;
-  padding: 0 14px;
+  height: 34px;
+  padding: 0 12px;
 
+  border: 1px solid color-mix(in srgb, var(--se-sky) 35%, transparent);
   border-radius: 999px;
-  background: #e4e7fd;
-  color: #1b2242;
+
+  background: color-mix(in srgb, var(--se-sky) 12%, transparent);
+  color: var(--se-sky-ink);
+
   font-size: 12px;
   font-weight: 600;
-}
-
-.se-filter {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  width: 220px;
-  max-width: 100%;
-}
-
-.se-filter__label {
-  color: var(--se-soft);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.se-filter__control {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.se-filter__select {
-  appearance: none;
-
-  width: 100%;
-  height: 36px;
-  padding: 0 34px 0 12px;
-
-  border: 1px solid var(--se-border);
-  border-radius: 10px;
-
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
-  color: var(--se-heading);
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 500;
-
-  cursor: pointer;
-}
-
-.se-filter__select:hover {
-  border-color: var(--color-border-strong);
-}
-
-.se-filter__select:focus-visible {
-  outline: 2px solid var(--se-accent);
-  outline-offset: 2px;
-}
-
-.se-filter__caret {
-  position: absolute;
-  right: 11px;
-
-  color: var(--se-muted);
-  pointer-events: none;
 }
 
 /* --------------------------------------------------------------- Metrics */
@@ -123,84 +59,90 @@
 .se-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
 
 .se-metric {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  gap: 8px;
 
-  padding: 16px 18px;
+  padding: 12px 14px;
 
   border: 1px solid var(--se-border);
-  border-radius: 14px;
+  border-radius: 12px;
 
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
 }
 
+.se-metric__top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Solid sky chips with white icons, as in the design reference. */
 .se-metric__icon {
   display: grid;
   place-items: center;
+
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
 
-  width: 48px;
-  height: 48px;
+  border-radius: 9px;
 
-  border-radius: 12px;
-  background: var(--se-chip);
-  color: #ffffff;
-}
-
-.se-metric__text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+  background: var(--se-sky);
+  color: #fff;
 }
 
 .se-metric__label {
   color: var(--se-muted);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.06em;
+  line-height: 1.4;
   text-transform: uppercase;
 }
 
 .se-metric__value {
   color: var(--se-heading);
-  font-size: 28px;
+  font-size: 1.35rem;
   font-weight: 700;
-  line-height: 1.15;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .se-metric__unit {
-  font-size: 15px;
-  font-weight: 600;
+  color: var(--se-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
-/* ----------------------------------------------------------------- Cards */
+/* ----------------------------------------------------------------- Grid */
 
 .se-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  gap: 14px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 12px;
   align-items: stretch;
 }
+
+/* ---------------------------------------------------------------- Cards */
 
 .se-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-
-  padding: 16px 20px 14px;
 
   border: 1px solid var(--se-border);
   border-radius: 14px;
 
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
+
+  overflow: hidden;
 }
 
 .se-card__header {
@@ -208,278 +150,200 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 10px 16px;
+  gap: 8px 12px;
 
-  padding-bottom: 12px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--se-border);
-}
-
-.se-card__title-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.se-card__chip {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-
-  width: 36px;
-  height: 36px;
-
-  border-radius: 10px;
-}
-
-.se-card__chip--navy {
-  background: var(--se-heading);
-  color: var(--color-surface);
-}
-
-.se-card__chip--pale {
-  background: var(--se-chip-pale);
-  color: var(--se-chip-pale-ink);
 }
 
 .se-card__title {
   margin: 0;
 
-  color: var(--se-heading);
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.se-card__footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px 16px;
-
-  padding-top: 12px;
-  border-top: 1px solid var(--se-border);
-
-  color: var(--se-muted);
+  color: var(--color-heading-alt);
   font-size: 12px;
-}
-
-.se-card__footer p {
-  margin: 0;
-}
-
-.se-ratio strong {
-  color: var(--se-heading);
   font-weight: 600;
+  line-height: 1.4;
 }
 
-.se-ratio__girls {
-  color: var(--se-girls-text);
-  font-weight: 600;
+.se-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+
+  padding: 10px 16px 12px;
 }
 
-.se-aggregate {
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-/* ---------------------------------------------------------------- Legend */
+/* --------------------------------------------------------------- Legend */
 
 .se-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 16px;
+  gap: 14px;
 
   margin: 0;
   padding: 0;
-  list-style: none;
 
-  color: var(--se-muted);
-  font-size: 12px;
+  list-style: none;
 }
 
-.se-legend li {
-  display: inline-flex;
+.se-legend--wide {
+  justify-content: center;
+}
+
+.se-legend__item {
+  display: flex;
   align-items: center;
   gap: 6px;
-}
-
-.se-legend--spread {
-  width: 100%;
-  justify-content: space-between;
-}
-
-.se-swatch {
-  width: 11px;
-  height: 11px;
-  border-radius: 3px;
-}
-
-/* ---------------------------------------------------------------- Charts */
-
-/* Row one is the plot, row two holds the labels. The first column carries
-   the axis numbers. */
-.se-chart {
-  display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
-  grid-template-rows: 190px auto;
-
-  margin-top: 36px;
-}
-
-.se-axis {
-  position: relative;
-}
-
-.se-axis span {
-  position: absolute;
-  right: 10px;
-
-  color: var(--se-soft);
-  font-size: 11px;
-  transform: translateY(50%);
-}
-
-.se-plot {
-  position: relative;
-}
-
-.se-gridlines,
-.se-bars {
-  position: absolute;
-  inset: 0;
-}
-
-.se-gridline {
-  position: absolute;
-  left: 0;
-  right: 0;
-
-  border-top: 1px dashed var(--se-border);
-}
-
-.se-gridline:first-child {
-  border-top-style: solid;
-}
-
-.se-bars {
-  display: grid;
-}
-
-.se-group {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 6px;
-
-  min-width: 0;
-  height: 100%;
-}
-
-.se-bar {
-  position: relative;
-
-  width: 38px;
-  max-width: 40%;
-
-  border-radius: 6px 6px 0 0;
-}
-
-.se-bar--tier {
-  width: 56px;
-  max-width: 70%;
-}
-
-.se-bar__value {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-
-  padding-bottom: 4px;
-
-  color: var(--se-heading);
-  font-size: 12px;
-  font-weight: 700;
-  text-align: center;
-  white-space: nowrap;
-  transform: translateX(-50%);
-}
-
-.se-bar__value--girls {
-  color: var(--se-girls-text);
-}
-
-.se-bar__value strong {
-  display: block;
-  font-weight: 700;
-}
-
-.se-bar__value small {
-  display: block;
 
   color: var(--se-muted);
   font-size: 11px;
   font-weight: 400;
 }
 
-.se-labels {
-  display: grid;
-  padding-top: 10px;
+.se-legend__swatch {
+  width: 10px;
+  height: 10px;
+
+  border-radius: 3px;
 }
 
-.se-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-
-  min-width: 0;
-  text-align: center;
+.se-legend__swatch--boys,
+.se-legend__swatch--primary {
+  background: var(--se-navy);
 }
 
-.se-label__name {
-  color: var(--se-heading);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.se-label__sub {
-  color: var(--se-muted);
-  font-size: 12px;
-}
-
-/* Bar and legend colours. Primary is navy, the same as Boys. */
-.se-tone--boys,
-.se-tone--primary {
-  background: var(--se-heading);
-}
-
-.se-tone--girls,
-.se-tone--olevel {
+.se-legend__swatch--girls,
+.se-legend__swatch--olevel {
   background: var(--se-sky);
 }
 
-.se-tone--nursery {
-  background: var(--se-pale);
+.se-legend__swatch--alevel {
+  background: var(--se-amber);
 }
 
-.se-tone--alevel {
-  background: var(--se-amber);
+.se-legend__swatch--nursery {
+  background: var(--se-sky-light);
+}
+
+/* ---------------------------------------------------------------- Chart */
+
+/* Cap the height so a wide screen can't stretch a chart into a tall block.
+   The chart keeps its proportions and stays centred. */
+.se-chart {
+  display: block;
+
+  width: 100%;
+  height: auto;
+  max-height: 240px;
+}
+
+.se-chart__grid {
+  stroke: var(--color-border-soft);
+  stroke-dasharray: 3 4;
+  stroke-width: 1;
+}
+
+.se-chart__tick {
+  fill: var(--se-soft);
+  font-size: 10.5px;
+  text-anchor: end;
+}
+
+.se-chart__cat {
+  fill: var(--se-heading);
+  font-size: 12px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+.se-chart__sub {
+  fill: var(--se-muted);
+  font-size: 10.5px;
+  text-anchor: middle;
+}
+
+.se-chart__value {
+  fill: var(--se-heading);
+  font-size: 12px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.se-chart__value--girls {
+  fill: var(--se-sky-ink);
+}
+
+.se-chart__bar--boys,
+.se-chart__bar--primary {
+  fill: var(--se-navy);
+}
+
+.se-chart__bar--girls,
+.se-chart__bar--olevel {
+  fill: var(--se-sky);
+}
+
+.se-chart__bar--alevel {
+  fill: var(--se-amber);
+}
+
+.se-chart__bar--nursery {
+  fill: var(--se-sky-light);
+}
+
+/* ---------------------------------------------------------- Gender ratio */
+
+.se-ratio {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+
+  padding-top: 10px;
+  border-top: 1px solid var(--se-border);
+}
+
+.se-page .se-ratio__text {
+  max-width: none;
+  margin: 0;
+
+  color: var(--se-muted);
+  font-size: 11.5px;
+  font-weight: 400;
+}
+
+.se-ratio__text strong {
+  color: var(--se-heading);
+  font-weight: 600;
+}
+
+.se-ratio__text strong.se-ratio__girls {
+  color: var(--se-sky-ink);
+}
+
+.se-page .se-ratio__total {
+  max-width: none;
+  margin: 0;
+
+  color: var(--se-soft);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 /* ------------------------------------------------------------ Responsive */
 
-@media (max-width: 960px) {
+@media (max-width: 1100px) {
   .se-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 860px) {
   .se-metrics {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .se-toolbar {
-    justify-content: space-between;
   }
 }

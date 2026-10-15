@@ -1,43 +1,30 @@
-export type CampusId = "kibuli" | "buwaate" | "annex";
+export type CampusKey = "kibuli" | "buwaate" | "annex";
 
 export type TierId = "nursery" | "primary" | "olevel" | "alevel";
 
-export interface CampusRecord {
-  id: CampusId;
-  name: string;
+export interface CampusRow {
+  key: CampusKey;
+  /** Short name used under the chart bars. */
+  label: string;
   boys: number;
   girls: number;
-  capacity: number;
-  /** Percentage of applicants who went on to enrol, 0 to 100. */
-  admissionsConversion: number;
-  /** Students in each educational tier. They add up to boys + girls. */
-  tiers: Record<TierId, number>;
+  total: number;
 }
 
-export interface TierFigure {
+export interface TierRow {
   id: TierId;
   label: string;
   value: number;
-  /** Share of the selected enrolment, 0 to 100. */
+  /** Share of the selected enrolment, in percent. */
   share: number;
 }
 
-export interface TierLegendItem {
-  label: string;
-  tone: TierId;
-}
-
 export interface EnrollmentSummary {
-  /** The campuses being shown: one when a campus is picked, otherwise all. */
-  records: CampusRecord[];
-  isAll: boolean;
   total: number;
   boys: number;
   girls: number;
-  boysShare: number;
-  girlsShare: number;
+  /** Admissions conversion, in percent. */
   conversion: number;
-  utilization: number;
-  tiers: TierFigure[];
-  scopeText: string;
+  /** Capacity utilisation, in percent. */
+  capacity: number;
 }
