@@ -1,66 +1,91 @@
 import { useState } from "react";
-import { CalendarDays, Landmark, TrendingUp, Users } from "lucide-react";
+import {
+  Building2,
+  CalendarDays,
+  ChevronDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 
 import {
-  CampusFilter,
-  type CampusOption,
-} from "../../components/filters/CampusFilter";
-import { defaultAcademicYear } from "../../lib/organisation";
-import { CampusGenderCard } from "./CampusGenderCard";
-import { EnrollmentMetricCard } from "./EnrollmentMetricCard";
-import { TierEnrollmentCard } from "./TierEnrollmentCard";
-import {
-  campusRowsFor,
+  academicYearLabel,
+  allCampusesLabel,
+  campusOptions,
   formatNumber,
+  formatPercent,
   summaryFor,
-  tierRowsFor,
 } from "./studentEnrollment.data";
+import { CampusEnrollmentCard } from "./CampusEnrollmentCard";
+import { EnrollmentTierCard } from "./EnrollmentTierCard";
+import { SummaryMetricCard } from "./SummaryMetricCard";
 
-import "../../palette.css";
 import "./StudentEnrollment.css";
 
 export function StudentEnrollment() {
-  const [campus, setCampus] = useState<CampusOption>("All Campuses");
+  const [campus, setCampus] = useState(allCampusesLabel);
 
   const summary = summaryFor(campus);
-  const campusRows = campusRowsFor(campus);
-  const tierRows = tierRowsFor(campus);
 
   return (
     <div className="se-page">
       <div className="se-toolbar">
         <span className="se-year">
-          <CalendarDays size={14} aria-hidden="true" />
-          {defaultAcademicYear}
+          <CalendarDays size={16} aria-hidden="true" />
+          {academicYearLabel}
         </span>
 
-        <CampusFilter onCampusChange={setCampus} />
+        <div className="se-filter">
+          <label className="se-filter__label" htmlFor="se-campus-filter">
+            Select Campus
+          </label>
+
+          <div className="se-filter__control">
+            <select
+              id="se-campus-filter"
+              className="se-filter__select"
+              value={campus}
+              onChange={(event) => setCampus(event.target.value)}
+            >
+              {campusOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+
+            <ChevronDown
+              className="se-filter__caret"
+              size={16}
+              aria-hidden="true"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="se-metrics">
-        <EnrollmentMetricCard
+        <SummaryMetricCard
           label="Total Active Enrolment"
           value={formatNumber(summary.total)}
           unit="Students"
           icon={Users}
         />
 
-        <EnrollmentMetricCard
+        <SummaryMetricCard
           label="Admissions Conversion"
-          value={`${summary.conversion.toFixed(1)}%`}
+          value={formatPercent(summary.conversion)}
           icon={TrendingUp}
         />
 
-        <EnrollmentMetricCard
+        <SummaryMetricCard
           label="Capacity Utilization"
-          value={`${summary.capacity.toFixed(1)}%`}
-          icon={Landmark}
+          value={formatPercent(summary.utilization)}
+          icon={Building2}
         />
       </div>
 
       <div className="se-grid">
-        <CampusGenderCard rows={campusRows} summary={summary} />
-        <TierEnrollmentCard rows={tierRows} />
+        <CampusEnrollmentCard summary={summary} />
+        <EnrollmentTierCard summary={summary} />
       </div>
     </div>
   );
