@@ -500,3 +500,55 @@
   background: var(--se-chip);
   color: #ffffff;
 }
+
+/* Campus filter: a single white pill, no visible label (the label stays for
+   screen readers and tests). */
+.se-page .se-filter {
+  width: 210px;
+  gap: 0;
+}
+
+.se-page .se-filter__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.se-page .se-filter__control .se-filter__select {
+  height: 46px;
+  padding: 0 40px 0 14px;
+
+  border: 1px solid var(--se-border);
+  border-radius: 12px;
+
+  background-color: var(--se-metric-bg);
+  box-shadow: none;
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 400;
+  opacity: 1;
+  -webkit-text-fill-color: currentColor;
+}
+
+.se-page .se-filter__caret {
+  right: 14px;
+}
+
+/* The global filter plumbing in styles.css makes the select an invisible
+   absolute overlay. This page draws the select itself, so put it back in the
+   normal flow where it takes up space. */
+.se-page .se-filter {
+  border-radius: 12px;
+}
+
+.se-page .se-filter__control .se-filter__select {
+  position: relative;
+  inset: auto;
+  width: 100%;
+}

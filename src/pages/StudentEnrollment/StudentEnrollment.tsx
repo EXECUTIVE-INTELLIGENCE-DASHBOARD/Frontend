@@ -1,14 +1,12 @@
 import { useState } from "react";
 import {
   Building2,
-  CalendarDays,
   ChevronDown,
   TrendingUp,
   Users,
 } from "lucide-react";
 
 import {
-  academicYearLabel,
   allCampusesLabel,
   campusOptions,
   formatNumber,
@@ -29,11 +27,6 @@ export function StudentEnrollment() {
   return (
     <div className="se-page">
       <div className="se-toolbar">
-        <span className="se-year">
-          <CalendarDays size={16} aria-hidden="true" />
-          {academicYearLabel}
-        </span>
-
         <div className="se-filter">
           <label className="se-filter__label" htmlFor="se-campus-filter">
             Select Campus
