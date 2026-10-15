@@ -1,48 +1,48 @@
-import { ChevronRight } from "lucide-react";
-
-import { overviewMetrics } from "./executiveOverview.data";
-import { MetricCard } from "./MetricCard";
-import { BudgetCard } from "./BudgetCard";
-import { PipelineCard } from "./PipelineCard";
-import { SafetyCard } from "./SafetyCard";
-import { FacilitiesCard } from "./FacilitiesCard";
-
+import { OverviewCards } from "../../components/Overview/OverviewCards";
+import { OverviewCharts } from "../../components/Overview/OverviewCharts";
+import { OverviewInsights } from "../../components/Overview/OverviewInsights";
+import { CampusFilter } from "../../components/filters/CampusFilter";
 import "./ExecutiveOverview.css";
 
 export function ExecutiveOverview() {
   return (
-    <div className="eo-page">
-      <nav className="eo-breadcrumb" aria-label="Breadcrumb">
-        <span>Executive Intelligence</span>
+    <main className="executive-overview">
+      <h1 className="executive-overview__sr-only">
+        CEO Overview
+      </h1>
 
-        <ChevronRight size={13} aria-hidden="true" />
-
-        <span className="eo-breadcrumb__current" aria-current="page">
-          Overview
-        </span>
-      </nav>
-
-      <div className="eo-heading">
-        <h1 className="eo-heading__title">CEO Overview</h1>
-
-        <p className="eo-heading__subtitle">
-          Enrolment, financial overview, safety and operational readiness across
-          all campuses.
-        </p>
+      {/* Campus filter */}
+      <div className="executive-overview__filters">
+        <CampusFilter
+          onCampusChange={(campus) => {
+            console.log("Selected campus:", campus);
+          }}
+        />
       </div>
 
-      <section className="eo-metrics" aria-label="Key executive metrics">
-        {overviewMetrics.map((metric) => (
-          <MetricCard key={metric.id} metric={metric} />
-        ))}
+      {/* Row 1: Three summary cards */}
+      <section
+        className="executive-overview__cards"
+        aria-label="Executive summary"
+      >
+        <OverviewCards />
       </section>
 
-      <div className="eo-grid">
-        <BudgetCard />
-        <PipelineCard />
-        <SafetyCard />
-        <FacilitiesCard />
-      </div>
-    </div>
+      {/* Row 2: Budget chart and admissions doughnut chart */}
+      <section
+        className="executive-overview__charts"
+        aria-label="Budget and admissions analytics"
+      >
+        <OverviewCharts />
+      </section>
+
+      {/* Row 3: Incidents and capital projects */}
+      <section
+        className="executive-overview__insights"
+        aria-label="Operational insights"
+      >
+        <OverviewInsights />
+      </section>
+    </main>
   );
 }

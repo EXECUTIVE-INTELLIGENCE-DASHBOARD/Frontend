@@ -1,0 +1,311 @@
+/* Two charts displayed side by side */
+.overview-charts {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr);
+  gap: 18px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Shared chart panel */
+.overview-chart-card {
+  min-width: 0;
+  min-height: 246px;
+  padding: 19px 22px 16px;
+  box-sizing: border-box;
+
+  background: var(--color-surface);
+border: 1px solid var(--color-border);
+  border-radius: 7px;
+}
+
+/* Panel headings */
+.overview-chart-card__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.overview-chart-card__heading h2 {
+  margin: 0;
+  color: var(--color-heading);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Budget chart legend */
+.overview-chart-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.overview-chart-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+
+  color: var(--color-text-secondary);
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.overview-chart-legend__swatch {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 1px;
+}
+
+.overview-chart-legend__swatch--actual {
+  background: #18264b;
+}
+
+.overview-chart-legend__swatch--budget {
+  background: #13a8ed;
+}
+
+/* Budget bar chart */
+.overview-budget-chart {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.overview-budget-chart__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.overview-budget-chart__gridline {
+  stroke: var(--color-border-soft);
+  stroke-width: 1;
+}
+
+/* Budget chart left-side axis numbers */
+.overview-budget-chart__axis-label {
+  fill: var(--color-text-secondary);
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.overview-budget-chart__bar--actual {
+  fill: #18264b;
+}
+
+.overview-budget-chart__bar--budget {
+  fill: #13a8ed;
+}
+
+.overview-budget-chart__value {
+  fill: var(--color-heading);
+  font-size: 8.5px;
+  font-weight: 700;
+}
+
+.overview-budget-chart__value--budget {
+  fill: #13a8ed;
+}
+
+.overview-budget-chart__quarter {
+  fill: var(--color-heading);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.overview-budget-chart__period {
+fill: var(--color-text-secondary);
+  font-size: 8.5px;
+  font-weight: 500;
+}
+
+/* Admissions chart panel */
+.overview-admissions-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-admissions-chart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-height: 0;
+  padding: 3px 0 0;
+}
+
+.overview-admissions-chart__svg {
+  display: block;
+  width: 145px;
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.overview-admissions-chart__segment {
+  transition: opacity 160ms ease;
+}
+
+.overview-admissions-chart__segment:hover {
+  opacity: 0.8;
+}
+
+.overview-admissions-chart__total {
+  fill: var(--color-heading);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* Text below the admissions chart total */
+.overview-admissions-chart__caption {
+  fill: var(--color-text-secondary);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.45px;
+}
+.overview-admissions-legend {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 5px;
+  width: 100%;
+  margin-top: 0;
+}
+
+.overview-admissions-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 3px 4px;
+  background: var(--color-surface-muted);
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+.overview-admissions-legend__label {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-heading);
+  font-size: 11px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overview-admissions-legend__count {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.overview-admissions-legend__dot {
+  flex: 0 0 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.overview-admissions-legend__values {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.overview-admissions-legend__percentage {
+  flex-shrink: 0;
+  margin-right: 8px;
+  padding: 2px 3px;
+  color: #ffffff;
+  border-radius: 2px;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Medium screens */
+@media (max-width: 1000px) {
+  .overview-charts {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 12px;
+  }
+
+  .overview-chart-card {
+    padding: 16px;
+  }
+
+  .overview-chart-card__heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .overview-chart-legend {
+    justify-content: flex-start;
+  }
+
+  .overview-admissions-legend {
+    gap: 4px;
+  }
+}
+
+/* Small screens */
+@media (max-width: 650px) {
+  .overview-charts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .overview-chart-card {
+    min-height: 230px;
+    padding: 18px 16px;
+  }
+
+  .overview-chart-card__heading {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .overview-chart-card__heading h2 {
+    font-size: 12px;
+  }
+
+  .overview-chart-legend {
+    gap: 9px;
+  }
+
+  .overview-admissions-chart {
+    min-height: 150px;
+  }
+
+  .overview-admissions-chart__svg {
+    width: 155px;
+  }
+
+  .overview-admissions-legend__label,
+  .overview-admissions-legend__count,
+  .overview-admissions-legend__percentage {
+    font-size: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overview-admissions-chart__segment {
+    transition: none;
+  }
+}
