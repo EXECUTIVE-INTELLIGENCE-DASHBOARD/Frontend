@@ -92,6 +92,10 @@ export const navigationItems: NavigationItem[] = [
     icon: Landmark,
     children: [
       {
+        id: "hr-workforce",
+        label: "HR & Workforce",
+      },
+      {
         id: "facilities-maintenance",
         label: "Facilities & Maintenance",
       },
