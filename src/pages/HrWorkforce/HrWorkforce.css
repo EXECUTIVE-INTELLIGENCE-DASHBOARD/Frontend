@@ -1,0 +1,494 @@
+/* Brand typography (Greenhill brand guidelines 2026): Montserrat.
+   Loaded here so it only affects this page. */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+.hw-page {
+  --hw-heading: var(--color-heading);
+  --hw-muted: var(--color-text-muted);
+  --hw-soft: var(--color-text-soft);
+  --hw-border: var(--color-border);
+
+  /* Navy is the app heading colour. The blues and amber come from palette.css,
+     the same colours the procurement page uses. */
+  --hw-navy: var(--color-heading);
+  --hw-sky: var(--pal-sky);
+  --hw-steel: var(--pal-steel);
+  --hw-amber: var(--pal-amber);
+  --hw-amber-ink: var(--pal-amber-ink);
+  --hw-green: var(--pal-green);
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  /* Headline: Bold. Subhead: Semibold. Body copy: Regular. */
+  font-family: "Montserrat", Inter, ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------------- Toolbar */
+
+/* The campus dropdown is the shared CampusFilter component. */
+.hw-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.hw-period {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  height: 34px;
+  padding: 0 12px;
+
+  border: 1px solid var(--hw-border);
+  border-radius: 10px;
+
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------- Metrics */
+
+.hw-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.hw-metric {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  padding: 12px 14px;
+
+  border: 1px solid var(--hw-border);
+  border-radius: 12px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+
+  overflow: hidden;
+}
+
+/* The soft circle in the corner of each card, as in the design reference. */
+.hw-metric::after {
+  position: absolute;
+  top: -48%;
+  right: -6%;
+
+  width: 46%;
+  aspect-ratio: 1;
+
+  border-radius: 50%;
+
+  background: var(--panel);
+
+  content: "";
+}
+
+.hw-metric--sky {
+  --panel: color-mix(in srgb, var(--hw-sky) 11%, transparent);
+  --chip: color-mix(in srgb, var(--hw-sky) 18%, transparent);
+  --chip-ink: var(--hw-steel);
+}
+
+.hw-metric--slate {
+  --panel: color-mix(in srgb, var(--hw-navy) 6%, transparent);
+  --chip: color-mix(in srgb, var(--hw-navy) 11%, transparent);
+  --chip-ink: var(--hw-navy);
+}
+
+.hw-metric--amber {
+  --panel: color-mix(in srgb, var(--hw-amber) 14%, transparent);
+  --chip: color-mix(in srgb, var(--hw-amber) 24%, transparent);
+  --chip-ink: var(--hw-amber-ink);
+}
+
+.hw-metric__top,
+.hw-metric__value {
+  position: relative;
+  z-index: 1;
+}
+
+.hw-metric__top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hw-metric__icon {
+  display: grid;
+  place-items: center;
+
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+
+  border-radius: 8px;
+
+  background: var(--chip);
+  color: var(--chip-ink);
+}
+
+.hw-metric__label {
+  color: var(--hw-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.hw-metric__value {
+  color: var(--hw-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* ---------------------------------------------------------------- Card */
+
+.hw-card {
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid var(--hw-border);
+  border-radius: 14px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+
+  overflow: hidden;
+}
+
+.hw-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 12px;
+
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--hw-border);
+}
+
+.hw-card__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin: 0;
+
+  color: var(--color-heading-alt);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.hw-card__dot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 999px;
+  background: var(--hw-sky);
+}
+
+.hw-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.hw-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  height: 32px;
+  padding: 0 10px;
+
+  border: 1px solid var(--hw-border);
+  border-radius: 10px;
+
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+
+.hw-select:focus-within {
+  outline: 2px solid var(--hw-sky);
+  outline-offset: 2px;
+}
+
+.hw-select__field {
+  appearance: none;
+
+  border: 0;
+  background: transparent;
+  color: inherit;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.hw-select__field:focus-visible {
+  outline: none;
+}
+
+.hw-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  height: 32px;
+  padding: 0 12px;
+
+  border: 1px solid transparent;
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: filter 0.2s ease;
+}
+
+.hw-button--primary {
+  background: var(--hw-sky);
+  color: #fff;
+}
+
+.hw-button--primary:hover {
+  filter: brightness(0.93);
+}
+
+.hw-button:focus-visible {
+  outline: 2px solid var(--hw-sky);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- Table */
+
+.hw-table-wrap {
+  overflow-x: auto;
+}
+
+.hw-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  font-size: 12px;
+}
+
+.hw-table thead th {
+  padding: 8px 14px;
+
+  border-bottom: 1px solid var(--hw-border);
+
+  background: var(--color-surface-subtle);
+  color: var(--hw-soft);
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.hw-table tbody td {
+  padding: 9px 14px;
+
+  border-bottom: 1px solid var(--color-border-soft);
+
+  color: var(--color-text);
+  vertical-align: middle;
+}
+
+.hw-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.hw-table tbody tr:hover {
+  background: var(--color-surface-hover);
+}
+
+/* The table cell colour rule is more specific than a single class,
+   so these repeat "tbody td". */
+.hw-table tbody td.hw-muted {
+  color: var(--hw-muted);
+}
+
+.hw-table tbody td.hw-empty {
+  padding: 28px 14px;
+
+  color: var(--hw-muted);
+  text-align: center;
+}
+
+.hw-department {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hw-department__icon {
+  display: grid;
+  place-items: center;
+
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+
+  border-radius: 8px;
+}
+
+.hw-department__icon--book {
+  background: color-mix(in srgb, var(--hw-sky) 16%, transparent);
+  color: var(--hw-sky);
+}
+
+.hw-department__icon--utensils {
+  background: color-mix(in srgb, var(--hw-amber) 18%, transparent);
+  color: var(--hw-amber-ink);
+}
+
+.hw-department__icon--bus {
+  background: color-mix(in srgb, var(--hw-steel) 16%, transparent);
+  color: var(--hw-steel);
+}
+
+.hw-department__icon--briefcase {
+  background: color-mix(in srgb, var(--hw-navy) 10%, transparent);
+  color: var(--hw-navy);
+}
+
+.hw-department__icon--wrench {
+  background: color-mix(in srgb, var(--hw-green) 14%, transparent);
+  color: var(--hw-green);
+}
+
+.hw-department__name {
+  color: var(--hw-heading);
+  font-weight: 600;
+}
+
+.hw-tag {
+  display: inline-block;
+
+  padding: 4px 9px;
+
+  border: 1px solid var(--color-border-soft);
+  border-radius: 8px;
+
+  background: var(--color-surface-tint);
+  color: var(--color-text-secondary);
+
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.hw-tag--teaching {
+  border-color: color-mix(in srgb, var(--hw-steel) 30%, transparent);
+
+  background: color-mix(in srgb, var(--hw-steel) 11%, transparent);
+  color: var(--hw-steel);
+}
+
+.hw-headcount strong {
+  color: var(--hw-heading);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.hw-headcount span {
+  color: var(--hw-soft);
+  font-size: 11px;
+}
+
+.hw-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.hw-pill__dot {
+  width: 5px;
+  height: 5px;
+
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.hw-pill--good {
+  background: color-mix(in srgb, var(--color-positive) 13%, transparent);
+  color: var(--color-positive);
+}
+
+.hw-pill--warn {
+  background: color-mix(in srgb, var(--hw-amber) 18%, transparent);
+  color: var(--hw-amber-ink);
+}
+
+.hw-absence {
+  display: inline-block;
+
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.hw-absence--neutral {
+  background: var(--color-surface-tint);
+  color: var(--color-text-secondary);
+}
+
+.hw-absence--info {
+  background: color-mix(in srgb, var(--hw-steel) 13%, transparent);
+  color: var(--hw-steel);
+}
+
+.hw-absence--warn {
+  background: color-mix(in srgb, var(--hw-amber) 18%, transparent);
+  color: var(--hw-amber-ink);
+}
+
+/* ------------------------------------------------------------ Responsive */
+
+@media (max-width: 860px) {
+  .hw-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
