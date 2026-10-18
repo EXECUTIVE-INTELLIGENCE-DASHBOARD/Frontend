@@ -114,18 +114,22 @@ describe("HrWorkforce", () => {
     expect(screen.getByText("93.8% Present")).toHaveClass("hw-pill--warn");
   });
 
-  it("narrows the table to one department", () => {
+    it("narrows the table to one department", () => {
     render(<HrWorkforce />);
 
     fireEvent.change(screen.getByLabelText("Filter department"), {
       target: { value: "Transport & Fleet Management" },
     });
 
+    const table = screen.getByRole("table");
+
     // The header row and the single department.
-    expect(screen.getAllByRole("row")).toHaveLength(2);
-    expect(screen.getByText("Transport & Fleet Management")).toBeInTheDocument();
+    expect(within(table).getAllByRole("row")).toHaveLength(2);
     expect(
-      screen.queryByText("Boarding & Catering Operations"),
+      within(table).getByText("Transport & Fleet Management"),
+    ).toBeInTheDocument();
+    expect(
+      within(table).queryByText("Boarding & Catering Operations"),
     ).not.toBeInTheDocument();
   });
 
@@ -142,8 +146,10 @@ describe("HrWorkforce", () => {
 
     // Header row plus the three departments that work at Buwaate.
     expect(screen.getAllByRole("row")).toHaveLength(4);
-    expect(
-      screen.queryByText("Boarding & Catering Operations"),
+        expect(
+      within(screen.getByRole("table")).queryByText(
+        "Boarding & Catering Operations",
+      ),
     ).not.toBeInTheDocument();
 
     expect(
