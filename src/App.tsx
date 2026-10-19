@@ -19,6 +19,7 @@ import { ProcurementFinancials } from "./pages/ProcurementFinancials/Procurement
 import { ExpenseManagement } from "./pages/ExpenseManagement/ExpenseManagement";
 import { CoCurricularActivities } from "./pages/CoCurricularActivities/CoCurricularActivities";
 import { StudentRetention } from "./pages/StudentRetention/StudentRetention";
+import { HrWorkforce } from "./pages/HrWorkforce/HrWorkforce";
 
 const pages: Record<string, ReactElement> = {
   /* Overview + academic group */
@@ -38,6 +39,9 @@ const pages: Record<string, ReactElement> = {
   "revenue-fee-collection": <Revenue />,
   "procurement-financials": <ProcurementFinancials />,
   "expense-management": <ExpenseManagement />,
+  
+  /* Operational group */
+  "hr-workforce": <HrWorkforce />,
 };
 
 const defaultPageId = "academic-performance";

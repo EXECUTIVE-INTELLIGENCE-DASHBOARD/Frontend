@@ -1,82 +1,85 @@
-import { RefreshCw } from "lucide-react";
+import { useState } from "react";
+import {
+  Building2,
+  ChevronDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 
 import {
-  filterControls,
-  prototypeNote,
-  summaryMetrics,
+  allCampusesLabel,
+  campusOptions,
+  formatNumber,
+  formatPercent,
+  summaryFor,
 } from "./studentEnrollment.data";
-import { FilterCard } from "./FilterCard";
+import { CampusEnrollmentCard } from "./CampusEnrollmentCard";
+import { EnrollmentTierCard } from "./EnrollmentTierCard";
 import { SummaryMetricCard } from "./SummaryMetricCard";
-import { EnrollmentTrendCard } from "./EnrollmentTrendCard";
-import { GroupComparisonCard } from "./GroupComparisonCard";
-import { CapacityPlanningCard } from "./CapacityPlanningCard";
-import { AttentionCard } from "./AttentionCard";
 
 import "./StudentEnrollment.css";
 
 export function StudentEnrollment() {
+  const [campus, setCampus] = useState(allCampusesLabel);
+
+  const summary = summaryFor(campus);
+
   return (
     <div className="se-page">
-      <nav className="se-breadcrumb" aria-label="Breadcrumb">
-        <span className="se-breadcrumb__item">Academic Intelligence</span>
+      <div className="se-toolbar">
+        <div className="se-filter">
+          <label className="se-filter__label" htmlFor="se-campus-filter">
+            Select Campus
+          </label>
 
-        <span className="se-breadcrumb__sep" aria-hidden="true">
-          /
-        </span>
+          <div className="se-filter__control">
+            <select
+              id="se-campus-filter"
+              className="se-filter__select"
+              value={campus}
+              onChange={(event) => setCampus(event.target.value)}
+            >
+              {campusOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
 
-        <span
-          className="se-breadcrumb__item se-breadcrumb__item--current"
-          aria-current="page"
-        >
-          Student Enrollment
-        </span>
-      </nav>
-
-      <div className="se-heading">
-        <div className="se-heading__text">
-          <h1 className="se-heading__title">Student Enrollment</h1>
-
-          <p className="se-heading__subtitle">
-            Tracks student numbers, conversions and the capacity needed to
-            support learning.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="se-icon-button"
-          aria-label="Refresh enrollment data"
-        >
-          <RefreshCw size={18} aria-hidden="true" />
-        </button>
-      </div>
-
-      <div className="se-controls">
-        <div className="se-filters">
-          {filterControls.map((control) => (
-            <FilterCard key={control.id} control={control} />
-          ))}
-        </div>
-
-        <div className="se-metrics">
-          {summaryMetrics.map((metric) => (
-            <SummaryMetricCard key={metric.id} metric={metric} />
-          ))}
+            <ChevronDown
+              className="se-filter__caret"
+              size={16}
+              aria-hidden="true"
+            />
+          </div>
         </div>
       </div>
 
-      <p className="se-note">{prototypeNote}</p>
+      <div className="se-metrics">
+        <SummaryMetricCard
+          label="Total Active Enrolment"
+          value={formatNumber(summary.total)}
+          unit="Students"
+          icon={Users}
+        />
+
+        <SummaryMetricCard
+          label="Admissions Conversion"
+          value={formatPercent(summary.conversion)}
+          icon={TrendingUp}
+        />
+
+        <SummaryMetricCard
+          label="Capacity Utilization"
+          value={formatPercent(summary.utilization)}
+          icon={Building2}
+        />
+      </div>
 
       <div className="se-grid">
-        <EnrollmentTrendCard />
-        <GroupComparisonCard />
+        <CampusEnrollmentCard summary={summary} />
+        <EnrollmentTierCard summary={summary} />
       </div>
-
-      <CapacityPlanningCard />
-
-      <AttentionCard />
-
-      <p className="se-footnote">Prototype · sample data</p>
     </div>
   );
 }

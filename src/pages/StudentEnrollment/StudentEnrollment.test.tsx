@@ -1,83 +1,139 @@
-import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 
 import { StudentEnrollment } from "./StudentEnrollment";
+import {
+  allCampusesLabel,
+  axisFor,
+  campuses,
+  summaryFor,
+} from "./studentEnrollment.data";
+
+afterEach(() => {
+  cleanup();
+});
 
 describe("StudentEnrollment", () => {
-  it("renders the page heading", () => {
+  it("renders the three headline cards for all campuses", () => {
     render(<StudentEnrollment />);
 
-    expect(
-      screen.getByRole("heading", { name: "Student Enrollment" }),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByText(
-        /Tracks student numbers, conversions and the capacity needed to support learning\./,
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Total Active Enrolment")).toBeInTheDocument();
+    expect(screen.getByText("2,800")).toBeInTheDocument();
+    expect(screen.getByText("Admissions Conversion")).toBeInTheDocument();
+    expect(screen.getByText("84.5%")).toBeInTheDocument();
+    expect(screen.getByText("Capacity Utilization")).toBeInTheDocument();
+    expect(screen.getByText("91.2%")).toBeInTheDocument();
   });
 
-  it("renders the headline enrollment metrics", () => {
+  it("shows boys and girls for each campus", () => {
     render(<StudentEnrollment />);
 
-    const expectedMetrics: Array<[string, string]> = [
-      ["Current Enrollment", "3,420"],
-      ["Capacity Used", "97.7%"],
-      ["Net Period Change", "+120"],
-    ];
+    expect(
+      screen.getByRole("group", { name: "Kibuli Main: 640 boys, 610 girls" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: "Buwaate: 430 boys, 420 girls" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", {
+        name: "Annex Preschool: 360 boys, 340 girls",
+      }),
+    ).toBeInTheDocument();
 
-    for (const [label, value] of expectedMetrics) {
-      const card = screen.getByText(label).closest("article");
+    expect(screen.getByText("Total: 1,250")).toBeInTheDocument();
+    expect(screen.getByText(/51\.1% Boys \(1,430\)/)).toBeInTheDocument();
+    expect(screen.getByText(/48\.9% Girls \(1,370\)/)).toBeInTheDocument();
+    expect(screen.getByText("Aggregate 2,800 students")).toBeInTheDocument();
+  });
 
-      expect(card).not.toBeNull();
-      expect(within(card as HTMLElement).getByText(value)).toBeInTheDocument();
+  it("shows enrolment by educational tier", () => {
+    render(<StudentEnrollment />);
+
+    expect(
+      screen.getByRole("group", { name: "Nursery: 450 students, 16.1%" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: "Primary: 1,450 students, 51.8%" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: "O-Level: 650 students, 23.2%" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: "A-Level: 250 students, 8.9%" }),
+    ).toBeInTheDocument();
+
+    expect(screen.getByText("Core (Primary)")).toBeInTheDocument();
+    expect(screen.getByText("Secondary / Prep")).toBeInTheDocument();
+    expect(screen.getByText("Sixth Form (A-L)")).toBeInTheDocument();
+  });
+
+  it("offers the four campus options", () => {
+    render(<StudentEnrollment />);
+
+    expect(screen.getByLabelText("Select Campus")).toHaveValue(
+      allCampusesLabel,
+    );
+
+    expect(
+      screen.getAllByRole("option").map((option) => option.textContent),
+    ).toEqual(["All Campuses", "Kibuli Main", "Buwaate", "Annex Preschool"]);
+  });
+
+  it("changes every figure when a campus is selected", () => {
+    render(<StudentEnrollment />);
+
+    fireEvent.change(screen.getByLabelText("Select Campus"), {
+      target: { value: "Kibuli Main" },
+    });
+
+    expect(screen.getByText("1,250")).toBeInTheDocument();
+    expect(screen.getByText("85.8%")).toBeInTheDocument();
+    expect(screen.getByText("93.3%")).toBeInTheDocument();
+    expect(screen.getByText("Kibuli Main 1,250 students")).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("group", { name: "Kibuli Main: 640 boys, 610 girls" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("group", { name: /Buwaate/ }),
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.getByRole("group", { name: "Primary: 620 students, 49.6%" }),
+    ).toBeInTheDocument();
+  });
+});
+
+describe("enrolment data", () => {
+  it("adds up to the design's 2,800 students", () => {
+    const summary = summaryFor(allCampusesLabel);
+
+    expect(summary.total).toBe(2800);
+    expect(summary.boys).toBe(1430);
+    expect(summary.girls).toBe(1370);
+  });
+
+  it("matches the design's tier counts", () => {
+    expect(
+      summaryFor(allCampusesLabel).tiers.map((tier) => tier.value),
+    ).toEqual([450, 1450, 650, 250]);
+  });
+
+  it("splits every campus across the tiers without losing anyone", () => {
+    for (const campus of campuses) {
+      const tierTotal = Object.values(campus.tiers).reduce(
+        (total, value) => total + value,
+        0,
+      );
+
+      expect(tierTotal).toBe(campus.boys + campus.girls);
     }
   });
 
-  it("renders the enrollment trend and group comparison cards", () => {
-    render(<StudentEnrollment />);
-
-    expect(
-      screen.getByRole("heading", { name: /Enrollment Changes Over Time/i }),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByRole("heading", { name: /Student Group Comparison/i }),
-    ).toBeInTheDocument();
-
-    // The year filter is a real dropdown now, so year labels also appear as
-    // <option> text. Scope the check to the trend card's own legend.
-    const trendCard = screen
-      .getByRole("heading", { name: /Enrollment Changes Over Time/i })
-      .closest("section");
-
-    expect(trendCard).not.toBeNull();
-
-    const legend = within(trendCard as HTMLElement);
-
-    expect(legend.getAllByText("AY 2025/2026").length).toBeGreaterThan(0);
-    expect(legend.getByText("AY 2024/2025")).toBeInTheDocument();
-  });
-
-  it("renders the capacity plan and the attention table", () => {
-    render(<StudentEnrollment />);
-
-    expect(
-      screen.getByRole("heading", {
-        name: /Capacity & Resource Planning/i,
-      }),
-    ).toBeInTheDocument();
-
-    expect(screen.getByText("Science lead")).toBeInTheDocument();
-
-    expect(
-      screen.getByRole("heading", {
-        name: /Enrollment Changes Requiring Attention/i,
-      }),
-    ).toBeInTheDocument();
-
-    expect(screen.getByText("Arts intake")).toBeInTheDocument();
-    expect(screen.getByText("Next intake")).toBeInTheDocument();
+  it("picks chart axes like the design", () => {
+    expect(axisFor(640).top).toBe(800);
+    expect(axisFor(640).ticks).toEqual([0, 200, 400, 600, 800]);
+    expect(axisFor(1450).top).toBe(1600);
+    expect(axisFor(1450).ticks).toEqual([0, 400, 800, 1200, 1600]);
   });
 });
