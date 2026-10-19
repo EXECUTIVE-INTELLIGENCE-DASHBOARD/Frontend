@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const fallbackApiBaseUrl =
-  "https://greenhill-eid-backend.onrender.com/api";
+  "https://eid-backend-4mrm.onrender.com/api";
 
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || fallbackApiBaseUrl,
