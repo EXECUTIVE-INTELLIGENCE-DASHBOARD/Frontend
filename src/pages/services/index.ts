@@ -1,3 +1,3 @@
-export { default as SalesPage } from "./SalesPage";
-export { default as InventoryPage } from "./InventoryPage";
-export { default as BudgetPage } from "./BudgetPage";
+export { default as Sales } from "./SalesPage";
+export { default as Inventory } from "./InventoryPage";
+export { default as Budget } from "./BudgetPage";
