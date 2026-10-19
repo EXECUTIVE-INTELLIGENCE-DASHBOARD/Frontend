@@ -26,7 +26,7 @@ interface KpiProps {
   tone?: "ok" | "bad";
 }
 
-export function Kpi({ icon, title, value, unit, note, tone }: KpiProps) {
+export function Kpi({ icon, title, value, unit }: KpiProps) {
   return (
     <div className="svc-kpi">
       <span className="svc-kic">
@@ -35,7 +35,6 @@ export function Kpi({ icon, title, value, unit, note, tone }: KpiProps) {
       <div>
         <div className="svc-kt">{title}</div>
         <div className="svc-kv">{value}{unit && <small>{unit}</small>}</div>
-        {note && <div className={`svc-kd ${tone ?? ""}`}>{note}</div>}
       </div>
     </div>
   );
