@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { outlets } from "../../lib/services.data";
 import type { MonthlySales, OutletFilterValue, Tone } from "../../lib/services.types";
 
@@ -142,42 +142,153 @@ export const OutletName = ({ icon, name }: { icon?: string; name: string }) => (
 );
 
 
-const L = 72, R = 990, T = 22, B = 205;
+const H = 220, T = 24, B = 180, L = 48, PAD = 16;
 const ticks = [40, 60, 80, 100, 120];
-const axis = { fontFamily: "Inter, sans-serif", fontSize: 14, fill: "var(--svc-mut)" };
-const label = { ...axis, fontSize: 15, fontWeight: 600 };
+const axis = { fontFamily: "Inter, sans-serif", fontSize: 12, fill: "var(--svc-mut)" };
+const label = { ...axis, fontWeight: 600 };
 
 export function SalesTrendChart({ data }: { data: MonthlySales[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(900);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setW(Math.max(320, Math.round(e.contentRect.width))));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const R = w - PAD;
   const x = (i: number) => L + ((i + 0.5) * (R - L)) / data.length;
   const y = (v: number) => B - ((v - 40) / 80) * (B - T);
 
   return (
     <div className="svc-panel">
       <div className="svc-ph"><h2>Monthly Sales Trend</h2></div>
-      <div style={{ padding: "0 20px 14px" }}>
-        <svg viewBox="0 0 1000 270" width="100%" role="img" aria-label="Monthly sales trend, UGX millions">
+      <div ref={ref} style={{ padding: "0 20px 8px" }}>
+        <svg width={w} height={H} role="img" aria-label="Monthly sales trend, UGX millions">
           {ticks.map((v) => (
             <g key={v}>
               <line x1={L} x2={R} y1={y(v)} y2={y(v)} stroke="var(--svc-line)" />
-              <text x={L - 12} y={y(v) + 5} textAnchor="end" style={axis}>{v}</text>
+              <text x={L - 8} y={y(v) + 4} textAnchor="end" style={axis}>{v}</text>
             </g>
           ))}
           <line x1={L} x2={L} y1={T} y2={B} stroke="var(--svc-mut)" />
           <line x1={L} x2={R} y1={B} y2={B} stroke="var(--svc-mut)" />
-          <polyline fill="none" strokeWidth={3} strokeLinejoin="round" strokeLinecap="round" stroke="var(--svc-blue)"
+          <polyline fill="none" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" stroke="var(--svc-blue)"
             points={data.map((m, i) => `${x(i)},${y(m.value)}`).join(" ")} />
           {data.map((m, i) => (
             <g key={m.month}>
-              <circle cx={x(i)} cy={y(m.value)} r={6} fill="var(--svc-blue)" />
-              <text x={x(i)} y={y(m.value) - 14} textAnchor="middle" style={{ ...label, fill: "var(--svc-ink)" }}>{m.value}</text>
-              <text x={x(i)} y={B + 26} textAnchor="middle" style={axis}>{m.month}</text>
+              <circle cx={x(i)} cy={y(m.value)} r={4.5} fill="var(--svc-blue)" />
+              <text x={x(i)} y={y(m.value) - 10} textAnchor="middle" style={{ ...label, fill: "var(--svc-ink)" }}>{m.value}</text>
+              <text x={x(i)} y={B + 18} textAnchor="middle" style={axis}>{m.month}</text>
             </g>
           ))}
-          <text x={(L + R) / 2} y={262} textAnchor="middle" style={label}>Month (2026)</text>
-          <text transform={`translate(18 ${(T + B) / 2}) rotate(-90)`} textAnchor="middle" style={label}>Sales (UGX millions)</text>
+          <text x={(L + R) / 2} y={H - 4} textAnchor="middle" style={label}>Month (2026)</text>
+          <text transform={`translate(12 ${(T + B) / 2}) rotate(-90)`} textAnchor="middle" style={label}>UGX millions</text>
         </svg>
       </div>
     </div>
   );
 }
+const H = 220, T = 24, B = 180, L = 48, PAD = 16;
+const ticks = [40, 60, 80, 100, 120];
+const axis = { fontFamily: "Inter, sans-serif", fontSize: 12, fill: "var(--svc-mut)" };
+const label = { ...axis, fontWeight: 600 };
 
+export function SalesTrendChart({ data }: { data: MonthlySales[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(900);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setW(Math.max(320, Math.round(e.contentRect.width))));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const R = w - PAD;
+  const x = (i: number) => L + ((i + 0.5) * (R - L)) / data.length;
+  const y = (v: number) => B - ((v - 40) / 80) * (B - T);
+
+  return (
+    <div className="svc-panel">
+      <div className="svc-ph"><h2>Monthly Sales Trend</h2></div>
+      <div ref={ref} style={{ padding: "0 20px 8px" }}>
+        <svg width={w} height={H} role="img" aria-label="Monthly sales trend, UGX millions">
+          {ticks.map((v) => (
+            <g key={v}>
+              <line x1={L} x2={R} y1={y(v)} y2={y(v)} stroke="var(--svc-line)" />
+              <text x={L - 8} y={y(v) + 4} textAnchor="end" style={axis}>{v}</text>
+            </g>
+          ))}
+          <line x1={L} x2={L} y1={T} y2={B} stroke="var(--svc-mut)" />
+          <line x1={L} x2={R} y1={B} y2={B} stroke="var(--svc-mut)" />
+          <polyline fill="none" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" stroke="var(--svc-blue)"
+            points={data.map((m, i) => `${x(i)},${y(m.value)}`).join(" ")} />
+          {data.map((m, i) => (
+            <g key={m.month}>
+              <circle cx={x(i)} cy={y(m.value)} r={4.5} fill="var(--svc-blue)" />
+              <text x={x(i)} y={y(m.value) - 10} textAnchor="middle" style={{ ...label, fill: "var(--svc-ink)" }}>{m.value}</text>
+              <text x={x(i)} y={B + 18} textAnchor="middle" style={axis}>{m.month}</text>
+            </g>
+          ))}
+          <text x={(L + R) / 2} y={H - 4} textAnchor="middle" style={label}>Month (2026)</text>
+          <text transform={`translate(12 ${(T + B) / 2}) rotate(-90)`} textAnchor="middle" style={label}>UGX millions</text>
+        </svg>
+      </div>
+    </div>
+  );
+}
+const H = 220, T = 24, B = 180, L = 48, PAD = 16;
+const ticks = [40, 60, 80, 100, 120];
+const axis = { fontFamily: "Inter, sans-serif", fontSize: 12, fill: "var(--svc-mut)" };
+const label = { ...axis, fontWeight: 600 };
+
+export function SalesTrendChart({ data }: { data: MonthlySales[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(900);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setW(Math.max(320, Math.round(e.contentRect.width))));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const R = w - PAD;
+  const x = (i: number) => L + ((i + 0.5) * (R - L)) / data.length;
+  const y = (v: number) => B - ((v - 40) / 80) * (B - T);
+
+  return (
+    <div className="svc-panel">
+      <div className="svc-ph"><h2>Monthly Sales Trend</h2></div>
+      <div ref={ref} style={{ padding: "0 20px 8px" }}>
+        <svg width={w} height={H} role="img" aria-label="Monthly sales trend, UGX millions">
+          {ticks.map((v) => (
+            <g key={v}>
+              <line x1={L} x2={R} y1={y(v)} y2={y(v)} stroke="var(--svc-line)" />
+              <text x={L - 8} y={y(v) + 4} textAnchor="end" style={axis}>{v}</text>
+            </g>
+          ))}
+          <line x1={L} x2={L} y1={T} y2={B} stroke="var(--svc-mut)" />
+          <line x1={L} x2={R} y1={B} y2={B} stroke="var(--svc-mut)" />
+          <polyline fill="none" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" stroke="var(--svc-blue)"
+            points={data.map((m, i) => `${x(i)},${y(m.value)}`).join(" ")} />
+          {data.map((m, i) => (
+            <g key={m.month}>
+              <circle cx={x(i)} cy={y(m.value)} r={4.5} fill="var(--svc-blue)" />
+              <text x={x(i)} y={y(m.value) - 10} textAnchor="middle" style={{ ...label, fill: "var(--svc-ink)" }}>{m.value}</text>
+              <text x={x(i)} y={B + 18} textAnchor="middle" style={axis}>{m.month}</text>
+            </g>
+          ))}
+          <text x={(L + R) / 2} y={H - 4} textAnchor="middle" style={label}>Month (2026)</text>
+          <text transform={`translate(12 ${(T + B) / 2}) rotate(-90)`} textAnchor="middle" style={label}>UGX millions</text>
+        </svg>
+      </div>
+    </div>
+  );
+}
