@@ -1,0 +1,131 @@
+
+.attendance-graph {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-card);
+}
+
+.attendance-graph__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.attendance-graph__title {
+  margin: 0;
+  color: var(--color-heading);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.attendance-graph__subtitle {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.attendance-graph__week {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.attendance-graph__week select {
+  width: 142px;
+  appearance: none;
+  padding: 8px 30px 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background: var(--color-surface);
+  color: var(--color-heading);
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.attendance-graph__week select:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.attendance-graph__week > svg {
+  position: absolute;
+  right: 9px;
+  pointer-events: none;
+  color: var(--color-text-muted);
+}
+
+.attendance-graph__legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0 8px;
+}
+
+.attendance-graph__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+}
+
+.attendance-graph__legend-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.attendance-graph__chart {
+  width: 100%;
+  height: 260px;
+  min-width: 0;
+}
+
+.attendance-graph__chart .recharts-wrapper {
+  outline: none;
+}
+
+.attendance-graph__chart .recharts-cartesian-axis-tick text {
+  font-family: inherit;
+}
+
+.attendance-graph__chart .recharts-cartesian-grid line {
+  stroke: var(--color-chart-grid);
+}
+
+.attendance-graph__chart .recharts-tooltip-cursor {
+  fill: var(--color-surface-hover);
+}
+
+@media (max-width: 640px) {
+  .attendance-graph {
+    padding: 14px;
+  }
+
+  .attendance-graph__header {
+    flex-direction: column;
+  }
+
+  .attendance-graph__legend {
+    gap: 10px;
+  }
+
+  .attendance-graph__chart {
+    height: 240px;
+  }
+
+  .attendance-graph__week select {
+    width: 150px;
+  }
+}
