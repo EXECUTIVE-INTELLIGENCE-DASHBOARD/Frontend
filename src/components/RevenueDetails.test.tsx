@@ -5,8 +5,12 @@ import { RevenueDetails } from "./RevenueDetails";
 
 describe("RevenueDetails", () => {
   it("renders all three summary cards with the correct amounts", () => {
-    render(<RevenueDetails />);
-
+    render(
+  <RevenueDetails
+    campus="Kibuli Main Campus"
+    section="Primary"
+  />
+);
     expect(
       screen.getByText("EXPECTED BILLED REVENUE"),
     ).toBeInTheDocument();
@@ -33,7 +37,12 @@ describe("RevenueDetails", () => {
   });
 
   it("renders the campus revenue table with the correct campuses", () => {
-    render(<RevenueDetails />);
+    render(
+  <RevenueDetails
+    campus="Kibuli Main Campus"
+    section="Primary"
+  />
+);
 
     const table = screen.getByRole("table");
 
@@ -53,7 +62,12 @@ describe("RevenueDetails", () => {
   });
 
   it("renders the correct campus collection percentages", () => {
-    render(<RevenueDetails />);
+  render(
+  <RevenueDetails
+    campus="Kibuli Main Campus"
+    section="Primary"
+  />
+);
 
     const table = within(screen.getByRole("table"));
 
@@ -63,7 +77,12 @@ describe("RevenueDetails", () => {
   });
 
   it("renders all six revenue streams", () => {
-    render(<RevenueDetails />);
+    render(
+  <RevenueDetails
+    campus="Kibuli Main Campus"
+    section="Primary"
+  />
+);
 
     expect(screen.getByText("Tuition")).toBeInTheDocument();
 
@@ -85,7 +104,12 @@ describe("RevenueDetails", () => {
   });
 
   it("renders the correct revenue stream progress values", () => {
-    render(<RevenueDetails />);
+    render(
+  <RevenueDetails
+    campus="Kibuli Main Campus"
+    section="Primary"
+  />
+);
 
     expect(
       screen.getByRole("progressbar", {

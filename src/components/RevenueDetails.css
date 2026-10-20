@@ -1,5 +1,6 @@
+
 /* ========================================
-   REVENUE DETAILS LAYOUT
+   REVENUE DETAILS — BASE
 ======================================== */
 
 .revenue-details {
@@ -14,6 +15,116 @@
   box-sizing: border-box;
 }
 
+.revenue-details *,
+.revenue-details *::before,
+.revenue-details *::after {
+  box-sizing: border-box;
+}
+
+/* ========================================
+   REPORTING HEADER
+======================================== */
+
+.revenue-reporting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+  padding: 17px 20px;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e5eaf1);
+  border-radius: 12px;
+}
+
+.revenue-reporting__intro {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.revenue-reporting__icon {
+  display: grid;
+  flex: 0 0 40px;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  color: var(--pal-steel, #64748b);
+  background: color-mix(
+    in srgb,
+    var(--pal-steel, #64748b) 12%,
+    transparent
+  );
+  border-radius: 10px;
+}
+
+.revenue-reporting__intro h2 {
+  margin: 0;
+  color: var(--color-heading, #17233d);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.revenue-reporting__intro p {
+  margin: 3px 0 0;
+  color: var(--color-text-muted, #8495af);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.revenue-reporting__controls {
+  display: grid;
+  grid-template-columns: minmax(155px, 195px);
+  gap: 6px;
+  min-width: 0;
+}
+
+.revenue-reporting__controls label {
+  color: var(--fo-muted, #64748b);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.revenue-reporting__controls select {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 11px;
+  color: var(--color-heading, #17233d);
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #dce3ec);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.revenue-reporting__controls select:focus-visible {
+  outline: 2px solid var(--pal-steel, #64748b);
+  outline-offset: 2px;
+}
+
+.revenue-reporting__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-muted, #8495af);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.revenue-reporting__status-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  background: var(--pal-steel, #64748b);
+  border-radius: 50%;
+}
+
 /* ========================================
    SUMMARY CARDS
 ======================================== */
@@ -21,106 +132,128 @@
 .revenue-summary {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: 18px;
   width: 100%;
   min-width: 0;
-  background: transparent;
+  margin: 0;
+  padding: 0;
 }
 
 .revenue-summary__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
   min-width: 0;
-  padding: 20px 22px;
-  box-sizing: border-box;
-  background: var(--color-surface, #ffffff);
-  border: 1px solid var(--color-border-soft, #eef1f5);
-  border-radius: 16px;
-  box-shadow: 0 1px 2px rgb(23 35 61 / 2%);
+  min-height: 158px;
+  padding: 19px;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e5eaf1);
+  border-radius: 12px;
+  box-shadow: none;
   transition:
     border-color 160ms ease,
-    box-shadow 160ms ease;
+    box-shadow 160ms ease,
+    transform 160ms ease;
 }
 
 .revenue-summary__card:hover {
-  border-color: var(--color-border, #e9edf3);
-  box-shadow: 0 2px 4px rgb(23 35 61 / 3%);
+  border-color: var(--color-border, #d7e0eb);
+  box-shadow: 0 5px 16px rgb(23 35 61 / 5%);
+  transform: translateY(-1px);
 }
 
-.revenue-summary__title {
-  margin: 0 0 14px;
-  color: var(--color-text-soft, #91a0b8);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.25px;
-  line-height: 1.45;
-  overflow-wrap: anywhere;
-}
-
-.revenue-summary__content {
+.revenue-summary__top {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
   min-width: 0;
 }
 
 .revenue-summary__icon {
   display: grid;
+  flex: 0 0 38px;
   place-items: center;
   width: 38px;
   height: 38px;
-  flex: 0 0 38px;
-  color: #ffffff;
-  border-radius: 11px;
+  color: var(--pal-steel, #64748b);
+  background: color-mix(
+    in srgb,
+    var(--pal-steel, #64748b) 13%,
+    transparent
+  );
+  border-radius: 10px;
 }
 
 .revenue-summary__icon svg {
-  width: 20px;
-  height: 20px;
+  width: 19px;
+  height: 19px;
 }
 
-.revenue-summary__icon--billed {
-  background: #0ea5e9;
+.revenue-summary__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  padding: 5px 8px;
+  color: var(--pal-steel, #64748b);
+  background: color-mix(
+    in srgb,
+    var(--pal-steel, #64748b) 9%,
+    transparent
+  );
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
-.revenue-summary__icon--collections {
-  background: #0ea5e9;
+.revenue-summary__badge--neutral {
+  color: var(--color-text-muted, #64748b);
+  background: var(--color-surface-subtle, #f1f5f9);
 }
 
-.revenue-summary__icon--arrears {
-  background: #0ea5e9;
+.revenue-summary__title {
+  margin: 1px 0 0;
+  color: var(--fo-muted, #64748b);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+  line-height: 1.45;
+  text-transform: uppercase;
 }
 
 .revenue-summary__amount {
   min-width: 0;
   margin: 0;
-  color: #202020;
-  font-size: clamp(16px, 1.3vw, 20px);
-  font-weight: 400;
-  letter-spacing: -0.2px;
+  color: var(--color-heading, #17233d);
+  font-size: clamp(20px, 2vw, 27px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
   line-height: 1.25;
   overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.revenue-summary__note {
+  margin: auto 0 0;
+  color: var(--color-text-muted, #8495af);
+  font-size: 11px;
+  line-height: 1.5;
 }
 
 /* ========================================
-   CAMPUS BREAKDOWN AND REVENUE STREAMS
+   GENERAL PANEL
 ======================================== */
-
-.revenue-breakdown {
-  display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-  align-items: stretch;
-  gap: 20px;
-  width: 100%;
-  min-width: 0;
-  background: transparent;
-}
 
 .revenue-panel {
   min-width: 0;
-  padding: 22px;
-  box-sizing: border-box;
-  background: var(--color-surface, #ffffff);
-  border: 1px solid var(--color-border-soft, #eef1f5);
-  border-radius: 16px;
+  padding: 21px;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border-soft, #e8edf4);
+  border-radius: 13px;
   box-shadow: 0 1px 2px rgb(23 35 61 / 2%);
 }
 
@@ -131,33 +264,158 @@
 .revenue-panel__heading {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  margin-bottom: 19px;
+}
+
+.revenue-panel__heading-main {
+  display: flex;
+  align-items: center;
   gap: 10px;
-  margin-bottom: 18px;
+  min-width: 0;
 }
 
 .revenue-panel__icon {
   display: grid;
+  flex: 0 0 36px;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
-  color: #0284c7;
-  background: #f0f8ff;
+  width: 36px;
+  height: 36px;
+  color: var(--pal-steel, #64748b);
+  background: color-mix(
+    in srgb,
+    var(--pal-steel, #64748b) 11%,
+    transparent
+  );
   border-radius: 10px;
 }
 
-.revenue-panel__icon svg {
-  width: 18px;
-  height: 18px;
+.revenue-panel__heading-main > div {
+  min-width: 0;
 }
 
-.revenue-panel__heading h2,
-.streams-panel__title h2 {
+.revenue-panel__heading h2 {
   margin: 0;
-  color: var(--color-heading, #10203e);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.45;
+  color: var(--color-heading, #17233d);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.revenue-panel__heading p {
+  margin: 3px 0 0;
+  color: var(--color-text-muted, #8495af);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.revenue-panel__notice {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  color: var(--color-text-muted, #64748b);
+  background: var(--color-surface-subtle, #f8fafc);
+  border: 1px solid var(--color-border-soft, #e8edf4);
+  border-radius: 8px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* ========================================
+   PERFORMANCE INDICATORS
+======================================== */
+
+.revenue-performance__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.revenue-performance__card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 168px;
+  padding: 16px;
+  background: var(--color-surface-subtle, #f8fafc);
+  border: 1px solid var(--color-border-soft, #e8edf4);
+  border-radius: 10px;
+}
+
+.revenue-performance__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 13px;
+}
+
+.revenue-performance__icon {
+  display: grid;
+  flex: 0 0 35px;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  color: var(--pal-steel, #64748b);
+  background: color-mix(
+    in srgb,
+    var(--pal-steel, #64748b) 12%,
+    transparent
+  );
+  border-radius: 9px;
+}
+
+.revenue-performance__indicator {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  color: var(--color-text-muted, #8495af);
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border-soft, #e8edf4);
+  border-radius: 7px;
+}
+
+.revenue-performance__label {
+  margin: 0 0 7px;
+  color: var(--fo-muted, #64748b);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.revenue-performance__value {
+  margin: 0;
+  color: var(--color-heading, #17233d);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.3;
+}
+
+.revenue-performance__description {
+  margin: auto 0 0;
+  padding-top: 8px;
+  color: var(--color-text-muted, #8495af);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+/* ========================================
+   CAMPUS AND REVENUE STREAM LAYOUT
+======================================== */
+
+.revenue-breakdown {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
 }
 
 /* ========================================
@@ -168,6 +426,8 @@
   width: 100%;
   min-width: 0;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
 }
 
 .campus-table {
@@ -180,22 +440,32 @@
   padding: 11px 8px;
   color: var(--color-text-soft, #91a0b8);
   background: var(--color-surface-subtle, #f8fafc);
-  font-size: 11px;
-  font-weight: 700px;
-  letter-spacing: 0.1px;
-  line-height: 1.45;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  line-height: 1.5;
+  text-transform: uppercase;
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .campus-table td {
-  padding: 12px 8px;
+  padding: 13px 8px;
   color: var(--color-text-muted, #8495af);
   border-bottom: 1px solid var(--color-border-soft, #edf1f6);
-  font-family: inherit;
   font-size: 11px;
   font-weight: 400;
-  line-height: 1.4;
-  letter-spacing: normal;
+  line-height: 1.5;
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.campus-table tbody tr {
+  transition: background-color 140ms ease;
+}
+
+.campus-table tbody tr:hover {
+  background: var(--color-surface-subtle, #f8fafc);
 }
 
 .campus-table tbody tr:last-child td {
@@ -204,7 +474,7 @@
 
 .campus-table th:first-child,
 .campus-table td:first-child {
-  min-width: 115px;
+  min-width: 120px;
   text-align: left;
 }
 
@@ -214,63 +484,65 @@
 }
 
 .campus-table__name {
-  color: var(--color-heading, #101b32) !important;
-  font-weight: 500 !important;
+  color: var(--color-heading, #17233d) !important;
+  font-weight: 600 !important;
 }
 
-/* ========================================
-   REVENUE STREAMS HEADING
-======================================== */
-
-.streams-panel__heading {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
+.campus-table td[colspan] {
+  padding: 22px 12px;
+  color: var(--color-text-muted, #8495af);
+  text-align: center;
+  font-size: 12px;
 }
 
-.streams-panel__title {
-  flex: 1;
-  min-width: 0;
-}
-
-.streams-panel__title p {
-  margin: 4px 0 0;
-  color: var(--color-text-muted, #8da0bd);
-  font-size: 11px;
-  line-height: 1.45;
-}
-
-.streams-panel__total {
+.campus-collection {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  min-width: 65px;
 }
 
-.streams-panel__total span {
-  color: var(--color-text-soft, #91a0b8);
-  font-size: 10px;
+.campus-collection > span {
+  color: var(--color-heading, #17233d);
+  font-size: 11px;
   font-weight: 700;
 }
 
-.streams-panel__total strong {
-  color: var(--color-text-muted, #91a0b8);
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.35;
-  white-space: nowrap;
+.campus-collection__track {
+  width: 100%;
+  max-width: 80px;
+  height: 5px;
+  overflow: hidden;
+  background: var(--color-track, #edf1f6);
+  border-radius: 999px;
+}
+
+.campus-collection__fill {
+  height: 100%;
+  background: var(--pal-steel, #64748b);
+  border-radius: inherit;
 }
 
 /* ========================================
-   REVENUE STREAM ITEMS
+   REVENUE SOURCES
 ======================================== */
+
+.streams-panel__count {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  color: var(--color-text-muted, #64748b);
+  background: var(--color-surface-subtle, #f8fafc);
+  border: 1px solid var(--color-border-soft, #e8edf4);
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+}
 
 .streams-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 19px;
 }
 
 .stream-item {
@@ -281,63 +553,194 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 7px;
+  gap: 12px;
+  margin-bottom: 9px;
 }
 
 .stream-item__name {
   min-width: 0;
-  color: var(--color-heading, #101b32);
-  font-size: 12px;
+  color: var(--color-heading, #17233d);
+  font-size: 11px;
   font-weight: 600;
-  line-height: 1.45;
+  line-height: 1.5;
   overflow-wrap: anywhere;
 }
 
 .stream-item__amount {
   flex-shrink: 0;
-  color: var(--color-text-muted, #8495af);
+  color: var(--color-text-muted, #64748b);
   font-size: 11px;
-  font-weight: 500;
-  line-height: 1.45;
+  font-weight: 600;
+  line-height: 1.5;
   text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.stream-item__progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .stream-item__track {
+  flex: 1;
   width: 100%;
-  height: 8px;
+  height: 7px;
   overflow: hidden;
-  background: var(--color-track, #f0f4f8);
+  background: var(--color-track, #edf1f6);
   border-radius: 999px;
 }
 
 .stream-item__fill {
   height: 100%;
   border-radius: inherit;
+  transition: width 250ms ease;
 }
 
-.stream-item__fill--tuition {
-  background: #172448;
-}
-
-.stream-item__fill--clubs {
-  background: #172448;
-}
-
-.stream-item__fill--admission {
-  background: #172448;
-}
-
-.stream-item__fill--transport {
-  background: #172448;
-}
-
-.stream-item__fill--donations {
-  background: #172448;
-}
-
+.stream-item__fill--tuition,
+.stream-item__fill--clubs,
+.stream-item__fill--admission,
+.stream-item__fill--transport,
+.stream-item__fill--donations,
 .stream-item__fill--alumni {
-  background: #172448;
+  background: var(--pal-steel, #64748b);
+}
+
+.stream-item__percentage {
+  flex: 0 0 43px;
+  color: var(--color-text-muted, #64748b);
+  font-size: 10px;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ========================================
+   RECEIVABLES AGEING
+======================================== */
+
+.revenue-ageing__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.revenue-ageing__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  min-height: 145px;
+  padding: 15px;
+  background: var(--color-surface-subtle, #f8fafc);
+  border: 1px solid var(--color-border-soft, #e8edf4);
+  border-radius: 10px;
+}
+
+.revenue-ageing__period {
+  color: var(--color-heading, #17233d);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.revenue-ageing__item p {
+  flex: 1;
+  margin: 7px 0 12px;
+  color: var(--color-text-muted, #8495af);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.revenue-ageing__item strong {
+  color: var(--color-heading, #17233d);
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.revenue-ageing__footnote {
+  margin-top: 5px;
+  color: var(--color-text-muted, #8495af);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* ========================================
+   BOARD ATTENTION
+======================================== */
+
+.revenue-board-actions__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.revenue-board-actions__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  min-width: 0;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-border-soft, #edf1f6);
+}
+
+.revenue-board-actions__item:first-child {
+  padding-top: 0;
+}
+
+.revenue-board-actions__item:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.revenue-board-actions__item-icon {
+  display: grid;
+  flex: 0 0 37px;
+  place-items: center;
+  width: 37px;
+  height: 37px;
+  color: var(--pal-steel, #64748b);
+  background: color-mix(
+    in srgb,
+    var(--pal-steel, #64748b) 11%,
+    transparent
+  );
+  border-radius: 9px;
+}
+
+.revenue-board-actions__item-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.revenue-board-actions__item-copy h3 {
+  margin: 0;
+  color: var(--color-heading, #17233d);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.revenue-board-actions__item-copy p {
+  margin: 5px 0 0;
+  color: var(--color-text-muted, #8495af);
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.revenue-board-actions__status {
+  flex: 0 0 auto;
+  max-width: 120px;
+  padding: 5px 8px;
+  color: var(--color-text-muted, #64748b);
+  background: var(--color-surface-subtle, #f1f5f9);
+  border: 1px solid var(--color-border-soft, #e8edf4);
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
 }
 
 /* ========================================
@@ -345,46 +748,47 @@
 ======================================== */
 
 @media (max-width: 1200px) {
-  .revenue-details {
-    gap: 18px;
-  }
-
-  .revenue-summary {
-    gap: 14px;
-  }
-
-  .revenue-summary__card {
-    padding: 18px 16px;
-  }
-
-  .revenue-summary__content {
-    gap: 9px;
-  }
-
-  .revenue-summary__icon {
-    width: 34px;
-    height: 34px;
-    flex-basis: 34px;
-    border-radius: 10px;
-  }
-
-  .revenue-summary__icon svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .revenue-summary__amount {
-    font-size: clamp(16px, 1.7vw, 21px);
-  }
-
   .revenue-breakdown {
     grid-template-columns: minmax(0, 1fr);
     gap: 16px;
   }
+
+  .revenue-ageing__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .revenue-reporting {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .revenue-reporting__controls {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+  }
+
+  .revenue-summary {
+    gap: 12px;
+  }
+
+  .revenue-summary__card {
+    padding: 15px;
+  }
+
+  .revenue-summary__amount {
+    font-size: clamp(18px, 2.5vw, 24px);
+  }
+
+  .revenue-performance__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* ========================================
-   TABLETS AND MOBILE
+   MOBILE
 ======================================== */
 
 @media (max-width: 700px) {
@@ -392,100 +796,121 @@
     gap: 16px;
   }
 
+  .revenue-reporting {
+    padding: 15px;
+  }
+
   .revenue-summary {
     grid-template-columns: minmax(0, 1fr);
-    gap: 10px;
+    gap: 11px;
   }
 
   .revenue-summary__card {
+    min-height: 145px;
     padding: 16px;
-    border-radius: 13px;
-  }
-
-  .revenue-summary__title {
-    margin-bottom: 10px;
-    font-size: 10px;
   }
 
   .revenue-summary__amount {
-    font-size: 20px;
+    font-size: 24px;
   }
 
   .revenue-panel {
     padding: 16px;
-    border-radius: 13px;
+    border-radius: 12px;
   }
 
   .revenue-panel__heading {
-    gap: 9px;
-    margin-bottom: 14px;
+    margin-bottom: 15px;
   }
 
-  .revenue-panel__heading h2,
-  .streams-panel__title h2 {
-    font-size: 13px;
+  .revenue-panel__heading h2 {
+    font-size: 12px;
+  }
+
+  .revenue-performance__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .revenue-performance__card {
+    min-height: 145px;
   }
 
   .campus-table {
-    min-width: 540px;
+    min-width: 570px;
   }
 
-  .campus-table th {
-    padding: 10px 7px;
-    font-size: 10px;
-  }
-
+  .campus-table th,
   .campus-table td {
     padding: 11px 7px;
-    font-size: 11px;
   }
 
-  .streams-panel__heading {
+  .streams-panel__count {
+    font-size: 9px;
+  }
+
+  .revenue-ageing__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .revenue-ageing__item {
+    min-height: 135px;
+    padding: 12px;
+  }
+
+  .revenue-board-actions__item {
     flex-wrap: wrap;
-    gap: 9px;
+    gap: 10px;
   }
 
-  .streams-panel__total {
-    margin-left: auto;
+  .revenue-board-actions__item-copy {
+    flex-basis: calc(100% - 50px);
   }
 
-  .streams-list {
-    gap: 14px;
-  }
-
-  .stream-item__amount {
-    white-space: normal;
+  .revenue-board-actions__status {
+    margin-left: 47px;
   }
 }
 
 /* ========================================
-   SMALL MOBILE SCREENS
+   SMALL MOBILE
 ======================================== */
 
 @media (max-width: 400px) {
-  .revenue-summary__card {
-    padding: 14px;
+  .revenue-reporting {
+    padding: 13px;
   }
 
   .revenue-summary__amount {
-    font-size: 18px;
+    font-size: 21px;
   }
 
   .revenue-panel {
     padding: 13px;
   }
 
-  .streams-panel__total strong {
-    font-size: 12px;
+  .revenue-panel__icon {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .revenue-ageing__grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .stream-item__details {
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
   }
 
   .stream-item__amount {
     text-align: left;
+  }
+
+  .revenue-summary__badge {
+    font-size: 9px;
   }
 }
 
@@ -493,68 +918,112 @@
    DARK THEME
 ======================================== */
 
+[data-theme="dark"] .revenue-reporting,
 [data-theme="dark"] .revenue-summary__card,
 [data-theme="dark"] .revenue-panel {
   background: var(--color-surface, #2d3c8f);
   border-color: var(--color-border, #3f4b92);
-  box-shadow: var(--shadow-card, 0 1px 2px rgb(0 0 0 / 20%));
 }
 
 [data-theme="dark"] .revenue-summary__card:hover {
-  border-color: var(--color-border-strong, #4b5aaf);
-  box-shadow: var(--shadow-pop, 0 6px 16px rgb(0 0 0 / 25%));
+  box-shadow: 0 5px 16px rgb(0 0 0 / 20%);
 }
 
-[data-theme="dark"] .revenue-summary__title,
-[data-theme="dark"] .streams-panel__total span,
-[data-theme="dark"] .streams-panel__total strong {
-  color: var(--color-text-soft, #969aa1);
-}
-
+[data-theme="dark"] .revenue-reporting__intro h2,
 [data-theme="dark"] .revenue-summary__amount,
 [data-theme="dark"] .revenue-panel__heading h2,
-[data-theme="dark"] .streams-panel__title h2,
+[data-theme="dark"] .campus-table__name,
+[data-theme="dark"] .campus-collection > span,
+[data-theme="dark"] .revenue-performance__value,
+[data-theme="dark"] .revenue-ageing__period,
+[data-theme="dark"] .revenue-ageing__item strong,
+[data-theme="dark"] .revenue-board-actions__item-copy h3,
 [data-theme="dark"] .stream-item__name {
   color: var(--color-heading, #f5f5f5);
 }
 
-[data-theme="dark"] .revenue-panel__icon {
-  background: var(--color-surface-tint, #31419b);
-  color: var(--color-accent-strong, #4fb8e8);
+[data-theme="dark"] .revenue-summary__title,
+[data-theme="dark"] .revenue-reporting__controls label {
+  color: var(--fo-muted, #b4bdcf);
+}
+
+[data-theme="dark"] .revenue-reporting__controls select {
+  color: var(--color-heading, #f5f5f5);
+  background: var(--color-surface, #2d3c8f);
+  border-color: var(--color-border, #3f4b92);
+}
+
+[data-theme="dark"] .revenue-reporting__controls option {
+  color: var(--color-heading, #f5f5f5);
+  background: var(--color-surface, #2d3c8f);
+}
+
+[data-theme="dark"] .revenue-summary__badge,
+[data-theme="dark"] .revenue-summary__badge--neutral,
+[data-theme="dark"] .revenue-performance__card,
+[data-theme="dark"] .revenue-performance__indicator,
+[data-theme="dark"] .revenue-ageing__item,
+[data-theme="dark"] .revenue-board-actions__status,
+[data-theme="dark"] .streams-panel__count {
+  background: var(--color-surface-subtle, #2a3784);
+  border-color: var(--color-border-soft, #394484);
+}
+
+[data-theme="dark"] .revenue-panel__icon,
+[data-theme="dark"] .revenue-summary__icon,
+[data-theme="dark"] .revenue-performance__icon,
+[data-theme="dark"] .revenue-board-actions__item-icon {
+  background: color-mix(
+    in srgb,
+    var(--pal-steel, #94a3b8) 20%,
+    transparent
+  );
+  color: var(--color-heading, #f5f5f5);
+}
+
+[data-theme="dark"] .revenue-reporting__intro p,
+[data-theme="dark"] .revenue-reporting__status,
+[data-theme="dark"] .revenue-summary__note,
+[data-theme="dark"] .revenue-panel__heading p,
+[data-theme="dark"] .revenue-performance__description,
+[data-theme="dark"] .revenue-ageing__item p,
+[data-theme="dark"] .revenue-ageing__footnote,
+[data-theme="dark"] .revenue-board-actions__item-copy p,
+[data-theme="dark"] .stream-item__amount,
+[data-theme="dark"] .stream-item__percentage,
+[data-theme="dark"] .campus-table td {
+  color: var(--color-text-muted, #a9adb3);
 }
 
 [data-theme="dark"] .campus-table th {
+  color: var(--color-text-soft, #b0b8ca);
   background: var(--color-surface-subtle, #2a3784);
-  color: var(--color-text-soft, #969aa1);
 }
 
-[data-theme="dark"] .campus-table td {
+[data-theme="dark"] .campus-table td,
+[data-theme="dark"] .revenue-board-actions__item {
   border-bottom-color: var(--color-border-soft, #394484);
-  color: var(--color-text-muted, #a9adb3);
 }
 
-[data-theme="dark"] .campus-table__name {
-  color: var(--color-heading, #f5f5f5) !important;
+[data-theme="dark"] .campus-table tbody tr:hover {
+  background: var(--color-surface-subtle, #2a3784);
 }
 
-[data-theme="dark"] .streams-panel__title p {
-  color: var(--color-text-muted, #a9adb3);
-}
-
-[data-theme="dark"] .stream-item__amount {
-  color: var(--color-text-muted, #a9adb3);
-}
-
+[data-theme="dark"] .campus-collection__track,
 [data-theme="dark"] .stream-item__track {
-  background: var(--color-track, #2d3c8f);
+  background: var(--color-track, #202d6b);
 }
 
 /* ========================================
-   REDUCED MOTION
+   ACCESSIBILITY AND REDUCED MOTION
 ======================================== */
 
 @media (prefers-reduced-motion: reduce) {
-  .revenue-summary__card {
+  .revenue-summary__card,
+  .revenue-summary__card:hover,
+  .campus-table tbody tr,
+  .stream-item__fill {
     transition: none;
+    transform: none;
   }
 }

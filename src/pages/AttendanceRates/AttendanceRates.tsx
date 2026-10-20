@@ -14,7 +14,7 @@ import { AttendanceTable } from "../../components/attendance-rates/AttendanceTab
 import "./AttendanceRates.css";
 
 export function AttendanceRates() {
-  const [selectedCampus, setSelectedCampus] =
+  const [,setSelectedCampus] =
     useState<CampusOption>("All Campuses");
 
   return (
