@@ -20,6 +20,8 @@ import { ExpenseManagement } from "./pages/ExpenseManagement/ExpenseManagement";
 import { CoCurricularActivities } from "./pages/CoCurricularActivities/CoCurricularActivities";
 import { StudentRetention } from "./pages/StudentRetention/StudentRetention";
 import { HrWorkforce } from "./pages/HrWorkforce/HrWorkforce";
+import { Sales, Inventory, Budget } from "./pages/services";
+
 
 const pages: Record<string, ReactElement> = {
   /* Overview + academic group */
@@ -42,6 +44,11 @@ const pages: Record<string, ReactElement> = {
   
   /* Operational group */
   "hr-workforce": <HrWorkforce />,
+
+  /* Services group  */
+  "sales": <Sales />,
+  "inventory": <Inventory />,
+  "budget-utilisation": <Budget />,
 };
 
 const defaultPageId = "academic-performance";
