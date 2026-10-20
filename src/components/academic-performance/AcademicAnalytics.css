@@ -1,0 +1,282 @@
+.acad-analytics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  margin-top: 14px;
+}
+
+.acad-analytics__card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 15px;
+
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+box-shadow: none;
+  border-radius: 12px;
+
+}
+
+.acad-analytics__header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.acad-analytics__header h2 {
+  margin: 0;
+  color: var(--color-heading);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.acad-analytics__header p {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Grade Distribution */
+
+.acad-analytics__grade-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.acad-analytics__grade-level {
+  min-width: 0;
+}
+
+.acad-analytics__grade-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 13px;
+}
+
+.acad-analytics__grade-heading h3 {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.acad-analytics__grade-heading > span {
+  color: var(--color-text-muted);
+  font-size: 9px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.acad-analytics__grade-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.acad-analytics__grade-row {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: 7px;
+}
+
+.acad-analytics__grade-label {
+  color: var(--color-text-secondary);
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.acad-analytics__grade-track {
+  height: 5px;
+  overflow: hidden;
+  background: var(--color-track);
+  border-radius: 999px;
+}
+
+.acad-analytics__grade-fill {
+  display: block;
+  height: 100%;
+  background: var(--chart-blue);
+  border-radius: inherit;
+  transition: width 180ms ease;
+}
+
+.acad-analytics__grade-count {
+  color: var(--color-text-muted);
+  font-size: 9px;
+  font-weight: 400;
+  text-align: right;
+}
+
+/* Graduation Rate: one chart with two bars */
+
+.acad-analytics__completion-chart {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.acad-analytics__completion-bars {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 24px;
+  width: 100%;
+  padding: 4px 12px 0;
+}
+
+.acad-analytics__completion-bar-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.acad-analytics__completion-percentage {
+  margin-bottom: 8px;
+  color: var(--color-heading);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.acad-analytics__completion-bar-area {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: 112px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.acad-analytics__completion-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: min(48px, 60%);
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-track);
+  border-radius: 4px 4px 0 0;
+}
+
+.acad-analytics__completion-bar-fill {
+  display: block;
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  transition: height 180ms ease;
+}
+
+.acad-analytics__completion-bar-fill--o-level {
+  background: var(--chart-blue);
+}
+
+.acad-analytics__completion-bar-fill--a-level {
+  background: var(--chart-sky);
+}
+
+.acad-analytics__completion-level-label {
+  margin-top: 9px;
+  color: var(--color-text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.acad-analytics__completion-student-count {
+  margin-top: 4px;
+  color: var(--color-text-muted);
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* Subtle sample-data note */
+
+.acad-analytics__note {
+  margin: auto 0 0;
+  padding-top: 14px;
+  color: var(--color-text-muted);
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Preserve the existing global dark theme */
+
+[data-theme="dark"] .acad-analytics__card {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+
+/* Tablet */
+
+@media (max-width: 1000px) {
+  .acad-analytics {
+    gap: 10px;
+  }
+
+  .acad-analytics__card {
+    padding: 13px;
+  }
+
+  .acad-analytics__grade-columns {
+    gap: 12px;
+  }
+
+  .acad-analytics__completion-bars {
+    gap: 14px;
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  .acad-analytics__completion-bar-area {
+    height: 100px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 640px) {
+  .acad-analytics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .acad-analytics__grade-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .acad-analytics__completion-bars {
+    gap: 24px;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .acad-analytics__completion-bar-area {
+    height: 112px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acad-analytics__grade-fill,
+  .acad-analytics__completion-bar-fill {
+    transition: none;
+  }
+}

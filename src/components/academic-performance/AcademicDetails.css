@@ -1,0 +1,325 @@
+.acad-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  margin-top: 18px;
+}
+
+.acad-details__card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 20px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+/* Headings: text only, without icons or descriptions */
+
+.acad-details__heading {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.acad-details__title {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.acad-details__title h2 {
+  margin: 0;
+  color: var(--color-heading);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* Filters */
+
+.acad-details__filters,
+.acad-details__table-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.acad-details__filter {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 120px;
+}
+
+.acad-details__filter > span {
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.acad-details__filter select {
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 28px 7px 10px;
+  color: var(--color-heading);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 11px;
+}
+
+/* Subject comparison list */
+
+.acad-details__subject-list {
+  width: 100%;
+  min-width: 0;
+}
+
+.acad-details__list-header,
+.acad-details__subject-row {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.6fr)
+    minmax(55px, 0.8fr)
+    minmax(55px, 0.7fr)
+    minmax(54px, 0.7fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.acad-details__list-header {
+  padding: 10px 0;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.acad-details__subject-row {
+  min-height: 49px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.acad-details__subject-row:last-child {
+  border-bottom: none;
+}
+
+.acad-details__subject-name {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.acad-details__subject-name strong {
+  overflow-wrap: anywhere;
+  color: var(--color-heading);
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.acad-details__subject-name > span {
+  color: var(--color-text-muted);
+  font-size: 9px;
+}
+
+.acad-details__level {
+  width: fit-content;
+  padding: 4px 6px;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-soft);
+  border-radius: 6px;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.acad-details__pass-rate {
+  color: var(--color-heading);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.acad-details__change {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.acad-details__change--up {
+  color: var(--color-positive);
+}
+
+.acad-details__change--down {
+  color: var(--color-critical);
+}
+
+/* Test results table */
+
+.acad-details__table-filters {
+  margin-bottom: 16px;
+}
+
+.acad-details__table-scroll {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.acad-details__table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.acad-details__table thead {
+  background: var(--color-surface-subtle);
+}
+
+.acad-details__table th {
+  padding: 12px 10px;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 10px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.acad-details__table td {
+  padding: 13px 10px;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border-soft);
+  font-size: 10px;
+  text-align: center;
+}
+
+.acad-details__table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.acad-details__table th:first-child,
+.acad-details__table td:first-child {
+  text-align: left;
+}
+.acad-details__table-subject {
+  color: var(--color-heading) !important;
+  font-weight: 500;
+}
+
+.acad-details__level-badge {
+  display: inline-block;
+  padding: 4px 7px;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-soft);
+  border-radius: 6px;
+  font-size: 9px;
+}
+
+.acad-details__score {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.acad-details__score > strong {
+  color: var(--color-heading);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.acad-details__score > span {
+  display: inline-block;
+  width: 42px;
+  height: 5px;
+  overflow: hidden;
+  background: var(--color-track);
+  border-radius: 999px;
+}
+
+.acad-details__score > span > span {
+  display: block;
+  height: 100%;
+  background: var(--chart-blue);
+  border-radius: inherit;
+}
+
+.acad-details__table-pass {
+  color: var(--color-positive);
+  font-weight: 600;
+}
+
+/* Supporting text and empty states */
+
+.acad-details__footnote {
+  margin: 14px 0 0;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.acad-details__empty {
+  padding: 20px 0;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  text-align: center;
+}
+
+/* Preserve the existing dark theme */
+
+[data-theme="dark"] .acad-details__card {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-card);
+}
+
+/* Tablet */
+
+@media (max-width: 1100px) {
+  .acad-details {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 640px) {
+  .acad-details__card {
+    padding: 14px;
+  }
+
+  .acad-details__list-header,
+  .acad-details__subject-row {
+    grid-template-columns:
+      minmax(0, 1.4fr)
+      minmax(50px, 0.8fr)
+      minmax(48px, 0.6fr)
+      minmax(48px, 0.7fr);
+    gap: 5px;
+  }
+
+  .acad-details__filters,
+  .acad-details__table-filters {
+    gap: 8px;
+  }
+}
