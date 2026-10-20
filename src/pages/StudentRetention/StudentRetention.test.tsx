@@ -15,8 +15,15 @@ const cellsOf = (row: HTMLElement) =>
     .map((cell) => cell.textContent);
 
 const chooseCampus = (from: string, to: string) => {
-  fireEvent.click(screen.getByRole("button", { name: `Campus: ${from}` }));
-  fireEvent.click(within(screen.getByRole("listbox")).getByText(to));
+  const campusSelect = screen.getByRole("combobox", {
+    name: "Campus",
+  });
+
+  expect(campusSelect).toHaveValue(from);
+
+  fireEvent.change(campusSelect, {
+    target: { value: to },
+  });
 };
 
 describe("StudentRetention", () => {
@@ -24,7 +31,25 @@ describe("StudentRetention", () => {
     render(<StudentRetention />);
 
     expect(
-      screen.getByRole("button", { name: "Campus: All Campuses" }),
+      screen.getByRole("combobox", { name: "Campus" }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("option", { name: "All Campuses" }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("option", { name: "Kibuli Main Campus" }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("option", { name: "Buwaate Campus" }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("option", {
+        name: "Annex / Preschool Branch",
+      }),
     ).toBeInTheDocument();
   });
 
@@ -51,7 +76,9 @@ describe("StudentRetention", () => {
     render(<StudentRetention />);
 
     expect(
-      screen.getByRole("heading", { name: "Student Retention by Nationality" }),
+      screen.getByRole("heading", {
+        name: "Student Retention by Nationality",
+      }),
     ).toBeInTheDocument();
 
     // One header row plus four nationalities.
@@ -66,7 +93,12 @@ describe("StudentRetention", () => {
 
     expect(
       cellsOf(screen.getByRole("row", { name: /South Sudanese/ })),
-    ).toEqual(["South Sudanese & Other Intl", "Buwaate", "90", "90.0%"]);
+    ).toEqual([
+      "South Sudanese & Other Intl",
+      "Buwaate",
+      "90",
+      "90.0%",
+    ]);
   });
 
   it("highlights rates on target and leaves the others grey", () => {
@@ -76,33 +108,49 @@ describe("StudentRetention", () => {
     const kenyan = screen.getByRole("row", { name: /Kenyan/ });
 
     expect(within(ugandan).getByText("88.0%")).toHaveClass("sr-pill--good");
-    expect(within(kenyan).getByText("86.7%")).not.toHaveClass("sr-pill--good");
+    expect(within(kenyan).getByText("86.7%")).not.toHaveClass(
+      "sr-pill--good",
+    );
   });
 
   it("shows the reasons for withdrawal card", () => {
     render(<StudentRetention />);
 
-    const card = screen
-      .getByRole("heading", { name: "Reasons for Withdrawal" })
-      .closest("section") as HTMLElement;
+    const heading = screen.getByRole("heading", {
+      name: "Reasons for Withdrawal",
+    });
+
+    const card = heading.closest("section");
 
     expect(card).not.toBeNull();
 
+    const withdrawalCard = card as HTMLElement;
+
     expect(
-      within(card).getByRole("img", {
+      within(withdrawalCard).getByRole("img", {
         name: "Student withdrawals by reason",
       }),
     ).toBeInTheDocument();
 
-    expect(within(card).getByText("124")).toBeInTheDocument();
-    expect(within(card).getByText("Total Withdrawals")).toBeInTheDocument();
+    expect(within(withdrawalCard).getByText("124")).toBeInTheDocument();
 
-    expect(within(card).getByText("Financial Constraints")).toBeInTheDocument();
     expect(
-      within(card).getByText("Transfer to Another School"),
+      within(withdrawalCard).getByText("Total Withdrawals"),
     ).toBeInTheDocument();
-    expect(within(card).getByText("Death")).toBeInTheDocument();
-    expect(within(card).getByText("Academic Performance")).toBeInTheDocument();
+
+    expect(
+      within(withdrawalCard).getByText("Financial Constraints"),
+    ).toBeInTheDocument();
+
+    expect(
+      within(withdrawalCard).getByText("Transfer to Another School"),
+    ).toBeInTheDocument();
+
+    expect(within(withdrawalCard).getByText("Death")).toBeInTheDocument();
+
+    expect(
+      within(withdrawalCard).getByText("Academic Performance"),
+    ).toBeInTheDocument();
   });
 
   it("changes the figures and rows when a campus is selected", () => {
@@ -118,7 +166,12 @@ describe("StudentRetention", () => {
 
     // Header row plus the three Buwaate nationalities.
     expect(screen.getAllByRole("row")).toHaveLength(4);
+
     expect(screen.queryByText("Ugandan")).not.toBeInTheDocument();
+
+    expect(
+      screen.getByRole("combobox", { name: "Campus" }),
+    ).toHaveValue("Buwaate Campus");
   });
 
   it("explains when a campus has no nationality rows", () => {
@@ -127,8 +180,11 @@ describe("StudentRetention", () => {
     chooseCampus("All Campuses", "Annex / Preschool Branch");
 
     expect(
-      screen.getByText("No nationality data is recorded for this campus yet."),
+      screen.getByText(
+        "No nationality data is recorded for this campus yet.",
+      ),
     ).toBeInTheDocument();
+
     expect(
       within(screen.getAllByRole("article")[0]).getByText("150"),
     ).toBeInTheDocument();

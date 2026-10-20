@@ -40,16 +40,7 @@ const totalWithdrawals = withdrawalReasons.reduce(
   0,
 );
 
-interface GenderRetentionCardProps {
-  summary: {
-    girls: number;
-    boys: number;
-  };
-}
-
-export function GenderRetentionCard(
-  _props: GenderRetentionCardProps,
-) {
+export function GenderRetentionCard() {
   return (
     <section className="sr-card sr-gender">
       <div className="sr-card__header">

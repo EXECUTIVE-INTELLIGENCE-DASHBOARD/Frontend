@@ -54,7 +54,7 @@ export function StudentRetention() {
 
       <div className="sr-grid">
         <NationalityTableCard rows={rows} />
-        <GenderRetentionCard summary={summary} />
+        <GenderRetentionCard />
       </div>
     </div>
   );
