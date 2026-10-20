@@ -27,8 +27,14 @@
   gap: 14px;
 
   /* Headline: Bold. Subhead: Semibold. Body copy: Regular. */
-  font-family: "Montserrat", Inter, ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", sans-serif;
+  font-family:
+    "Montserrat",
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
   font-weight: 400;
 }
 
@@ -134,9 +140,8 @@
   display: flex;
   align-items: center;
   gap: 16px;
-
-  padding: 16px 18px;
-
+  min-height: 110px;
+  padding: 20px 18px;
   border: 1px solid var(--se-border);
   border-radius: 14px;
 
@@ -153,29 +158,30 @@
   height: 48px;
 
   border-radius: 12px;
-  background: var(--se-chip);
-  color: #ffffff;
+  background: color-mix(in srgb, var(--pal-steel) 13%, transparent);
+  color: var(--pal-steel);
+  /* color: #ffffff; */
 }
 
 .se-metric__text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 20px;
   min-width: 0;
 }
 
 .se-metric__label {
   color: var(--se-muted);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .se-metric__value {
   color: var(--se-heading);
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 500;
   line-height: 1.15;
 }
 
@@ -234,10 +240,9 @@
 
   border-radius: 10px;
 }
-
 .se-card__chip--navy {
-  background: var(--se-heading);
-  color: var(--color-surface);
+  background: color-mix(in srgb, var(--pal-steel) 13%, transparent);
+  color: var(--pal-steel);
 }
 
 .se-card__chip--pale {
@@ -469,9 +474,192 @@
 .se-tone--alevel {
   background: var(--se-amber);
 }
+/* ========================================
+   ENROLLMENT & PIPELINE FUNNEL CARD
+======================================== */
+
+.se-funnel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 16px;
+  overflow: hidden;
+
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
+}
+
+/* Header */
+
+.se-funnel__header {
+  margin: 0 0 20px;
+}
+
+.se-funnel__title {
+  margin: 0;
+  color: var(--color-heading, #0b2e75);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.se-funnel__subtitle {
+  margin: 2px 0 0;
+  color: var(--color-text-muted, #94a3b8);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.se-funnel__stages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border-radius: 20px;
+  padding: 0 0 24px;
+  margin-top: 8px;
+}
+
+.se-funnel__stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+  min-height: 34px;
+  padding: 6px 8px;
+  box-sizing: border-box;
+
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  border-radius: 8px !important;
+  white-space: nowrap;
+}
+
+.se-funnel__stage--applications {
+  border-radius: 4px 4px 0 0;
+}
+
+.se-funnel__stage--qualified {
+  border-radius: 0;
+}
+
+.se-funnel__stage--interviewed {
+  border-radius: 0;
+}
+
+.se-funnel__stage--accepted {
+  min-height: 32px;
+  border-radius: 0 0 5px 5px;
+  color: #17233b;
+}
+
+.se-funnel__footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.se-funnel__summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.se-funnel__summary-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  min-width: 0;
+  min-height: 42px;
+  padding: 9px 10px;
+  box-sizing: border-box;
+
+  background: var(--color-surface-subtle, #f8fafc);
+  border: 1px solid var(--color-border-soft, #dce5f0);
+  border-radius: 6px;
+}
+
+.se-funnel__dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+}
+.se-funnel__summary-label {
+  flex: 1;
+  min-width: 0;
+
+  color: #526782;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.se-funnel__summary-item strong {
+  flex-shrink: 0;
+
+  color: #0b2e75;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Responsive layout */
 
 /* ------------------------------------------------------------ Responsive */
+/* ========================================
+   ENROLLMENT & PIPELINE — DARK MODE
+======================================== */
 
+[data-theme="dark"] .se-funnel__title {
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .se-funnel__subtitle {
+  color: #b8c5d9;
+}
+
+[data-theme="dark"] .se-funnel__summary-item {
+  background: #1c2c52;
+  border-color: #34466f;
+}
+
+[data-theme="dark"] .se-funnel__summary-label {
+  color: #d1dced;
+}
+
+[data-theme="dark"] .se-funnel__summary-item strong {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .se-funnel__footer {
+  border-top-color: #34466f;
+}
+
+[data-theme="dark"] .se-funnel {
+  background: var(--color-surface, #111b30);
+  border-color: #34466f;
+}
+
+/* Keep text visible on the golden Accepted bar */
+[data-theme="dark"] .se-funnel__stage--accepted {
+  color: #17233b;
+}
 @media (max-width: 960px) {
   .se-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -497,8 +685,9 @@
 }
 
 :root:not([data-theme="dark"]) .se-page .se-metric__icon {
-  background: var(--se-chip);
-  color: #ffffff;
+  background: color-mix(in srgb, var(--pal-steel) 13%, transparent);
+  color: var(--pal-steel);
+  /* color: #ffffff;. */
 }
 
 /* Campus filter: a single white pill, no visible label (the label stays for

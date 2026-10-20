@@ -1,8 +1,6 @@
 import {
-  axisFor,
   formatNumber,
   formatPercent,
-  tierLegend,
 } from "./studentEnrollment.data";
 import type { EnrollmentSummary } from "./studentEnrollment.types";
 
@@ -10,110 +8,120 @@ interface EnrollmentTierCardProps {
   summary: EnrollmentSummary;
 }
 
-/* A small bar-chart icon, drawn inline so the page needs no extra icon name. */
-function BarsIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <rect x="4" y="11" width="4" height="9" rx="1" />
-      <rect x="10" y="4" width="4" height="16" rx="1" />
-      <rect x="16" y="8" width="4" height="12" rx="1" />
-    </svg>
-  );
-}
-
-export function EnrollmentTierCard({ summary }: EnrollmentTierCardProps) {
+export function EnrollmentTierCard({
+  summary,
+}: EnrollmentTierCardProps) {
   const { tiers } = summary;
 
-  const axis = axisFor(Math.max(...tiers.map((tier) => tier.value)));
+  // Adapt the existing tier data to the application funnel.
+  // Replace these mappings with actual pipeline data when available.
+  const total = tiers.reduce((sum, tier) => sum + tier.value, 0);
 
-  const columns = {
-    gridTemplateColumns: `repeat(${tiers.length}, minmax(0, 1fr))`,
-  };
-  const height = (value: number) => `${(value / axis.top) * 100}%`;
+  const stages = [
+    {
+      id: "applications",
+      label: "Applications",
+      value: total,
+      percentage: 100,
+      color: "#243B70",
+    },
+    {
+      id: "qualified",
+      label: "Qualified",
+      value: Math.round(total * 0.509),
+      percentage: 50.9,
+      color: "#27A7D9",
+    },
+    {
+      id: "interviewed",
+      label: "Interviewed",
+      value: Math.round(total * 0.182),
+      percentage: 18.2,
+      color: "#79CFF0",
+    },
+    {
+      id: "accepted",
+      label: "Accepted",
+      value: Math.round(total * 0.124),
+      percentage: 12.4,
+      color: "#F5B91B",
+    },
+  ];
+
+  const summaryItems = [
+    {
+      label: "Total",
+      value: formatNumber(stages[0].value),
+      color: stages[0].color,
+    },
+    {
+      label: "Qualified",
+      value: `${formatPercent(stages[1].percentage / 100)}`,
+      color: stages[1].color,
+    },
+    {
+      label: "Interviewed",
+      value: `${formatPercent(stages[2].percentage / 100)}`,
+      color: stages[2].color,
+    },
+    {
+      label: "Accepted",
+      value: `${formatPercent(stages[3].percentage / 100)}`,
+      color: stages[3].color,
+    },
+  ];
 
   return (
-    <section className="se-card" aria-labelledby="se-tier-title">
-      <header className="se-card__header">
-        <div className="se-card__title-group">
-          <span className="se-card__chip se-card__chip--pale">
-            <BarsIcon />
-          </span>
+    <section className="se-card se-funnel" aria-labelledby="se-tier-title">
+      <header className="se-funnel__header">
+        <h2 id="se-tier-title" className="se-funnel__title">
+          Enrollment &amp; Pipeline
+        </h2>
 
-          <h2 id="se-tier-title" className="se-card__title">
-            Enrolment by Educational Tier
-          </h2>
-        </div>
+        <p className="se-funnel__subtitle">
+          Application Conversion Funnel
+        </p>
       </header>
 
-      <div className="se-chart">
-        <div className="se-axis" aria-hidden="true">
-          {axis.ticks.map((tick) => (
-            <span key={tick} style={{ bottom: height(tick) }}>
-              {formatNumber(tick)}
+      <div
+        className="se-funnel__stages"
+        role="img"
+        aria-label="Application conversion funnel"
+      >
+        {stages.map((stage) => (
+          <div
+            key={stage.id}
+            className={`se-funnel__stage se-funnel__stage--${stage.id}`}
+            style={{
+              width: `${Math.max(stage.percentage, 25)}%`,
+              backgroundColor: stage.color,
+            }}
+          >
+            <span>
+              {formatNumber(stage.value)}{" "}
+              {stage.id === "applications"
+                ? "Applications"
+                : stage.label}
             </span>
-          ))}
-        </div>
-
-        <div className="se-plot">
-          <div className="se-gridlines" aria-hidden="true">
-            {axis.ticks.map((tick) => (
-              <span
-                key={tick}
-                className="se-gridline"
-                style={{ bottom: height(tick) }}
-              />
-            ))}
           </div>
-
-          <div className="se-bars" style={columns}>
-            {tiers.map((tier) => (
-              <div
-                key={tier.id}
-                className="se-group"
-                role="group"
-                aria-label={`${tier.label}: ${formatNumber(tier.value)} students, ${formatPercent(tier.share)}`}
-              >
-                <div
-                  className={`se-bar se-bar--tier se-tone--${tier.id}`}
-                  style={{ height: height(tier.value) }}
-                  aria-hidden="true"
-                >
-                  <span className="se-bar__value">
-                    <strong>{formatNumber(tier.value)}</strong>
-                    <small>{formatPercent(tier.share)}</small>
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div aria-hidden="true" />
-
-        <div className="se-labels" style={columns}>
-          {tiers.map((tier) => (
-            <div key={tier.id} className="se-label">
-              <span className="se-label__name">{tier.label}</span>
-            </div>
-          ))}
-        </div>
+        ))}
       </div>
 
-      <footer className="se-card__footer">
-        <ul className="se-legend se-legend--spread">
-          {tierLegend.map((item) => (
-            <li key={item.label}>
+      <footer className="se-funnel__footer">
+        <ul className="se-funnel__summary">
+          {summaryItems.map((item) => (
+            <li key={item.label} className="se-funnel__summary-item">
               <span
-                className={`se-swatch se-tone--${item.tone}`}
+                className="se-funnel__dot"
+                style={{ backgroundColor: item.color }}
                 aria-hidden="true"
               />
-              {item.label}
+
+              <span className="se-funnel__summary-label">
+                {item.label}
+              </span>
+
+              <strong>{item.value}</strong>
             </li>
           ))}
         </ul>
