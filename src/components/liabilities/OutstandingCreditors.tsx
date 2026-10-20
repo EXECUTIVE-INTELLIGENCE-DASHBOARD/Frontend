@@ -1,4 +1,3 @@
-
 import { ClipboardList } from "lucide-react";
 
 import type { CampusOption } from "../filters/CampusFilter";
@@ -163,10 +162,11 @@ export function OutstandingCreditors({
         id="outstanding-creditors-title"
       >
         <ClipboardList size={20} aria-hidden="true" />
-        Top Outstanding Creditors
+        Top{" "}
         <span className="outstanding-creditors__count">
           {creditors.length}
-        </span>
+        </span>{" "}
+        Outstanding Creditors
       </h2>
 
       <div className="outstanding-creditors__table-wrapper">
@@ -175,10 +175,7 @@ export function OutstandingCreditors({
             <tr>
               <th scope="col">Creditor / Entity</th>
               <th scope="col">Type</th>
-              <th
-                scope="col"
-                className="outstanding-creditors__amount-heading"
-              >
+              <th scope="col" className="outstanding-creditors__amount-heading">
                 Outstanding (UGX)
               </th>
             </tr>

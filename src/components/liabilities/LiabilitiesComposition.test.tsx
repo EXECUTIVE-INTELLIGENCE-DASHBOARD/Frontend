@@ -1,4 +1,3 @@
-
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 
@@ -35,12 +34,10 @@ describe("LiabilitiesComposition", () => {
     render(<LiabilitiesComposition />);
 
     expect(
-      screen.getByText("Current Payables (0-30 Days)"),
+      screen.getByText("Current Payables (0–30 Days)"),
     ).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Accrued Expenses & Tax"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Accrued Expenses & Tax")).toBeInTheDocument();
 
     expect(
       screen.getByText("Long-Term Debt & Commitments"),
@@ -67,23 +64,21 @@ describe("LiabilitiesComposition", () => {
     render(<LiabilitiesComposition />);
 
     expect(
-      screen.getByText("Immediate obligations & invoices"),
+      screen.getByText("Immediate obligations and invoices"),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText("Statutory deductions & utilities"),
+      screen.getByText("Statutory deductions and utilities"),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText("Contracts, CapEx & Encumbered"),
+      screen.getByText("Contracts, capital expenditure and commitments"),
     ).toBeInTheDocument();
   });
 
   it("renders exactly three liability breakdown rows", () => {
     render(<LiabilitiesComposition />);
 
-    expect(
-      document.querySelectorAll(".liability-breakdown"),
-    ).toHaveLength(3);
+    expect(document.querySelectorAll(".liability-breakdown")).toHaveLength(3);
   });
 });

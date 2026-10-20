@@ -6,73 +6,49 @@ describe("CampusFilter", () => {
   it("renders the default selected campus", () => {
     render(<CampusFilter />);
 
-    expect(
-      screen.getByRole("button", {
-        name: "Campus: All Campuses",
-      })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Campus" })).toHaveValue(
+      "All Campuses",
+    );
   });
 
-  it("opens the dropdown when clicked", () => {
+  it("renders all available campus options", () => {
     render(<CampusFilter />);
 
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Campus: All Campuses",
-      })
-    );
-
-    expect(screen.getByRole("listbox")).toBeInTheDocument();
+    const campusSelect = screen.getByRole("combobox", {
+      name: "Campus",
+    });
 
     expect(
-      screen.getByRole("option", {
-        name: "All Campuses",
-      })
+      screen.getByRole("option", { name: "All Campuses" }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole("option", {
-        name: "Kibuli Main Campus",
-      })
+      screen.getByRole("option", { name: "Kibuli Main Campus" }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole("option", {
-        name: "Buwaate Campus",
-      })
+      screen.getByRole("option", { name: "Buwaate Campus" }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole("option", {
-        name: "Annex / Preschool Branch",
-      })
+      screen.getByRole("option", { name: "Annex / Preschool Branch" }),
     ).toBeInTheDocument();
+
+    expect(campusSelect).toHaveValue("All Campuses");
   });
 
-  it("selects a campus and closes the dropdown", () => {
+  it("selects a campus", () => {
     render(<CampusFilter />);
 
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Campus: All Campuses",
-      })
-    );
+    const campusSelect = screen.getByRole("combobox", {
+      name: "Campus",
+    });
 
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Kibuli Main Campus",
-      })
-    );
+    fireEvent.change(campusSelect, {
+      target: { value: "Kibuli Main Campus" },
+    });
 
-    expect(
-      screen.getByRole("button", {
-        name: "Campus: Kibuli Main Campus",
-      })
-    ).toBeInTheDocument();
-
-    expect(
-      screen.queryByRole("listbox")
-    ).not.toBeInTheDocument();
+    expect(campusSelect).toHaveValue("Kibuli Main Campus");
   });
 
   it("calls onCampusChange with the selected campus", () => {
@@ -80,59 +56,39 @@ describe("CampusFilter", () => {
 
     render(<CampusFilter onCampusChange={onCampusChange} />);
 
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Campus: All Campuses",
-      })
-    );
-
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Buwaate Campus",
-      })
-    );
+    fireEvent.change(screen.getByRole("combobox", { name: "Campus" }), {
+      target: { value: "Buwaate Campus" },
+    });
 
     expect(onCampusChange).toHaveBeenCalledWith("Buwaate Campus");
     expect(onCampusChange).toHaveBeenCalledTimes(1);
   });
 
-  it("marks the selected campus in the dropdown", () => {
+  it("renders the school section selector with its default value", () => {
     render(<CampusFilter />);
 
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Campus: All Campuses",
-      })
-    );
-
     expect(
-      screen.getByRole("option", {
-        name: "All Campuses",
-      })
-    ).toHaveAttribute("aria-selected", "true");
-
-    expect(
-      screen.getByRole("option", {
-        name: "Kibuli Main Campus",
-      })
-    ).toHaveAttribute("aria-selected", "false");
+      screen.getByRole("combobox", { name: "School section" }),
+    ).toHaveValue("All Sections");
   });
 
-  it("closes the dropdown when the trigger is clicked again", () => {
+  it("renders all available school section options", () => {
     render(<CampusFilter />);
 
-    const trigger = screen.getByRole("button", {
-      name: "Campus: All Campuses",
-    });
+    expect(
+      screen.getByRole("option", { name: "All Sections" }),
+    ).toBeInTheDocument();
 
-    fireEvent.click(trigger);
+    expect(screen.getByRole("option", { name: "Nursery" })).toBeInTheDocument();
 
-    expect(screen.getByRole("listbox")).toBeInTheDocument();
-
-    fireEvent.click(trigger);
+    expect(screen.getByRole("option", { name: "Primary" })).toBeInTheDocument();
 
     expect(
-      screen.queryByRole("listbox")
-    ).not.toBeInTheDocument();
+      screen.getByRole("option", { name: "Secondary" }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("option", { name: "Preschool" }),
+    ).toBeInTheDocument();
   });
 });

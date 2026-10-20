@@ -9,7 +9,7 @@ describe("Revenue", () => {
     expect(
       screen.getByRole("heading", {
         name: "Revenue Trend vs. Target",
-      })
+      }),
     ).toBeInTheDocument();
   });
 
@@ -17,7 +17,11 @@ describe("Revenue", () => {
     render(<Revenue />);
 
     expect(
-      screen.getByText("EXPECTED BILLED REVENUE")
+      screen.getByRole("heading", { name: "Financial Performance" }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByText("Revenue collection and fee recovery overview"),
     ).toBeInTheDocument();
   });
 
@@ -27,7 +31,7 @@ describe("Revenue", () => {
     expect(
       screen.getByRole("heading", {
         name: "Revenue Trend vs. Target",
-      })
+      }),
     ).toBeInTheDocument();
   });
 
@@ -35,9 +39,9 @@ describe("Revenue", () => {
     render(<Revenue />);
 
     expect(
-      screen.getByRole("button", {
-        name: /campus:\s*all campuses/i,
-      })
-    ).toBeInTheDocument();
+      screen.getByRole("combobox", {
+        name: "Campus",
+      }),
+    ).toHaveValue("All Campuses");
   });
 });

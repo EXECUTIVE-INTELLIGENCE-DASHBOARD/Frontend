@@ -35,7 +35,7 @@ describe("CoCurricularActivities", () => {
     expected.forEach(([label, value], index) => {
       expect(within(cards[index]).getByText(label)).toBeInTheDocument();
       expect(within(cards[index]).getByText(value)).toBeInTheDocument();
-      });
+    });
   });
 
   it("lists the five clubs with their figures", () => {
@@ -69,21 +69,21 @@ describe("CoCurricularActivities", () => {
     render(<CoCurricularActivities />);
 
     expect(
-      screen.getByRole("button", { name: "Campus: All Campuses" }),
-    ).toBeInTheDocument();
+      screen.getByRole("combobox", { name: "Campus" }),
+    ).toHaveValue("All Campuses");
   });
 
   it("changes the figures when a campus is selected", () => {
     render(<CoCurricularActivities />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Campus: All Campuses" }));
-    fireEvent.click(
-      within(screen.getByRole("listbox")).getByText("Kibuli Main Campus"),
-    );
+    const campusSelect = screen.getByRole("combobox", {
+      name: "Campus",
+    });
 
-    expect(
-      screen.getByRole("button", { name: "Campus: Kibuli Main Campus" }),
-    ).toBeInTheDocument();
+    // Select Kibuli Main Campus.
+    fireEvent.change(campusSelect, {
+      target: { value: "Kibuli Main Campus" },
+    });
 
     const cards = screen.getAllByRole("article");
 
@@ -105,12 +105,10 @@ describe("CoCurricularActivities", () => {
       "12",
     ]);
 
-    fireEvent.click(
-      screen.getByRole("button", { name: "Campus: Kibuli Main Campus" }),
-    );
-    fireEvent.click(
-      within(screen.getByRole("listbox")).getByText("All Campuses"),
-    );
+    // Return to All Campuses.
+    fireEvent.change(campusSelect, {
+      target: { value: "All Campuses" },
+    });
 
     expect(
       within(screen.getAllByRole("article")[0]).getByText("94.2%"),
@@ -141,6 +139,7 @@ describe("CoCurricularActivities", () => {
       configurable: true,
       writable: true,
     });
+
     Object.defineProperty(URL, "revokeObjectURL", {
       value: revokeObjectURL,
       configurable: true,
@@ -177,9 +176,10 @@ describe("co-curricular data", () => {
     });
 
     expect(all.reduce((total, row) => total + row.attended, 0)).toBe(1200);
-    expect(all.reduce((total, row) => total + row.nonParticipatory, 0)).toBe(
-      170,
-    );
+
+    expect(
+      all.reduce((total, row) => total + row.nonParticipatory, 0),
+    ).toBe(170);
   });
 });
 
@@ -189,9 +189,11 @@ describe("buildCsv", () => {
     const lines = buildCsv(rows).split("\r\n");
 
     expect(lines).toHaveLength(6);
+
     expect(lines[0]).toBe(
       "Activity / Club,Society,Events held,Total attended,Girls attended,Boys attended,Non participatory",
     );
+
     expect(lines[1]).toBe(
       "Model United Nations & Debate,Humanities & Diplomacy,14,300,180,120,25",
     );

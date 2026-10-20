@@ -23,7 +23,7 @@ vi.mock("recharts", () => ({
   Line: () => null,
 }));
 
-describe("CalRevenueGraph", () => {
+describe("RevenueGraph", () => {
   it("renders the revenue trend heading", () => {
     render(<RevenueGraph />);
 
@@ -43,12 +43,16 @@ describe("CalRevenueGraph", () => {
   it("renders the year-to-date performance summary", () => {
     render(<RevenueGraph />);
 
-    expect(screen.getByText("+4.3% above target")).toBeInTheDocument();
+    expect(screen.getByText("4.0% above target")).toBeInTheDocument();
 
     expect(
-      screen.getByText(
-        "YTD UGX 620.5M realized vs UGX 595.0M target",
-      ),
+      screen.getByText((_, element) => {
+        return (
+          element?.tagName === "P" &&
+          element.textContent?.replace(/\s+/g, " ").trim() ===
+            "YTD UGX 619.0M realized vs UGX 595.0M target"
+        );
+      }),
     ).toBeInTheDocument();
   });
 

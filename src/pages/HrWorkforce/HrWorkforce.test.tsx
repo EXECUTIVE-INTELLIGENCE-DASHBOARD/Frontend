@@ -13,8 +13,14 @@ import {
 } from "./hrWorkforce.data";
 
 const chooseCampus = (from: string, to: string) => {
-  fireEvent.click(screen.getByRole("button", { name: `Campus: ${from}` }));
-  fireEvent.click(within(screen.getByRole("listbox")).getByText(to));
+  const campusSelect = screen.getByRole("combobox", {
+    name: "Campus",
+  });
+
+  expect(campusSelect).toHaveValue(from);
+  fireEvent.change(campusSelect, {
+    target: { value: to },
+  });
 };
 
 const cellsOf = (row: HTMLElement) =>
@@ -31,9 +37,9 @@ describe("HrWorkforce", () => {
     render(<HrWorkforce />);
 
     expect(screen.getByText(reportingPeriod)).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Campus: All Campuses" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Campus" })).toHaveValue(
+      "All Campuses",
+    );
   });
 
   it("renders the three headline cards for all campuses", () => {
@@ -114,7 +120,7 @@ describe("HrWorkforce", () => {
     expect(screen.getByText("93.8% Present")).toHaveClass("hw-pill--warn");
   });
 
-    it("narrows the table to one department", () => {
+  it("narrows the table to one department", () => {
     render(<HrWorkforce />);
 
     fireEvent.change(screen.getByLabelText("Filter department"), {
@@ -146,7 +152,7 @@ describe("HrWorkforce", () => {
 
     // Header row plus the three departments that work at Buwaate.
     expect(screen.getAllByRole("row")).toHaveLength(4);
-        expect(
+    expect(
       within(screen.getByRole("table")).queryByText(
         "Boarding & Catering Operations",
       ),
@@ -235,7 +241,9 @@ describe("hr workforce data", () => {
       expect(parts.reduce((sum, part) => sum + part.headcount, 0)).toBe(
         row.headcount,
       );
-      expect(parts.reduce((sum, part) => sum + part.absent, 0)).toBe(row.absent);
+      expect(parts.reduce((sum, part) => sum + part.absent, 0)).toBe(
+        row.absent,
+      );
     });
 
     expect(
