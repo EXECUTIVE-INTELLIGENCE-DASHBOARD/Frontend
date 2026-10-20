@@ -18,8 +18,14 @@
   gap: 14px;
 
   /* Headline: Bold. Subhead: Semibold. Body copy: Regular. */
-  font-family: "Montserrat", Inter, ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", sans-serif;
+  font-family:
+    "Montserrat",
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
   font-weight: 400;
 }
 
@@ -42,9 +48,9 @@
 .sr-metric {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-
-  padding: 12px 14px;
+  gap: 10px;
+  min-height: 110px;
+  padding: 16px 14px;
 
   border: 1px solid var(--sr-border);
   border-radius: 12px;
@@ -71,25 +77,18 @@
 }
 
 /* Solid chips with white icons, as in the design reference. */
-.sr-chip--navy {
-  background: var(--sr-navy);
-  color: var(--color-surface);
-}
-
-.sr-chip--sky {
-  background: var(--sr-sky);
-  color: #fff;
-}
-
+/* Student Retention summary icons: soft steel-blue background */
+.sr-chip--navy,
+.sr-chip--sky,
 .sr-chip--amber {
-  background: var(--sr-amber);
-  color: #fff;
+  background: color-mix(in srgb, var(--pal-steel) 13%, transparent);
+  color: var(--pal-steel);
 }
 
 .sr-metric__label {
   color: var(--sr-muted);
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 0.06em;
   line-height: 1.4;
   text-transform: uppercase;
@@ -97,51 +96,54 @@
 
 .sr-metric__value {
   color: var(--sr-heading);
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.1;
 }
-
-/* ----------------------------------------------------------------- Grid */
 
 .sr-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
   gap: 12px;
   align-items: stretch;
+  width: 100%;
 }
-
-/* ---------------------------------------------------------------- Cards */
 
 .sr-card {
   display: flex;
   flex-direction: column;
+  align-self: stretch;
+  min-width: 0;
+  box-sizing: border-box;
 
   border: 1px solid var(--sr-border);
   border-radius: 14px;
-
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
-
   overflow: hidden;
 }
-
 .sr-card__header {
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--sr-border);
-}
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  box-sizing: border-box;
+  padding: 8px 16px;
 
+  border-bottom: 1px solid var(--sr-border);
+  background: var(--color-surface);
+}
 .sr-card__title {
   display: flex;
   align-items: center;
   gap: 8px;
 
   margin: 0;
+  padding: 0;
 
   color: var(--color-heading-alt);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   line-height: 1.4;
 }
 
@@ -273,14 +275,23 @@
 }
 
 /* --------------------------------------------------------- Gender card */
-
 .sr-gender__body {
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: 12px;
-
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
   padding: 12px 16px 14px;
+}
+
+.sr-gender__chart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .sr-page .sr-gender__intro {
@@ -293,23 +304,60 @@
   line-height: 1.5;
 }
 
-.sr-gender__chart {
-  display: flex;
-  justify-content: center;
-}
-
 /* The shared donut uses a 30px centre value, which is too big for a compact
    ring. Scale it down here without touching the shared component. */
+
+.sr-withdrawal__details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.sr-withdrawal__details h3 {
+  margin: 0;
+  color: var(--sr-heading);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.sr-withdrawal__item {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border-soft);
+  border-radius: 10px;
+  background: var(--color-surface-subtle);
+}
+
+.sr-withdrawal__description {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.sr-withdrawal__description p {
+  margin: 0;
+  color: var(--sr-muted);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.4;
+}
 .sr-gender .donut__value {
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 700;
 }
 
 .sr-gender .donut__label {
-  margin-top: 3px;
-
-  font-size: 9px;
-  font-weight: 600;
+  margin-top: 2px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0;
+  white-space: nowrap;
 }
 
 .sr-gender__list {
@@ -357,6 +405,34 @@
   font-weight: 700;
 }
 
+/* Fix nationality text visibility in dark mode */
+[data-theme="dark"] .sr-card .sr-table tbody td:first-child {
+  color: #f5f7ff !important;
+}
+
+[data-theme="dark"] .sr-card .sr-table .sr-nationality__name {
+  color: #ffffff !important;
+  font-weight: 600;
+  opacity: 1 !important;
+}
+
+[data-theme="dark"] .sr-card .sr-table .sr-nationality__dot {
+  background-color: #91baff !important;
+  opacity: 1 !important;
+}
+/* Improve withdrawal labels and percentages in dark mode */
+[data-theme="dark"] .sr-withdrawal__item .sr-gender__label {
+  color: #f5f7ff !important;
+  opacity: 1 !important;
+}
+
+[data-theme="dark"] .sr-withdrawal__item .sr-pill {
+  color: #ffffff !important;
+  background-color: #34466f !important;
+  border: 1px solid #526991;
+  opacity: 1 !important;
+  font-weight: 600;
+}
 /* ------------------------------------------------------------ Responsive */
 
 @media (max-width: 1100px) {

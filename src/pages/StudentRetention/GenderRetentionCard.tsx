@@ -1,76 +1,120 @@
 import { DonutChart } from "../../components/DonutChart";
 import { formatNumber } from "./studentRetention.data";
-import type { RetentionSummary } from "./studentRetention.types";
 
 const COLORS = {
-  girls: "var(--pal-sky)",
-  boys: "var(--color-heading)",
+  financial: "#0B2E75",
+  transfer: "#1685E8",
+  death: "#F5B51B",
+  academic: "#4B6FAE",
 } as const;
 
+const withdrawalReasons = [
+  {
+    id: "financial",
+    label: "Financial Constraints",
+    value: 44,
+    color: COLORS.financial,
+  },
+  {
+    id: "transfer",
+    label: "Transfer to Another School",
+    value: 34,
+    color: COLORS.transfer,
+  },
+  {
+    id: "death",
+    label: "Death",
+    value: 23,
+    color: COLORS.death,
+  },
+  {
+    id: "academic",
+    label: "Academic Performance",
+    value: 23,
+    color: COLORS.academic,
+  },
+] as const;
+
+const totalWithdrawals = withdrawalReasons.reduce(
+  (total, reason) => total + reason.value,
+  0,
+);
+
 interface GenderRetentionCardProps {
-  summary: RetentionSummary;
+  summary: {
+    girls: number;
+    boys: number;
+  };
 }
 
-export function GenderRetentionCard({ summary }: GenderRetentionCardProps) {
-  const total = summary.girls + summary.boys;
-  const share = (value: number) =>
-    total === 0 ? "0.0" : ((value / total) * 100).toFixed(1);
-
-  const rows = [
-    { id: "girls", label: "Girls Retained", value: summary.girls },
-    { id: "boys", label: "Boys Retained", value: summary.boys },
-  ] as const;
-
+export function GenderRetentionCard(
+  _props: GenderRetentionCardProps,
+) {
   return (
     <section className="sr-card sr-gender">
       <div className="sr-card__header">
         <h2 className="sr-card__title">
-          <span className="sr-card__dot sr-card__dot--sky" aria-hidden="true" />
-          Retention by Gender
+          Reasons for Withdrawal
         </h2>
       </div>
 
       <div className="sr-gender__body">
-        <p className="sr-gender__intro">
-          Comparative breakdown of student retention between girls and boys.
-        </p>
-
         <div className="sr-gender__chart">
           <DonutChart
-            segments={rows.map((row) => ({
-              id: row.id,
-              value: row.value,
-              color: COLORS[row.id],
+            segments={withdrawalReasons.map((reason) => ({
+              id: reason.id,
+              value: reason.value,
+              color: reason.color,
             }))}
-            centerValue={formatNumber(total)}
-            centerLabel="Retained"
-            ariaLabel="Retention by gender"
+            centerValue={formatNumber(totalWithdrawals)}
+            centerLabel="Total Withdrawals"
+            ariaLabel="Student withdrawals by reason"
             size={150}
             thickness={20}
           />
         </div>
 
-        <ul className="sr-gender__list">
-          {rows.map((row) => (
-            <li key={row.id} className="sr-gender__item">
-              <span
-                className="sr-gender__dot"
-                style={{ background: COLORS[row.id] }}
-                aria-hidden="true"
-              />
+        <div className="sr-withdrawal__details">
+          <ul className="sr-gender__list">
+            {withdrawalReasons.map((reason) => {
+              const percentage = (
+                (reason.value / totalWithdrawals) *
+                100
+              ).toFixed(1);
 
-              <span className="sr-gender__label">{row.label}</span>
+              return (
+                <li
+                  key={reason.id}
+                  className="sr-withdrawal__item"
+                >
+                  <span
+                    className="sr-gender__dot"
+                    style={{ background: reason.color }}
+                    aria-hidden="true"
+                  />
 
-              <span className="sr-gender__count">{formatNumber(row.value)}</span>
+                  <span className="sr-gender__label">
+                    {reason.label}
+                  </span>
 
-              <span
-                className={`sr-pill ${row.id === "girls" ? "sr-pill--good" : ""}`}
-              >
-                {share(row.value)}%
-              </span>
-            </li>
-          ))}
-        </ul>
+                  <span className="sr-gender__count">
+                    {formatNumber(reason.value)}
+                  </span>
+
+                  <span
+                    className="sr-pill"
+                    style={{
+                      color: reason.color,
+                      backgroundColor: `${reason.color}20`,
+                    }}
+                  >
+                    {percentage}%
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
     </section>
   );
