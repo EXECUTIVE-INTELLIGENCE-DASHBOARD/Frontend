@@ -20,9 +20,18 @@ import { ExpenseManagement } from "./pages/ExpenseManagement/ExpenseManagement";
 import { CoCurricularActivities } from "./pages/CoCurricularActivities/CoCurricularActivities";
 import { StudentRetention } from "./pages/StudentRetention/StudentRetention";
 import { HrWorkforce } from "./pages/HrWorkforce/HrWorkforce";
+
+import { FinanceOverview } from "./pages/FinanceOverview/FinanceOverview";
+import { BudgetExpenditure } from "./pages/BudgetExpenditure/BudgetExpenditure";
+import { CostCentreAnalysis } from "./pages/CostCentreAnalysis/CostCentreAnalysis";
+import { FinancialForecasts } from "./pages/FinancialForecasts/FinancialForecasts";
+import PurchaseOrdersApprovals from "./pages/Procurement/PurchaseOrdersApprovals";
+import SupplierPerformance from "./pages/Procurement/SupplierPerformance";
+import InventoryStock from "./pages/Procurement/InventoryStock";
+import ProcurementRequests from "./pages/Procurement/ProcurementRequests";
+
 import { AssetsEquipment } from "./pages/AssetsEquipment/AssetsEquipment";
 import { Sales, Inventory, Budget } from "./pages/services";
-
 
 const pages: Record<string, ReactElement> = {
   /* Overview + academic group */
@@ -38,10 +47,20 @@ const pages: Record<string, ReactElement> = {
 
   /* Finance & Procurement group — the ids must match the `id`s used in
      `navigation.config.ts`, or the sidebar entry renders a placeholder. */
+  "finance-overview": <FinanceOverview />,
+  "cost-centre-analysis": <CostCentreAnalysis />,
+  "financial-forecasts": <FinancialForecasts />,
+  "budget-management": <BudgetExpenditure />,
   "liabilities-management": <Liabilities />,
   "revenue-fee-collection": <Revenue />,
-  "procurement-financials": <ProcurementFinancials />,
   "expense-management": <ExpenseManagement />,
+
+  // New procurement page
+  "procurement-financials": <ProcurementFinancials />,
+  "purchase-orders-approvals": <PurchaseOrdersApprovals />,
+  "supplier-performance": <SupplierPerformance />,
+  "inventory-stock": <InventoryStock />,
+  "procurement-requests": <ProcurementRequests />,
   
   /* Operational group */
   "hr-workforce": <HrWorkforce />,

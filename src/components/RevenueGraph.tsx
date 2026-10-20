@@ -33,9 +33,40 @@ const revenueData: RevenueMonth[] = [
   { month: "Dec", forecast: 35, target: 35 },
 ];
 
+const realizedMonths = revenueData.filter(
+  (month) => month.realized !== undefined,
+);
+
+const yearToDateRealized = realizedMonths.reduce(
+  (total, month) => total + (month.realized ?? 0),
+  0,
+);
+
+const yearToDateTarget = realizedMonths.reduce(
+  (total, month) => total + month.target,
+  0,
+);
+
+const performancePercentage =
+  yearToDateTarget === 0
+    ? 0
+    : ((yearToDateRealized - yearToDateTarget) / yearToDateTarget) * 100;
+
+const performanceLabel =
+  performancePercentage >= 0
+    ? `${performancePercentage.toFixed(1)}% above target`
+    : `${Math.abs(performancePercentage).toFixed(1)}% below target`;
+
+function formatMillions(value: number): string {
+  return `UGX ${value.toFixed(1)}M`;
+}
+
 export function RevenueGraph() {
   return (
-    <section className="revenue-trend" aria-labelledby="revenue-trend-title">
+    <section
+      className="revenue-trend"
+      aria-labelledby="revenue-trend-title"
+    >
       <header className="revenue-trend__header">
         <div className="revenue-trend__heading">
           <div className="revenue-trend__icon" aria-hidden="true">
@@ -55,12 +86,18 @@ export function RevenueGraph() {
 
           <div className="revenue-trend__title-group">
             <div className="revenue-trend__title-line">
-              <h2 id="revenue-trend-title">Revenue Trend vs. Target</h2>
+              <h2 id="revenue-trend-title">
+                Revenue Trend vs. Target
+              </h2>
 
-              <span className="revenue-trend__badge">ILLUSTRATIVE</span>
+              <span className="revenue-trend__badge">
+                ILLUSTRATIVE
+              </span>
             </div>
 
-            <p>Realized revenue by month, FY 2028 (Jan–Dec)</p>
+            <p>
+              Monthly realized revenue and forecast, FY 2028
+            </p>
           </div>
         </div>
 
@@ -73,17 +110,27 @@ export function RevenueGraph() {
               stroke="currentColor"
               strokeWidth="2"
             >
-              <path d="m3 10 5-5 5 5" />
+              {performancePercentage >= 0 ? (
+                <path d="m3 10 5-5 5 5" />
+              ) : (
+                <path d="m3 6 5 5 5-5" />
+              )}
             </svg>
 
-            <span>+4.3% above target</span>
+            <span>{performanceLabel}</span>
           </div>
 
-          <p>YTD UGX 620.5M realized vs UGX 595.0M target</p>
+          <p>
+            YTD {formatMillions(yearToDateRealized)} realized vs{" "}
+            {formatMillions(yearToDateTarget)} target
+          </p>
         </div>
       </header>
 
-      <div className="revenue-trend__legend" aria-label="Chart legend">
+      <div
+        className="revenue-trend__legend"
+        aria-label="Chart legend"
+      >
         <span className="revenue-trend__legend-item">
           <span className="revenue-trend__legend-square" />
           Realized
@@ -103,7 +150,7 @@ export function RevenueGraph() {
       <div
         className="revenue-trend__chart"
         role="img"
-        aria-label="Revenue trend versus target from January to December. Realized revenue is shown through July, with forecast bars from August onward."
+        aria-label={`Revenue trend versus target from January to December. Realized revenue is shown through July, with forecast bars from August onward. Year-to-date realized revenue is ${yearToDateRealized} million Ugandan shillings against a target of ${yearToDateTarget} million.`}
       >
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
@@ -123,10 +170,16 @@ export function RevenueGraph() {
 
             <XAxis
               dataKey="month"
-              axisLine={{ stroke: "var(--color-chart-axis)" }}
+              axisLine={{
+                stroke: "var(--color-chart-axis)",
+              }}
               tickLine={false}
-              tick={{ fill: "var(--color-text-muted)", fontSize: 12 }}
+              tick={{
+                fill: "var(--color-text-muted)",
+                fontSize: 12,
+              }}
               tickMargin={10}
+              minTickGap={8}
             />
 
             <YAxis
@@ -135,7 +188,10 @@ export function RevenueGraph() {
               tickFormatter={(value: number) => `${value}M`}
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "var(--color-text-muted)", fontSize: 12 }}
+              tick={{
+                fill: "var(--color-text-muted)",
+                fontSize: 12,
+              }}
               width={54}
             />
 
@@ -148,8 +204,12 @@ export function RevenueGraph() {
                       ? "Forecast"
                       : "Target / budget";
 
-                return [`UGX ${Number(value ?? 0).toFixed(1)}M`, label];
+                return [
+                  formatMillions(Number(value ?? 0)),
+                  label,
+                ];
               }}
+              labelFormatter={(label) => `Month: ${label}`}
               contentStyle={{
                 backgroundColor: "var(--color-surface)",
                 color: "var(--color-text)",
@@ -158,13 +218,17 @@ export function RevenueGraph() {
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.12)",
                 fontSize: 12,
               }}
+              cursor={{
+                fill: "var(--color-surface-subtle)",
+                opacity: 0.45,
+              }}
             />
 
             <Bar
               dataKey="realized"
               name="Realized"
               fill="var(--color-chart-realized)"
-              barSize={44}
+              barSize={36}
               radius={[5, 5, 0, 0]}
               isAnimationActive={false}
             />
@@ -176,7 +240,7 @@ export function RevenueGraph() {
               stroke="var(--color-border-strong)"
               strokeDasharray="3 3"
               strokeWidth={1}
-              barSize={44}
+              barSize={36}
               radius={[5, 5, 0, 0]}
               isAnimationActive={false}
             />
