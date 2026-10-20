@@ -1,11 +1,12 @@
+
 .outstanding-creditors {
   min-width: 0;
   height: 100%;
   box-sizing: border-box;
-  padding: 24px 28px 28px;
+  padding: 24px;
   background: var(--color-surface);
   border: 1px solid var(--color-border-soft);
-  border-radius: 24px;
+  border-radius: 20px;
   box-shadow: var(--shadow-card);
 }
 
@@ -15,26 +16,48 @@
   gap: 10px;
   margin: 0 0 20px;
   color: var(--color-heading);
-  font-size: 15px;
+  font-size: 1.05rem;
   font-weight: 700;
   line-height: 1.4;
 }
 
 .outstanding-creditors__title svg {
-  width: 18px;
-  height: 18px;
+  width: 19px;
+  height: 19px;
   flex-shrink: 0;
   color: var(--color-accent);
 }
 
+.outstanding-creditors__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 25px;
+  height: 25px;
+  margin-left: auto;
+  padding: 0 7px;
+  box-sizing: border-box;
+  color: var(--color-text);
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-soft);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
 .outstanding-creditors__table-wrapper {
   width: 100%;
+  min-width: 0;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-soft) transparent;
 }
 
 .outstanding-creditors__table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   text-align: left;
 }
 
@@ -43,17 +66,19 @@
 }
 
 .outstanding-creditors__table th {
-  padding: 12px 10px;
+  padding: 13px 10px;
   color: var(--color-text-soft);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  line-height: 1.4;
+  font-size: 0.67rem;
+  font-weight: 750;
+  letter-spacing: 0.045em;
+  line-height: 1.45;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .outstanding-creditors__table th:first-child {
   min-width: 160px;
+  border-radius: 9px 0 0 9px;
 }
 
 .outstanding-creditors__table th:nth-child(2) {
@@ -61,7 +86,8 @@
 }
 
 .outstanding-creditors__table th:last-child {
-  min-width: 115px;
+  min-width: 125px;
+  border-radius: 0 9px 9px 0;
 }
 
 .outstanding-creditors__amount-heading {
@@ -69,9 +95,17 @@
 }
 
 .outstanding-creditors__table td {
-  padding: 11px 10px;
+  padding: 13px 10px;
   border-bottom: 1px solid var(--color-border-soft);
   vertical-align: middle;
+}
+
+.outstanding-creditors__table tbody tr {
+  transition: background-color 150ms ease;
+}
+
+.outstanding-creditors__table tbody tr:hover {
+  background: var(--color-surface-subtle);
 }
 
 .outstanding-creditors__table tbody tr:last-child td {
@@ -81,21 +115,21 @@
 .creditor-name {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   min-width: 0;
 }
 
 .creditor-name strong {
-  color: var(--color-heading-alt);
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1.35;
+  color: var(--color-heading);
+  font-size: 0.8rem;
+  font-weight: 650;
+  line-height: 1.4;
 }
 
 .creditor-name span {
   color: var(--color-text-soft);
-  font-size: 11px;
-  line-height: 1.4;
+  font-size: 0.68rem;
+  line-height: 1.45;
   overflow-wrap: anywhere;
 }
 
@@ -105,16 +139,18 @@
   padding: 5px 9px;
   color: var(--color-text);
   background: var(--color-surface-hover);
-  border-radius: 24px;
-  font-size: 11px;
-  font-weight: 500;
+  border: 1px solid var(--color-border-soft);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 550;
   line-height: 1.4;
 }
 
 .outstanding-creditors__amount {
   color: var(--color-heading);
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
   text-align: right;
   white-space: nowrap;
 }
@@ -126,35 +162,28 @@
 
   .outstanding-creditors__table th,
   .outstanding-creditors__table td {
-    padding: 10px 8px;
-  }
-
-  .creditor-name strong {
-    font-size: 12px;
-  }
-
-  .creditor-name span,
-  .creditor-type {
-    font-size: 10px;
-  }
-
-  .outstanding-creditors__amount {
-    font-size: 12px;
+    padding: 11px 8px;
   }
 }
 
 @media (max-width: 600px) {
   .outstanding-creditors {
-    padding: 20px 16px;
+    padding: 20px 15px;
     border-radius: 18px;
   }
 
   .outstanding-creditors__title {
-    margin-bottom: 18px;
-    font-size: 15px;
+    margin-bottom: 17px;
+    font-size: 0.98rem;
   }
 
   .outstanding-creditors__table {
     min-width: 520px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .outstanding-creditors__table tbody tr {
+    transition: none;
   }
 }

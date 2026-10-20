@@ -1,5 +1,5 @@
+
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 import "./CampusFilter.css";
 
 export type CampusOption =
@@ -8,82 +8,112 @@ export type CampusOption =
   | "Buwaate Campus"
   | "Annex / Preschool Branch";
 
+export type SectionOption =
+  | "All Sections"
+  | "Nursery"
+  | "Primary"
+  | "Secondary"
+  | "Preschool";
+
 interface CampusFilterProps {
   onCampusChange?: (campus: CampusOption) => void;
+  onSectionChange?: (section: SectionOption) => void;
 }
 
-const campuses: CampusOption[] = [
-  "All Campuses",
-  "Kibuli Main Campus",
-  "Buwaate Campus",
-  "Annex / Preschool Branch",
-];
+const sectionsByCampus: Record<CampusOption, SectionOption[]> = {
+  "All Campuses": [
+    "All Sections",
+    "Nursery",
+    "Primary",
+    "Secondary",
+    "Preschool",
+  ],
+  "Kibuli Main Campus": [
+    "All Sections",
+    "Nursery",
+    "Primary",
+    "Secondary",
+  ],
+  "Buwaate Campus": [
+    "All Sections",
+    "Nursery",
+    "Primary",
+  ],
+  "Annex / Preschool Branch": [
+    "All Sections",
+    "Preschool",
+  ],
+};
+
+const campuses = Object.keys(
+  sectionsByCampus,
+) as CampusOption[];
 
 export function CampusFilter({
   onCampusChange,
+  onSectionChange,
 }: CampusFilterProps) {
   const [selectedCampus, setSelectedCampus] =
     useState<CampusOption>("All Campuses");
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [selectedSection, setSelectedSection] =
+    useState<SectionOption>("All Sections");
 
-  function handleSelect(campus: CampusOption) {
+  const availableSections = sectionsByCampus[selectedCampus];
+
+  function handleCampusChange(campus: CampusOption) {
     setSelectedCampus(campus);
-    setIsOpen(false);
+    setSelectedSection("All Sections");
+
     onCampusChange?.(campus);
+    onSectionChange?.("All Sections");
+  }
+
+  function handleSectionChange(section: SectionOption) {
+    setSelectedSection(section);
+    onSectionChange?.(section);
   }
 
   return (
-    <div className="campus-filter">
-      <button
-        type="button"
-        className={`campus-filter__trigger ${
-          isOpen ? "campus-filter__trigger--open" : ""
-        }`}
-        aria-label={`Campus: ${selectedCampus}`}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-        onClick={() => setIsOpen((open) => !open)}
-      >
-        <span>{selectedCampus}</span>
-
-        <ChevronDown
-          size={15}
-          strokeWidth={1.8}
-          className={`campus-filter__chevron ${
-            isOpen ? "campus-filter__chevron--open" : ""
-          }`}
-          aria-hidden="true"
-        />
-      </button>
-
-      {isOpen && (
-        <ul
-          className="campus-filter__options"
-          role="listbox"
-          aria-label="Choose campus"
+    <div
+      className="campus-filter__scope"
+      aria-label="Campus and section filters"
+    >
+      <label className="campus-filter__field">
+        <span className="campus-filter__sr-only">Campus</span>
+        <select
+          value={selectedCampus}
+          onChange={(event) =>
+            handleCampusChange(event.target.value as CampusOption)
+          }
+          aria-label="Campus"
         >
           {campuses.map((campus) => (
-            <li
-              key={campus}
-              role="option"
-              aria-selected={selectedCampus === campus}
-            >
-              <button
-                type="button"
-                className={`campus-filter__option ${
-                  selectedCampus === campus
-                    ? "campus-filter__option--selected"
-                    : ""
-                }`}
-                onClick={() => handleSelect(campus)}
-              >
-                {campus}
-              </button>
-            </li>
+            <option key={campus} value={campus}>
+              {campus}
+            </option>
           ))}
-        </ul>
-      )}
+        </select>
+      </label>
+
+      <label className="campus-filter__field">
+        <span className="campus-filter__sr-only">
+          School section
+        </span>
+        <select
+          value={selectedSection}
+          onChange={(event) =>
+            handleSectionChange(event.target.value as SectionOption)
+          }
+          aria-label="School section"
+        >
+          {availableSections.map((section) => (
+            <option key={section} value={section}>
+              {section}
+            </option>
+          ))}
+        </select>
+      </label>
     </div>
   );
 }

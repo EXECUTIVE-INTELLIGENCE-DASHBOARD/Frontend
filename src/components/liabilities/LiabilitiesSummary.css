@@ -1,114 +1,76 @@
+
 .liabilities-summary {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  gap: 12px;
   width: 100%;
+  min-width: 0;
 }
 
+/* Card — matches Finance Overview */
 .liability-metric {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
   min-width: 0;
-  padding: 24px;
+  padding: 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 13px;
   background: var(--color-surface);
-  border: 1px solid var(--color-border-soft);
-  border-radius: 20px;
   box-shadow: var(--shadow-card);
+  text-align: left;
+}
+
+/* Icon stays on the left */
+.liability-metric__icon {
+  display: grid;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--pal-steel) 13%, transparent);
+  color: var(--pal-steel);
+}
+
+/* Title and amount stay together on the right */
+.liability-metric__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
 }
 
 .liability-metric__title {
-  margin: 0 0 14px;
-  color: var(--color-text-soft);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.2px;
-  line-height: 1.5;
-}
-
-.liability-metric__body {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.liability-metric__icon {
-  display: flex;
-  flex: 0 0 42px;
-  width: 42px;
-  height: 42px;
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
-  border-radius: 10px;
-}
-
-.liability-metric--total .liability-metric__icon {
-  background:#0ea5e9;
-}
-
-.liability-metric--due .liability-metric__icon {
-  background: #0ea5e9;
-}
-
-.liability-metric--overdue .liability-metric__icon {
-  background:  #0ea5e9;
+  display: block;
+  width: 100%;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  line-height: 1.45;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .liability-metric__amount {
-  min-width: 0;
+  display: block;
+  width: 100%;
   margin: 0;
-  color: var(--color-heading);
-  font-size: clamp(15px, 1.2vw, 21px);
-  font-weight: 400;
-  line-height: 1.3;
-  letter-spacing: -0.4px;
-  white-space: nowrap;
+  font-size: clamp(17px, 1.8vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
-@media (max-width: 1200px) {
-  .liabilities-summary {
-    gap: 14px;
-  }
-
-  .liability-metric {
-    padding: 20px;
-    border-radius: 18px;
-  }
-
-  .liability-metric__title {
-    font-size: 10px;
-    margin-bottom: 12px;
-  }
-
-  .liability-metric__icon {
-    flex-basis: 38px;
-    width: 38px;
-    height: 38px;
-  }
-
-  .liability-metric__amount {
-    font-size: clamp(14px, 1.3vw, 19px);
-    letter-spacing: -0.3px;
-  }
-}
-
-@media (max-width: 850px) {
-  .liabilities-summary {
-    grid-template-columns: 1fr;
-  }
-
-  .liability-metric {
-    padding: 20px;
-  }
-
-  .liability-metric__title {
-    font-size: 10px;
-  }
-
-  .liability-metric__amount {
-    font-size: clamp(15px, 3vw, 21px);
-  }
-}
-
+/* Accessible text */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -119,4 +81,42 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Tablet */
+@media (max-width: 1050px) {
+  .liabilities-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile */
+@media (max-width: 560px) {
+  .liabilities-summary {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .liability-metric {
+    gap: 10px;
+    padding: 15px;
+  }
+
+  .liability-metric__title {
+    font-size: 10px;
+  }
+
+  .liability-metric__amount {
+    font-size: clamp(17px, 5vw, 22px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liability-metric {
+    transition: none;
+  }
+
+  .liability-metric:hover {
+    transform: none;
+  }
 }
