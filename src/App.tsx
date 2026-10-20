@@ -20,6 +20,7 @@ import { ExpenseManagement } from "./pages/ExpenseManagement/ExpenseManagement";
 import { CoCurricularActivities } from "./pages/CoCurricularActivities/CoCurricularActivities";
 import { StudentRetention } from "./pages/StudentRetention/StudentRetention";
 import { HrWorkforce } from "./pages/HrWorkforce/HrWorkforce";
+import { AssetsEquipment } from "./pages/AssetsEquipment/AssetsEquipment";
 import { Sales, Inventory, Budget } from "./pages/services";
 
 
@@ -44,6 +45,7 @@ const pages: Record<string, ReactElement> = {
   
   /* Operational group */
   "hr-workforce": <HrWorkforce />,
+  "asset-management": <AssetsEquipment />,
 
   /* Services group  */
   "sales": <Sales />,
