@@ -37,15 +37,17 @@ describe("App", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders a main content area", () => {
-    render(
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>,
-    );
+ it("renders a main content area", () => {
+  render(
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>,
+  );
 
-    expect(screen.getByRole("main")).toBeInTheDocument();
-  });
+  expect(
+    document.querySelector("main.app-shell.layout-content"),
+  ).toBeInTheDocument();
+});
 
   it("opens the Academic Overview screen from the Academics section", async () => {
     const user = userEvent.setup();

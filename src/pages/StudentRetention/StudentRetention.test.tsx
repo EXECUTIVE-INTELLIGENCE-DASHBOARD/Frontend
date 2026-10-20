@@ -57,9 +57,12 @@ describe("StudentRetention", () => {
     // One header row plus four nationalities.
     expect(screen.getAllByRole("row")).toHaveLength(5);
 
-    expect(
-      cellsOf(screen.getByRole("row", { name: /Ugandan/ })),
-    ).toEqual(["Ugandan", "Kibuli", "1,100", "88.0%"]);
+    expect(cellsOf(screen.getByRole("row", { name: /Ugandan/ }))).toEqual([
+      "Ugandan",
+      "Kibuli",
+      "1,100",
+      "88.0%",
+    ]);
 
     expect(
       cellsOf(screen.getByRole("row", { name: /South Sudanese/ })),
@@ -76,26 +79,30 @@ describe("StudentRetention", () => {
     expect(within(kenyan).getByText("86.7%")).not.toHaveClass("sr-pill--good");
   });
 
-  it("shows retention by gender", () => {
+  it("shows the reasons for withdrawal card", () => {
     render(<StudentRetention />);
 
     const card = screen
-      .getByRole("heading", { name: "Retention by Gender" })
+      .getByRole("heading", { name: "Reasons for Withdrawal" })
       .closest("section") as HTMLElement;
 
     expect(card).not.toBeNull();
 
     expect(
-      within(card).getByRole("img", { name: "Retention by gender" }),
+      within(card).getByRole("img", {
+        name: "Student withdrawals by reason",
+      }),
     ).toBeInTheDocument();
 
-    const girls = within(card).getByText("Girls Retained").closest("li");
-    const boys = within(card).getByText("Boys Retained").closest("li");
+    expect(within(card).getByText("124")).toBeInTheDocument();
+    expect(within(card).getByText("Total Withdrawals")).toBeInTheDocument();
 
-    expect(girls).toHaveTextContent("720");
-    expect(girls).toHaveTextContent("60.0%");
-    expect(boys).toHaveTextContent("480");
-    expect(boys).toHaveTextContent("40.0%");
+    expect(within(card).getByText("Financial Constraints")).toBeInTheDocument();
+    expect(
+      within(card).getByText("Transfer to Another School"),
+    ).toBeInTheDocument();
+    expect(within(card).getByText("Death")).toBeInTheDocument();
+    expect(within(card).getByText("Academic Performance")).toBeInTheDocument();
   });
 
   it("changes the figures and rows when a campus is selected", () => {

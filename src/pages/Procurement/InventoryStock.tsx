@@ -5,13 +5,11 @@ import {
   Download,
   Package,
   AlertTriangle,
-  CheckCircle2,
   Archive,
   ArrowUpRight,
   ArrowDownRight,
   Eye,
   ChevronDown,
-  Boxes,
 } from "lucide-react";
 import {
   ResponsiveContainer,

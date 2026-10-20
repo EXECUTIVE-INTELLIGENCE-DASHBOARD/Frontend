@@ -7,7 +7,6 @@ import {
   ArrowUpRight,
   Banknote,
   CalendarRange,
-  ChartNoAxesCombined,
   CircleDollarSign,
   ShieldCheck,
   TrendingUp,

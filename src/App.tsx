@@ -6,7 +6,7 @@ import { Hero } from "./components/Hero";
 import { Sidebar } from "./components/Sidebar";
 import { findNavigationLabel } from "./navigation/navigation.config";
 import { AcademicOverview } from "./pages/AcademicOverview/AcademicOverview";
-import { AcademicPerformance } from "./pages/AcademicPerformance/AcademicPerformance";
+import { AcademicPerformance } from "./pages/academic-performance/AcademicPerformance";
 import { ExecutiveOverview } from "./pages/ExecutiveOverview/ExecutiveOverview";
 import { LibraryResourceUsage } from "./pages/LibraryResourceUsage/LibraryResourceUsage";
 import { MyChildProgress } from "./pages/MyChildProgress/MyChildProgress";
@@ -20,6 +20,7 @@ import { ExpenseManagement } from "./pages/ExpenseManagement/ExpenseManagement";
 import { CoCurricularActivities } from "./pages/CoCurricularActivities/CoCurricularActivities";
 import { StudentRetention } from "./pages/StudentRetention/StudentRetention";
 import { HrWorkforce } from "./pages/HrWorkforce/HrWorkforce";
+
 import { FinanceOverview } from "./pages/FinanceOverview/FinanceOverview";
 import { BudgetExpenditure } from "./pages/BudgetExpenditure/BudgetExpenditure";
 import { CostCentreAnalysis } from "./pages/CostCentreAnalysis/CostCentreAnalysis";
@@ -28,6 +29,9 @@ import PurchaseOrdersApprovals from "./pages/Procurement/PurchaseOrdersApprovals
 import SupplierPerformance from "./pages/Procurement/SupplierPerformance";
 import InventoryStock from "./pages/Procurement/InventoryStock";
 import ProcurementRequests from "./pages/Procurement/ProcurementRequests";
+
+import { AssetsEquipment } from "./pages/AssetsEquipment/AssetsEquipment";
+import { Sales, Inventory, Budget } from "./pages/services";
 
 const pages: Record<string, ReactElement> = {
   /* Overview + academic group */
@@ -60,6 +64,12 @@ const pages: Record<string, ReactElement> = {
   
   /* Operational group */
   "hr-workforce": <HrWorkforce />,
+  "asset-management": <AssetsEquipment />,
+
+  /* Services group  */
+  "sales": <Sales />,
+  "inventory": <Inventory />,
+  "budget-utilisation": <Budget />,
 };
 
 const defaultPageId = "academic-performance";

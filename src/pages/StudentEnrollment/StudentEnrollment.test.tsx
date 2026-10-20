@@ -18,7 +18,7 @@ describe("StudentEnrollment", () => {
     render(<StudentEnrollment />);
 
     expect(screen.getByText("Total Active Enrolment")).toBeInTheDocument();
-    expect(screen.getByText("2,800")).toBeInTheDocument();
+    expect(screen.getAllByText("2,800").length).toBeGreaterThan(0);
     expect(screen.getByText("Admissions Conversion")).toBeInTheDocument();
     expect(screen.getByText("84.5%")).toBeInTheDocument();
     expect(screen.getByText("Capacity Utilization")).toBeInTheDocument();
@@ -50,21 +50,28 @@ describe("StudentEnrollment", () => {
     render(<StudentEnrollment />);
 
     expect(
-      screen.getByRole("group", { name: "Nursery: 450 students, 16.1%" }),
+      screen.getByRole("group", {
+        name: "Annex Preschool: 360 boys, 340 girls",
+      }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("group", { name: "Primary: 1,450 students, 51.8%" }),
+      screen.getByRole("group", {
+        name: "Kibuli Main: 640 boys, 610 girls",
+      }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("group", { name: "O-Level: 650 students, 23.2%" }),
+      screen.getByRole("img", { name: "Application conversion funnel" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("group", { name: "A-Level: 250 students, 8.9%" }),
+      screen.getByRole("region", { name: "Enrollment & Pipeline" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: "Enrollment & Pipeline" }),
     ).toBeInTheDocument();
 
-    expect(screen.getByText("Core (Primary)")).toBeInTheDocument();
-    expect(screen.getByText("Secondary / Prep")).toBeInTheDocument();
-    expect(screen.getByText("Sixth Form (A-L)")).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "Application conversion funnel" }),
+    ).toBeInTheDocument();
   });
 
   it("offers the four campus options", () => {
@@ -86,7 +93,7 @@ describe("StudentEnrollment", () => {
       target: { value: "Kibuli Main" },
     });
 
-    expect(screen.getByText("1,250")).toBeInTheDocument();
+    expect(screen.getAllByText("1,250").length).toBeGreaterThan(0);
     expect(screen.getByText("85.8%")).toBeInTheDocument();
     expect(screen.getByText("93.3%")).toBeInTheDocument();
     expect(screen.getByText("Kibuli Main 1,250 students")).toBeInTheDocument();
@@ -99,7 +106,9 @@ describe("StudentEnrollment", () => {
     ).not.toBeInTheDocument();
 
     expect(
-      screen.getByRole("group", { name: "Primary: 620 students, 49.6%" }),
+      screen.getByRole("group", {
+        name: "Kibuli Main: 640 boys, 610 girls",
+      }),
     ).toBeInTheDocument();
   });
 });

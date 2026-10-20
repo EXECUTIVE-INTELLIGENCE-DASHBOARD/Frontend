@@ -24,7 +24,7 @@ const sampleObligations: PaymentObligation[] = [
     reference: "PAY-2026-041",
     dueDate: "2026-11-03",
     amount: 18.5,
-    campus: "Kibuli",
+    campus: "Kibuli Main Campus",
     status: "Due soon",
   },
   {
@@ -33,7 +33,7 @@ const sampleObligations: PaymentObligation[] = [
     reference: "PAY-2026-042",
     dueDate: "2026-11-07",
     amount: 8.2,
-    campus: "Buwaate",
+    campus: "Buwaate Campus",
     status: "Due soon",
   },
   {
@@ -42,7 +42,7 @@ const sampleObligations: PaymentObligation[] = [
     reference: "PAY-2026-043",
     dueDate: "2026-11-12",
     amount: 22.0,
-    campus: "Kansanga International",
+    campus: "Annex / Preschool Branch",
     status: "Scheduled",
   },
   {
@@ -51,7 +51,7 @@ const sampleObligations: PaymentObligation[] = [
     reference: "PAY-2026-044",
     dueDate: "2026-11-18",
     amount: 14.7,
-    campus: "Kibuli",
+    campus: "Kibuli Main Campus",
     status: "Scheduled",
   },
   {
@@ -60,7 +60,7 @@ const sampleObligations: PaymentObligation[] = [
     reference: "PAY-2026-045",
     dueDate: "2026-11-24",
     amount: 9.6,
-    campus: "Buwaate",
+    campus: "Buwaate Campus",
     status: "Scheduled",
   },
 ];

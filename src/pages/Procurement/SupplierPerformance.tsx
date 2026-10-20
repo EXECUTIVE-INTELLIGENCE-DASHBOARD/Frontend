@@ -4,10 +4,8 @@ import {
   Search,
   Download,
   Truck,
-  Star,
   CheckCircle2,
   AlertTriangle,
-  Clock3,
   ArrowUpRight,
   ArrowDownRight,
   Eye,
@@ -203,10 +201,7 @@ export default function SupplierPerformance() {
     (supplier) => supplier.status === "Under Review"
   ).length;
 
-  const totalOrders = suppliers.reduce(
-    (sum, supplier) => sum + supplier.orders,
-    0
-  );
+  
 
   const averageOnTime = Math.round(
     suppliers.reduce((sum, supplier) => sum + supplier.onTimeRate, 0) /

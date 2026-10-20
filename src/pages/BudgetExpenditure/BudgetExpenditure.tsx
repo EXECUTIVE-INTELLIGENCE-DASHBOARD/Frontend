@@ -46,8 +46,6 @@ const campusBudgets: CampusRow[] = [
 
 const totalBudget = departmentBudgets.reduce((sum, row) => sum + row.budget, 0);
 const totalActual = departmentBudgets.reduce((sum, row) => sum + row.actual, 0);
-const remainingBudget = totalBudget - totalActual;
-const utilisation = (totalActual / totalBudget) * 100;
 
 const formatMoney = (value: number) =>
   `UGX ${value.toLocaleString("en-UG", {

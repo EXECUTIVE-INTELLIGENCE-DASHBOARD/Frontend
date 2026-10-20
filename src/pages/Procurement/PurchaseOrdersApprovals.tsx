@@ -7,12 +7,11 @@ import {
   CheckCircle2,
   AlertTriangle,
   Download,
-  Plus,
   ArrowUpRight,
   ArrowDownRight,
   Eye,
   ChevronDown,
-  ClipboardList,
+  
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -160,8 +159,7 @@ const currency = (amount: number) =>
     maximumFractionDigits: 0,
   }).format(amount);
 
-const shortCurrency = (amount: number) =>
-  `UGX ${(amount / 1_000_000).toFixed(1)}M`;
+
 
 function StatusBadge({ status }: { status: OrderStatus }) {
   return (

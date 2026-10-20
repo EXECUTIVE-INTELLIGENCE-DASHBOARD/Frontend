@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 import {
   AlertTriangle,
   Building2,
-  ChartColumnIncreasing,
   CircleDollarSign,
   Percent,
 } from "lucide-react";
