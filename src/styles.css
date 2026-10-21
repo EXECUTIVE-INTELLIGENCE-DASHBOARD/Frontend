@@ -15,7 +15,7 @@
   --color-border-strong: #d7e4f8;
 
   /* Text */
-  --color-heading: #17233d;
+  --color-heading: #203468;
   --color-heading-alt: #26344e;
   --color-text: #35435d;
   --color-text-secondary: #485872;
@@ -23,14 +23,14 @@
   --color-text-soft: #8e9cb3;
 
   /* Accent */
-  --color-accent: #4a86f7;
-  --color-accent-strong: #2f6fe4;
+  --color-accent: #2AA4DD;
+  --color-accent-strong: #1F8CC0;
   --color-accent-soft: #eaf2ff;
 
   /* Feedback */
   --color-positive: #16a34a;
   --color-warning: #b45309;
-  --color-warning-soft: #fef3e2;
+  --color-warning-soft: #FEF6DC;
   --color-critical: #e05b5b;
   --color-danger: #dc4b4b;
   --color-track: #eef4fd;
@@ -41,11 +41,11 @@
   --shadow-elevated: 0 20px 44px rgba(37, 78, 150, 0.12);
 
   /* Charts */
-  --chart-navy: #2f6fe4;
-  --chart-blue: #4a86f7;
+  --chart-navy: #1F8CC0;
+  --chart-blue: #2AA4DD;
   --chart-sky: #8ec0ff;
-  --chart-gradient-from: #5b9bff;
-  --chart-gradient-to: #2f6fe4;
+  --chart-gradient-from: #5BBDE8;
+  --chart-gradient-to: #1F8CC0;
 
   font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
@@ -102,20 +102,20 @@ p {
   color-scheme: dark;
 
   /* Surfaces — one indigo ramp built on the brand navy.
-     `--color-bg` is exactly #263278 = hsl(231 52% 31%).
+     `--color-bg` is exactly #203468 = hsl(231 52% 31%).
      Every step keeps the same relative spacing as before, so cards still sit
      clearly above the page instead of sinking into it. */
-  --color-bg: #263278;
-  --color-surface: #2d3c8f;
-  --color-surface-subtle: #2a3784;
-  --color-surface-muted: #2a3784;
-  --color-surface-hover: #31419b;
-  --color-surface-tint: #31419b;
+  --color-bg: #203468;
+  --color-surface: #283F7D;
+  --color-surface-subtle: #243A73;
+  --color-surface-muted: #243A73;
+  --color-surface-hover: #2F4A8F;
+  --color-surface-tint: #2F4A8F;
 
   /* Borders */
-  --color-border: #3f4b92;
-  --color-border-soft: #394484;
-  --color-border-strong: #4b5aaf;
+  --color-border: #3A528C;
+  --color-border-soft: #334A7F;
+  --color-border-strong: #4662A4;
 
   /* Text */
   --color-heading: #f5f5f5;
@@ -128,7 +128,7 @@ p {
   /* Accent */
   --color-accent: #2aa4dd;
   --color-accent-strong: #4fb8e8;
-  --color-accent-soft: #2d3c8f;
+  --color-accent-soft: #283F7D;
 
   /* Feedback */
   --color-positive: #4ade80;
@@ -136,7 +136,7 @@ p {
   --color-warning-soft: #3a2f10;
   --color-critical: #f87171;
   --color-danger: #f87171;
-  --color-track: #2d3c8f;
+  --color-track: #283F7D;
 
   /* Elevation */
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35);
@@ -151,11 +151,11 @@ p {
   --chart-gradient-to: #2aa4dd;
 
   color: #f5f5f5;
-  background: #263278;
+  background: #203468;
 }
 
 [data-theme="dark"] body {
-  background: #263278;
+  background: #203468;
   color: #f5f5f5;
 }
 
@@ -176,48 +176,6 @@ p {
 
 [data-theme="dark"] p {
   color: #d3d4d6;
-}
-
-/* --------------------------------------------------
-   LIGHT METRIC CARDS — matched to the reference screen.
-   Every small stat card shares one soft-blue tint with no
-   coloured accent borders, and a single blue icon chip.
-   Scoped to light only so the dark palette is untouched.
--------------------------------------------------- */
-
-:root:not([data-theme="dark"]) .stat-card,
-:root:not([data-theme="dark"]) .ap-metric,
-:root:not([data-theme="dark"]) .ar-metric,
-:root:not([data-theme="dark"]) .eo-metric,
-:root:not([data-theme="dark"]) .lr-metric,
-:root:not([data-theme="dark"]) .mc-metric,
-:root:not([data-theme="dark"]) .se-metric {
-  border: 1px solid #e4effc;
-  border-radius: 16px;
-  background: #eef7ff;
-}
-
-/* Remove the coloured left accent bar (the "different colour" borders) */
-:root:not([data-theme="dark"]) .stat-card::before,
-:root:not([data-theme="dark"]) .ap-metric::before,
-:root:not([data-theme="dark"]) .eo-metric::before,
-:root:not([data-theme="dark"]) .lr-metric::before,
-:root:not([data-theme="dark"]) .mc-metric::before,
-:root:not([data-theme="dark"]) .se-metric::before {
-  display: none;
-}
-
-/* A single uniform blue icon chip, as in the reference */
-:root:not([data-theme="dark"]) .stat-card__icon,
-:root:not([data-theme="dark"]) .ap-metric__icon,
-:root:not([data-theme="dark"]) .ar-metric__icon,
-:root:not([data-theme="dark"]) .eo-metric__icon,
-:root:not([data-theme="dark"]) .lr-metric__icon,
-:root:not([data-theme="dark"]) .mc-metric__icon,
-:root:not([data-theme="dark"]) .se-metric__icon {
-  border-radius: 12px;
-  background: #dcebff;
-  color: #2f6fe4;
 }
 
 /* --------------------------------------------------

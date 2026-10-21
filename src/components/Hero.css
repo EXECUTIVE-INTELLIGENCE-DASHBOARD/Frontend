@@ -455,13 +455,13 @@
    DARK THEME
 -------------------------------------------------- */
 
-/* Dark values follow the shared indigo navy (#263278) with #3f4b92 borders,
+/* Dark values follow the shared indigo navy (#203468) with #3A528C borders,
    so the header blends with the sidebar instead of sitting on a different
    shade. */
 
 [data-theme="dark"] .hero {
-  background: #263278;
-  border-bottom-color: #3f4b92;
+  background: #203468;
+  border-bottom-color: #3A528C;
 }
 
 [data-theme="dark"] .hero__title {
@@ -473,8 +473,8 @@
 }
 
 [data-theme="dark"] .hero__search {
-  background: #263278;
-  border-color: #3f4b92;
+  background: #203468;
+  border-color: #3A528C;
 }
 
 [data-theme="dark"] .hero__search-input {
@@ -486,24 +486,24 @@
 }
 
 [data-theme="dark"] .hero__search-mic {
-  background: #263278;
-  border-color: #3f4b92;
+  background: #203468;
+  border-color: #3A528C;
   color: #2aa4dd;
 }
 
 [data-theme="dark"] .hero__notify {
-  background: #263278;
-  border-color: #3f4b92;
+  background: #203468;
+  border-color: #3A528C;
   color: #d3d4d6;
 }
 
 [data-theme="dark"] .hero__notify-badge {
-  border-color: #263278;
+  border-color: #203468;
 }
 
 [data-theme="dark"] .hero__theme-toggle {
-  background: #263278;
-  border-color: #3f4b92;
+  background: #203468;
+  border-color: #3A528C;
 }
 
 /* Keep the theme switch neutral — no yellow/blue/purple here */
@@ -513,17 +513,17 @@
 
 [data-theme="dark"] .hero__theme-button--active {
   background: #d3d4d6;
-  color: #263278;
+  color: #203468;
 }
 
 [data-theme="dark"] .hero__profile {
-  background: #263278;
-  border-color: #3f4b92;
+  background: #203468;
+  border-color: #3A528C;
 }
 
 [data-theme="dark"] .hero__avatar {
   background: #f5f5f5;
-  color: #263278;
+  color: #203468;
 }
 
 [data-theme="dark"] .hero__user-name {
@@ -540,8 +540,8 @@
 
 [data-theme="dark"] .hero__search-results,
 [data-theme="dark"] .hero__profile-panel {
-  background: #2d3c8f;
-  border-color: #3f4b92;
+  background: #283F7D;
+  border-color: #3A528C;
 }
 
 [data-theme="dark"] .hero__search-results-title,
@@ -556,11 +556,11 @@
 }
 
 [data-theme="dark"] .hero__search-result:hover {
-  background: #3f4b92;
+  background: #3A528C;
 }
 
 [data-theme="dark"] .hero__profile-head {
-  border-bottom-color: #3f4b92;
+  border-bottom-color: #3A528C;
 }
 
 /* --------------------------------------------------

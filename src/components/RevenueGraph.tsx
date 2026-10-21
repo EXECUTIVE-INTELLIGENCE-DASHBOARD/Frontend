@@ -249,19 +249,19 @@ export function RevenueGraph() {
               dataKey="target"
               name="Target / budget"
               type="linear"
-              stroke="#F18700"
+              stroke="#F1BA1B"
               strokeWidth={2.5}
               strokeDasharray="6 5"
               dot={{
                 r: 4,
                 fill: "var(--color-surface)",
-                stroke: "#F18700",
+                stroke: "#F1BA1B",
                 strokeWidth: 2.5,
               }}
               activeDot={{
                 r: 5,
                 fill: "var(--color-surface)",
-                stroke: "#F18700",
+                stroke: "#F1BA1B",
                 strokeWidth: 2.5,
               }}
               isAnimationActive={false}

@@ -30,7 +30,7 @@ export function EnrollmentTierCard({
       label: "Qualified",
       value: Math.round(total * 0.509),
       percentage: 50.9,
-      color: "#27A7D9",
+      color: "#2AA4DD",
     },
     {
       id: "interviewed",
@@ -44,7 +44,7 @@ export function EnrollmentTierCard({
       label: "Accepted",
       value: Math.round(total * 0.124),
       percentage: 12.4,
-      color: "#F5B91B",
+      color: "#F1BA1B",
     },
   ];
 

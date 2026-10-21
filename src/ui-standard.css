@@ -1,0 +1,336 @@
+/*
+ * UI STANDARD — the one file that makes every card look the same.
+ *
+ * It holds: (1) the brand colours, identical in light AND dark theme,
+ * (2) the card / panel standard, (3) the metric-tile standard,
+ * (4) page spacing. Edit a variable below and every screen follows.
+ *
+ * Import it LAST (after styles.css) in main.tsx. The `:root` prefix adds
+ * a little specificity so per-page rules like `.page .card` do not win.
+ * Filters are intentionally not covered here.
+ */
+
+/* ------------------------------------------------------------------
+   1. BRAND COLOURS — same values in light and dark theme
+------------------------------------------------------------------ */
+
+:root,
+[data-theme="dark"] {
+  --brand-navy: #203468;
+  --brand-gold: #F1BA1B;
+  --brand-sky: #2AA4DD;
+
+  /* Everything that was "the blue" or "the amber" now reads the brand. */
+  --color-accent: var(--brand-sky);
+  --color-accent-strong: #1F8CC0;
+  --color-accent-soft: color-mix(in srgb, var(--brand-sky) 14%, var(--color-surface));
+
+  --color-warning-soft: color-mix(in srgb, var(--brand-gold) 18%, var(--color-surface));
+
+  --chart-blue: var(--brand-sky);
+  --chart-gradient-from: #5BBDE8;
+  --chart-gradient-to: var(--brand-sky);
+
+  --pal-sky: var(--brand-sky);
+  --pal-amber: var(--brand-gold);
+}
+
+/* Navy is the page background in dark theme, so navy used as a chart
+   fill or text would vanish there; sky takes its place on dark surfaces. */
+:root {
+  --chart-navy: var(--brand-navy);
+  --pal-steel: var(--brand-navy);
+}
+[data-theme="dark"] {
+  --chart-navy: var(--brand-sky);
+  --pal-steel: var(--brand-sky);
+}
+
+/* ------------------------------------------------------------------
+   2. CARD TOKENS
+------------------------------------------------------------------ */
+
+:root {
+  --ui-card-radius: 18px;
+  --ui-card-pad: 16px;
+  --ui-card-bg: var(--color-surface);
+  --ui-card-border: 1px solid var(--color-border);
+  --ui-card-shadow: var(--shadow-card);
+
+  --ui-metric-pad: 14px 18px;
+  --ui-chip-size: 40px;
+  --ui-chip-radius: 12px;
+  --ui-chip-bg: var(--brand-sky);
+  --ui-chip-fg: #ffffff;
+
+  --ui-page-gap: 12px;
+}
+
+/* ------------------------------------------------------------------
+   3. PAGE RHYTHM — same gap between blocks on every screen
+------------------------------------------------------------------ */
+
+:root .layout-content {
+  padding: 12px 24px 20px;
+}
+
+:root :is(
+  .revenue-page, .mc-page, .cc-page, .pf-page, .sr-page, .budget-page,
+  .se-page, .hw-page, .is-page, .po-page, .sp-page, .proc-requests-page,
+  .liabilities-page, .lr-page, .exp-page
+) {
+  gap: var(--ui-page-gap);
+}
+
+/* ------------------------------------------------------------------
+   4. CARDS / PANELS — identical radius, border, shadow, background
+------------------------------------------------------------------ */
+
+:root :is(
+  .overview-chart-card, .overview-insight-card, .revenue-panel,
+  .attendance-table-card, .ao-card, .ae-panel, .budget-panel, .cc-card,
+  .eo-card, .exp-card, .hw-card, .lr-card, .mc-card, .is-panel, .pr-table-card,
+  .po-orders-panel, .sp-panel, .pf-card, .se-card, .sr-card, .svc-panel,
+  .acad-analytics__card, .acad-details__card, .finance-overview__panel
+) {
+  border: var(--ui-card-border);
+  border-radius: var(--ui-card-radius);
+  background: var(--ui-card-bg);
+  box-shadow: var(--ui-card-shadow);
+}
+
+/* ------------------------------------------------------------------
+   5. METRIC TILES — same size, same card, solid brand-sky icon chip
+------------------------------------------------------------------ */
+
+:root :is(
+  .overview-metric-card, .acad-metric, .attendance-summary__card,
+  .liability-metric, .stat-card, .ae-card, .cc-metric, .eo-metric,
+  .exp-metric, .hw-metric, .lr-metric, .mc-metric, .is-metric, .pr-kpi-card,
+  .po-metric-card, .sp-metric, .pf-metric, .se-metric, .sr-metric,
+  .ap-metric, .ar-metric, .revenue-summary__card, .finance-overview__metric
+) {
+  padding: var(--ui-metric-pad);
+  border: var(--ui-card-border);
+  border-radius: var(--ui-card-radius);
+  background: var(--ui-card-bg);
+  box-shadow: var(--ui-card-shadow);
+}
+
+/* No coloured side bars or corner circles: every tile looks the same. */
+:root :is(
+  .overview-metric-card, .acad-metric, .attendance-summary__card,
+  .liability-metric, .stat-card, .ae-card, .cc-metric, .eo-metric,
+  .exp-metric, .hw-metric, .lr-metric, .mc-metric, .is-metric, .pr-kpi-card,
+  .po-metric-card, .sp-metric, .pf-metric, .se-metric, .sr-metric,
+  .ap-metric, .ar-metric, .revenue-summary__card, .finance-overview__metric
+)::before,
+:root :is(.hw-metric, .stat-card, .eo-metric)::after {
+  display: none;
+}
+
+:root :is(
+  .overview-metric-card__icon, .acad-metric__icon, .liability-metric__icon,
+  .stat-card__icon, .cc-metric__icon, .eo-metric__icon, .hw-metric__icon,
+  .lr-metric__icon, .mc-metric__icon, .se-metric__icon, .ap-metric__icon,
+  .ar-metric__icon, .sr-metric__icon, .exp-metric__icon, .pf-metric__icon
+) {
+  display: grid;
+  place-items: center;
+  width: var(--ui-chip-size);
+  height: var(--ui-chip-size);
+  flex-shrink: 0;
+  border-radius: var(--ui-chip-radius);
+  background: var(--ui-chip-bg);
+  color: var(--ui-chip-fg);
+}
+
+/* ------------------------------------------------------------------
+   6. LESS SCROLLING
+   - The top bar stays put, so only the content scrolls.
+   - Long tables show about 6-7 rows and scroll inside their own card,
+     with the header row pinned (as in the reference screen).
+   Raise --ui-table-max-h to show more rows.
+------------------------------------------------------------------ */
+
+:root {
+  --ui-table-max-h: 360px;
+}
+
+:root .hero {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+:root :is(
+  .acad-details__table-scroll, .ao-table-wrap, .attendance-table-wrapper,
+  .budget-table-wrap, .campus-table-wrapper, .cc-table-wrap,
+  .cost-centre__table-wrap, .exp-table-wrap,
+  .finance-overview__supplier-table-wrap, .hw-table-wrap, .is-table-scroll,
+  .lr-table-wrap, .mc-table-wrap, .outstanding-creditors__table-wrapper,
+  .po-table-scroll, .pr-table-wrap, .sp-table-scroll, .sr-table-wrap,
+  .upcoming-obligations__table-wrap
+) {
+  max-height: var(--ui-table-max-h);
+  overflow: auto;
+}
+
+:root :is(
+  .acad-details__table-scroll, .ao-table-wrap, .attendance-table-wrapper,
+  .budget-table-wrap, .campus-table-wrapper, .cc-table-wrap,
+  .cost-centre__table-wrap, .exp-table-wrap,
+  .finance-overview__supplier-table-wrap, .hw-table-wrap, .is-table-scroll,
+  .lr-table-wrap, .mc-table-wrap, .outstanding-creditors__table-wrapper,
+  .po-table-scroll, .pr-table-wrap, .sp-table-scroll, .sr-table-wrap,
+  .upcoming-obligations__table-wrap
+) thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-surface-subtle);
+}
+
+/* ------------------------------------------------------------------
+   7. HR & WORKFORCE and ASSETS & EQUIPMENT — one neutral look
+   (reference screen): no per-row colours, one brand-sky accent.
+------------------------------------------------------------------ */
+
+/* Tabs: active tab is a solid brand-sky pill with white text */
+:root .hr-tabs {
+  border-radius: 16px;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+}
+:root .hr-tab {
+  border-radius: 12px;
+  color: var(--color-text-muted);
+}
+:root .hr-tab[aria-selected="true"] {
+  background: var(--brand-sky);
+  color: #ffffff;
+}
+
+/* HR table: no coloured department icons */
+:root .hw-department__icon {
+  display: none;
+}
+
+/* HR table: every pill/tag is the same neutral chip */
+:root :is(
+  .hw-pill, .hw-pill--good, .hw-pill--warn, .hw-pill--bad,
+  .hw-absence, .hw-absence--neutral, .hw-absence--info, .hw-absence--warn,
+  .hw-tag, .hw-tag--teaching
+) {
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-surface-tint);
+  color: var(--color-heading);
+  font-weight: 600;
+}
+:root .hw-pill__dot {
+  display: none;
+}
+
+/* Assets: every card gets the same chip and the same value colour */
+:root .ae .ae-card .ae-ic {
+  width: var(--ui-chip-size);
+  height: var(--ui-chip-size);
+  border-radius: var(--ui-chip-radius);
+  background: var(--ui-chip-bg);
+  color: var(--ui-chip-fg);
+}
+:root .ae .ae-card .ae-val {
+  color: var(--color-heading);
+}
+
+/* Assets: status pills are one neutral chip, no coloured dot */
+:root .ae .ae-st,
+:root .ae .ae-st.good,
+:root .ae .ae-st.servicing,
+:root .ae .ae-st.critical {
+  background: var(--color-surface-tint);
+  color: var(--color-heading);
+}
+:root .ae .ae-st::before {
+  display: none;
+}
+
+/* Assets: button and panel dot use the brand sky */
+:root .ae .ae-btn {
+  background: var(--brand-sky);
+}
+:root .ae .ae-ph h2::before {
+  background: var(--brand-sky);
+}
+
+/* ------------------------------------------------------------------
+   8. SAME SIZE — tiles, gaps and big numbers match on every screen
+   (Column counts still follow the data: 3, 4 or 5 tiles per row.)
+------------------------------------------------------------------ */
+
+:root {
+  --ui-metric-gap: 12px;
+  --ui-metric-min-h: 88px;
+  --ui-metric-value-size: clamp(1.15rem, 1.7vw, 1.6rem);
+}
+
+/* One gap between tiles, tiles in a row stretch to the same height. */
+:root :is(
+  .overview-cards, .revenue-summary, .acad-summary, .attendance-summary,
+  .liabilities-summary, .ao-metrics, .ae-cards, .budget-kpis, .cc-metrics,
+  .eo-metrics, .exp-metrics, .hw-metrics, .lr-metrics, .mc-metrics,
+  .is-metrics, .pr-kpi-grid, .po-metrics, .sp-metrics, .pf-metrics,
+  .se-metrics, .sr-metrics, .svc-kpis, .finance-overview__metrics
+) {
+  gap: var(--ui-metric-gap);
+  align-items: stretch;
+}
+
+/* Tiles missing from section 5 (Budget and Services), same card look. */
+:root :is(.budget-kpi, .svc-kpi) {
+  padding: var(--ui-metric-pad);
+  border: var(--ui-card-border);
+  border-radius: var(--ui-card-radius);
+  background: var(--ui-card-bg);
+  box-shadow: var(--ui-card-shadow);
+}
+:root :is(.budget-kpi, .svc-kpi)::before,
+:root :is(.budget-kpi, .svc-kpi)::after {
+  display: none;
+}
+:root .budget-kpi__icon {
+  display: grid;
+  place-items: center;
+  width: var(--ui-chip-size);
+  height: var(--ui-chip-size);
+  border-radius: var(--ui-chip-radius);
+  background: var(--ui-chip-bg);
+  color: var(--ui-chip-fg);
+}
+
+/* Same minimum height for every tile. */
+:root :is(
+  .overview-metric-card, .acad-metric, .attendance-summary__card,
+  .liability-metric, .stat-card, .ae-card, .cc-metric, .eo-metric,
+  .exp-metric, .hw-metric, .lr-metric, .mc-metric, .is-metric, .pr-kpi-card,
+  .po-metric-card, .sp-metric, .pf-metric, .se-metric, .sr-metric,
+  .ap-metric, .ar-metric, .revenue-summary__card, .finance-overview__metric,
+  .budget-kpi, .svc-kpi
+) {
+  min-height: var(--ui-metric-min-h);
+}
+
+/* Same size for the big number on every tile. */
+:root :is(
+  .overview-metric-card__value, .acad-metric__value, .liability-metric__amount,
+  .stat-card__value, .budget-kpi__value, .cc-metric__value, .eo-metric__value,
+  .exp-metric__value, .hw-metric__value, .lr-metric__value, .mc-metric__value,
+  .pf-metric__value, .se-metric__value, .sr-metric__value, .ae-val,
+  .finance-overview__metric-value
+) {
+  font-size: var(--ui-metric-value-size);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}

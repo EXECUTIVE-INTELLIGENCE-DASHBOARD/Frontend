@@ -85,7 +85,7 @@
 
 .sp-button--primary {
   width: 100%;
-  background: #4568d8;
+  background: #2AA4DD;
   color: white;
 }
 
@@ -100,7 +100,7 @@
   padding: 12px 15px;
   border: 1px solid #f0dfb8;
   border-radius: 10px;
-  background: #fffaf0;
+  background: #FFFBEA;
   color: #876321;
   font-size: 12px;
   line-height: 1.6;
@@ -146,8 +146,8 @@
 }
 
 .sp-icon--blue {
-  background: #edf1ff;
-  color: #5578e8;
+  background: #E6F4FB;
+  color: #2AA4DD;
 }
 
 .sp-icon--green {
@@ -259,7 +259,7 @@
 }
 
 .sp-legend-dot--delivery {
-  background: #5578e8;
+  background: #2AA4DD;
 }
 
 .sp-legend-dot--quality {
@@ -298,7 +298,7 @@
 
 .sp-search:focus-within,
 .sp-select-wrap:focus-within {
-  border-color: #8298ed;
+  border-color: #7CC7EA;
   box-shadow: 0 0 0 3px rgba(85, 120, 232, 0.08);
 }
 
@@ -477,12 +477,12 @@
 }
 
 .sp-rating--good {
-  background: #edf1ff;
+  background: #E6F4FB;
   color: #5572d3;
 }
 
 .sp-rating--needs-improvement {
-  background: #fff4df;
+  background: #FEF6DC;
   color: #ad7819;
 }
 
@@ -499,7 +499,7 @@
 }
 
 .sp-status--under-review {
-  background: #fff4df;
+  background: #FEF6DC;
   color: #ad7819;
 }
 
@@ -524,7 +524,7 @@
 .sp-view-button:hover {
   border-color: #c9d4f8;
   background: #f3f6ff;
-  color: #4568d8;
+  color: #2AA4DD;
 }
 
 .sp-empty {

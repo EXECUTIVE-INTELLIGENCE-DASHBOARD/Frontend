@@ -97,7 +97,7 @@
   padding: 3px 7px;
   border: 1px solid #ffe1a3;
   border-radius: 6px;
-  background: #fffaf0;
+  background: #FFFBEA;
   color: #b96500;
   font-size: 9px;
   font-weight: 700;
@@ -196,8 +196,8 @@
   flex-shrink: 0;
   background: repeating-linear-gradient(
     to right,
-    #f18700 0,
-    #f18700 5px,
+    #F1BA1B 0,
+    #F1BA1B 5px,
     transparent 5px,
     transparent 8px
   );
@@ -322,7 +322,7 @@
 
 [data-theme="dark"] .revenue-trend {
   background: var(--color-surface, #202d6b);
-  border-color: var(--color-border, #3f4b92);
+  border-color: var(--color-border, #3A528C);
   box-shadow: 0 1px 2px rgb(0 0 0 / 15%);
 }
 

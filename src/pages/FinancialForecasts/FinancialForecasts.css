@@ -114,7 +114,7 @@
 }
 
 .financial-forecast__icon--blue {
-  color: #4676c8;
+  color: #2AA4DD;
   background: #edf3ff;
 }
 
@@ -125,7 +125,7 @@
 
 .financial-forecast__icon--amber {
   color: #ad791e;
-  background: #fff4df;
+  background: #FEF6DC;
 }
 
 .financial-forecast .finance-overview__metric-content {
@@ -311,11 +311,11 @@
 
 .financial-forecast__risk-icon--warning {
   color: #a87519;
-  background: #fff4df;
+  background: #FEF6DC;
 }
 
 .financial-forecast__risk-icon--neutral {
-  color: #4676c8;
+  color: #2AA4DD;
   background: #edf3ff;
 }
 
@@ -334,7 +334,7 @@
 
 .financial-forecast__risk-status--warning {
   color: #9b6915;
-  background: #fff4df;
+  background: #FEF6DC;
 }
 
 .financial-forecast__risk-status--neutral {

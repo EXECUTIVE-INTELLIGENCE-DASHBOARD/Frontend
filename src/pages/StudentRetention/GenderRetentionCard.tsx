@@ -3,8 +3,8 @@ import { formatNumber } from "./studentRetention.data";
 
 const COLORS = {
   financial: "#0B2E75",
-  transfer: "#1685E8",
-  death: "#F5B51B",
+  transfer: "#2AA4DD",
+  death: "#F1BA1B",
   academic: "#4B6FAE",
 } as const;
 

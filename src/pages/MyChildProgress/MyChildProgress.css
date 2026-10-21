@@ -193,8 +193,8 @@
 }
 
 .mc-metric--blue {
-  --tone: #2563eb;
-  --tone-soft: #e8f0fe;
+  --tone: #2AA4DD;
+  --tone-soft: #E6F4FB;
   --tone-text: #1d4ed8;
 }
 
@@ -205,13 +205,13 @@
 }
 
 .mc-metric--amber {
-  --tone: #f59e0b;
-  --tone-soft: #fef3e2;
+  --tone: #F1BA1B;
+  --tone-soft: #FEF6DC;
   --tone-text: #b45309;
 }
 
 [data-theme="dark"] .mc-metric--blue {
-  --tone: #5b9bff;
+  --tone: #5BBDE8;
   --tone-soft: #14294a;
   --tone-text: #8bb6ff;
 }
@@ -223,7 +223,7 @@
 }
 
 [data-theme="dark"] .mc-metric--amber {
-  --tone: #f59e0b;
+  --tone: #F1BA1B;
   --tone-soft: #3a2a10;
   --tone-text: #fbbf24;
 }
@@ -868,7 +868,7 @@
 }
 
 .mc-status--practice {
-  background: #fef3e2;
+  background: #FEF6DC;
   color: #b45309;
 }
 

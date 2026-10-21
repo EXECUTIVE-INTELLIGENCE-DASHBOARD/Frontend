@@ -35,13 +35,13 @@ const categoryData: Record<string, LiabilityCategory[]> = {
       name: "Accrued Expenses & Tax",
       description: "Statutory deductions and utilities",
       amount: 28.5,
-      color: "#0ea5e9",
+      color: "#2AA4DD",
     },
     {
       name: "Long-Term Debt & Commitments",
       description: "Contracts, capital expenditure and commitments",
       amount: 19.8,
-      color: "#f59e0b",
+      color: "#F1BA1B",
     },
   ],
   Kibuli: [
@@ -55,13 +55,13 @@ const categoryData: Record<string, LiabilityCategory[]> = {
       name: "Accrued Expenses & Tax",
       description: "Statutory deductions and utilities",
       amount: 12.5,
-      color: "#0ea5e9",
+      color: "#2AA4DD",
     },
     {
       name: "Long-Term Debt & Commitments",
       description: "Contracts, capital expenditure and commitments",
       amount: 9.8,
-      color: "#f59e0b",
+      color: "#F1BA1B",
     },
   ],
   Buwaate: [
@@ -75,13 +75,13 @@ const categoryData: Record<string, LiabilityCategory[]> = {
       name: "Accrued Expenses & Tax",
       description: "Statutory deductions and utilities",
       amount: 6.5,
-      color: "#0ea5e9",
+      color: "#2AA4DD",
     },
     {
       name: "Long-Term Debt & Commitments",
       description: "Contracts, capital expenditure and commitments",
       amount: 4.5,
-      color: "#f59e0b",
+      color: "#F1BA1B",
     },
   ],
   "Kansanga International": [
@@ -95,13 +95,13 @@ const categoryData: Record<string, LiabilityCategory[]> = {
       name: "Accrued Expenses & Tax",
       description: "Statutory deductions and utilities",
       amount: 9.5,
-      color: "#0ea5e9",
+      color: "#2AA4DD",
     },
     {
       name: "Long-Term Debt & Commitments",
       description: "Contracts, capital expenditure and commitments",
       amount: 5.5,
-      color: "#f59e0b",
+      color: "#F1BA1B",
     },
   ],
 };
