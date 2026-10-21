@@ -142,8 +142,8 @@
   height: 38px;
   place-items: center;
   border-radius: 10px;
-  background: color-mix(in srgb, var(--pal-steel) 13%, transparent);
-  color: var(--pal-steel);
+  background: #EAF6FF;
+  color: #2AA4DD;
 }
 
 .finance-overview__metric-content {
@@ -679,7 +679,7 @@
 .finance-overview__delivery-fill {
   height: 100%;
   border-radius: inherit;
-  background: var(--pal-green);
+   background-color: #2AA4DD;
 }
 
 .finance-overview__supplier-status {
@@ -692,8 +692,8 @@
 }
 
 .finance-overview__supplier-status--good {
-  color: #267b5d;
-  background: #edf8f2;
+  background: #EAF6FF;
+  color: #2AA4DD;
 }
 
 .finance-overview__supplier-status--monitor {

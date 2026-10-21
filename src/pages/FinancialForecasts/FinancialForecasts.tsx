@@ -1,4 +1,3 @@
-
 import { useMemo, useState } from "react";
 import {
   Activity,
@@ -6,7 +5,6 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   Banknote,
-  CalendarRange,
   CircleDollarSign,
   ShieldCheck,
   TrendingUp,
@@ -25,7 +23,37 @@ import {
 } from "recharts";
 import "./FinancialForecasts.css";
 
-type Campus = "All Campuses" | "Kibuli" | "Buwaate" | "Kansanga";
+type Campus =
+  | "All Campuses"
+  | "Kibuli"
+  | "Buwaate"
+  | "Annex/Preschool Branch";
+
+type Section =
+  | "All Sections"
+  | "Nursery"
+  | "Primary"
+  | "Secondary"
+  | "Preschool";
+
+const sectionsByCampus: Record<Campus, Section[]> = {
+  "All Campuses": [
+    "All Sections",
+    "Nursery",
+    "Primary",
+    "Secondary",
+    "Preschool",
+  ],
+  Kibuli: ["All Sections", "Nursery", "Primary", "Secondary"],
+  Buwaate: ["All Sections", "Nursery", "Primary"],
+  "Annex/Preschool Branch": [
+    "All Sections",
+    "Nursery",
+    "Primary",
+    "Secondary",
+    "Preschool",
+  ],
+};
 
 const forecastData = [
   { month: "Jan", revenue: 72, expenditure: 48, projectedRevenue: null, projectedExpenditure: null, cashFlow: 24 },
@@ -60,12 +88,14 @@ const assumptions = [
   {
     title: "Operating costs",
     value: "5% increase",
-    description: "Allows for expected changes in utilities, supplies and staffing costs.",
+    description:
+      "Allows for expected changes in utilities, supplies and staffing costs.",
   },
   {
     title: "Fee collection",
     value: "92% target",
-    description: "Assumes most billed school fees are collected within the period.",
+    description:
+      "Assumes most billed school fees are collected within the period.",
   },
   {
     title: "Capital spending",
@@ -83,38 +113,104 @@ const risks = [
   },
   {
     title: "Unexpected operating costs",
-    description: "Unplanned repairs or price increases could affect margins.",
+    description:
+      "Unplanned repairs or price increases could affect margins.",
     level: "Monitor",
     tone: "neutral",
   },
   {
     title: "Revenue below forecast",
-    description: "Lower enrolment or collection rates may reduce income.",
+    description:
+      "Lower enrolment or collection rates may reduce income.",
     level: "Watch",
     tone: "warning",
   },
 ];
 
 const formatMoney = (value: number) =>
-  `UGX ${value.toLocaleString("en-UG", { maximumFractionDigits: 0 })}M`;
+  `UGX ${value.toLocaleString("en-UG", {
+    maximumFractionDigits: 0,
+  })}M`;
+
+type ReportingFiltersProps = {
+  year: number;
+  term: string;
+  onYearChange: (year: number) => void;
+  onTermChange: (term: string) => void;
+};
+
+function ReportingFilters({
+  year,
+  term,
+  onYearChange,
+  onTermChange,
+}: ReportingFiltersProps) {
+  return (
+    <div className="financial-forecast__filters">
+      <label>
+  
+        <select
+          value={year}
+          onChange={(event) =>
+            onYearChange(Number(event.target.value))
+          }
+        >
+          <option value={2026}>2026</option>
+          <option value={2027}>2027</option>
+        </select>
+      </label>
+
+      <label>
+
+        <select
+          value={term}
+          onChange={(event) => onTermChange(event.target.value)}
+        >
+          <option value="Term 1">Term 1</option>
+          <option value="Term 2">Term 2</option>
+          <option value="Term 3">Term 3</option>
+        </select>
+      </label>
+    </div>
+  );
+}
 
 export function FinancialForecasts() {
   const [campus, setCampus] = useState<Campus>("All Campuses");
-  const [period, setPeriod] = useState("2026");
+  const [section, setSection] = useState<Section>("All Sections");
   const [scenario, setScenario] = useState("Expected");
+
+  const availableSections = sectionsByCampus[campus];
+
+  const [metricsYear, setMetricsYear] = useState(2026);
+  const [metricsTerm, setMetricsTerm] = useState("Term 1");
+
+  const [revenueYear, setRevenueYear] = useState(2026);
+  const [revenueTerm, setRevenueTerm] = useState("Term 1");
+
+  const [cashYear, setCashYear] = useState(2026);
+  const [cashTerm, setCashTerm] = useState("Term 1");
+
+  const [assumptionsYear, setAssumptionsYear] = useState(2026);
+  const [assumptionsTerm, setAssumptionsTerm] = useState("Term 1");
+
+  const [risksYear, setRisksYear] = useState(2026);
+  const [risksTerm, setRisksTerm] = useState("Term 1");
 
   const multiplier = useMemo(() => {
     const campusFactor: Record<Campus, number> = {
       "All Campuses": 1,
       Kibuli: 0.46,
       Buwaate: 0.29,
-      Kansanga: 0.25,
+      "Annex/Preschool Branch": 0.25,
     };
+
     const scenarioFactor: Record<string, number> = {
       Conservative: 0.9,
       Expected: 1,
       Optimistic: 1.1,
     };
+
     return campusFactor[campus] * scenarioFactor[scenario];
   }, [campus, scenario]);
 
@@ -151,10 +247,22 @@ export function FinancialForecasts() {
 
   const scaledForecast = forecastData.map((item) => ({
     ...item,
-    revenue: item.revenue === null ? null : Math.round(item.revenue * multiplier),
-    expenditure: item.expenditure === null ? null : Math.round(item.expenditure * multiplier),
-    projectedRevenue: item.projectedRevenue === null ? null : Math.round(item.projectedRevenue * multiplier),
-    projectedExpenditure: item.projectedExpenditure === null ? null : Math.round(item.projectedExpenditure * multiplier),
+    revenue:
+      item.revenue === null
+        ? null
+        : Math.round(item.revenue * multiplier),
+    expenditure:
+      item.expenditure === null
+        ? null
+        : Math.round(item.expenditure * multiplier),
+    projectedRevenue:
+      item.projectedRevenue === null
+        ? null
+        : Math.round(item.projectedRevenue * multiplier),
+    projectedExpenditure:
+      item.projectedExpenditure === null
+        ? null
+        : Math.round(item.projectedExpenditure * multiplier),
   }));
 
   const scaledCashFlow = cashFlowData.map((item) => ({
@@ -164,49 +272,72 @@ export function FinancialForecasts() {
 
   return (
     <section className="finance-overview financial-forecast">
-      
-
-      
-
       <div className="financial-forecast__filters">
         <label>
-          <span>Campus</span>
-          <select value={campus} onChange={(event) => setCampus(event.target.value as Campus)}>
-            <option>All Campuses</option>
-            <option>Kibuli</option>
-            <option>Buwaate</option>
-            <option>Kansanga</option>
+  
+          <select
+            value={campus}
+            onChange={(event) => {
+              const nextCampus = event.target.value as Campus;
+              setCampus(nextCampus);
+              setSection("All Sections");
+            }}
+          >
+            <option value="All Campuses">All Campuses</option>
+            <option value="Kibuli">Kibuli</option>
+            <option value="Buwaate">Buwaate</option>
+            <option value="Annex/Preschool Branch">
+              Annex/Preschool Branch
+            </option>
           </select>
         </label>
+
         <label>
-          <span>Forecast year</span>
-          <select value={period} onChange={(event) => setPeriod(event.target.value)}>
-            <option value="2026">2026</option>
-            <option value="2027">2027</option>
+        
+          <select
+            value={section}
+            onChange={(event) =>
+              setSection(event.target.value as Section)
+            }
+          >
+            {availableSections.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
           </select>
         </label>
-        <label>
-          <span>Scenario</span>
-          <select value={scenario} onChange={(event) => setScenario(event.target.value)}>
-            <option>Conservative</option>
-            <option>Expected</option>
-            <option>Optimistic</option>
-          </select>
-        </label>
+
+        
       </div>
+
+      
 
       <div className="financial-forecast__metrics">
         {metrics.map((metric) => {
           const Icon = metric.icon;
+
           return (
-            <article className="finance-overview__metric" key={metric.label}>
-              <span className={`finance-overview__icon financial-forecast__icon--${metric.tone}`}>
+            <article
+              className="finance-overview__metric"
+              key={metric.label}
+            >
+              <span
+                className={`finance-overview__icon financial-forecast__icon--${metric.tone}`}
+              >
                 <Icon size={19} />
               </span>
+
               <div className="finance-overview__metric-content">
-                <span className="finance-overview__metric-label">{metric.label}</span>
-                <strong className="finance-overview__metric-value">{metric.value}</strong>
-                <span className="financial-forecast__metric-note">{metric.note}</span>
+                <span className="finance-overview__metric-label">
+                  {metric.label}
+                </span>
+                <strong className="finance-overview__metric-value">
+                  {metric.value}
+                </strong>
+                <span className="financial-forecast__metric-note">
+                  {metric.note}
+                </span>
               </div>
             </article>
           );
@@ -218,24 +349,92 @@ export function FinancialForecasts() {
           <div className="finance-overview__panel-heading">
             <div>
               <h2>Revenue vs Expenditure</h2>
-              <p>Historical results and projected monthly trends · UGX millions</p>
+              <p>
+                Historical results and projected monthly trends · UGX
+                millions
+              </p>
             </div>
-            <span className="financial-forecast__panel-icon"><TrendingUp size={18} /></span>
+
+            <ReportingFilters
+              year={revenueYear}
+              term={revenueTerm}
+              onYearChange={setRevenueYear}
+              onTermChange={setRevenueTerm}
+            />
           </div>
+
           <div className="financial-forecast__chart">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={scaledForecast} margin={{ top: 12, right: 12, left: 2, bottom: 2 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e9edf3" />
-                <XAxis dataKey="month" tickLine={false} axisLine={false} tick={{ fill: "#7c8798", fontSize: 11 }} />
-                <YAxis tickLine={false} axisLine={false} tick={{ fill: "#7c8798", fontSize: 11 }} width={38} />
-                <Tooltip formatter={(value) => value == null ? "—" : `${value}M UGX`} />
-                <Legend wrapperStyle={{ fontSize: 11, paddingTop: 12 }} />
+              <LineChart
+                data={scaledForecast}
+                margin={{ top: 12, right: 12, left: 2, bottom: 2 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#e9edf3"
+                />
+                <XAxis
+                  dataKey="month"
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: "#7c8798", fontSize: 11 }}
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: "#7c8798", fontSize: 11 }}
+                  width={38}
+                />
+                <Tooltip
+                  formatter={(value) =>
+                    value == null ? "—" : `${value}M UGX`
+                  }
+                />
+                <Legend
+                  wrapperStyle={{ fontSize: 11, paddingTop: 12 }}
+                />
 
-                <Line type="monotone" dataKey="revenue" name="Actual Revenue" stroke="#2AA4DD" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} connectNulls={false} />
-                <Line type="monotone" dataKey="expenditure" name="Actual Expenditure" stroke="#203468" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} connectNulls={false} />
-                <Line type="monotone" dataKey="projectedRevenue" name="Projected Revenue" stroke="#2AA4DD" strokeWidth={3} strokeDasharray="5 5" dot={false} connectNulls={false} />
-                <Line type="monotone" dataKey="projectedExpenditure" name="Projected Expenditure" stroke="#203468" strokeWidth={3} strokeDasharray="5 5" dot={false} connectNulls={false} />
-
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  name="Actual Revenue"
+                  stroke="#2AA4DD"
+                  strokeWidth={3}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                  connectNulls={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="expenditure"
+                  name="Actual Expenditure"
+                  stroke="#203468"
+                  strokeWidth={3}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                  connectNulls={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="projectedRevenue"
+                  name="Projected Revenue"
+                  stroke="#2AA4DD"
+                  strokeWidth={3}
+                  strokeDasharray="5 5"
+                  dot={false}
+                  connectNulls={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="projectedExpenditure"
+                  name="Projected Expenditure"
+                  stroke="#203468"
+                  strokeWidth={3}
+                  strokeDasharray="5 5"
+                  dot={false}
+                  connectNulls={false}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -247,30 +446,83 @@ export function FinancialForecasts() {
               <h2>Projected Cash Position</h2>
               <p>Expected closing cash balance · UGX millions</p>
             </div>
-            <span className="financial-forecast__panel-icon"><Activity size={18} /></span>
+
+            <ReportingFilters
+              year={cashYear}
+              term={cashTerm}
+              onYearChange={setCashYear}
+              onTermChange={setCashTerm}
+            />
           </div>
+
           <div className="financial-forecast__chart">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={scaledCashFlow} margin={{ top: 12, right: 12, left: 2, bottom: 2 }}>
+              <AreaChart
+                data={scaledCashFlow}
+                margin={{ top: 12, right: 12, left: 2, bottom: 2 }}
+              >
                 <defs>
-                  <linearGradient id="forecastCashFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#c5a334" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#c5a334" stopOpacity={0.02} />
+                  <linearGradient
+                    id="forecastCashFill"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="0%"
+                      stopColor="#c5a334"
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="#c5a334"
+                      stopOpacity={0.02}
+                    />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e9edf3" />
-                <XAxis dataKey="month" tickLine={false} axisLine={false} tick={{ fill: "#7c8798", fontSize: 11 }} />
-                <YAxis tickLine={false} axisLine={false} tick={{ fill: "#7c8798", fontSize: 11 }} width={38} />
-                <Tooltip formatter={(value) => value == null ? "—" : `${value}M UGX`} />
 
-                <Area type="monotone" dataKey="closing" name="Closing Cash" stroke="#F1BA1B" strokeWidth={3} fill="#F1BA1B" fillOpacity={0.2} />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#e9edf3"
+                />
+                <XAxis
+                  dataKey="month"
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: "#7c8798", fontSize: 11 }}
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: "#7c8798", fontSize: 11 }}
+                  width={38}
+                />
+                <Tooltip
+                  formatter={(value) =>
+                    value == null ? "—" : `${value}M UGX`
+                  }
+                />
 
+                <Area
+                  type="monotone"
+                  dataKey="closing"
+                  name="Closing Cash"
+                  stroke="#F1BA1B"
+                  strokeWidth={3}
+                  fill="#F1BA1B"
+                  fillOpacity={0.2}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
+
           <div className="financial-forecast__cash-note">
             <ArrowUpRight size={16} />
-            <span>Illustrative cash balance trends upward in this scenario.</span>
+            <span>
+              Illustrative cash balance trends upward in this scenario.
+            </span>
           </div>
         </article>
       </div>
@@ -282,11 +534,21 @@ export function FinancialForecasts() {
               <h2>Forecast Assumptions</h2>
               <p>Inputs that influence the expected scenario</p>
             </div>
-            <CalendarRange size={19} />
+
+            <ReportingFilters
+              year={assumptionsYear}
+              term={assumptionsTerm}
+              onYearChange={setAssumptionsYear}
+              onTermChange={setAssumptionsTerm}
+            />
           </div>
+
           <div className="financial-forecast__assumptions">
             {assumptions.map((item) => (
-              <div className="financial-forecast__assumption" key={item.title}>
+              <div
+                className="financial-forecast__assumption"
+                key={item.title}
+              >
                 <div>
                   <strong>{item.title}</strong>
                   <p>{item.description}</p>
@@ -295,10 +557,6 @@ export function FinancialForecasts() {
               </div>
             ))}
           </div>
-          <p className="financial-forecast__footnote">
-            These assumptions are demonstration values and should be replaced with
-            approved budgets, enrolment projections and collection history.
-          </p>
         </article>
 
         <article className="finance-overview__panel">
@@ -307,34 +565,56 @@ export function FinancialForecasts() {
               <h2>Forecast Risk Indicators</h2>
               <p>Areas to review before committing funds</p>
             </div>
-            <ShieldCheck size={19} />
+
+            <ReportingFilters
+              year={risksYear}
+              term={risksTerm}
+              onYearChange={setRisksYear}
+              onTermChange={setRisksTerm}
+            />
           </div>
+
           <div className="financial-forecast__risks">
             {risks.map((risk) => (
-              <div className="financial-forecast__risk" key={risk.title}>
-                <span className={`financial-forecast__risk-icon financial-forecast__risk-icon--${risk.tone}`}>
-                  {risk.tone === "warning" ? <AlertTriangle size={17} /> : <ArrowDownRight size={17} />}
+              <div
+                className="financial-forecast__risk"
+                key={risk.title}
+              >
+                <span
+                  className={`financial-forecast__risk-icon financial-forecast__risk-icon--${risk.tone}`}
+                >
+                  {risk.tone === "warning" ? (
+                    <AlertTriangle size={17} />
+                  ) : (
+                    <ArrowDownRight size={17} />
+                  )}
                 </span>
+
                 <div className="financial-forecast__risk-copy">
                   <strong>{risk.title}</strong>
                   <p>{risk.description}</p>
                 </div>
-                <span className={`financial-forecast__risk-status financial-forecast__risk-status--${risk.tone}`}>
+
+                <span
+                  className={`financial-forecast__risk-status financial-forecast__risk-status--${risk.tone}`}
+                >
                   {risk.level}
                 </span>
               </div>
             ))}
           </div>
+
           <div className="financial-forecast__review-note">
             <ShieldCheck size={17} />
-            <p>Review forecasts against actual collections and approved expenditure each month.</p>
+            <p>
+              Review forecasts against actual collections and approved
+              expenditure each month.
+            </p>
           </div>
         </article>
       </div>
 
-      <p className="financial-forecast__footer">
-        {period} forecast · {campus} · {scenario} scenario · Figures are illustrative and not connected to live financial data.
-      </p>
+      
     </section>
   );
 }

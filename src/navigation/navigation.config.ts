@@ -68,7 +68,16 @@ export const navigationItems: NavigationItem[] = [
         id: "finance-overview",
         label: "Dashboard",
       },
-      {
+      
+       {
+  id: "cost-centre-analysis",
+  label: "Cost Centre Analysis",
+},
+{
+  id: "financial-forecasts",
+  label: "Financial Forecasts",
+},
+{
         id: "liabilities-management",
         label: "Liabilities Management",
       },
@@ -85,14 +94,8 @@ export const navigationItems: NavigationItem[] = [
         id: "budget-management",
         label: "Budget Management",
       },
-      {
-  id: "cost-centre-analysis",
-  label: "Cost Centre Analysis",
-},
-{
-  id: "financial-forecasts",
-  label: "Financial Forecasts",
-},
+     
+
 {
         id: "procurement-financials",
         label: "Procurement Financials",

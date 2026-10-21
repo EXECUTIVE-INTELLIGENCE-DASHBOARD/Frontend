@@ -29,8 +29,35 @@ const campuses = [
   "All Campuses",
   "Kibuli Campus",
   "Buwaate Campus",
-  "Kansanga International",
+  "Annex/Preschool Branch",
 ];
+
+const sectionsByCampus: Record<string, string[]> = {
+  "All Campuses": [
+    "All Sections",
+    "Nursery",
+    "Primary",
+    "Secondary",
+    "Preschool",
+  ],
+  "Kibuli Campus": [
+    "All Sections",
+    "Nursery",
+    "Primary",
+    "Secondary",
+  ],
+  "Buwaate Campus": [
+    "All Sections",
+    "Nursery",
+    "Primary",
+  ],
+  "Annex/Preschool Branch": [
+    "All Sections",
+    "Preschool",
+    "Primary",
+    "Secondary",
+  ],
+};
 
 const departments = [
   {
@@ -65,19 +92,19 @@ const departments = [
   },
   {
     name: "Sports",
-    campus: "Kansanga International",
+    campus: "Annex/Preschool Branch",
     budget: 45,
     actual: 31,
   },
   {
     name: "Health",
-    campus: "Kansanga International",
+    campus: "Annex/Preschool Branch",
     budget: 35,
     actual: 21,
   },
   {
     name: "Facilities",
-    campus: "Kansanga International",
+    campus: "Annex/Preschool Branch",
     budget: 30,
     actual: 18,
   },
@@ -121,9 +148,7 @@ function ReportingFilters({
   return (
     <div className="finance-overview__report-filters">
       <label>
-        <span className="finance-overview__filter-label">
-          Year
-        </span>
+       
         <select
           value={year}
           onChange={(event) =>
@@ -140,9 +165,7 @@ function ReportingFilters({
       </label>
 
       <label>
-        <span className="finance-overview__filter-label">
-          Term
-        </span>
+        
         <select
           value={term}
           onChange={(event) => onTermChange(event.target.value)}
@@ -161,8 +184,11 @@ function ReportingFilters({
 
 export function CostCentreAnalysis() {
   const [campus, setCampus] = useState("All Campuses");
-  const [year, setYear] = useState(2026);
-  const [term, setTerm] = useState("Term 1");
+const [section, setSection] = useState("All Sections");
+const [year, setYear] = useState(2026);
+const [term, setTerm] = useState("Term 1");
+
+const availableSections = sectionsByCampus[campus];
 
   const filteredDepartments = useMemo(
     () =>
@@ -218,32 +244,48 @@ export function CostCentreAnalysis() {
 
       
 
-      <section
-        className="finance-overview__scope cost-centre__filters"
-        aria-label="Cost centre filters"
+      
+<section
+  className="finance-overview__scope cost-centre__filters"
+  aria-label="Cost centre filters"
+>
+  {/* Campus and Section */}
+  <div className="cost-centre__location-filters">
+    <label>
+      <select
+        value={campus}
+        onChange={(event) => {
+          setCampus(event.target.value);
+          setSection("All Sections");
+        }}
+        aria-label="Campus"
       >
-        <label>
-          <span>Campus</span>
-          <select
-            value={campus}
-            onChange={(event) => setCampus(event.target.value)}
-            aria-label="Campus"
-          >
-            {campuses.map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
-        </label>
+        {campuses.map((value) => (
+          <option key={value} value={value}>
+            {value}
+          </option>
+        ))}
+      </select>
+    </label>
 
-        <ReportingFilters
-          year={year}
-          term={term}
-          onYearChange={setYear}
-          onTermChange={setTerm}
-        />
-      </section>
+    <label>
+      <select
+        value={section}
+        onChange={(event) => setSection(event.target.value)}
+        aria-label="Section"
+      >
+        {availableSections.map((value) => (
+          <option key={value} value={value}>
+            {value}
+          </option>
+        ))}
+      </select>
+    </label>
+  </div>
+
+ 
+</section>
+
 
       <section
         className="finance-overview__metrics"
@@ -300,22 +342,7 @@ export function CostCentreAnalysis() {
           </div>
         </article>
 
-        <article className="finance-overview__metric">
-          <span className="finance-overview__icon">
-            <AlertTriangle size={21} aria-hidden="true" />
-          </span>
-          <div className="finance-overview__metric-content">
-            <span className="finance-overview__metric-label">
-              Over-Budget Centres
-            </span>
-            <strong className="finance-overview__metric-value">
-              {totals.overBudget}
-            </strong>
-            <span className="finance-overview__metric-note">
-              Departments exceeding allocation
-            </span>
-          </div>
-        </article>
+
       </section>
 
       <section className="finance-overview__grid cost-centre__chart-grid">
@@ -325,6 +352,12 @@ export function CostCentreAnalysis() {
               <h2>Departmental Expenditure</h2>
               <p>Actual expenditure · UGX millions</p>
             </div>
+             <ReportingFilters
+    year={year}
+    term={term}
+    onYearChange={setYear}
+    onTermChange={setTerm}
+  />
           </div>
 
           <div className="cost-centre__chart">
@@ -382,6 +415,12 @@ export function CostCentreAnalysis() {
               <h2>Spending Distribution</h2>
               <p>Share of total actual expenditure</p>
             </div>
+             <ReportingFilters
+    year={year}
+    term={term}
+    onYearChange={setYear}
+    onTermChange={setTerm}
+  />
           </div>
 
           <div className="cost-centre__donut-layout">
@@ -443,6 +482,12 @@ export function CostCentreAnalysis() {
               UGX millions
             </p>
           </div>
+           <ReportingFilters
+    year={year}
+    term={term}
+    onYearChange={setYear}
+    onTermChange={setTerm}
+  />
         </div>
 
         <div className="cost-centre__chart cost-centre__chart--comparison">
@@ -504,6 +549,12 @@ export function CostCentreAnalysis() {
               Allocation, expenditure, variance and utilisation
             </p>
           </div>
+           <ReportingFilters
+    year={year}
+    term={term}
+    onYearChange={setYear}
+    onTermChange={setTerm}
+  />
         </div>
 
         <div className="cost-centre__table-wrap">

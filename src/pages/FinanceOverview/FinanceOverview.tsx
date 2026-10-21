@@ -133,35 +133,10 @@ const riskItems = [
   },
 ];
 
-const procurementMetrics = [
-  {
-    icon: ClipboardList,
-    label: "Purchase Orders",
-    value: "53",
-    note: "Orders recorded in the period",
-  },
-  {
-    icon: Clock3,
-    label: "Pending Approvals",
-    value: "9",
-    note: "Awaiting approval",
-  },
-  {
-    icon: PackageCheck,
-    label: "Completed Orders",
-    value: "32",
-    note: "Orders fulfilled",
-  },
-  {
-    icon: Truck,
-    label: "Delayed Deliveries",
-    value: "7",
-    note: "Require follow-up",
-  },
-];
+
 
 const procurementStatusData = [
-  { name: "Completed", value: 32, color: "#258568" },
+  { name: "Completed", value: 32, color: "#021559" },
   { name: "Pending approval", value: 9, color: "#F1BA1B" },
   { name: "In progress", value: 5, color: "#2AA4DD" },
   { name: "Delayed", value: 7, color: "#cf6464" },
@@ -337,54 +312,7 @@ export function FinanceOverview() {
         })}
       </section>
 
-      <section
-        className="finance-overview__procurement"
-        aria-label="Procurement summary"
-      >
-        <div className="finance-overview__section-heading">
-          <div>
-            <h2>Procurement Performance</h2>
-            <p>
-              Purchase orders, approvals and supplier fulfilment
-            </p>
-          </div>
-
-          <span className="finance-overview__sample-tag">
-            Illustrative data
-          </span>
-        </div>
-
-        <div className="finance-overview__procurement-metrics">
-          {procurementMetrics.map((metric) => {
-            const Icon = metric.icon;
-
-            return (
-              <article
-                className="finance-overview__metric"
-                key={metric.label}
-              >
-                <span className="finance-overview__icon">
-                  <Icon size={21} aria-hidden="true" />
-                </span>
-
-                <div className="finance-overview__metric-content">
-                  <span className="finance-overview__metric-label">
-                    {metric.label}
-                  </span>
-
-                  <strong className="finance-overview__metric-value">
-                    {metric.value}
-                  </strong>
-
-                  <span className="finance-overview__procurement-note">
-                    {metric.note}
-                  </span>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
+      
 
       <section className="finance-overview__grid">
         <article className="finance-overview__panel">
@@ -563,7 +491,13 @@ export function FinanceOverview() {
               <h2>Purchase Order Activity</h2>
               <p>Orders raised versus completed each month</p>
             </div>
-            <ClipboardList size={20} aria-hidden="true" />
+            <ReportingFilters
+              year={budgetYear}
+              term={budgetTerm}
+              onYearChange={setBudgetYear}
+              onTermChange={setBudgetTerm}
+            />
+  
           </div>
 
           <div className="finance-overview__procurement-chart">
@@ -594,7 +528,7 @@ export function FinanceOverview() {
                 <Bar
                   dataKey="raised"
                   name="Orders raised"
-                  fill="#2AA4DD"
+                  fill="#042165"
                   radius={[4, 4, 0, 0]}
                 />
                 <Bar
@@ -619,7 +553,13 @@ export function FinanceOverview() {
               <h2>Purchase Order Status</h2>
               <p>Illustrative distribution of order statuses</p>
             </div>
-            <PackageCheck size={20} aria-hidden="true" />
+            <ReportingFilters
+              year={budgetYear}
+              term={budgetTerm}
+              onYearChange={setBudgetYear}
+              onTermChange={setBudgetTerm}
+            />
+
           </div>
 
           <div className="finance-overview__status-layout">
@@ -677,7 +617,12 @@ export function FinanceOverview() {
               <h2>Supplier Performance</h2>
               <p>Illustrative on-time delivery indicators</p>
             </div>
-            <Truck size={20} aria-hidden="true" />
+            <ReportingFilters
+              year={budgetYear}
+              term={budgetTerm}
+              onYearChange={setBudgetYear}
+              onTermChange={setBudgetTerm}
+            />
           </div>
 
           <div className="finance-overview__supplier-table-wrap">

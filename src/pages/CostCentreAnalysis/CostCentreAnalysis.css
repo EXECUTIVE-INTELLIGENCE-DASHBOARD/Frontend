@@ -162,7 +162,7 @@
 }
 
 .cost-centre__positive {
-  color: var(--pal-green) !important;
+  color: #046c9c !important;
   font-weight: 650;
   white-space: nowrap;
 }
@@ -218,8 +218,8 @@
 }
 
 .cost-centre__status--within {
-  color: var(--pal-green);
-  background: color-mix(in srgb, var(--pal-green) 8%, transparent);
+ color: #2AA4DD;
+background: color-mix(in srgb, #2AA4DD 8%, transparent);
 }
 
 .cost-centre__status--watch {
@@ -263,4 +263,28 @@
   .cost-centre__legend-item {
     gap: 6px;
   }
+}
+
+
+
+.cost-centre__filters {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.cost-centre__location-filters {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 16px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.cost-centre__location-filters > label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
