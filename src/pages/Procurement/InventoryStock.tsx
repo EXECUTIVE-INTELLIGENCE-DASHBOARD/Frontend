@@ -416,14 +416,14 @@ export default function InventoryStock() {
               />
               <Bar
                 dataKey="received"
-                name="Stock received"
-                fill="#5578e8"
+                name="Stock Received"
+                fill="#2AA4DD"
                 radius={[5, 5, 0, 0]}
               />
               <Bar
                 dataKey="issued"
-                name="Stock issued"
-                fill="#35b68a"
+                name="Stock Issued"
+                fill="#203468"
                 radius={[5, 5, 0, 0]}
               />
             </BarChart>
