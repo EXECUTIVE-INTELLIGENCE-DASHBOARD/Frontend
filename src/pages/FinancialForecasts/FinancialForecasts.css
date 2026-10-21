@@ -430,3 +430,50 @@
     text-align: left;
   }
 }
+
+/* Year and Term filters — match Cost Centres */
+.financial-forecast__filters {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: nowrap;
+}
+
+.financial-forecast__filters label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+}
+
+.financial-forecast__filters label span {
+  color: var(--fo-muted, #64748b);
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.financial-forecast__filters select {
+  min-height: 29px;
+  min-width: 78px;
+  padding: 4px 18px 4px 6px;
+  border: 1px solid var(--fo-border, #dbe3ef);
+  border-radius: 7px;
+  background-color: #fff;
+  color: var(--fo-text, #203468);
+  font-family: inherit;
+  font-size: 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+.financial-forecast__filters select:focus {
+  border-color: var(--pal-steel, #2aa4dd);
+  box-shadow: 0 0 0 2px rgba(42, 164, 221, 0.1);
+}
+
+@media (max-width: 600px) {
+  .financial-forecast__filters {
+    flex-wrap: wrap;
+  }
+}
