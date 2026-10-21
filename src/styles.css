@@ -179,48 +179,6 @@ p {
 }
 
 /* --------------------------------------------------
-   LIGHT METRIC CARDS — matched to the reference screen.
-   Every small stat card shares one soft-blue tint with no
-   coloured accent borders, and a single blue icon chip.
-   Scoped to light only so the dark palette is untouched.
--------------------------------------------------- */
-
-:root:not([data-theme="dark"]) .stat-card,
-:root:not([data-theme="dark"]) .ap-metric,
-:root:not([data-theme="dark"]) .ar-metric,
-:root:not([data-theme="dark"]) .eo-metric,
-:root:not([data-theme="dark"]) .lr-metric,
-:root:not([data-theme="dark"]) .mc-metric,
-:root:not([data-theme="dark"]) .se-metric {
-  border: 1px solid #e4effc;
-  border-radius: 16px;
-  background: #eef7ff;
-}
-
-/* Remove the coloured left accent bar (the "different colour" borders) */
-:root:not([data-theme="dark"]) .stat-card::before,
-:root:not([data-theme="dark"]) .ap-metric::before,
-:root:not([data-theme="dark"]) .eo-metric::before,
-:root:not([data-theme="dark"]) .lr-metric::before,
-:root:not([data-theme="dark"]) .mc-metric::before,
-:root:not([data-theme="dark"]) .se-metric::before {
-  display: none;
-}
-
-/* A single uniform blue icon chip, as in the reference */
-:root:not([data-theme="dark"]) .stat-card__icon,
-:root:not([data-theme="dark"]) .ap-metric__icon,
-:root:not([data-theme="dark"]) .ar-metric__icon,
-:root:not([data-theme="dark"]) .eo-metric__icon,
-:root:not([data-theme="dark"]) .lr-metric__icon,
-:root:not([data-theme="dark"]) .mc-metric__icon,
-:root:not([data-theme="dark"]) .se-metric__icon {
-  border-radius: 12px;
-  background: #dcebff;
-  color: #2f6fe4;
-}
-
-/* --------------------------------------------------
    FILTER DROPDOWNS — shared plumbing.
 
    Each page keeps its own filter card skin. The selected value is drawn by
