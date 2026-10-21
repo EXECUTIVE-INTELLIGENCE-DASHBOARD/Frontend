@@ -1,14 +1,31 @@
 # Render Blueprint — GreenHill EID dashboard frontend.
 # Vite + React single-page app built with `npm run build` and served as a static site.
 # Docs: https://render.com/docs/blueprint-spec
+#
+# NOTE: Render sets NODE_ENV=production for deployments, which makes npm skip
+# devDependencies. `vite` and `typescript` are devDependencies and `build` runs
+# `tsc -b && vite build`, so the install MUST include dev dependencies or the
+# build fails with "vite: not found". Both `--include=dev` and
+# NPM_CONFIG_PRODUCTION=false are set as belt-and-braces.
 services:
   - type: web
     name: greenhill-eid-frontend
     runtime: static
     branch: Dev
-    buildCommand: npm ci && npm run build
+    buildCommand: npm ci --include=dev && npm run build
     staticPublishPath: ./dist
     autoDeployTrigger: commit
     envVars:
       - key: NODE_VERSION
         value: "24"
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
+    headers:
+      # Vite emits content-hashed filenames, so these are safe to cache forever.
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      # The HTML entry point must always be revalidated so new deploys are picked up.
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate

@@ -7,3 +7,9 @@ coverage/
 !.env.example
 .DS_Store
 
+# Build, test and log output that must never be committed
+test-results.txt
+*.log
+.tmp/
+
+
