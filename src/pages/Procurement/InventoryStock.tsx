@@ -292,7 +292,7 @@ export default function InventoryStock() {
   return (
     <main className="is-page">
       <header className="is-header">
-        
+
 
         <button
           className="is-button is-button--secondary"
@@ -303,7 +303,7 @@ export default function InventoryStock() {
         </button>
       </header>
 
-      
+
 
       <section className="is-metrics">
         <article className="is-metric">
@@ -414,18 +414,20 @@ export default function InventoryStock() {
                   border: "1px solid #e4e9f0",
                 }}
               />
+
               <Bar
                 dataKey="received"
-                name="Stock received"
-                fill="#041e75"
+                name="Stock Received"
+                fill="#2AA4DD"
                 radius={[5, 5, 0, 0]}
               />
               <Bar
                 dataKey="issued"
-                name="Stock issued"
-                fill="#358fb6"
+                name="Stock Issued"
+                fill="#203468"
                 radius={[5, 5, 0, 0]}
               />
+
             </BarChart>
           </ResponsiveContainer>
         </div>

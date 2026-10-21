@@ -1,9 +1,10 @@
 import "./Hero.css";
 import { useEffect, useRef, useState } from "react";
+import { Search, Mic, Bell, Sun, Moon, ChevronRight } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
-import { Search, Mic, Sun, Moon, ChevronRight } from "lucide-react";
 import { userProfile } from "../lib/userProfile";
 import { searchNavigation } from "../navigation/navigation.search";
+
 interface HeroProps {
   /** Lets the header jump to another screen from the search results. */
   onSelectPage?: (pageId: string) => void;
@@ -11,16 +12,6 @@ interface HeroProps {
 
 export function Hero({ onSelectPage }: HeroProps) {
   const { theme, setTheme } = useTheme();
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [isListening, setIsListening] = useState(false);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentDate(new Date());
-    }, 60_000);
-
-    return () => clearInterval(timer);
-  }, []);
 
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -32,61 +23,6 @@ export function Hero({ onSelectPage }: HeroProps) {
   const isDark = theme === "dark";
   const results = searchNavigation(query);
   const showResults = searchOpen && query.trim().length > 0;
-
-  function startVoiceSearch() {
-    type SpeechRecognitionInstance = {
-      lang: string;
-      interimResults: boolean;
-      maxAlternatives: number;
-      onresult:
-        | ((event: {
-            results: ArrayLike<ArrayLike<{ transcript: string }>>;
-          }) => void)
-        | null;
-      onerror: (() => void) | null;
-      onend: (() => void) | null;
-      start: () => void;
-    };
-
-    type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance;
-
-    const speechWindow = window as Window & {
-      SpeechRecognition?: SpeechRecognitionConstructor;
-      webkitSpeechRecognition?: SpeechRecognitionConstructor;
-    };
-
-    const SpeechRecognitionAPI =
-      speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
-
-    if (!SpeechRecognitionAPI) {
-      window.alert("Voice search is not supported. Please try Chrome.");
-      return;
-    }
-
-    try {
-      const recognition = new SpeechRecognitionAPI();
-
-      recognition.lang = "en-UG";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      recognition.onresult = (event) => {
-        setQuery(event.results[0][0].transcript);
-        setSearchOpen(true);
-      };
-
-      recognition.onerror = () => setIsListening(false);
-      recognition.onend = () => setIsListening(false);
-
-      setIsListening(true);
-      recognition.start();
-    } catch {
-      setIsListening(false);
-      window.alert(
-        "Could not start voice search. Check microphone permissions.",
-      );
-    }
-  }
 
   // Close the popovers when the user clicks away.
   useEffect(() => {
@@ -140,19 +76,17 @@ export function Hero({ onSelectPage }: HeroProps) {
       {/* Page information */}
       <div className="hero__page-info">
         <h1 className="hero__title">Dashboard</h1>
-        <p className="hero__date">
-          {currentDate.toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-          })}
-        </p>
+        <p className="hero__date">01 August, 2026</p>
       </div>
 
       {/* Search */}
       <div className="hero__search-wrapper" ref={searchRef}>
         <div className="hero__search">
-          <Search className="hero__search-icon" size={15} aria-hidden="true" />
+          <Search
+            className="hero__search-icon"
+            size={15}
+            aria-hidden="true"
+          />
 
           <input
             className="hero__search-input"
@@ -184,10 +118,7 @@ export function Hero({ onSelectPage }: HeroProps) {
         <button
           className="hero__search-mic"
           type="button"
-          onClick={startVoiceSearch}
-          aria-label={isListening ? "Listening..." : "Voice search"}
-          aria-pressed={isListening}
-          title={isListening ? "Listening..." : "Voice search"}
+          aria-label="Voice search"
         >
           <Mic size={15} aria-hidden="true" />
         </button>
@@ -234,6 +165,15 @@ export function Hero({ onSelectPage }: HeroProps) {
       {/* Actions */}
       <div className="hero__actions">
         {/* Notifications */}
+        <button
+          className="hero__notify"
+          type="button"
+          aria-label="Notifications"
+        >
+          <Bell size={15} aria-hidden="true" />
+
+          <span className="hero__notify-badge" aria-hidden="true" />
+        </button>
 
         {/* Theme toggle */}
         <div className="hero__theme-toggle">
@@ -304,18 +244,26 @@ export function Hero({ onSelectPage }: HeroProps) {
                 </span>
 
                 <span className="hero__profile-identity">
-                  <span className="hero__profile-name">{userProfile.name}</span>
+                  <span className="hero__profile-name">
+                    {userProfile.name}
+                  </span>
 
-                  <span className="hero__profile-role">{userProfile.role}</span>
+                  <span className="hero__profile-role">
+                    {userProfile.role}
+                  </span>
                 </span>
               </div>
 
               <dl className="hero__profile-fields">
-              {userProfile.fields.map((field: { id: string; label: string; value: string }) => (
+                {userProfile.fields.map((field) => (
                   <div className="hero__profile-field" key={field.id}>
-                    <dt className="hero__profile-field-label">{field.label}</dt>
+                    <dt className="hero__profile-field-label">
+                      {field.label}
+                    </dt>
 
-                    <dd className="hero__profile-field-value">{field.value}</dd>
+                    <dd className="hero__profile-field-value">
+                      {field.value}
+                    </dd>
                   </div>
                 ))}
               </dl>

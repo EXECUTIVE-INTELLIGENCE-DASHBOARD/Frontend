@@ -201,7 +201,7 @@ export default function SupplierPerformance() {
     (supplier) => supplier.status === "Under Review"
   ).length;
 
-  
+
 
   const averageOnTime = Math.round(
     suppliers.reduce((sum, supplier) => sum + supplier.onTimeRate, 0) /
@@ -261,7 +261,7 @@ export default function SupplierPerformance() {
   return (
     <main className="sp-page">
       <header className="sp-header">
-        
+
         <button
           className="sp-button sp-button--secondary"
           onClick={exportCsv}
@@ -271,7 +271,7 @@ export default function SupplierPerformance() {
         </button>
       </header>
 
-      
+
 
       <section className="sp-metrics">
         <article className="sp-metric">
@@ -387,18 +387,20 @@ export default function SupplierPerformance() {
                   border: "1px solid #e4e9f0",
                 }}
               />
+
               <Bar
                 dataKey="onTime"
                 name="On-time delivery"
-                fill="#02175c"
+                fill="#2AA4DD"
                 radius={[5, 5, 0, 0]}
               />
               <Bar
                 dataKey="quality"
                 name="Quality score"
-                fill="#b6a535"
+                fill="#203468"
                 radius={[5, 5, 0, 0]}
               />
+
             </BarChart>
           </ResponsiveContainer>
         </div>

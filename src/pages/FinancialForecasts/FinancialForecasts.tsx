@@ -230,10 +230,12 @@ export function FinancialForecasts() {
                 <YAxis tickLine={false} axisLine={false} tick={{ fill: "#7c8798", fontSize: 11 }} width={38} />
                 <Tooltip formatter={(value) => value == null ? "—" : `${value}M UGX`} />
                 <Legend wrapperStyle={{ fontSize: 11, paddingTop: 12 }} />
-                <Line type="monotone" dataKey="revenue" name="Historical revenue" stroke="#c5a334" strokeWidth={2.5} dot={{ r: 3 }} connectNulls={false} />
-                <Line type="monotone" dataKey="expenditure" name="Historical expenditure" stroke="#4676c8" strokeWidth={2.5} dot={{ r: 3 }} connectNulls={false} />
-                <Line type="monotone" dataKey="projectedRevenue" name="Projected revenue" stroke="#c5a334" strokeWidth={2.5} strokeDasharray="6 4" dot={{ r: 3 }} connectNulls={false} />
-                <Line type="monotone" dataKey="projectedExpenditure" name="Projected expenditure" stroke="#4676c8" strokeWidth={2.5} strokeDasharray="6 4" dot={{ r: 3 }} connectNulls={false} />
+
+                <Line type="monotone" dataKey="revenue" name="Actual Revenue" stroke="#2AA4DD" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} connectNulls={false} />
+                <Line type="monotone" dataKey="expenditure" name="Actual Expenditure" stroke="#203468" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} connectNulls={false} />
+                <Line type="monotone" dataKey="projectedRevenue" name="Projected Revenue" stroke="#2AA4DD" strokeWidth={3} strokeDasharray="5 5" dot={false} connectNulls={false} />
+                <Line type="monotone" dataKey="projectedExpenditure" name="Projected Expenditure" stroke="#203468" strokeWidth={3} strokeDasharray="5 5" dot={false} connectNulls={false} />
+
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -260,7 +262,9 @@ export function FinancialForecasts() {
                 <XAxis dataKey="month" tickLine={false} axisLine={false} tick={{ fill: "#7c8798", fontSize: 11 }} />
                 <YAxis tickLine={false} axisLine={false} tick={{ fill: "#7c8798", fontSize: 11 }} width={38} />
                 <Tooltip formatter={(value) => value == null ? "—" : `${value}M UGX`} />
-                <Area type="monotone" dataKey="closing" name="Closing cash" stroke="#c5a334" strokeWidth={2.5} fill="url(#forecastCashFill)" />
+
+                <Area type="monotone" dataKey="closing" name="Closing Cash" stroke="#F1BA1B" strokeWidth={3} fill="#F1BA1B" fillOpacity={0.2} />
+
               </AreaChart>
             </ResponsiveContainer>
           </div>

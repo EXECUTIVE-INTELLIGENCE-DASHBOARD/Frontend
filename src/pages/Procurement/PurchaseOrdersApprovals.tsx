@@ -403,8 +403,10 @@ export default function PurchaseOrdersApprovals() {
                   boxShadow: "0 8px 24px rgba(20, 34, 60, 0.08)",
                 }}
               />
-              <Bar dataKey="orders" name="Orders raised" fill="#041a64" radius={[5, 5, 0, 0]} />
-              <Bar dataKey="completed" name="Completed" fill="#c5a334" radius={[5, 5, 0, 0]} />
+
+              <Bar dataKey="orders" name="Orders raised" fill="#2AA4DD" radius={[4, 4, 0, 0]} maxBarSize={30} />
+              <Bar dataKey="completed" name="Completed" fill="#203468" radius={[4, 4, 0, 0]} maxBarSize={30} />
+
             </BarChart>
           </ResponsiveContainer>
         </div>
