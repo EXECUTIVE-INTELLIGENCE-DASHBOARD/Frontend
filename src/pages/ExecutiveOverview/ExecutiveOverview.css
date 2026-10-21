@@ -101,8 +101,8 @@
 }
 
 .eo-metric--blue {
-  --tone: #2563eb;
-  --tone-soft: #e8f0fe;
+  --tone: #2AA4DD;
+  --tone-soft: #E6F4FB;
   --tone-text: #1d4ed8;
 }
 
@@ -114,7 +114,7 @@
 
 .eo-metric--amber {
   --tone: #b45309;
-  --tone-soft: #fef3e2;
+  --tone-soft: #FEF6DC;
   --tone-text: #b45309;
 }
 
@@ -665,7 +665,7 @@
 /* ------------------------------------------------------------ Dark theme */
 
 [data-theme="dark"] .eo-metric--blue {
-  --tone-soft: #2d3c8f;
+  --tone-soft: #283F7D;
   --tone-text: #9adcf5;
 }
 

@@ -96,7 +96,7 @@
   height: 100%;
 
   /* Keep the blue indicator visible in both themes */
-  background: #13a8ed;
+  background: #2AA4DD;
   border-radius: 999px;
 
   transition: width 200ms ease;
@@ -131,7 +131,7 @@
 }
 
 .overview-incidents-legend__swatch--actual {
-  background: #13a8ed;
+  background: #2AA4DD;
 }
 
 .overview-incidents-legend__swatch--threshold {

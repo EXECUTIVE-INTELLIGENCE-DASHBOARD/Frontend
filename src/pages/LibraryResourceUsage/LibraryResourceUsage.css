@@ -193,8 +193,8 @@
 }
 
 .lr-metric--blue {
-  --tone: #2563eb;
-  --tone-soft: #e8f0fe;
+  --tone: #2AA4DD;
+  --tone-soft: #E6F4FB;
   --tone-text: #1d4ed8;
 }
 
@@ -205,13 +205,13 @@
 }
 
 .lr-metric--amber {
-  --tone: #f59e0b;
-  --tone-soft: #fef3e2;
+  --tone: #F1BA1B;
+  --tone-soft: #FEF6DC;
   --tone-text: #b45309;
 }
 
 [data-theme="dark"] .lr-metric--blue {
-  --tone: #5b9bff;
+  --tone: #5BBDE8;
   --tone-soft: #14294a;
   --tone-text: #8bb6ff;
 }
@@ -223,7 +223,7 @@
 }
 
 [data-theme="dark"] .lr-metric--amber {
-  --tone: #f59e0b;
+  --tone: #F1BA1B;
   --tone-soft: #3a2a10;
   --tone-text: #fbbf24;
 }
@@ -694,7 +694,7 @@
 }
 
 [data-theme="dark"] .lr-status--replacement {
-  background: #2d3c8f;
+  background: #283F7D;
   color: #9adcf5;
 }
 
@@ -741,7 +741,7 @@
 }
 
 [data-theme="dark"] .lr-signal--promote {
-  background: #2d3c8f;
+  background: #283F7D;
   color: #9adcf5;
 }
 
@@ -772,13 +772,13 @@
 }
 
 .lr-callout--amber {
-  --tone: #f59e0b;
+  --tone: #F1BA1B;
   --tone-bg: var(--color-warning-soft);
   --tone-border: rgba(245, 158, 11, 0.32);
 }
 
 .lr-callout--blue {
-  --tone: #2563eb;
+  --tone: #2AA4DD;
   --tone-bg: var(--color-accent-soft);
   --tone-border: rgba(37, 99, 235, 0.28);
 }
@@ -813,7 +813,7 @@
 }
 
 [data-theme="dark"] .lr-callout--blue {
-  --tone-bg: #2d3c8f;
+  --tone-bg: #283F7D;
   --tone-border: rgba(154, 220, 245, 0.28);
 }
 

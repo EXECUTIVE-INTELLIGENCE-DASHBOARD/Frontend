@@ -69,7 +69,7 @@ border: 1px solid var(--color-border);
 }
 
 .overview-chart-legend__swatch--budget {
-  background: #13a8ed;
+  background: #2AA4DD;
 }
 
 /* Budget bar chart */
@@ -102,7 +102,7 @@ border: 1px solid var(--color-border);
 }
 
 .overview-budget-chart__bar--budget {
-  fill: #13a8ed;
+  fill: #2AA4DD;
 }
 
 .overview-budget-chart__value {
@@ -112,7 +112,7 @@ border: 1px solid var(--color-border);
 }
 
 .overview-budget-chart__value--budget {
-  fill: #13a8ed;
+  fill: #2AA4DD;
 }
 
 .overview-budget-chart__quarter {

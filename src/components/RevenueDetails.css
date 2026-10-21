@@ -10,7 +10,7 @@
   width: 100%;
   min-width: 0;
   padding: 0;
-  color: var(--color-heading, #17233d);
+  color: var(--color-heading, #203468);
   background: transparent;
   box-sizing: border-box;
 }
@@ -62,7 +62,7 @@
 
 .revenue-reporting__intro h2 {
   margin: 0;
-  color: var(--color-heading, #17233d);
+  color: var(--color-heading, #203468);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
@@ -94,7 +94,7 @@
   width: 100%;
   min-height: 38px;
   padding: 8px 11px;
-  color: var(--color-heading, #17233d);
+  color: var(--color-heading, #203468);
   background: var(--color-surface, #fff);
   border: 1px solid var(--color-border, #dce3ec);
   border-radius: 8px;
@@ -228,7 +228,7 @@
 .revenue-summary__amount {
   min-width: 0;
   margin: 0;
-  color: var(--color-heading, #17233d);
+  color: var(--color-heading, #203468);
   font-size: clamp(20px, 2vw, 27px);
   font-weight: 700;
   letter-spacing: -0.04em;
@@ -298,7 +298,7 @@
 
 .revenue-panel__heading h2 {
   margin: 0;
-  color: var(--color-heading, #17233d);
+  color: var(--color-heading, #203468);
   font-size: 13px;
   font-weight: 700;
   line-height: 1.5;
@@ -390,7 +390,7 @@
 
 .revenue-performance__value {
   margin: 0;
-  color: var(--color-heading, #17233d);
+  color: var(--color-heading, #203468);
   font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -484,7 +484,7 @@
 }
 
 .campus-table__name {
-  color: var(--color-heading, #17233d) !important;
+  color: var(--color-heading, #203468) !important;
   font-weight: 600 !important;
 }
 
@@ -504,7 +504,7 @@
 }
 
 .campus-collection > span {
-  color: var(--color-heading, #17233d);
+  color: var(--color-heading, #203468);
   font-size: 11px;
   font-weight: 700;
 }
@@ -559,7 +559,7 @@
 
 .stream-item__name {
   min-width: 0;
-  color: var(--color-heading, #17233d);
+  color: var(--color-heading, #203468);
   font-size: 11px;
   font-weight: 600;
   line-height: 1.5;
@@ -638,7 +638,7 @@
 }
 
 .revenue-ageing__period {
-  color: var(--color-heading, #17233d);
+  color: var(--color-heading, #203468);
   font-size: 12px;
   font-weight: 700;
   line-height: 1.5;
@@ -653,7 +653,7 @@
 }
 
 .revenue-ageing__item strong {
-  color: var(--color-heading, #17233d);
+  color: var(--color-heading, #203468);
   font-size: 23px;
   font-weight: 700;
   line-height: 1.25;
@@ -716,7 +716,7 @@
 
 .revenue-board-actions__item-copy h3 {
   margin: 0;
-  color: var(--color-heading, #17233d);
+  color: var(--color-heading, #203468);
   font-size: 12px;
   font-weight: 700;
   line-height: 1.5;
@@ -921,8 +921,8 @@
 [data-theme="dark"] .revenue-reporting,
 [data-theme="dark"] .revenue-summary__card,
 [data-theme="dark"] .revenue-panel {
-  background: var(--color-surface, #2d3c8f);
-  border-color: var(--color-border, #3f4b92);
+  background: var(--color-surface, #283F7D);
+  border-color: var(--color-border, #3A528C);
 }
 
 [data-theme="dark"] .revenue-summary__card:hover {
@@ -949,13 +949,13 @@
 
 [data-theme="dark"] .revenue-reporting__controls select {
   color: var(--color-heading, #f5f5f5);
-  background: var(--color-surface, #2d3c8f);
-  border-color: var(--color-border, #3f4b92);
+  background: var(--color-surface, #283F7D);
+  border-color: var(--color-border, #3A528C);
 }
 
 [data-theme="dark"] .revenue-reporting__controls option {
   color: var(--color-heading, #f5f5f5);
-  background: var(--color-surface, #2d3c8f);
+  background: var(--color-surface, #283F7D);
 }
 
 [data-theme="dark"] .revenue-summary__badge,
@@ -965,8 +965,8 @@
 [data-theme="dark"] .revenue-ageing__item,
 [data-theme="dark"] .revenue-board-actions__status,
 [data-theme="dark"] .streams-panel__count {
-  background: var(--color-surface-subtle, #2a3784);
-  border-color: var(--color-border-soft, #394484);
+  background: var(--color-surface-subtle, #243A73);
+  border-color: var(--color-border-soft, #334A7F);
 }
 
 [data-theme="dark"] .revenue-panel__icon,
@@ -997,16 +997,16 @@
 
 [data-theme="dark"] .campus-table th {
   color: var(--color-text-soft, #b0b8ca);
-  background: var(--color-surface-subtle, #2a3784);
+  background: var(--color-surface-subtle, #243A73);
 }
 
 [data-theme="dark"] .campus-table td,
 [data-theme="dark"] .revenue-board-actions__item {
-  border-bottom-color: var(--color-border-soft, #394484);
+  border-bottom-color: var(--color-border-soft, #334A7F);
 }
 
 [data-theme="dark"] .campus-table tbody tr:hover {
-  background: var(--color-surface-subtle, #2a3784);
+  background: var(--color-surface-subtle, #243A73);
 }
 
 [data-theme="dark"] .campus-collection__track,

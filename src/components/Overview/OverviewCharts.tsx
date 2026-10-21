@@ -13,14 +13,14 @@ const admissionsData = [
     label: "Qualified",
     count: 1247,
     percentage: "50.9%",
-    color: "#13a8ed",
+    color: "#2AA4DD",
   },
   {
     id: "interview",
     label: "Interview",
     count: 446,
     percentage: "18.2%",
-    color: "#ff9d00",
+    color: "#F1BA1B",
   },
   {
     id: "accepted",

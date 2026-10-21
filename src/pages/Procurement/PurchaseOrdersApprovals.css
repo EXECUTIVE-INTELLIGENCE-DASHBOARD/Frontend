@@ -4,7 +4,7 @@
   --po-muted: #7b8799;
   --po-border: #e8edf3;
   --po-surface: #ffffff;
-  --po-blue: #5578e8;
+  --po-blue: #2AA4DD;
   --po-green: #269b75;
   color: var(--po-ink);
   display: flex;
@@ -90,7 +90,7 @@
 }
 
 .po-button--primary {
-  background: #4568d8;
+  background: #2AA4DD;
   color: white;
   box-shadow: 0 4px 10px rgba(69, 104, 216, 0.15);
 }
@@ -116,7 +116,7 @@
   padding: 12px 15px;
   border: 1px solid #f0dfb8;
   border-radius: 10px;
-  background: #fffaf0;
+  background: #FFFBEA;
   color: #876321;
   font-size: 12px;
   line-height: 1.6;
@@ -163,8 +163,8 @@
 }
 
 .po-icon--blue {
-  background: #edf1ff;
-  color: #5578e8;
+  background: #E6F4FB;
+  color: #2AA4DD;
 }
 
 .po-icon--amber {
@@ -285,7 +285,7 @@
 }
 
 .po-legend-dot--orders {
-  background: #5578e8;
+  background: #2AA4DD;
 }
 
 .po-legend-dot--completed {
@@ -324,7 +324,7 @@
 
 .po-search:focus-within,
 .po-select-wrap:focus-within {
-  border-color: #8298ed;
+  border-color: #7CC7EA;
   box-shadow: 0 0 0 3px rgba(85, 120, 232, 0.08);
 }
 
@@ -458,12 +458,12 @@
 }
 
 .po-status--pending-approval {
-  background: #fff4df;
+  background: #FEF6DC;
   color: #ad7819;
 }
 
 .po-status--approved {
-  background: #edf1ff;
+  background: #E6F4FB;
   color: #5572d3;
 }
 
@@ -522,7 +522,7 @@
 .po-view-button:hover {
   border-color: #c9d4f8;
   background: #f3f6ff;
-  color: #4568d8;
+  color: #2AA4DD;
 }
 
 .po-empty-state {

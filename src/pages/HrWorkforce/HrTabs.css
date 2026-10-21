@@ -3,6 +3,6 @@
 .hr-tabs { display: inline-flex; gap: 6px; padding: 4px; border-radius: 14px; border: 1px solid rgba(120, 130, 160, 0.25); background: #fff; }
 .hr-tabs--sub { margin-bottom: 12px; }
 .hr-tab { border: 0; background: none; padding: 9px 18px; border-radius: 10px; font: 600 13.5px inherit; color: #6b7491; cursor: pointer; }
-.hr-tab[aria-selected="true"] { background: rgba(22, 133, 232, 0.14); color: #1685e8; }
-.hr-tab:focus-visible { outline: 3px solid #1685e8; outline-offset: 2px; }
+.hr-tab[aria-selected="true"] { background: rgba(22, 133, 232, 0.14); color: #2AA4DD; }
+.hr-tab:focus-visible { outline: 3px solid #2AA4DD; outline-offset: 2px; }
 .hw-pill--bad { background: rgba(217, 72, 63, 0.12); color: #c0392b; }
