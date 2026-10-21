@@ -1,18 +1,18 @@
 :root {
   color-scheme: light;
 
-  /* Surfaces — near-white canvas with independent white cards */
-  --color-bg: #f3f6fb;
+  /* Surfaces — soft blue canvas with white floating cards */
+  --color-bg: #eaf2fe;
   --color-surface: #ffffff;
-  --color-surface-subtle: #f8fafc;
-  --color-surface-muted: #f8fafc;
-  --color-surface-hover: #f1f5f9;
-  --color-surface-tint: #f3f7fc;
+  --color-surface-subtle: #f5f9ff;
+  --color-surface-muted: #f6faff;
+  --color-surface-hover: #f0f6ff;
+  --color-surface-tint: #eef5ff;
 
-  /* Borders — subtle cool greys */
-  --color-border: #e9eef5;
-  --color-border-soft: #edf1f6;
-  --color-border-strong: #d7e1ee;
+  /* Borders — barely-there cool greys */
+  --color-border: #e9f0fb;
+  --color-border-soft: #eef4fd;
+  --color-border-strong: #d7e4f8;
 
   /* Text */
   --color-heading: #17233d;
@@ -29,47 +29,26 @@
 
   /* Feedback */
   --color-positive: #16a34a;
-
-  /* Tinted fill for "good" pills and badges (e.g. the "Under budget" status
-     pill on Expense Management). Pairs with --color-positive for the text. */
-  --color-positive-soft: #e6f7ee;
-
   --color-warning: #b45309;
   --color-warning-soft: #fef3e2;
   --color-critical: #e05b5b;
   --color-danger: #dc4b4b;
-  --color-track: #eef2f7;
+  --color-track: #eef4fd;
 
-  /* Elevation — soft shadows for independent floating cards */
-  --shadow-card: 0 2px 4px rgba(37, 55, 90, 0.035);
-  --shadow-pop: 0 6px 16px rgba(37, 55, 90, 0.07);
-  --shadow-elevated: 0 12px 30px rgba(37, 55, 90, 0.1);
+  /* Elevation — soft blue-tinted glows so cards float on the canvas */
+  --shadow-card: 0 6px 16px rgba(37, 78, 150, 0.06);
+  --shadow-pop: 0 12px 26px rgba(37, 78, 150, 0.1);
+  --shadow-elevated: 0 20px 44px rgba(37, 78, 150, 0.12);
 
   /* Charts */
   --chart-navy: #2f6fe4;
   --chart-blue: #4a86f7;
   --chart-sky: #8ec0ff;
-
-  /* Lightest step of the single-hue chart ramp. Used as the 4th slice in
-     multi-category charts (e.g. the Expense Management donut) where more
-     than three series colours are needed. */
-  --chart-mist: #c3dbff;
-
   --chart-gradient-from: #5b9bff;
   --chart-gradient-to: #2f6fe4;
-  --color-chart-grid: #eaf0f7;
-  --color-chart-axis: #cbd5e1;
-  --color-chart-realized: #172447;
-  --color-chart-forecast: #f0f4f9;
 
-  font-family:
-    "Poppins",
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
   color: var(--color-text);
   background: var(--color-bg);
   font-synthesis: none;
@@ -114,142 +93,97 @@ p {
   color: var(--color-text-muted);
   line-height: 1.65;
 }
-/* GLOBAL DARK THEME — ALL PAGES */
+
+/* --------------------------------------------------
+   DARK THEME
+-------------------------------------------------- */
 
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --color-bg: #152244;
-  --color-surface: #1c2c52;
-  --color-surface-subtle: #192849;
-  --color-surface-muted: #192849;
-  --color-surface-hover: #263a64;
-  --color-surface-tint: #263a64;
+  /* Surfaces — one indigo ramp built on the brand navy.
+     `--color-bg` is exactly #263278 = hsl(231 52% 31%).
+     Every step keeps the same relative spacing as before, so cards still sit
+     clearly above the page instead of sinking into it. */
+  --color-bg: #263278;
+  --color-surface: #2d3c8f;
+  --color-surface-subtle: #2a3784;
+  --color-surface-muted: #2a3784;
+  --color-surface-hover: #31419b;
+  --color-surface-tint: #31419b;
 
-  --color-border: #34466f;
-  --color-border-soft: #2c3d63;
-  --color-border-strong: #435783;
+  /* Borders */
+  --color-border: #3f4b92;
+  --color-border-soft: #394484;
+  --color-border-strong: #4b5aaf;
 
-  --color-heading: #f5f7ff;
-  --color-heading-alt: #dce5f7;
-  --color-text: #dce5f7;
-  --color-text-secondary: #c2cfe7;
-  --color-text-muted: #a5b5d1;
-  --color-text-soft: #91a3c2;
+  /* Text */
+  --color-heading: #f5f5f5;
+  --color-heading-alt: #d3d4d6;
+  --color-text: #d3d4d6;
+  --color-text-secondary: #c3c6c9;
+  --color-text-muted: #a9adb3;
+  --color-text-soft: #969aa1;
 
-  --color-accent: #4a86f7;
-  --color-accent-strong: #6a9bff;
-  --color-accent-soft: #263a64;
+  /* Accent */
+  --color-accent: #2aa4dd;
+  --color-accent-strong: #4fb8e8;
+  --color-accent-soft: #2d3c8f;
 
-  --color-track: #263a64;
+  /* Feedback */
+  --color-positive: #4ade80;
+  --color-warning: #f1ba1b;
+  --color-warning-soft: #3a2f10;
+  --color-critical: #f87171;
+  --color-danger: #f87171;
+  --color-track: #2d3c8f;
 
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2);
-  --shadow-pop: 0 6px 16px rgba(0, 0, 0, 0.25);
-  --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.35);
+  /* Elevation */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-pop: 0 6px 16px rgba(0, 0, 0, 0.35);
+  --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.4);
 
-  --chart-navy: #4a86f7;
-  --chart-blue: #6a9bff;
-  --chart-sky: #9bc5ff;
-  /* Dark counterpart of the light --chart-mist above. Darker and less
-     saturated so the 4th chart slice stays distinct on the navy surface. */
-  --chart-mist: #6d8fc4;
-  --chart-gradient-from: #6a9bff;
-  --chart-gradient-to: #2f6fe4;
-  /* Revenue graph — dark theme */
-  --color-chart-grid: #2c3d63;
-  --color-chart-axis: #435783;
-  --color-chart-realized: #263a64;
-  --color-chart-forecast: #1c2c52;
-  color: var(--color-text);
-  background: var(--color-bg);
+  /* Charts */
+  --chart-navy: #2aa4dd;
+  --chart-blue: #4fb8e8;
+  --chart-sky: #9adcf5;
+  --chart-gradient-from: #4fb8e8;
+  --chart-gradient-to: #2aa4dd;
+
+  color: #f5f5f5;
+  background: #263278;
 }
 
 [data-theme="dark"] body {
-  background: var(--color-bg);
-  color: var(--color-heading);
-}
-/* GLOBAL DARK THEME — SHARED COMPONENT COLORS */
-
-[data-theme="dark"] .hero,
-[data-theme="dark"] .sidebar {
-  background: var(--color-bg);
-  color: var(--color-heading);
-  border-color: var(--color-border);
+  background: #263278;
+  color: #f5f5f5;
 }
 
-/* ==================================================================
-   METRIC-CARD REGISTRATION — READ THIS BEFORE ADDING A NEW PAGE
-   ==================================================================
+/* Existing application shell.
+   These follow the surface tokens so light and dark stay in step. */
 
-   The next four rules are what give every KPI card in this app its
-   signature look: a tinted card with no coloured accent bar and one
-   uniform blue icon chip in light mode, and a solid surface with a
-   coloured accent bar in dark mode.
-
-   Each is written as a long selector *list*, and every card class in the
-   app must appear in ALL FOUR:
-
-     A. [data-theme="dark"] <prefix>-metric            -> dark card surface
-     B. :root:not([data-theme="dark"]) <prefix>-metric -> light tinted card
-     C. ... <prefix>-metric::before                    -> hides the accent bar
-     D. ... <prefix>-metric__icon                      -> uniform blue icon chip
-
-   If a new class is missing from these lists the page still renders, but
-   its cards silently fall back to the plain white look defined in the
-   page's own stylesheet — no error, just cards that do not match the rest
-   of the dashboard.
-
-   A page stylesheet cannot fix this on its own: these selectors have
-   specificity (0,2,0), which beats a plain `.my-metric` rule (0,1,0)
-   regardless of which file is imported first.
-
-   When adding a page: append its metric class to A, B, C and D, and its
-   metric icon class to D.
-   ================================================================== */
-
-/* A — dark theme card surface */
-
-[data-theme="dark"] .stat-card,
-[data-theme="dark"] .ap-metric,
-[data-theme="dark"] .ar-metric,
-[data-theme="dark"] .eo-metric,
-[data-theme="dark"] .lr-metric,
-[data-theme="dark"] .mc-metric,
-[data-theme="dark"] .se-metric,
-[data-theme="dark"] .exp-metric {
-  background: var(--color-surface);
-  border-color: var(--color-border);
-  color: var(--color-text);
+[data-theme="dark"] .layout-content {
+  color: #f5f5f5;
 }
 
-/* Shared headings */
+/* Main heading */
 
-[data-theme="dark"] h1,
-[data-theme="dark"] h2,
-[data-theme="dark"] h3 {
-  color: var(--color-heading);
+[data-theme="dark"] h1 {
+  color: #f5f5f5;
 }
 
-/* Shared form controls */
+/* Paragraph text */
 
-[data-theme="dark"] input,
-[data-theme="dark"] textarea,
-[data-theme="dark"] select {
-  background-color: var(--color-surface);
-  color: var(--color-heading);
-  border-color: var(--color-border);
+[data-theme="dark"] p {
+  color: #d3d4d6;
 }
 
-/* Shared dropdown menus and popups */
-
-[data-theme="dark"] .hero__search-results,
-[data-theme="dark"] .hero__profile-panel {
-  background: var(--color-surface);
-  border-color: var(--color-border);
-}
-
-/* B — light theme tinted card. `:root:not([data-theme="dark"])` is what makes
-   these rules outrank the page stylesheet's plain class selectors. */
+/* --------------------------------------------------
+   LIGHT METRIC CARDS — matched to the reference screen.
+   Every small stat card shares one soft-blue tint with no
+   coloured accent borders, and a single blue icon chip.
+   Scoped to light only so the dark palette is untouched.
+-------------------------------------------------- */
 
 :root:not([data-theme="dark"]) .stat-card,
 :root:not([data-theme="dark"]) .ap-metric,
@@ -257,37 +191,30 @@ p {
 :root:not([data-theme="dark"]) .eo-metric,
 :root:not([data-theme="dark"]) .lr-metric,
 :root:not([data-theme="dark"]) .mc-metric,
-:root:not([data-theme="dark"]) .se-metric,
-:root:not([data-theme="dark"]) .exp-metric {
+:root:not([data-theme="dark"]) .se-metric {
   border: 1px solid #e4effc;
   border-radius: 16px;
   background: #eef7ff;
 }
 
-/* C — in light mode the coloured left accent bar is removed entirely, so the
-   cards read as one uniform family (the "different colour" borders). */
-
+/* Remove the coloured left accent bar (the "different colour" borders) */
 :root:not([data-theme="dark"]) .stat-card::before,
 :root:not([data-theme="dark"]) .ap-metric::before,
 :root:not([data-theme="dark"]) .eo-metric::before,
 :root:not([data-theme="dark"]) .lr-metric::before,
 :root:not([data-theme="dark"]) .mc-metric::before,
-:root:not([data-theme="dark"]) .se-metric::before,
-:root:not([data-theme="dark"]) .exp-metric::before {
+:root:not([data-theme="dark"]) .se-metric::before {
   display: none;
 }
 
-/* D — a single uniform blue icon chip in place of the per-tone chips, so every
-   card's icon matches. */
-
+/* A single uniform blue icon chip, as in the reference */
 :root:not([data-theme="dark"]) .stat-card__icon,
 :root:not([data-theme="dark"]) .ap-metric__icon,
 :root:not([data-theme="dark"]) .ar-metric__icon,
 :root:not([data-theme="dark"]) .eo-metric__icon,
 :root:not([data-theme="dark"]) .lr-metric__icon,
 :root:not([data-theme="dark"]) .mc-metric__icon,
-:root:not([data-theme="dark"]) .se-metric__icon,
-:root:not([data-theme="dark"]) .exp-metric__icon {
+:root:not([data-theme="dark"]) .se-metric__icon {
   border-radius: 12px;
   background: #dcebff;
   color: #2f6fe4;
@@ -306,8 +233,7 @@ p {
 .lr-filter,
 .mc-filter,
 .se-filter,
-.ao-year,
-.exp-filter {
+.ao-year {
   position: relative;
 }
 
@@ -317,8 +243,6 @@ p {
 .lr-filter__value,
 .mc-filter__label,
 .mc-filter__value,
-.exp-filter__label,
-.exp-filter__value,
 .se-filter__label,
 .se-filter__value,
 .ao-year__label,
@@ -330,8 +254,7 @@ p {
 .lr-filter__select,
 .mc-filter__select,
 .se-filter__select,
-.ao-year__select,
-.exp-filter__select {
+.ao-year__select {
   position: absolute;
   inset: 0;
 
@@ -354,51 +277,13 @@ p {
 }
 
 /* The overlay select is invisible, so surface focus on the card itself. */
-
 .ap-filter:focus-within,
 .lr-filter:focus-within,
 .mc-filter:focus-within,
 .se-filter:focus-within,
-.ao-year:focus-within,
-.exp-filter:focus-within {
+.ao-year:focus-within {
   border-color: var(--color-border-strong);
   box-shadow: var(--shadow-pop);
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-}
-/* Dark mode: remove unwanted light-blue traces */
-[data-theme="dark"] .hero {
-  border-bottom: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-[data-theme="dark"] .sidebar {
-  border-right: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-/* Remove the blue vertical line beside sidebar submenus */
-[data-theme="dark"] .sidebar a::before,
-[data-theme="dark"] .sidebar button::before {
-  border-color: transparent !important;
-  box-shadow: none !important;
-}
-
-/* Remove blue outlines from selected sidebar items */
-[data-theme="dark"] .sidebar a:focus,
-[data-theme="dark"] .sidebar button:focus,
-[data-theme="dark"] .sidebar a:focus-visible,
-[data-theme="dark"] .sidebar button:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/* Keep dashboard cards subtle in dark mode */
-[data-theme="dark"] .card,
-[data-theme="dark"] .metric-card,
-[data-theme="dark"] .dashboard-card {
-  border-color: #293958 !important;
-  box-shadow: none !important;
 }

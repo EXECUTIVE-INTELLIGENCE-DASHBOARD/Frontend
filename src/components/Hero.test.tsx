@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { Hero } from "./Hero";
@@ -23,13 +23,9 @@ describe("Hero", () => {
   it("renders the current date", () => {
     renderHero();
 
-    const expectedDate = new Date().toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-
-    expect(screen.getByText(expectedDate)).toBeInTheDocument();
+    expect(
+      screen.getByText("01 August, 2026"),
+    ).toBeInTheDocument();
   });
 
   it("renders the search field", () => {
@@ -60,7 +56,7 @@ describe("Hero", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the hardcoded user profile", () => {
+  it("renders the user profile", () => {
     renderHero();
 
     expect(
@@ -101,23 +97,20 @@ describe("Hero", () => {
     expect(screen.getByText(/No pages match/i)).toBeInTheDocument();
   });
 
-    it("reveals the hardcoded user's details from the profile", async () => {
+  it("reveals the signed-in user's details from the profile", () => {
     renderHero();
 
+    // Closed by default.
     expect(
       screen.queryByText("maruf.hossen@greenhill.ac.ug"),
     ).not.toBeInTheDocument();
 
-    fireEvent.click(
-      screen.getByRole("button", { name: "Open user profile" }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Open user profile" }));
 
     expect(
-      await screen.findByText("maruf.hossen@greenhill.ac.ug"),
+      screen.getByText("maruf.hossen@greenhill.ac.ug"),
     ).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(screen.getByText("GH-STAFF-0284")).toBeInTheDocument();
-    });
+    expect(screen.getByText("GH-STAFF-0284")).toBeInTheDocument();
   });
 });
