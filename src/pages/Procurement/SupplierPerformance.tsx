@@ -390,13 +390,13 @@ export default function SupplierPerformance() {
               <Bar
                 dataKey="onTime"
                 name="On-time delivery"
-                fill="#5578e8"
+                fill="#02175c"
                 radius={[5, 5, 0, 0]}
               />
               <Bar
                 dataKey="quality"
                 name="Quality score"
-                fill="#35b68a"
+                fill="#b6a535"
                 radius={[5, 5, 0, 0]}
               />
             </BarChart>

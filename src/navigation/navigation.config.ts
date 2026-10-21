@@ -66,7 +66,7 @@ export const navigationItems: NavigationItem[] = [
       
       {
         id: "finance-overview",
-        label: "Overview",
+        label: "Dashboard",
       },
       {
         id: "liabilities-management",
