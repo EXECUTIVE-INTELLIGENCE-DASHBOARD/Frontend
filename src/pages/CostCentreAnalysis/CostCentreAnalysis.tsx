@@ -93,9 +93,9 @@ const formatCompact = (value: number) => `${value}M`;
 const formatPercent = (value: number) => `${value.toFixed(1)}%`;
 
 const chartColours = [
-  "var(--pal-steel)",
-  "var(--pal-green)",
-  "var(--pal-amber)",
+  "#203468", // Brand Dark Navy
+  "#F1BA1B", // Brand Gold
+  "#2AA4DD", // Brand Light Blue
   "#7C83DB",
   "#53A7A0",
   "#C38B65",
@@ -478,16 +478,16 @@ export function CostCentreAnalysis() {
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />
               <Bar
-                dataKey="Budget"
-                fill="var(--fo-border)"
-                radius={[4, 4, 0, 0]}
-                maxBarSize={30}
+        dataKey="Budget"
+        fill="#203468"
+        radius={[4, 4, 0, 0]}
+        maxBarSize={30}
               />
               <Bar
-                dataKey="Actual"
-                fill="var(--pal-steel)"
-                radius={[4, 4, 0, 0]}
-                maxBarSize={30}
+        dataKey="Actual"
+        fill="#2AA4DD"
+        radius={[4, 4, 0, 0]}
+        maxBarSize={30}
               />
             </BarChart>
           </ResponsiveContainer>
