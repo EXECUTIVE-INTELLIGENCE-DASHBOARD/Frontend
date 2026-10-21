@@ -93,11 +93,11 @@ const formatCompact = (value: number) => `${value}M`;
 const formatPercent = (value: number) => `${value.toFixed(1)}%`;
 
 const chartColours = [
-  "var(--pal-steel)",
-  "var(--pal-green)",
+  "#02096d",
+  "#87CEFA",
   "var(--pal-amber)",
   "#7C83DB",
-  "#53A7A0",
+  "#4e8de6",
   "#C38B65",
   "#8A9BAE",
   "#A68AC7",

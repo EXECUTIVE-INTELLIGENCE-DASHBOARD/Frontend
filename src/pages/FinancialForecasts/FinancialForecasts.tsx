@@ -230,9 +230,9 @@ export function FinancialForecasts() {
                 <YAxis tickLine={false} axisLine={false} tick={{ fill: "#7c8798", fontSize: 11 }} width={38} />
                 <Tooltip formatter={(value) => value == null ? "—" : `${value}M UGX`} />
                 <Legend wrapperStyle={{ fontSize: 11, paddingTop: 12 }} />
-                <Line type="monotone" dataKey="revenue" name="Historical revenue" stroke="#258568" strokeWidth={2.5} dot={{ r: 3 }} connectNulls={false} />
+                <Line type="monotone" dataKey="revenue" name="Historical revenue" stroke="#c5a334" strokeWidth={2.5} dot={{ r: 3 }} connectNulls={false} />
                 <Line type="monotone" dataKey="expenditure" name="Historical expenditure" stroke="#4676c8" strokeWidth={2.5} dot={{ r: 3 }} connectNulls={false} />
-                <Line type="monotone" dataKey="projectedRevenue" name="Projected revenue" stroke="#258568" strokeWidth={2.5} strokeDasharray="6 4" dot={{ r: 3 }} connectNulls={false} />
+                <Line type="monotone" dataKey="projectedRevenue" name="Projected revenue" stroke="#c5a334" strokeWidth={2.5} strokeDasharray="6 4" dot={{ r: 3 }} connectNulls={false} />
                 <Line type="monotone" dataKey="projectedExpenditure" name="Projected expenditure" stroke="#4676c8" strokeWidth={2.5} strokeDasharray="6 4" dot={{ r: 3 }} connectNulls={false} />
               </LineChart>
             </ResponsiveContainer>
@@ -252,15 +252,15 @@ export function FinancialForecasts() {
               <AreaChart data={scaledCashFlow} margin={{ top: 12, right: 12, left: 2, bottom: 2 }}>
                 <defs>
                   <linearGradient id="forecastCashFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#258568" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#258568" stopOpacity={0.02} />
+                    <stop offset="0%" stopColor="#c5a334" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#c5a334" stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e9edf3" />
                 <XAxis dataKey="month" tickLine={false} axisLine={false} tick={{ fill: "#7c8798", fontSize: 11 }} />
                 <YAxis tickLine={false} axisLine={false} tick={{ fill: "#7c8798", fontSize: 11 }} width={38} />
                 <Tooltip formatter={(value) => value == null ? "—" : `${value}M UGX`} />
-                <Area type="monotone" dataKey="closing" name="Closing cash" stroke="#258568" strokeWidth={2.5} fill="url(#forecastCashFill)" />
+                <Area type="monotone" dataKey="closing" name="Closing cash" stroke="#c5a334" strokeWidth={2.5} fill="url(#forecastCashFill)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>

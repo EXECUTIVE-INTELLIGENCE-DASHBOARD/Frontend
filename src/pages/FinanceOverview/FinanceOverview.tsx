@@ -161,9 +161,9 @@ const procurementMetrics = [
 ];
 
 const procurementStatusData = [
-  { name: "Completed", value: 32, color: "#258568" },
+  { name: "Completed", value: 32, color: "#87CEFA" },
   { name: "Pending approval", value: 9, color: "#d9a441" },
-  { name: "In progress", value: 5, color: "#4676c8" },
+  { name: "In progress", value: 5, color: "#04245b" },
   { name: "Delayed", value: 7, color: "#cf6464" },
 ];
 
@@ -594,13 +594,13 @@ export function FinanceOverview() {
                 <Bar
                   dataKey="raised"
                   name="Orders raised"
-                  fill="#4676c8"
+                  fill="#041d4a"
                   radius={[4, 4, 0, 0]}
                 />
                 <Bar
                   dataKey="completed"
                   name="Orders completed"
-                  fill="#258568"
+                  fill="#87CEFA"
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
