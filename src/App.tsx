@@ -19,6 +19,7 @@ import { ProcurementFinancials } from "./pages/ProcurementFinancials/Procurement
 import { ExpenseManagement } from "./pages/ExpenseManagement/ExpenseManagement";
 import { CoCurricularActivities } from "./pages/CoCurricularActivities/CoCurricularActivities";
 import { StudentRetention } from "./pages/StudentRetention/StudentRetention";
+import { AdmissionsEnrollment } from "./pages/AdmissionsEnrollment/AdmissionsEnrollment";
 import { HrWorkforce } from "./pages/HrWorkforce/HrWorkforce";
 
 import { FinanceOverview } from "./pages/FinanceOverview/FinanceOverview";
@@ -38,6 +39,7 @@ const pages: Record<string, ReactElement> = {
   overview: <ExecutiveOverview />,
   "academics-overview": <AcademicOverview />,
   "student-enrollment": <StudentEnrollment />,
+  "admissions-enrollment": <AdmissionsEnrollment />,
   "academic-performance": <AcademicPerformance />,
   "parent-access": <MyChildProgress />,
   "library-resource-usage": <LibraryResourceUsage />,

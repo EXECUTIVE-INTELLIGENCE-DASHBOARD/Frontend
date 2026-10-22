@@ -32,6 +32,10 @@ export const navigationItems: NavigationItem[] = [
         label: "Student Enrollment",
       },
       {
+        id: "admissions-enrollment",
+        label: "Admissions & Enrolment",
+      },
+      {
         id: "student-retention",
         label: "Student Retention",
       },
