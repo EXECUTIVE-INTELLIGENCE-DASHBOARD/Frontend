@@ -1,3 +1,4 @@
+
 import { useMemo, useState } from "react";
 import {
   Activity,
@@ -148,7 +149,6 @@ function ReportingFilters({
   return (
     <div className="financial-forecast__filters">
       <label>
-  
         <select
           value={year}
           onChange={(event) =>
@@ -161,7 +161,6 @@ function ReportingFilters({
       </label>
 
       <label>
-
         <select
           value={term}
           onChange={(event) => onTermChange(event.target.value)}
@@ -178,12 +177,8 @@ function ReportingFilters({
 export function FinancialForecasts() {
   const [campus, setCampus] = useState<Campus>("All Campuses");
   const [section, setSection] = useState<Section>("All Sections");
-  const [scenario, setScenario] = useState("Expected");
 
   const availableSections = sectionsByCampus[campus];
-
-  const [metricsYear, setMetricsYear] = useState(2026);
-  const [metricsTerm, setMetricsTerm] = useState("Term 1");
 
   const [revenueYear, setRevenueYear] = useState(2026);
   const [revenueTerm, setRevenueTerm] = useState("Term 1");
@@ -205,14 +200,8 @@ export function FinancialForecasts() {
       "Annex/Preschool Branch": 0.25,
     };
 
-    const scenarioFactor: Record<string, number> = {
-      Conservative: 0.9,
-      Expected: 1,
-      Optimistic: 1.1,
-    };
-
-    return campusFactor[campus] * scenarioFactor[scenario];
-  }, [campus, scenario]);
+    return campusFactor[campus];
+  }, [campus]);
 
   const metrics = [
     {
@@ -274,7 +263,6 @@ export function FinancialForecasts() {
     <section className="finance-overview financial-forecast">
       <div className="financial-forecast__filters">
         <label>
-  
           <select
             value={campus}
             onChange={(event) => {
@@ -293,7 +281,6 @@ export function FinancialForecasts() {
         </label>
 
         <label>
-        
           <select
             value={section}
             onChange={(event) =>
@@ -307,11 +294,7 @@ export function FinancialForecasts() {
             ))}
           </select>
         </label>
-
-        
       </div>
-
-      
 
       <div className="financial-forecast__metrics">
         {metrics.map((metric) => {
@@ -613,8 +596,6 @@ export function FinancialForecasts() {
           </div>
         </article>
       </div>
-
-      
     </section>
   );
 }
