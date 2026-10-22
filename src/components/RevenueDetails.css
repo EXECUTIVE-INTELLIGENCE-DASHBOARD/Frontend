@@ -921,8 +921,8 @@
 [data-theme="dark"] .revenue-reporting,
 [data-theme="dark"] .revenue-summary__card,
 [data-theme="dark"] .revenue-panel {
-  background: var(--color-surface, #283F7D);
-  border-color: var(--color-border, #3A528C);
+  background: var(--color-surface, #2d3c8f);
+  border-color: var(--color-border, #3f4b92);
 }
 
 [data-theme="dark"] .revenue-summary__card:hover {
@@ -949,13 +949,13 @@
 
 [data-theme="dark"] .revenue-reporting__controls select {
   color: var(--color-heading, #f5f5f5);
-  background: var(--color-surface, #283F7D);
-  border-color: var(--color-border, #3A528C);
+  background: var(--color-surface, #2d3c8f);
+  border-color: var(--color-border, #3f4b92);
 }
 
 [data-theme="dark"] .revenue-reporting__controls option {
   color: var(--color-heading, #f5f5f5);
-  background: var(--color-surface, #283F7D);
+  background: var(--color-surface, #2d3c8f);
 }
 
 [data-theme="dark"] .revenue-summary__badge,
@@ -965,8 +965,8 @@
 [data-theme="dark"] .revenue-ageing__item,
 [data-theme="dark"] .revenue-board-actions__status,
 [data-theme="dark"] .streams-panel__count {
-  background: var(--color-surface-subtle, #243A73);
-  border-color: var(--color-border-soft, #334A7F);
+  background: var(--color-surface-subtle, #2a3784);
+  border-color: var(--color-border-soft, #394484);
 }
 
 [data-theme="dark"] .revenue-panel__icon,
@@ -997,16 +997,16 @@
 
 [data-theme="dark"] .campus-table th {
   color: var(--color-text-soft, #b0b8ca);
-  background: var(--color-surface-subtle, #243A73);
+  background: var(--color-surface-subtle, #2a3784);
 }
 
 [data-theme="dark"] .campus-table td,
 [data-theme="dark"] .revenue-board-actions__item {
-  border-bottom-color: var(--color-border-soft, #334A7F);
+  border-bottom-color: var(--color-border-soft, #394484);
 }
 
 [data-theme="dark"] .campus-table tbody tr:hover {
-  background: var(--color-surface-subtle, #243A73);
+  background: var(--color-surface-subtle, #2a3784);
 }
 
 [data-theme="dark"] .campus-collection__track,

@@ -20,12 +20,18 @@ describe("Hero", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the current date", () => {
+  it("renders today's date", () => {
     renderHero();
 
-    expect(
-      screen.getByText("01 August, 2026"),
-    ).toBeInTheDocument();
+    // The header date is generated at render time, so compare against the
+    // same formatter rather than a frozen string.
+    const expected = new Date().toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+
+    expect(screen.getByText(expected)).toBeInTheDocument();
   });
 
   it("renders the search field", () => {

@@ -4,10 +4,8 @@ import {
   Activity,
   AlertTriangle,
   ArrowDownRight,
-  ArrowUpRight,
   Banknote,
   CircleDollarSign,
-  ShieldCheck,
   TrendingUp,
 } from "lucide-react";
 import {
@@ -207,28 +205,24 @@ export function FinancialForecasts() {
     {
       label: "Projected Revenue",
       value: formatMoney(Math.round(620 * multiplier)),
-      note: "Full-year estimate",
       icon: TrendingUp,
       tone: "green",
     },
     {
       label: "Projected Expenditure",
       value: formatMoney(Math.round(408 * multiplier)),
-      note: "Operating and planned costs",
       icon: CircleDollarSign,
       tone: "blue",
     },
     {
       label: "Forecast Surplus",
       value: formatMoney(Math.round(212 * multiplier)),
-      note: "Revenue less expenditure",
       icon: Banknote,
       tone: "purple",
     },
     {
       label: "Expected Closing Cash",
       value: formatMoney(Math.round(387 * multiplier)),
-      note: "Illustrative year-end position",
       icon: Activity,
       tone: "amber",
     },
@@ -318,9 +312,7 @@ export function FinancialForecasts() {
                 <strong className="finance-overview__metric-value">
                   {metric.value}
                 </strong>
-                <span className="financial-forecast__metric-note">
-                  {metric.note}
-                </span>
+                
               </div>
             </article>
           );
@@ -501,12 +493,7 @@ export function FinancialForecasts() {
             </ResponsiveContainer>
           </div>
 
-          <div className="financial-forecast__cash-note">
-            <ArrowUpRight size={16} />
-            <span>
-              Illustrative cash balance trends upward in this scenario.
-            </span>
-          </div>
+          
         </article>
       </div>
 
@@ -587,13 +574,7 @@ export function FinancialForecasts() {
             ))}
           </div>
 
-          <div className="financial-forecast__review-note">
-            <ShieldCheck size={17} />
-            <p>
-              Review forecasts against actual collections and approved
-              expenditure each month.
-            </p>
-          </div>
+          
         </article>
       </div>
     </section>
