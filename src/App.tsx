@@ -11,7 +11,6 @@ import { ExecutiveOverview } from "./pages/ExecutiveOverview/ExecutiveOverview";
 import { LibraryResourceUsage } from "./pages/LibraryResourceUsage/LibraryResourceUsage";
 import { MyChildProgress } from "./pages/MyChildProgress/MyChildProgress";
 import { PlaceholderPage } from "./pages/Placeholder/PlaceholderPage";
-import { StudentEnrollment } from "./pages/StudentEnrollment/StudentEnrollment";
 import { AttendanceRates } from "./pages/AttendanceRates/AttendanceRates";
 import { Revenue } from "./pages/Revenue";
 import { Liabilities } from "./pages/Liabilities/Liabilities";
@@ -38,7 +37,6 @@ const pages: Record<string, ReactElement> = {
   /* Overview + academic group */
   overview: <ExecutiveOverview />,
   "academics-overview": <AcademicOverview />,
-  "student-enrollment": <StudentEnrollment />,
   "admissions-enrollment": <AdmissionsEnrollment />,
   "academic-performance": <AcademicPerformance />,
   "parent-access": <MyChildProgress />,
