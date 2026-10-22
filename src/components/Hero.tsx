@@ -13,6 +13,18 @@ interface HeroProps {
 export function Hero({ onSelectPage }: HeroProps) {
   const { theme, setTheme } = useTheme();
 
+  // The header date is live, so a tab left open overnight does not go stale.
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [isListening, setIsListening] = useState(false);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDate(new Date());
+    }, 60_000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -23,6 +35,61 @@ export function Hero({ onSelectPage }: HeroProps) {
   const isDark = theme === "dark";
   const results = searchNavigation(query);
   const showResults = searchOpen && query.trim().length > 0;
+
+  function startVoiceSearch() {
+    type SpeechRecognitionInstance = {
+      lang: string;
+      interimResults: boolean;
+      maxAlternatives: number;
+      onresult:
+        | ((event: {
+            results: ArrayLike<ArrayLike<{ transcript: string }>>;
+          }) => void)
+        | null;
+      onerror: (() => void) | null;
+      onend: (() => void) | null;
+      start: () => void;
+    };
+
+    type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance;
+
+    const speechWindow = window as Window & {
+      SpeechRecognition?: SpeechRecognitionConstructor;
+      webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    };
+
+    const SpeechRecognitionAPI =
+      speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
+
+    if (!SpeechRecognitionAPI) {
+      window.alert("Voice search is not supported. Please try Chrome.");
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognitionAPI();
+
+      recognition.lang = "en-UG";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onresult = (event) => {
+        setQuery(event.results[0][0].transcript);
+        setSearchOpen(true);
+      };
+
+      recognition.onerror = () => setIsListening(false);
+      recognition.onend = () => setIsListening(false);
+
+      setIsListening(true);
+      recognition.start();
+    } catch {
+      setIsListening(false);
+      window.alert(
+        "Could not start voice search. Check microphone permissions.",
+      );
+    }
+  }
 
   // Close the popovers when the user clicks away.
   useEffect(() => {
@@ -76,7 +143,13 @@ export function Hero({ onSelectPage }: HeroProps) {
       {/* Page information */}
       <div className="hero__page-info">
         <h1 className="hero__title">Dashboard</h1>
-        <p className="hero__date">01 August, 2026</p>
+        <p className="hero__date">
+          {currentDate.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          })}
+        </p>
       </div>
 
       {/* Search */}
@@ -118,7 +191,10 @@ export function Hero({ onSelectPage }: HeroProps) {
         <button
           className="hero__search-mic"
           type="button"
-          aria-label="Voice search"
+          onClick={startVoiceSearch}
+          aria-label={isListening ? "Listening..." : "Voice search"}
+          aria-pressed={isListening}
+          title={isListening ? "Listening..." : "Voice search"}
         >
           <Mic size={15} aria-hidden="true" />
         </button>
