@@ -496,12 +496,12 @@
 
 /* =========================================
    DARK THEME
-   Brand navy so the header blends with the
+   Indigo navy so the header blends with the
    sidebar instead of sitting on its own shade.
    ========================================= */
 
 [data-theme="dark"] .hero {
-  background: #203468;
+  background: #263278;
 }
 
 [data-theme="dark"] .hero__title,
@@ -519,12 +519,12 @@
 [data-theme="dark"] .hero__notify,
 [data-theme="dark"] .hero__theme-toggle,
 [data-theme="dark"] .hero__profile {
-  background: #203468;
-  border-color: #3a528c;
+  background: #263278;
+  border-color: #3f4b92;
 }
 
 [data-theme="dark"] .hero__notify-badge {
-  border-color: #203468;
+  border-color: #263278;
 }
 
 [data-theme="dark"] .hero__search-input {
@@ -542,12 +542,12 @@
 [data-theme="dark"] .hero__avatar,
 [data-theme="dark"] .hero__profile-avatar {
   background: #f5f5f5;
-  color: #203468;
+  color: #263278;
 }
 
 [data-theme="dark"] .hero__notify:hover,
 [data-theme="dark"] .hero__theme-button:hover {
-  background: #3a528c;
+  background: #3f4b92;
 }
 
 [data-theme="dark"]
@@ -563,13 +563,13 @@
 }
 
 [data-theme="dark"] .hero__profile-panel {
-  background: #283f7d;
-  border-color: #3a528c;
+  background: #2d3c8f;
+  border-color: #3f4b92;
   color: #edf2ff;
 }
 
 [data-theme="dark"] .hero__profile-head {
-  border-color: #3a528c;
+  border-color: #3f4b92;
 }
 
 [data-theme="dark"] .hero__profile-name {
@@ -586,8 +586,8 @@
 }
 
 [data-theme="dark"] .hero__search-results {
-  background: #283f7d;
-  border-color: #3a528c;
+  background: #2d3c8f;
+  border-color: #3f4b92;
   color: #edf2ff;
 }
 
@@ -602,7 +602,7 @@
 
 [data-theme="dark"] .hero__search-result:hover,
 [data-theme="dark"] .hero__search-result:focus-visible {
-  background: #3a528c;
+  background: #3f4b92;
 }
 
 [data-theme="dark"] .hero__search-empty {

@@ -102,20 +102,20 @@ p {
   color-scheme: dark;
 
   /* Surfaces — one indigo ramp built on the brand navy.
-     `--color-bg` is exactly #203468 = hsl(231 52% 31%).
+     `--color-bg` is exactly #263278 = hsl(231 52% 31%).
      Every step keeps the same relative spacing as before, so cards still sit
      clearly above the page instead of sinking into it. */
-  --color-bg: #203468;
-  --color-surface: #283F7D;
-  --color-surface-subtle: #243A73;
-  --color-surface-muted: #243A73;
-  --color-surface-hover: #2F4A8F;
-  --color-surface-tint: #2F4A8F;
+  --color-bg: #263278;
+  --color-surface: #2d3c8f;
+  --color-surface-subtle: #2a3784;
+  --color-surface-muted: #2a3784;
+  --color-surface-hover: #31419b;
+  --color-surface-tint: #31419b;
 
   /* Borders */
-  --color-border: #3A528C;
-  --color-border-soft: #334A7F;
-  --color-border-strong: #4662A4;
+  --color-border: #3f4b92;
+  --color-border-soft: #394484;
+  --color-border-strong: #4b5aaf;
 
   /* Text */
   --color-heading: #f5f5f5;
@@ -128,7 +128,7 @@ p {
   /* Accent */
   --color-accent: #2aa4dd;
   --color-accent-strong: #4fb8e8;
-  --color-accent-soft: #283F7D;
+  --color-accent-soft: #2d3c8f;
 
   /* Feedback */
   --color-positive: #4ade80;
@@ -136,7 +136,7 @@ p {
   --color-warning-soft: #3a2f10;
   --color-critical: #f87171;
   --color-danger: #f87171;
-  --color-track: #283F7D;
+  --color-track: #2d3c8f;
 
   /* Elevation */
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35);
@@ -151,11 +151,11 @@ p {
   --chart-gradient-to: #2aa4dd;
 
   color: #f5f5f5;
-  background: #203468;
+  background: #263278;
 }
 
 [data-theme="dark"] body {
-  background: #203468;
+  background: #263278;
   color: #f5f5f5;
 }
 

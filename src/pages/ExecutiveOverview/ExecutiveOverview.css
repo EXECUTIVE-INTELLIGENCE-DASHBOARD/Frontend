@@ -665,7 +665,7 @@
 /* ------------------------------------------------------------ Dark theme */
 
 [data-theme="dark"] .eo-metric--blue {
-  --tone-soft: #283F7D;
+  --tone-soft: #2d3c8f;
   --tone-text: #9adcf5;
 }
 
