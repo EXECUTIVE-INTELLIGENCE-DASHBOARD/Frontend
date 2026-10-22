@@ -120,9 +120,9 @@ const formatPercent = (value: number) => `${value.toFixed(1)}%`;
 
 
 const chartColours = [
-  "#203468", // Brand Dark Navy
-  "#F1BA1B", // Brand Gold
-  "#2AA4DD", // Brand Light Blue
+  "#203468", 
+  "#F1BA1B", 
+  "#2AA4DD", 
   "#7C83DB",
   "#4e8de6",
   "#C38B65",
@@ -301,9 +301,7 @@ const availableSections = sectionsByCampus[campus];
             <strong className="finance-overview__metric-value">
               {formatAmount(totals.actual)}
             </strong>
-            <span className="finance-overview__metric-note">
-              Across selected cost centres
-            </span>
+            
           </div>
         </article>
 
@@ -318,9 +316,7 @@ const availableSections = sectionsByCampus[campus];
             <strong className="finance-overview__metric-value">
               {filteredDepartments.length}
             </strong>
-            <span className="finance-overview__metric-note">
-              In the selected campus scope
-            </span>
+            
           </div>
         </article>
 
@@ -335,9 +331,7 @@ const availableSections = sectionsByCampus[campus];
             <strong className="finance-overview__metric-value">
               {formatPercent(totals.utilisation)}
             </strong>
-            <span className="finance-overview__metric-note">
-              Actual expenditure ÷ allocated budget
-            </span>
+            
           </div>
         </article>
 
