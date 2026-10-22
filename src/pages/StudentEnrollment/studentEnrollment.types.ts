@@ -1,4 +1,5 @@
-export type CampusId = "kibuli" | "buwaate" | "annex";
+/** The campus key sent by the backend, for example "kibuli". */
+export type CampusId = string;
 
 export type TierId = "nursery" | "primary" | "olevel" | "alevel";
 

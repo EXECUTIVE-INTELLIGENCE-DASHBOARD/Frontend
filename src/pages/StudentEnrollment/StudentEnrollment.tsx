@@ -7,11 +7,10 @@ import {
 } from "lucide-react";
 
 import {
-  allCampusesLabel,
-  campusOptions,
   formatNumber,
   formatPercent,
-  summaryFor,
+  toSummary,
+  useEnrollmentDashboard,
 } from "./studentEnrollment.data";
 import { CampusEnrollmentCard } from "./CampusEnrollmentCard";
 import { EnrollmentTierCard } from "./EnrollmentTierCard";
@@ -20,9 +19,16 @@ import { SummaryMetricCard } from "./SummaryMetricCard";
 import "./StudentEnrollment.css";
 
 export function StudentEnrollment() {
-  const [campus, setCampus] = useState(allCampusesLabel);
+  // The campus key from the backend (for example "kibuli"); "" means all.
+  const [campus, setCampus] = useState("");
 
-  const summary = summaryFor(campus);
+  const { data, campusOptions, isLoading, error, refetch } =
+    useEnrollmentDashboard(campus);
+
+  const scopeLabel = campus
+    ? (campusOptions.find((option) => option.value === campus)?.label ?? campus)
+    : null;
+  const summary = data ? toSummary(data, scopeLabel) : null;
 
   return (
     <div className="se-page">
@@ -39,9 +45,10 @@ export function StudentEnrollment() {
               value={campus}
               onChange={(event) => setCampus(event.target.value)}
             >
+              <option value="">All Campuses</option>
               {campusOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
+                <option key={option.value} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>
@@ -55,31 +62,48 @@ export function StudentEnrollment() {
         </div>
       </div>
 
+      {error && (
+        <p role="alert">
+          {error.message}{" "}
+          <button type="button" onClick={() => refetch()}>
+            Try again
+          </button>
+        </p>
+      )}
+
+      {isLoading && (
+        <p role="status">
+          Loading student enrolment data....
+        </p>
+      )}
+
       <div className="se-metrics">
         <SummaryMetricCard
           label="Total Active Enrolment"
-          value={formatNumber(summary.total)}
-          unit="Students"
+          value={data ? formatNumber(data.summary.total_active_enrolment) : "—"}
+          unit={data ? "Students" : undefined}
           icon={Users}
         />
 
         <SummaryMetricCard
           label="Admissions Conversion"
-          value={formatPercent(summary.conversion)}
+          value={formatPercent(data?.summary.admissions_conversion)}
           icon={TrendingUp}
         />
 
         <SummaryMetricCard
           label="Capacity Utilization"
-          value={formatPercent(summary.utilization)}
+          value={formatPercent(data?.summary.capacity_utilisation)}
           icon={Building2}
         />
       </div>
 
-      <div className="se-grid">
-        <CampusEnrollmentCard summary={summary} />
-        <EnrollmentTierCard summary={summary} />
-      </div>
+      {summary && data && (
+        <div className="se-grid">
+          <CampusEnrollmentCard summary={summary} />
+          <EnrollmentTierCard pipeline={data.pipeline} />
+        </div>
+      )}
     </div>
   );
 }

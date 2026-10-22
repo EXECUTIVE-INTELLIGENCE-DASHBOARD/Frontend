@@ -1,75 +1,29 @@
-import {
-  formatNumber,
-  formatPercent,
-} from "./studentEnrollment.data";
-import type { EnrollmentSummary } from "./studentEnrollment.types";
+import { formatNumber, formatPercent } from "./studentEnrollment.data";
+import type { EnrollmentStage } from "./studentEnrollment.data";
 
 interface EnrollmentTierCardProps {
-  summary: EnrollmentSummary;
+  pipeline: EnrollmentStage[];
 }
 
-export function EnrollmentTierCard({
-  summary,
-}: EnrollmentTierCardProps) {
-  const { tiers } = summary;
+// Funnel colours from the design; extra stages reuse the last colour.
+const STAGE_COLORS = ["#243B70", "#2AA4DD", "#79CFF0", "#F1BA1B", "#2F9E6B"];
 
-  // Adapt the existing tier data to the application funnel.
-  // Replace these mappings with actual pipeline data when available.
-  const total = tiers.reduce((sum, tier) => sum + tier.value, 0);
+export function EnrollmentTierCard({ pipeline }: EnrollmentTierCardProps) {
+  // Every figure comes from the backend's admissions pipeline.
+  const stages = pipeline.map((stage, index) => ({
+    id: index === 0 ? "applications" : stage.stage,
+    label: index === 0 ? "Applications" : stage.label,
+    value: stage.count,
+    percentage: stage.rate ?? 0,
+    color: STAGE_COLORS[Math.min(index, STAGE_COLORS.length - 1)],
+  }));
 
-  const stages = [
-    {
-      id: "applications",
-      label: "Applications",
-      value: total,
-      percentage: 100,
-      color: "#243B70",
-    },
-    {
-      id: "qualified",
-      label: "Qualified",
-      value: Math.round(total * 0.509),
-      percentage: 50.9,
-      color: "#2AA4DD",
-    },
-    {
-      id: "interviewed",
-      label: "Interviewed",
-      value: Math.round(total * 0.182),
-      percentage: 18.2,
-      color: "#79CFF0",
-    },
-    {
-      id: "accepted",
-      label: "Accepted",
-      value: Math.round(total * 0.124),
-      percentage: 12.4,
-      color: "#F1BA1B",
-    },
-  ];
-
-  const summaryItems = [
-    {
-      label: "Total",
-      value: formatNumber(stages[0].value),
-      color: stages[0].color,
-    },
-    {
-      label: "Qualified",
-      value: `${formatPercent(stages[1].percentage / 100)}`,
-      color: stages[1].color,
-    },
-    {
-      label: "Interviewed",
-      value: `${formatPercent(stages[2].percentage / 100)}`,
-      color: stages[2].color,
-    },
-    {
-      label: "Accepted",
-      value: `${formatPercent(stages[3].percentage / 100)}`,
-      color: stages[3].color,
-    },
-  ];
+  const summaryItems = stages.map((stage, index) => ({
+    label: index === 0 ? "Total" : stage.label,
+    value:
+      index === 0 ? formatNumber(stage.value) : formatPercent(stage.percentage),
+    color: stage.color,
+  }));
 
   return (
     <section className="se-card se-funnel" aria-labelledby="se-tier-title">
@@ -78,54 +32,55 @@ export function EnrollmentTierCard({
           Enrollment &amp; Pipeline
         </h2>
 
-        <p className="se-funnel__subtitle">
-          Application Conversion Funnel
-        </p>
+        <p className="se-funnel__subtitle">Application Conversion Funnel</p>
       </header>
 
-      <div
-        className="se-funnel__stages"
-        role="img"
-        aria-label="Application conversion funnel"
-      >
-        {stages.map((stage) => (
+      {stages.length === 0 ? (
+        <p className="se-funnel__subtitle">
+          No applications for this term yet.
+        </p>
+      ) : (
+        <>
           <div
-            key={stage.id}
-            className={`se-funnel__stage se-funnel__stage--${stage.id}`}
-            style={{
-              width: `${Math.max(stage.percentage, 25)}%`,
-              backgroundColor: stage.color,
-            }}
+            className="se-funnel__stages"
+            role="img"
+            aria-label="Application conversion funnel"
           >
-            <span>
-              {formatNumber(stage.value)}{" "}
-              {stage.id === "applications"
-                ? "Applications"
-                : stage.label}
-            </span>
+            {stages.map((stage) => (
+              <div
+                key={stage.id}
+                className={`se-funnel__stage se-funnel__stage--${stage.id}`}
+                style={{
+                  width: `${Math.max(stage.percentage, 25)}%`,
+                  backgroundColor: stage.color,
+                }}
+              >
+                <span>
+                  {formatNumber(stage.value)} {stage.label}
+                </span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      <footer className="se-funnel__footer">
-        <ul className="se-funnel__summary">
-          {summaryItems.map((item) => (
-            <li key={item.label} className="se-funnel__summary-item">
-              <span
-                className="se-funnel__dot"
-                style={{ backgroundColor: item.color }}
-                aria-hidden="true"
-              />
+          <footer className="se-funnel__footer">
+            <ul className="se-funnel__summary">
+              {summaryItems.map((item) => (
+                <li key={item.label} className="se-funnel__summary-item">
+                  <span
+                    className="se-funnel__dot"
+                    style={{ backgroundColor: item.color }}
+                    aria-hidden="true"
+                  />
 
-              <span className="se-funnel__summary-label">
-                {item.label}
-              </span>
+                  <span className="se-funnel__summary-label">{item.label}</span>
 
-              <strong>{item.value}</strong>
-            </li>
-          ))}
-        </ul>
-      </footer>
+                  <strong>{item.value}</strong>
+                </li>
+              ))}
+            </ul>
+          </footer>
+        </>
+      )}
     </section>
   );
 }

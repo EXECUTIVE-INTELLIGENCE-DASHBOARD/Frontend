@@ -1,77 +1,98 @@
+
 import type {
   CampusKey,
   NationalityRow,
   RetentionSummary,
 } from "./studentRetention.types";
+import type { RetentionDashboardData } from "./studentRetention.api";
 
 export const allCampusesLabel = "All Campuses";
 
-export const campuses: Array<{ key: CampusKey; label: string; short: string }> =
-  [
-    { key: "kibuli", label: "Kibuli Main Campus", short: "Kibuli" },
-    { key: "buwaate", label: "Buwaate Campus", short: "Buwaate" },
-    { key: "annex", label: "Annex / Preschool Branch", short: "Annex" },
-  ];
-
-/** Rows at or above this retention rate are highlighted in blue. */
-export const retentionTarget = 88;
-
-/* Rows come from the design reference. */
-export const nationalities: NationalityRow[] = [
-  { id: "ugandan", nationality: "Ugandan", campus: "kibuli", reEnrolled: 1100, retention: 88.0 },
-  { id: "kenyan", nationality: "Kenyan", campus: "buwaate", reEnrolled: 390, retention: 86.7 },
-  { id: "rwandese", nationality: "Rwandese", campus: "buwaate", reEnrolled: 220, retention: 88.0 },
-  { id: "south-sudanese", nationality: "South Sudanese & Other Intl", campus: "buwaate", reEnrolled: 90, retention: 90.0 },
+export const campuses: Array<{
+  key: CampusKey;
+  label: string;
+  short: string;
+}> = [
+  { key: "kibuli", label: "Kibuli Main Campus", short: "Kibuli" },
+  { key: "buwaate", label: "Buwaate Campus", short: "Buwaate" },
+  { key: "annex", label: "Annex / Preschool Branch", short: "Annex" },
 ];
 
-/*
- * Sample figures per campus. The three campuses add up to the
- * "All Campuses" figures in the design reference: 1,200 re-enrolled
- * (720 girls and 480 boys) and 150 at risk.
- */
-const summaryByCampus: Record<CampusKey, RetentionSummary> = {
-  kibuli: { reEnrolled: 600, rate: 89.2, atRisk: 75, girls: 360, boys: 240 },
-  buwaate: { reEnrolled: 450, rate: 87.6, atRisk: 60, girls: 270, boys: 180 },
-  annex: { reEnrolled: 150, rate: 88.0, atRisk: 15, girls: 90, boys: 60 },
-};
-
-const allCampusesRate = 88.5;
-
-const campusFor = (label: string) =>
-  campuses.find((campus) => campus.label === label);
+export const retentionTarget = 88;
 
 export const campusShortName = (key: CampusKey) =>
   campuses.find((campus) => campus.key === key)?.short ?? key;
 
-export const formatNumber = (value: number) => value.toLocaleString("en-US");
+export const formatNumber = (value: number) =>
+  value.toLocaleString("en-US");
 
-/** The nationality rows for a campus. "All Campuses" shows every row. */
-export function rowsForCampus(label: string): NationalityRow[] {
-  const campus = campusFor(label);
+function getCampusKey(value: string, display: string): CampusKey {
+  const text = `${value} ${display}`.toLowerCase();
 
-  return campus
-    ? nationalities.filter((row) => row.campus === campus.key)
-    : nationalities;
+  if (text.includes("buwaate")) return "buwaate";
+  if (text.includes("annex") || text.includes("preschool")) return "annex";
+  return "kibuli";
 }
 
-/** The headline figures for a campus. "All Campuses" adds the campuses up. */
-export function summaryForCampus(label: string): RetentionSummary {
-  const campus = campusFor(label);
+function matchesCampus(
+  row: RetentionDashboardData["by_nationality"][number],
+  selectedCampus: CampusKey,
+): boolean {
+  return getCampusKey(row.campus, row.campus_display) === selectedCampus;
+}
 
-  if (campus) {
-    return summaryByCampus[campus.key];
-  }
-
-  const total = Object.values(summaryByCampus).reduce<RetentionSummary>(
-    (sum, item) => ({
-      reEnrolled: sum.reEnrolled + item.reEnrolled,
-      rate: allCampusesRate,
-      atRisk: sum.atRisk + item.atRisk,
-      girls: sum.girls + item.girls,
-      boys: sum.boys + item.boys,
-    }),
-    { reEnrolled: 0, rate: allCampusesRate, atRisk: 0, girls: 0, boys: 0 },
+export function rowsForCampus(
+  data: RetentionDashboardData,
+  label: string,
+): NationalityRow[] {
+  const selectedCampus = campuses.find(
+    (campus) => campus.label === label,
   );
 
-  return total;
+  return data.by_nationality
+    .filter(
+      (row) =>
+        !selectedCampus ||
+        matchesCampus(row, selectedCampus.key),
+    )
+    .map((row, index) => ({
+      id: `${row.nationality}-${row.campus}-${index}`,
+      nationality: row.nationality,
+      campus: getCampusKey(row.campus, row.campus_display),
+      reEnrolled: row.re_enrolled,
+      retention: row.retention_rate ?? 0,
+    }));
+}
+
+export function summaryForCampus(
+  data: RetentionDashboardData,
+  label: string,
+): RetentionSummary {
+  const selectedCampus = campuses.find(
+    (campus) => campus.label === label,
+  );
+
+  const rows = data.by_nationality.filter(
+    (row) =>
+      !selectedCampus ||
+      matchesCampus(row, selectedCampus.key),
+  );
+
+  const reEnrolled = selectedCampus
+    ? rows.reduce((total, row) => total + row.re_enrolled, 0)
+    : data.summary.total_re_enrolled;
+
+  const eligible = selectedCampus
+    ? rows.reduce((total, row) => total + row.eligible, 0)
+    : data.summary.eligible_to_return;
+
+  return {
+    reEnrolled,
+    rate: eligible
+      ? Math.round((reEnrolled / eligible) * 1000) / 10
+      : 0,
+    atRisk: data.summary.at_risk,
+    girls: 0,
+    boys: 0,
+  };
 }

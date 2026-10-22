@@ -1,20 +1,84 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { StudentRetention } from "./StudentRetention";
-import {
-  allCampusesLabel,
-  campuses,
-  rowsForCampus,
-  summaryForCampus,
-} from "./studentRetention.data";
+import type { RetentionDashboardData } from "./studentRetention.api";
+import { fetchStudentRetention } from "./studentRetention.api";
+
+vi.mock("./studentRetention.api", () => ({
+  fetchStudentRetention: vi.fn(),
+}));
+
+const mockRetentionData = {
+  summary: {
+    total_re_enrolled: 1200,
+    eligible_to_return: 1356,
+    at_risk: 150,
+  },
+  by_nationality: [
+    {
+      nationality: "Ugandan",
+      campus: "kibuli",
+      campus_display: "Kibuli Main Campus",
+      re_enrolled: 1100,
+      eligible: 1250,
+      retention_rate: 88.0,
+    },
+    {
+      nationality: "South Sudanese & Other Intl",
+      campus: "buwaate",
+      campus_display: "Buwaate Campus",
+      re_enrolled: 90,
+      eligible: 100,
+      retention_rate: 90.0,
+    },
+    {
+      nationality: "Kenyan",
+      campus: "buwaate",
+      campus_display: "Buwaate Campus",
+      re_enrolled: 200,
+      eligible: 230,
+      retention_rate: 86.7,
+    },
+    {
+      nationality: "Other Nationalities",
+      campus: "buwaate",
+      campus_display: "Buwaate Campus",
+      re_enrolled: 160,
+      eligible: 183,
+      retention_rate: 87.4,
+    },
+  ],
+} as RetentionDashboardData;
+
+beforeEach(() => {
+  vi.mocked(fetchStudentRetention).mockResolvedValue(mockRetentionData);
+});
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
+
+const renderDashboard = async () => {
+  render(<StudentRetention />);
+
+  await waitFor(() => {
+    expect(fetchStudentRetention).toHaveBeenCalledTimes(1);
+  });
+
+  expect(
+    await screen.findByText("Total Re-enrolled Students"),
+  ).toBeInTheDocument();
+};
 
 const cellsOf = (row: HTMLElement) =>
   within(row)
     .getAllByRole("cell")
     .map((cell) => cell.textContent);
 
-const chooseCampus = (from: string, to: string) => {
+const chooseCampus = async (from: string, to: string) => {
   const campusSelect = screen.getByRole("combobox", {
     name: "Campus",
   });
@@ -24,11 +88,41 @@ const chooseCampus = (from: string, to: string) => {
   fireEvent.change(campusSelect, {
     target: { value: to },
   });
+
+  await waitFor(() => {
+    expect(campusSelect).toHaveValue(to);
+  });
 };
 
-describe("StudentRetention", () => {
-  it("shows the shared campus filter", () => {
+describe("StudentRetention API", () => {
+  it("fetches retention data when the dashboard loads", async () => {
+    await renderDashboard();
+
+    expect(fetchStudentRetention).toHaveBeenCalledTimes(1);
+    expect(
+      await screen.findByText("Total Re-enrolled Students"),
+    ).toBeInTheDocument();
+    expect(await screen.findByText("1,200")).toBeInTheDocument();
+    expect(await screen.findByText("88.5%")).toBeInTheDocument();
+    expect(await screen.findByText("150")).toBeInTheDocument();
+  });
+
+  it("displays an error when the API request fails", async () => {
+    vi.mocked(fetchStudentRetention).mockRejectedValueOnce(
+      new Error("Request failed"),
+    );
+
     render(<StudentRetention />);
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Unable to load retention data: Request failed",
+    );
+  });
+});
+
+describe("StudentRetention", () => {
+  it("shows the shared campus filter", async () => {
+    await renderDashboard();
 
     expect(
       screen.getByRole("combobox", { name: "Campus" }),
@@ -53,8 +147,8 @@ describe("StudentRetention", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the three headline cards for all campuses", () => {
-    render(<StudentRetention />);
+  it("renders the three headline cards from the API response", async () => {
+    await renderDashboard();
 
     const cards = screen.getAllByRole("article");
 
@@ -72,8 +166,8 @@ describe("StudentRetention", () => {
     });
   });
 
-  it("lists retention by nationality", () => {
-    render(<StudentRetention />);
+  it("lists retention by nationality using the API response", async () => {
+    await renderDashboard();
 
     expect(
       screen.getByRole("heading", {
@@ -81,7 +175,6 @@ describe("StudentRetention", () => {
       }),
     ).toBeInTheDocument();
 
-    // One header row plus four nationalities.
     expect(screen.getAllByRole("row")).toHaveLength(5);
 
     expect(cellsOf(screen.getByRole("row", { name: /Ugandan/ }))).toEqual([
@@ -92,7 +185,11 @@ describe("StudentRetention", () => {
     ]);
 
     expect(
-      cellsOf(screen.getByRole("row", { name: /South Sudanese/ })),
+      cellsOf(
+        screen.getByRole("row", {
+          name: /South Sudanese/,
+        }),
+      ),
     ).toEqual([
       "South Sudanese & Other Intl",
       "Buwaate",
@@ -101,20 +198,23 @@ describe("StudentRetention", () => {
     ]);
   });
 
-  it("highlights rates on target and leaves the others grey", () => {
-    render(<StudentRetention />);
+  it("highlights rates on target and leaves the others grey", async () => {
+    await renderDashboard();
 
     const ugandan = screen.getByRole("row", { name: /Ugandan/ });
     const kenyan = screen.getByRole("row", { name: /Kenyan/ });
 
-    expect(within(ugandan).getByText("88.0%")).toHaveClass("sr-pill--good");
+    expect(within(ugandan).getByText("88.0%")).toHaveClass(
+      "sr-pill--good",
+    );
+
     expect(within(kenyan).getByText("86.7%")).not.toHaveClass(
       "sr-pill--good",
     );
   });
 
-  it("shows the reasons for withdrawal card", () => {
-    render(<StudentRetention />);
+  it("shows the reasons for withdrawal card", async () => {
+    await renderDashboard();
 
     const heading = screen.getByRole("heading", {
       name: "Reasons for Withdrawal",
@@ -153,20 +253,18 @@ describe("StudentRetention", () => {
     ).toBeInTheDocument();
   });
 
-  it("changes the figures and rows when a campus is selected", () => {
-    render(<StudentRetention />);
+  it("updates the figures and nationality rows when a campus is selected", async () => {
+    await renderDashboard();
 
-    chooseCampus("All Campuses", "Buwaate Campus");
+    await chooseCampus("All Campuses", "Buwaate Campus");
 
     const cards = screen.getAllByRole("article");
 
     expect(within(cards[0]).getByText("450")).toBeInTheDocument();
-    expect(within(cards[1]).getByText("87.6%")).toBeInTheDocument();
-    expect(within(cards[2]).getByText("60")).toBeInTheDocument();
+    expect(within(cards[1]).getByText("87.7%")).toBeInTheDocument();
+    expect(within(cards[2]).getByText("150")).toBeInTheDocument();
 
-    // Header row plus the three Buwaate nationalities.
     expect(screen.getAllByRole("row")).toHaveLength(4);
-
     expect(screen.queryByText("Ugandan")).not.toBeInTheDocument();
 
     expect(
@@ -174,10 +272,10 @@ describe("StudentRetention", () => {
     ).toHaveValue("Buwaate Campus");
   });
 
-  it("explains when a campus has no nationality rows", () => {
-    render(<StudentRetention />);
+  it("explains when a campus has no nationality rows", async () => {
+    await renderDashboard();
 
-    chooseCampus("All Campuses", "Annex / Preschool Branch");
+    await chooseCampus("All Campuses", "Annex / Preschool Branch");
 
     expect(
       screen.getByText(
@@ -186,40 +284,7 @@ describe("StudentRetention", () => {
     ).toBeInTheDocument();
 
     expect(
-      within(screen.getAllByRole("article")[0]).getByText("150"),
+      within(screen.getAllByRole("article")[0]).getByText("0"),
     ).toBeInTheDocument();
-  });
-});
-
-describe("student retention data", () => {
-  it("adds the campuses up to the all-campuses figures", () => {
-    const all = summaryForCampus(allCampusesLabel);
-    const parts = campuses.map((campus) => summaryForCampus(campus.label));
-
-    const sum = (pick: (s: typeof all) => number) =>
-      parts.reduce((total, part) => total + pick(part), 0);
-
-    expect(sum((s) => s.reEnrolled)).toBe(all.reEnrolled);
-    expect(sum((s) => s.atRisk)).toBe(all.atRisk);
-    expect(sum((s) => s.girls)).toBe(all.girls);
-    expect(sum((s) => s.boys)).toBe(all.boys);
-    expect(all.reEnrolled).toBe(1200);
-  });
-
-  it("keeps girls plus boys equal to the re-enrolled total for every campus", () => {
-    [allCampusesLabel, ...campuses.map((campus) => campus.label)].forEach(
-      (label) => {
-        const summary = summaryForCampus(label);
-
-        expect(summary.girls + summary.boys).toBe(summary.reEnrolled);
-      },
-    );
-  });
-
-  it("shows every row for all campuses and filters by campus", () => {
-    expect(rowsForCampus(allCampusesLabel)).toHaveLength(4);
-    expect(rowsForCampus("Kibuli Main Campus")).toHaveLength(1);
-    expect(rowsForCampus("Buwaate Campus")).toHaveLength(3);
-    expect(rowsForCampus("Annex / Preschool Branch")).toHaveLength(0);
   });
 });

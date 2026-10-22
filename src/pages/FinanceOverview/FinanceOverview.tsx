@@ -6,10 +6,6 @@ import {
   CircleDollarSign,
   Landmark,
   ShieldAlert,
-  ClipboardList,
-  Clock3,
-  PackageCheck,
-  Truck,
 } from "lucide-react";
 import {
   Bar,
@@ -132,8 +128,6 @@ const riskItems = [
       "Compare approved project budgets with actual expenditure, outstanding purchase commitments and delivery milestones before authorising further spending.",
   },
 ];
-
-
 
 const procurementStatusData = [
   { name: "Completed", value: 32, color: "#021559" },
@@ -312,8 +306,6 @@ export function FinanceOverview() {
         })}
       </section>
 
-      
-
       <section className="finance-overview__grid">
         <article className="finance-overview__panel">
           <div className="finance-overview__panel-heading">
@@ -345,13 +337,10 @@ export function FinanceOverview() {
 
             {budgetRows.map((row) => {
               const maxAmount = 900;
-              const budgetWidth =
-                (row.budget / maxAmount) * 100;
-              const actualWidth =
-                (row.actual / maxAmount) * 100;
+              const budgetWidth = (row.budget / maxAmount) * 100;
+              const actualWidth = (row.actual / maxAmount) * 100;
               const variance = row.actual - row.budget;
-              const percentage =
-                (row.actual / row.budget) * 100;
+              const percentage = (row.actual / row.budget) * 100;
 
               return (
                 <div
@@ -374,9 +363,7 @@ export function FinanceOverview() {
                       <div className="finance-overview__bar-track">
                         <div
                           className="finance-overview__bar finance-overview__bar--budget"
-                          style={{
-                            width: `${budgetWidth}%`,
-                          }}
+                          style={{ width: `${budgetWidth}%` }}
                         />
                       </div>
 
@@ -393,9 +380,7 @@ export function FinanceOverview() {
                       <div className="finance-overview__bar-track">
                         <div
                           className="finance-overview__bar finance-overview__bar--actual"
-                          style={{
-                            width: `${actualWidth}%`,
-                          }}
+                          style={{ width: `${actualWidth}%` }}
                         />
                       </div>
 
@@ -408,11 +393,7 @@ export function FinanceOverview() {
                   <div className="finance-overview__chart-variance">
                     <span>Variance (actual − budget)</span>
 
-                    <strong
-                      className={
-                        variance < 0 ? "is-favourable" : ""
-                      }
-                    >
+                    <strong className={variance < 0 ? "is-favourable" : ""}>
                       {variance < 0 ? "−" : "+"}
                       {formatAmount(variance)}
                     </strong>
@@ -491,13 +472,13 @@ export function FinanceOverview() {
               <h2>Purchase Order Activity</h2>
               <p>Orders raised versus completed each month</p>
             </div>
+
             <ReportingFilters
               year={budgetYear}
               term={budgetTerm}
               onYearChange={setBudgetYear}
               onTermChange={setBudgetTerm}
             />
-  
           </div>
 
           <div className="finance-overview__procurement-chart">
@@ -553,13 +534,13 @@ export function FinanceOverview() {
               <h2>Purchase Order Status</h2>
               <p>Illustrative distribution of order statuses</p>
             </div>
+
             <ReportingFilters
               year={budgetYear}
               term={budgetTerm}
               onYearChange={setBudgetYear}
               onTermChange={setBudgetTerm}
             />
-
           </div>
 
           <div className="finance-overview__status-layout">
@@ -617,6 +598,7 @@ export function FinanceOverview() {
               <h2>Supplier Performance</h2>
               <p>Illustrative on-time delivery indicators</p>
             </div>
+
             <ReportingFilters
               year={budgetYear}
               term={budgetTerm}
@@ -646,9 +628,7 @@ export function FinanceOverview() {
                         <div className="finance-overview__delivery-track">
                           <div
                             className="finance-overview__delivery-fill"
-                            style={{
-                              width: `${supplier.onTime}%`,
-                            }}
+                            style={{ width: `${supplier.onTime}%` }}
                           />
                         </div>
                       </div>
@@ -695,15 +675,9 @@ export function FinanceOverview() {
                 className={`finance-overview__risk-number finance-overview__risk-number--${index + 1}`}
               >
                 {index === 0 ? (
-                  <ArrowDownRight
-                    size={18}
-                    aria-hidden="true"
-                  />
+                  <ArrowDownRight size={18} aria-hidden="true" />
                 ) : (
-                  <ArrowUpRight
-                    size={18}
-                    aria-hidden="true"
-                  />
+                  <ArrowUpRight size={18} aria-hidden="true" />
                 )}
               </span>
 
