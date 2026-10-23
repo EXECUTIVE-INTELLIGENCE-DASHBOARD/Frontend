@@ -24,10 +24,6 @@ export const navigationItems: NavigationItem[] = [
     icon: GraduationCap,
     children: [
       {
-        id: "academics-overview",
-        label: "Overview",
-      },
-      {
         id: "admissions-enrollment",
         label: "Admissions & Enrolment",
       },
@@ -46,14 +42,6 @@ export const navigationItems: NavigationItem[] = [
       {
         id: "academic-performance",
         label: "Academic Performance",
-      },
-      {
-        id: "parent-access",
-        label: "My Child's Progress",
-      },
-      {
-        id: "library-resource-usage",
-        label: "Library & Resource Usage",
       },
     ],
   },

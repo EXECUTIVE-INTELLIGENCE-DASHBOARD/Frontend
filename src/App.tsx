@@ -5,11 +5,8 @@ import "./layout.css";
 import { Hero } from "./components/Hero";
 import { Sidebar } from "./components/Sidebar";
 import { findNavigationLabel } from "./navigation/navigation.config";
-import { AcademicOverview } from "./pages/AcademicOverview/AcademicOverview";
 import { AcademicPerformance } from "./pages/academic-performance/AcademicPerformance";
 import { ExecutiveOverview } from "./pages/ExecutiveOverview/ExecutiveOverview";
-import { LibraryResourceUsage } from "./pages/LibraryResourceUsage/LibraryResourceUsage";
-import { MyChildProgress } from "./pages/MyChildProgress/MyChildProgress";
 import { PlaceholderPage } from "./pages/Placeholder/PlaceholderPage";
 import { AttendanceRates } from "./pages/AttendanceRates/AttendanceRates";
 import { Revenue } from "./pages/Revenue";
@@ -36,11 +33,8 @@ import { Sales, Inventory, Budget } from "./pages/services";
 const pages: Record<string, ReactElement> = {
   /* Overview + academic group */
   overview: <ExecutiveOverview />,
-  "academics-overview": <AcademicOverview />,
   "admissions-enrollment": <AdmissionsEnrollment />,
   "academic-performance": <AcademicPerformance />,
-  "parent-access": <MyChildProgress />,
-  "library-resource-usage": <LibraryResourceUsage />,
   "attendance-rates": <AttendanceRates />,
   "co-curricular-activities": <CoCurricularActivities />,
   "student-retention": <StudentRetention />,

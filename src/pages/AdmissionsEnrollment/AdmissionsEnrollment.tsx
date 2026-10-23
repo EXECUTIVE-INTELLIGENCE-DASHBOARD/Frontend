@@ -33,7 +33,6 @@ import {
   groupRows,
   learnerRoster,
   levelLabels,
-  previousYearFor,
   schoolCount,
   schoolNameFor,
   schools,
@@ -112,19 +111,6 @@ export function AdmissionsEnrollment() {
     () => (isAllSchools ? averageAcrossSchools(filters) : totals),
     [isAllSchools, filters, totals],
   );
-
-  const priorYear = previousYearFor(filters.year);
-  const prior = useMemo(() => {
-    if (!priorYear) {
-      return null;
-    }
-
-    const previous: Filters = { ...filters, year: priorYear };
-
-    return isAllSchools
-      ? averageAcrossSchools(previous)
-      : aggregate(filteredRows(previous));
-  }, [filters, isAllSchools, priorYear]);
 
   const availableClasses = useMemo(
     () => classOptionsFor(filters.school),
@@ -316,13 +302,6 @@ export function AdmissionsEnrollment() {
     );
   };
 
-  const delta = (current: number, previous: number | undefined) => {
-    if (previous === undefined || previous <= 0) return undefined;
-    const value = ((current - previous) / previous) * 100;
-    if (Math.abs(value) < 0.05) return undefined;
-    return { value, label: `vs AY ${priorYear}` };
-  };
-
   const trail: Array<{ label: string; target: DrillDimension }> = [
     { label: "All schools", target: "school" },
   ];
@@ -402,7 +381,6 @@ export function AdmissionsEnrollment() {
         aria-label="Enrolment filters"
       >
         <label className="ae-field ae-field--school">
-          <span className="ae-field__label">School</span>
           <span className="ae-select">
             <select
               aria-label="School"
@@ -538,36 +516,32 @@ export function AdmissionsEnrollment() {
         )}
       </section>
 
-      <div className="ae-trail-row">
-        <nav className="ae-trail" aria-label="Drill-down path">
-          {trail.map((step, index) => {
-            const isLast = index === trail.length - 1;
+      {filters.school === "all" ? null : (
+        <div className="ae-trail-row">
+          <nav className="ae-trail" aria-label="Drill-down path">
+            {trail.map((step, index) => {
+              const isLast = index === trail.length - 1;
 
-            return (
-              <span key={`${step.label}-${index}`} className="ae-trail__step">
-                {isLast ? (
-                  <strong aria-current="page">{step.label}</strong>
-                ) : (
-                  <button type="button" onClick={() => clearTo(step.target)}>
-                    {step.label}
-                  </button>
-                )}
-                {isLast ? null : (
-                  <span className="ae-trail__sep" aria-hidden="true">
-                    /
-                  </span>
-                )}
-              </span>
-            );
-          })}
-        </nav>
-
-        <span className="ae-trail__hint">
-          {dimension === "learners"
-            ? "Each total traces down to a named learner"
-            : "Filters and clicks narrow the same totals — use either"}
-        </span>
-      </div>
+              return (
+                <span key={`${step.label}-${index}`} className="ae-trail__step">
+                  {isLast ? (
+                    <strong aria-current="page">{step.label}</strong>
+                  ) : (
+                    <button type="button" onClick={() => clearTo(step.target)}>
+                      {step.label}
+                    </button>
+                  )}
+                  {isLast ? null : (
+                    <span className="ae-trail__sep" aria-hidden="true">
+                      /
+                    </span>
+                  )}
+                </span>
+              );
+            })}
+          </nav>
+        </div>
+      )}
 
       {searchMode ? (
         <div className="ae-student-banner" role="status">
@@ -589,25 +563,21 @@ export function AdmissionsEnrollment() {
       <section className="ae-kpis" aria-label="Enrolment summary">
         <KpiCard
           icon={Users}
-          label={isAllSchools ? "Average learners" : "Total learners"}
+          label="Total students"
           value={formatNumber(summary.learners)}
           detail={`${formatNumber(summary.girls)} girls · ${formatNumber(summary.boys)} boys`}
           tone="navy"
-          delta={delta(summary.learners, prior?.learners)}
         />
         <KpiCard
           icon={Building2}
-          label={
-            isAllSchools ? "Average opening enrolment" : "Opening enrolment"
-          }
+          label="Roll at start"
           value={formatNumber(summary.opening)}
           detail={`${formatPercent(summary.utilization)} of capacity`}
           tone="sky"
-          delta={delta(summary.opening, prior?.opening)}
         />
         <KpiCard
           icon={UserPlus}
-          label={isAllSchools ? "Average new learners" : "New learners"}
+          label="New students"
           value={formatNumber(summary.newLearners)}
           detail={`${formatPercent(
             summary.learners === 0
@@ -615,25 +585,25 @@ export function AdmissionsEnrollment() {
               : (summary.newLearners / summary.learners) * 100,
           )} of the roll`}
           tone="sky"
-          delta={delta(summary.newLearners, prior?.newLearners)}
         />
         <KpiCard
           icon={Repeat}
-          label={
-            isAllSchools ? "Average continuing learners" : "Continuing learners"
-          }
+          label="Returning"
           value={formatNumber(summary.continuing)}
-          detail={`${formatPercent(summary.retentionRate)} retention`}
+          detail={`${formatPercent(
+            summary.learners === 0
+              ? 0
+              : (summary.continuing / summary.learners) * 100,
+          )} of the roll`}
           tone="green"
-          delta={delta(summary.continuing, prior?.continuing)}
         />
         <KpiCard
           icon={TrendingUp}
-          label="Apply → report"
+          label="Join rate"
           value={formatPercent(summary.conversionRate)}
-          detail={`${formatNumber(summary.reported)} joined of ${formatNumber(
+          detail={`${formatNumber(summary.reported)} of ${formatNumber(
             summary.applicants,
-          )}`}
+          )} applicants`}
           tone="amber"
         />
       </section>

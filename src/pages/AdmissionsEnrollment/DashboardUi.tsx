@@ -5,18 +5,12 @@ import { formatNumber, formatPercent } from "./admissionsEnrollment.data";
 
 /* ------------------------------------------------------------------ KPI card */
 
-export interface KpiDelta {
-  value: number;
-  label: string;
-}
-
 interface KpiCardProps {
   icon: LucideIcon;
   label: string;
   value: string;
   detail: string;
   tone?: "navy" | "sky" | "green" | "amber";
-  delta?: KpiDelta;
 }
 
 export function KpiCard({
@@ -25,29 +19,24 @@ export function KpiCard({
   value,
   detail,
   tone = "navy",
-  delta,
 }: KpiCardProps) {
   return (
     <article className={`ae-kpi ae-kpi--${tone}`}>
-      <div className="ae-kpi__top">
-        <span className="ae-kpi__icon" aria-hidden="true">
-          <Icon size={14} />
+      <span className="ae-kpi__icon" aria-hidden="true">
+        <Icon size={13} />
+      </span>
+
+      <div className="ae-kpi__body">
+        <span className="ae-kpi__label" title={label}>
+          {label}
         </span>
-        {delta ? (
-          <span
-            className={`ae-kpi__delta ae-kpi__delta--${
-              delta.value >= 0 ? "up" : "down"
-            }`}
-            title={delta.label}
-          >
-            {delta.value >= 0 ? "▲" : "▼"} {Math.abs(delta.value).toFixed(1)}%
-            <span className="ae-sr-only"> {delta.label}</span>
-          </span>
-        ) : null}
+
+        <strong className="ae-kpi__value">{value}</strong>
+
+        <span className="ae-kpi__detail" title={detail}>
+          {detail}
+        </span>
       </div>
-      <p className="ae-kpi__label">{label}</p>
-      <p className="ae-kpi__value">{value}</p>
-      <p className="ae-kpi__detail">{detail}</p>
     </article>
   );
 }

@@ -26,18 +26,24 @@ describe("Sidebar", () => {
 
     expect(screen.getByText("Admissions & Enrolment")).toBeInTheDocument();
 
+    expect(screen.getByText("Student Retention")).toBeInTheDocument();
+
+    expect(screen.getByText("Co-Curricular Activities")).toBeInTheDocument();
+
     expect(screen.getByText("Attendance Rates")).toBeInTheDocument();
 
     expect(screen.getByText("Academic Performance")).toBeInTheDocument();
 
-    expect(screen.getByText("My Child's Progress")).toBeInTheDocument();
+    expect(screen.queryByText("My Child's Progress")).not.toBeInTheDocument();
 
-    expect(screen.getByText("Library & Resource Usage")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Library & Resource Usage"),
+    ).not.toBeInTheDocument();
 
     expect(screen.queryByText("Academic Overview")).not.toBeInTheDocument();
   });
 
-  it("shows an Overview entry inside the Academics dropdown", async () => {
+  it("no longer lists Overview inside the Academics dropdown", async () => {
     const user = userEvent.setup();
 
     render(<Sidebar />);
@@ -48,9 +54,7 @@ describe("Sidebar", () => {
 
     expect(submenu).not.toBeNull();
 
-    expect(
-      within(submenu as HTMLElement).getByText("Overview"),
-    ).toBeInTheDocument();
+    expect(within(submenu as HTMLElement).queryByText("Overview")).toBeNull();
   });
 
   it("hides Academics dropdown items when Academics is clicked again", async () => {

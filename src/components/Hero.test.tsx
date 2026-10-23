@@ -80,16 +80,16 @@ describe("Hero", () => {
 
     const search = screen.getByRole("searchbox", { name: "Search" });
 
-    fireEvent.change(search, { target: { value: "library" } });
+    fireEvent.change(search, { target: { value: "attendance" } });
     fireEvent.focus(search);
 
     const result = screen.getByRole("button", {
-      name: /Library & Resource Usage/,
+      name: /Attendance Rates/,
     });
 
     fireEvent.click(result);
 
-    expect(onSelectPage).toHaveBeenCalledWith("library-resource-usage");
+    expect(onSelectPage).toHaveBeenCalledWith("attendance-rates");
     expect(search).toHaveValue("");
   });
 

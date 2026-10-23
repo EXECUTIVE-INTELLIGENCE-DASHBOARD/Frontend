@@ -1,5 +1,4 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { App } from "./App";
@@ -44,32 +43,6 @@ describe("App", () => {
 
     expect(
       document.querySelector("main.app-shell.layout-content"),
-    ).toBeInTheDocument();
-  });
-
-  it("opens the Academic Overview screen from the Academics section", async () => {
-    const user = userEvent.setup();
-
-    render(
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>,
-    );
-
-    const submenu = document.getElementById("academics-submenu");
-
-    expect(submenu).not.toBeNull();
-
-    await user.click(
-      within(submenu as HTMLElement).getByRole("button", {
-        name: "Overview",
-      }),
-    );
-
-    expect(
-      screen.getByRole("heading", {
-        name: "Academic Overview",
-      }),
     ).toBeInTheDocument();
   });
 });

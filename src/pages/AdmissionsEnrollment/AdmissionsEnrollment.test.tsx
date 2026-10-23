@@ -14,15 +14,11 @@ describe("AdmissionsEnrollment", () => {
 
     const kpis = screen.getByRole("region", { name: "Enrolment summary" });
 
-    expect(within(kpis).getByText("Average learners")).toBeInTheDocument();
-    expect(
-      within(kpis).getByText("Average opening enrolment"),
-    ).toBeInTheDocument();
-    expect(within(kpis).getByText("Average new learners")).toBeInTheDocument();
-    expect(
-      within(kpis).getByText("Average continuing learners"),
-    ).toBeInTheDocument();
-    expect(within(kpis).getByText("Apply → report")).toBeInTheDocument();
+    expect(within(kpis).getByText("Total students")).toBeInTheDocument();
+    expect(within(kpis).getByText("Roll at start")).toBeInTheDocument();
+    expect(within(kpis).getByText("New students")).toBeInTheDocument();
+    expect(within(kpis).getByText("Returning")).toBeInTheDocument();
+    expect(within(kpis).getByText("Join rate")).toBeInTheDocument();
   });
 
   it("offers every campus under all schools", () => {
@@ -49,7 +45,11 @@ describe("AdmissionsEnrollment", () => {
     chooseSchool("kibuli-primary");
 
     expect(screen.queryByText(/average of the 6 schools/i)).toBeNull();
-    expect(screen.getByText("Total learners")).toBeInTheDocument();
+    expect(
+      within(
+        screen.getByRole("region", { name: "Enrolment summary" }),
+      ).getByText("Total students"),
+    ).toBeInTheDocument();
   });
 
   it("shows a single control until a school is chosen", () => {
