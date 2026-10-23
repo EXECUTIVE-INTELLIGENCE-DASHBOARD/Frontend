@@ -24,7 +24,7 @@ describe("Sidebar", () => {
 
     await user.click(screen.getByRole("button", { name: /academics/i }));
 
-    expect(screen.getByText("Student Enrollment")).toBeInTheDocument();
+    expect(screen.getByText("Admissions & Enrolment")).toBeInTheDocument();
 
     expect(screen.getByText("Attendance Rates")).toBeInTheDocument();
 
@@ -64,11 +64,11 @@ describe("Sidebar", () => {
 
     await user.click(academicsButton);
 
-    expect(screen.getByText("Student Enrollment")).toBeInTheDocument();
+    expect(screen.getByText("Admissions & Enrolment")).toBeInTheDocument();
 
     await user.click(academicsButton);
 
-    expect(screen.queryByText("Student Enrollment")).not.toBeInTheDocument();
+    expect(screen.queryByText("Admissions & Enrolment")).not.toBeInTheDocument();
 
     expect(screen.queryByText("Attendance Rates")).not.toBeInTheDocument();
 
@@ -138,11 +138,11 @@ describe("Sidebar", () => {
 
     await user.click(academicsButton);
 
-    expect(screen.getByText("Student Enrollment")).toBeInTheDocument();
+    expect(screen.getByText("Admissions & Enrolment")).toBeInTheDocument();
 
     await user.click(operationalButton);
 
-    expect(screen.queryByText("Student Enrollment")).not.toBeInTheDocument();
+    expect(screen.queryByText("Admissions & Enrolment")).not.toBeInTheDocument();
 
     expect(screen.queryByText("Academic Performance")).not.toBeInTheDocument();
 
