@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ChangeEvent } from "react";
 import {
   Building2,
   Download,
+  MoreHorizontal,
   Repeat,
   RotateCcw,
   Search,
@@ -21,10 +22,10 @@ import { ProfilePanel } from "./ProfilePanel";
 import type { DrillDimension, RosterLearner } from "./admissionsEnrollment.data";
 import {
   aggregate,
+  averageAcrossSchools,
   classBreakdown,
   classLabelFor,
   classOptionsFor,
-  dataFreshness,
   defaultFilters,
   filteredRows,
   formatNumber,
@@ -33,6 +34,7 @@ import {
   learnerRoster,
   levelLabels,
   previousYearFor,
+  schoolCount,
   schoolNameFor,
   schools,
   streams,
@@ -69,16 +71,60 @@ const dimensionCopy: Record<DrillDimension, { heading: string; sub: string }> = 
 export function AdmissionsEnrollment() {
   const [filters, setFilters] = useState<Filters>(defaultFilters);
   const [openLearner, setOpenLearner] = useState<RosterLearner | null>(null);
+  const [actionsOpen, setActionsOpen] = useState(false);
+  const actionsRef = useRef<HTMLDivElement | null>(null);
+
+  // The quick actions menu closes on an outside click or Escape, like a native menu.
+  useEffect(() => {
+    if (!actionsOpen) {
+      return;
+    }
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!actionsRef.current?.contains(event.target as Node)) {
+        setActionsOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setActionsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [actionsOpen]);
 
   const rows = useMemo(() => filteredRows(filters), [filters]);
-  const summary = useMemo(() => aggregate(rows), [rows]);
+  const totals = useMemo(() => aggregate(rows), [rows]);
+
+  const isAllSchools = filters.school === "all";
+
+  // Board members looking at the whole group see the mean of the six campuses.
+  // The moment they pick a school every figure comes from that school alone.
+  const summary = useMemo(
+    () => (isAllSchools ? averageAcrossSchools(filters) : totals),
+    [isAllSchools, filters, totals],
+  );
 
   const priorYear = previousYearFor(filters.year);
-  const prior = useMemo(
-    () =>
-      priorYear ? aggregate(filteredRows({ ...filters, year: priorYear })) : null,
-    [filters, priorYear],
-  );
+  const prior = useMemo(() => {
+    if (!priorYear) {
+      return null;
+    }
+
+    const previous: Filters = { ...filters, year: priorYear };
+
+    return isAllSchools
+      ? averageAcrossSchools(previous)
+      : aggregate(filteredRows(previous));
+  }, [filters, isAllSchools, priorYear]);
 
   const availableClasses = useMemo(
     () => classOptionsFor(filters.school),
@@ -303,180 +349,193 @@ export function AdmissionsEnrollment() {
         <div className="ae-head__text">
           <span className="ae-eyebrow">Academics</span>
           <h1 className="ae-head__title">Admissions &amp; enrolment</h1>
-          <p className="ae-head__sub">
-            How many learners we have, where they sit and how they arrive —{" "}
-            {dataFreshness.source}
-          </p>
         </div>
 
         <div className="ae-head__actions">
-          <span className="ae-freshness">
-            <span className="ae-freshness__dot" aria-hidden="true" />
-            Synced {dataFreshness.lastSync}
-          </span>
+          <div className="ae-actions" ref={actionsRef}>
+            <button
+              type="button"
+              className="ae-icon-button"
+              aria-label="Quick actions"
+              aria-haspopup="menu"
+              aria-expanded={actionsOpen}
+              onClick={() => setActionsOpen((open) => !open)}
+            >
+              <MoreHorizontal size={18} aria-hidden="true" />
+            </button>
 
-          <button
-            type="button"
-            className="ae-button ae-button--ghost"
-            onClick={handleReset}
-          >
-            <RotateCcw size={14} aria-hidden="true" />
-            Reset
-          </button>
-
-          <button
-            type="button"
-            className="ae-button ae-button--primary"
-            onClick={handleExport}
-            disabled={rows.length === 0}
-            title="Authorised export of the current view"
-          >
-            <Download size={14} aria-hidden="true" />
-            Export
-          </button>
+            {actionsOpen ? (
+              <div className="ae-menu" role="menu" aria-label="Quick actions">
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="ae-menu__item"
+                  onClick={() => {
+                    setActionsOpen(false);
+                    handleExport();
+                  }}
+                  disabled={rows.length === 0}
+                >
+                  <Download size={14} aria-hidden="true" />
+                  Export CSV
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="ae-menu__item"
+                  onClick={() => {
+                    setActionsOpen(false);
+                    handleReset();
+                  }}
+                >
+                  <RotateCcw size={14} aria-hidden="true" />
+                  Reset filters
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
       </header>
 
-      <section className="ae-filters" aria-label="Enrolment filters">
-        <div className="ae-filters__group">
-          <label className="ae-field">
-            <span className="ae-field__label">Academic year</span>
-            <span className="ae-select">
-              <select
-                aria-label="Year"
-                value={filters.year}
-                onChange={(event) =>
-                  update({ year: event.target.value as YearId })
-                }
-              >
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    AY {year}
-                  </option>
-                ))}
-              </select>
-            </span>
-          </label>
-
-          <label className="ae-field">
-            <span className="ae-field__label">Term</span>
-            <span className="ae-select">
-              <select
-                aria-label="Term"
-                value={filters.term}
-                onChange={(event) =>
-                  update({ term: event.target.value as TermId })
-                }
-              >
-                {termOptions.map((term) => (
-                  <option key={term.id} value={term.id}>
-                    {term.label}
-                  </option>
-                ))}
-              </select>
-            </span>
-          </label>
-        </div>
-
-        <span className="ae-filters__divider" aria-hidden="true" />
-
-        <div className="ae-filters__group">
-          <label className="ae-field">
-            <span className="ae-field__label">School</span>
-            <span className="ae-select">
-              <select
-                aria-label="School"
-                value={filters.school}
-                onChange={handleSchoolChange}
-              >
-                <option value="all">All schools</option>
-                {schools.map((school) => (
-                  <option key={school.id} value={school.id}>
-                    {school.name}
-                  </option>
-                ))}
-              </select>
-            </span>
-          </label>
-
-          <label className="ae-field">
-            <span className="ae-field__label">Class</span>
-            <span className="ae-select">
-              <select
-                aria-label="Class"
-                value={filters.classId}
-                onChange={(event) =>
-                  update({ classId: event.target.value, stream: "all" })
-                }
-              >
-                <option value="all">All classes</option>
-                {levels.map((level) => {
-                  const options = availableClasses.filter(
-                    (definition) => definition.level === level,
-                  );
-
-                  if (options.length === 0) {
-                    return null;
-                  }
-
-                  return (
-                    <optgroup key={level} label={levelLabels[level]}>
-                      {options.map((definition) => (
-                        <option key={definition.id} value={definition.id}>
-                          {definition.label}
-                        </option>
-                      ))}
-                    </optgroup>
-                  );
-                })}
-              </select>
-            </span>
-          </label>
-
-          <label className="ae-field">
-            <span className="ae-field__label">Stream</span>
-            <span className="ae-select">
-              <select
-                aria-label="Stream"
-                value={filters.stream}
-                onChange={(event) => update({ stream: event.target.value })}
-              >
-                <option value="all">All streams</option>
-                {streams.map((stream) => (
-                  <option key={stream} value={stream}>
-                    Stream {stream}
-                  </option>
-                ))}
-              </select>
-            </span>
-          </label>
-        </div>
-
-        <span className="ae-filters__divider" aria-hidden="true" />
-
-        <label className="ae-field ae-field--grow">
-          <span className="ae-field__label">Find a learner</span>
-          <span className="ae-search">
-            <Search size={15} aria-hidden="true" />
-            <input
-              type="search"
-              aria-label="Find a learner"
-              value={filters.student}
-              placeholder="Name or admission number"
-              onChange={(event) => update({ student: event.target.value })}
-            />
-            {filters.student.length > 0 ? (
-              <button
-                type="button"
-                className="ae-search__clear"
-                onClick={() => update({ student: "" })}
-                aria-label="Clear learner filter"
-              >
-                <X size={14} aria-hidden="true" />
-              </button>
-            ) : null}
+      <section
+        className={`ae-filters${isAllSchools ? " ae-filters--board" : ""}`}
+        aria-label="Enrolment filters"
+      >
+        <label className="ae-field ae-field--school">
+          <span className="ae-field__label">School</span>
+          <span className="ae-select">
+            <select
+              aria-label="School"
+              value={filters.school}
+              onChange={handleSchoolChange}
+            >
+              <option value="all">All schools</option>
+              {schools.map((school) => (
+                <option key={school.id} value={school.id}>
+                  {school.name}
+                </option>
+              ))}
+            </select>
           </span>
         </label>
+
+        {isAllSchools ? null : (
+          <>
+            <label className="ae-field ae-field--year">
+              <span className="ae-field__label">Academic year</span>
+              <span className="ae-select">
+                <select
+                  aria-label="Year"
+                  value={filters.year}
+                  onChange={(event) =>
+                    update({ year: event.target.value as YearId })
+                  }
+                >
+                  {years.map((year) => (
+                    <option key={year} value={year}>
+                      AY {year}
+                    </option>
+                  ))}
+                </select>
+              </span>
+            </label>
+
+            <label className="ae-field ae-field--term">
+              <span className="ae-field__label">Term</span>
+              <span className="ae-select">
+                <select
+                  aria-label="Term"
+                  value={filters.term}
+                  onChange={(event) =>
+                    update({ term: event.target.value as TermId })
+                  }
+                >
+                  {termOptions.map((term) => (
+                    <option key={term.id} value={term.id}>
+                      {term.label}
+                    </option>
+                  ))}
+                </select>
+              </span>
+            </label>
+
+            <label className="ae-field ae-field--class">
+              <span className="ae-field__label">Class</span>
+              <span className="ae-select">
+                <select
+                  aria-label="Class"
+                  value={filters.classId}
+                  onChange={(event) =>
+                    update({ classId: event.target.value, stream: "all" })
+                  }
+                >
+                  <option value="all">All classes</option>
+                  {levels.map((level) => {
+                    const options = availableClasses.filter(
+                      (definition) => definition.level === level,
+                    );
+
+                    if (options.length === 0) {
+                      return null;
+                    }
+
+                    return (
+                      <optgroup key={level} label={levelLabels[level]}>
+                        {options.map((definition) => (
+                          <option key={definition.id} value={definition.id}>
+                            {definition.label}
+                          </option>
+                        ))}
+                      </optgroup>
+                    );
+                  })}
+                </select>
+              </span>
+            </label>
+
+            <label className="ae-field ae-field--stream">
+              <span className="ae-field__label">Stream</span>
+              <span className="ae-select">
+                <select
+                  aria-label="Stream"
+                  value={filters.stream}
+                  onChange={(event) => update({ stream: event.target.value })}
+                >
+                  <option value="all">All streams</option>
+                  {streams.map((stream) => (
+                    <option key={stream} value={stream}>
+                      Stream {stream}
+                    </option>
+                  ))}
+                </select>
+              </span>
+            </label>
+
+            <label className="ae-field ae-field--grow">
+              <span className="ae-field__label">Find a learner</span>
+              <span className="ae-search">
+                <Search size={15} aria-hidden="true" />
+                <input
+                  type="search"
+                  aria-label="Find a learner"
+                  value={filters.student}
+                  placeholder="Name or admission number"
+                  onChange={(event) => update({ student: event.target.value })}
+                />
+                {filters.student.length > 0 ? (
+                  <button
+                    type="button"
+                    className="ae-search__clear"
+                    onClick={() => update({ student: "" })}
+                    aria-label="Clear learner filter"
+                  >
+                    <X size={14} aria-hidden="true" />
+                  </button>
+                ) : null}
+              </span>
+            </label>
+          </>
+        )}
       </section>
 
       <div className="ae-trail-row">
@@ -530,7 +589,7 @@ export function AdmissionsEnrollment() {
       <section className="ae-kpis" aria-label="Enrolment summary">
         <KpiCard
           icon={Users}
-          label="Total learners"
+          label={isAllSchools ? "Average learners" : "Total learners"}
           value={formatNumber(summary.learners)}
           detail={`${formatNumber(summary.girls)} girls · ${formatNumber(summary.boys)} boys`}
           tone="navy"
@@ -538,7 +597,9 @@ export function AdmissionsEnrollment() {
         />
         <KpiCard
           icon={Building2}
-          label="Opening enrolment"
+          label={
+            isAllSchools ? "Average opening enrolment" : "Opening enrolment"
+          }
           value={formatNumber(summary.opening)}
           detail={`${formatPercent(summary.utilization)} of capacity`}
           tone="sky"
@@ -546,7 +607,7 @@ export function AdmissionsEnrollment() {
         />
         <KpiCard
           icon={UserPlus}
-          label="New learners"
+          label={isAllSchools ? "Average new learners" : "New learners"}
           value={formatNumber(summary.newLearners)}
           detail={`${formatPercent(
             summary.learners === 0
@@ -558,7 +619,9 @@ export function AdmissionsEnrollment() {
         />
         <KpiCard
           icon={Repeat}
-          label="Continuing learners"
+          label={
+            isAllSchools ? "Average continuing learners" : "Continuing learners"
+          }
           value={formatNumber(summary.continuing)}
           detail={`${formatPercent(summary.retentionRate)} retention`}
           tone="green"
@@ -595,12 +658,21 @@ export function AdmissionsEnrollment() {
                   : "Select a learner to open their admission record"
                 : dimensionCopy[dimension].sub
             }
-            total={dimension === "learners" ? matches.length : summary.learners}
+            total={dimension === "learners" ? matches.length : totals.learners}
             onDrill={drill}
             onOpenLearner={setOpenLearner}
           />
 
-          <ProfilePanel summary={summary} />
+          <ProfilePanel
+            summary={summary}
+            sub={
+              isAllSchools
+                ? `Average of the ${schoolCount} schools · ${formatNumber(
+                    totals.learners,
+                  )} learners in total`
+                : undefined
+            }
+          />
         </div>
 
         <AdmissionsFunnel summary={summary} />

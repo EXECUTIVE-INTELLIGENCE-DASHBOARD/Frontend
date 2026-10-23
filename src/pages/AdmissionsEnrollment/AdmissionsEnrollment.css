@@ -78,13 +78,6 @@
   line-height: 1.15;
 }
 
-.ae-head__sub {
-  margin: 0;
-  max-width: 62ch;
-  color: var(--ae-muted);
-  font-size: 12.5px;
-}
-
 .ae-head__actions {
   display: flex;
   flex-wrap: wrap;
@@ -92,27 +85,82 @@
   gap: 8px;
 }
 
-.ae-freshness {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 34px;
-  padding: 0 12px;
-  border-radius: 999px;
-  background: var(--color-surface);
-  border: 1px solid var(--ae-border);
-  color: var(--ae-muted);
-  font-size: 11px;
-  font-weight: 600;
-  white-space: nowrap;
+/* Quick actions live behind a three-dot button in the top right corner. */
+.ae-actions {
+  position: relative;
 }
 
-.ae-freshness__dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--ae-green);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ae-green) 18%, transparent);
+.ae-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--ae-border);
+  border-radius: 9px;
+  background: var(--color-surface);
+  color: var(--ae-heading);
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease;
+}
+
+.ae-icon-button:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-strong);
+}
+
+.ae-icon-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.ae-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  min-width: 190px;
+  padding: 6px;
+  border: 1px solid var(--ae-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ae-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ae-heading);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ae-menu__item:hover {
+  background: var(--color-surface-hover);
+}
+
+.ae-menu__item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ae-menu__item:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
 }
 
 /* ------------------------------------------------------------------ Buttons */
@@ -165,47 +213,68 @@
 
 /* ------------------------------------------------------------------ Filters */
 
+/* Laid out like the academic performance screen: no card chrome, a label
+   above each control and a native select box per field. */
 .ae-filters {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
-  gap: 14px;
-  padding: 12px 16px 14px;
-  border: 1px solid var(--ae-border);
-  border-radius: 14px;
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
+  gap: 12px;
 }
 
-.ae-filters__group {
-  display: flex;
-  align-items: flex-end;
-  gap: 10px;
+/* Board members start with one control only — the school picker — parked
+   in the right corner of the page. */
+.ae-filters--board {
+  justify-content: flex-end;
 }
 
-.ae-filters__divider {
-  align-self: stretch;
-  width: 1px;
-  margin: 2px 2px 0;
-  background: var(--ae-border);
+.ae-filters--board .ae-field--school {
+  flex: 0 0 268px;
 }
 
 .ae-field {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   min-width: 0;
 }
 
+/* Controls stay compact instead of stretching across the whole row. */
+.ae-field--school {
+  flex: 0 1 268px;
+  max-width: 280px;
+}
+
+.ae-field--year {
+  flex: 0 1 112px;
+  max-width: 124px;
+}
+
+.ae-field--term {
+  flex: 0 1 102px;
+  max-width: 114px;
+}
+
+.ae-field--class {
+  flex: 0 1 122px;
+  max-width: 134px;
+}
+
+.ae-field--stream {
+  flex: 0 1 108px;
+  max-width: 120px;
+}
+
+/* The learner search takes whatever room is left on the row. */
 .ae-field--grow {
-  flex: 1 1 220px;
+  flex: 0 1 230px;
+  max-width: 250px;
 }
 
 .ae-field__label {
-  color: var(--ae-soft);
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
+  color: var(--ae-muted);
+  font-size: 11px;
+  font-weight: 500;
 }
 
 .ae-select {
@@ -214,42 +283,22 @@
   width: 100%;
 }
 
-.ae-select::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 11px;
-  width: 6px;
-  height: 6px;
-  margin-top: -4px;
-  border-right: 1.6px solid var(--ae-muted);
-  border-bottom: 1.6px solid var(--ae-muted);
-  transform: rotate(45deg);
-  pointer-events: none;
-}
-
 .ae-select select {
-  appearance: none;
   width: 100%;
-  height: 34px;
-  padding: 0 28px 0 11px;
+  min-width: 0;
+  height: 38px;
+  padding: 0 11px;
   border: 1px solid var(--ae-border);
-  border-radius: 9px;
+  border-radius: 8px;
   background: var(--color-surface);
-  color: var(--color-text);
+  color: var(--ae-heading);
   font-family: inherit;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   cursor: pointer;
-}
-
-.ae-filters__group > .ae-field:nth-child(1) .ae-select select {
-  min-width: 132px;
-}
-
-.ae-filters__group > .ae-field:nth-child(2) .ae-select select,
-.ae-filters__group > .ae-field:nth-child(3) .ae-select select {
-  min-width: 108px;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .ae-select select:hover {
@@ -258,8 +307,9 @@
 
 .ae-select select:focus-visible,
 .ae-search:focus-within {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 14%, transparent);
 }
 
 .ae-search {
@@ -267,12 +317,15 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  height: 34px;
+  height: 38px;
   padding: 0 10px;
   border: 1px solid var(--ae-border);
-  border-radius: 9px;
+  border-radius: 8px;
   background: var(--color-surface);
   color: var(--ae-soft);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .ae-search input {
@@ -404,20 +457,21 @@
 
 /* -------------------------------------------------------------------- KPIs */
 
+/* Five compact cards so the whole summary reads on one line. */
 .ae-kpis {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
 }
 
 .ae-kpi {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
-  padding: 11px 13px 12px;
+  padding: 10px 11px 11px;
   border: 1px solid var(--ae-border);
-  border-radius: 13px;
+  border-radius: 12px;
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
 }
@@ -426,19 +480,19 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  min-height: 24px;
-  margin-bottom: 5px;
+  gap: 5px;
+  min-height: 20px;
+  margin-bottom: 4px;
 }
 
 .ae-kpi__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   flex: none;
-  border-radius: 8px;
+  border-radius: 7px;
   background: var(--color-surface-tint);
   color: var(--ae-heading);
 }
@@ -460,21 +514,22 @@
 
 .ae-kpi__label {
   margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   overflow: hidden;
   color: var(--ae-muted);
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  line-height: 1.2;
-  text-overflow: ellipsis;
+  letter-spacing: 0.03em;
+  line-height: 1.15;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .ae-kpi__value {
   margin: 0;
   color: var(--ae-heading);
-  font-size: 1.55rem;
+  font-size: 1.3rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.025em;
@@ -484,11 +539,11 @@
 .ae-kpi__delta {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   flex: none;
-  padding: 2px 6px;
+  padding: 2px 5px;
   border-radius: 999px;
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.02em;
   white-space: nowrap;
@@ -506,9 +561,12 @@
 
 .ae-kpi__detail {
   margin: 0;
+  overflow: hidden;
   color: var(--ae-muted);
-  font-size: 10.5px;
-  line-height: 1.35;
+  font-size: 10px;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ------------------------------------------------------------------- Blocks */
@@ -1203,7 +1261,7 @@
 
 /* --------------------------------------------------------------- Responsive */
 
-@media (max-width: 1180px) {
+@media (max-width: 1040px) {
   .ae-kpis {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -1230,6 +1288,7 @@
 
   .ae-field--grow {
     flex-basis: 100%;
+    max-width: none;
   }
 }
 
@@ -1277,16 +1336,20 @@
 
 /* --------------------------------------------------------------- Dark theme */
 
-[data-theme="dark"] .ae-freshness,
-[data-theme="dark"] .ae-filters,
+[data-theme="dark"] .ae-icon-button,
+[data-theme="dark"] .ae-menu,
 [data-theme="dark"] .ae-kpi,
 [data-theme="dark"] .ae-block,
-[data-theme="dark"] .ae-select select,
-[data-theme="dark"] .ae-search,
 [data-theme="dark"] .ae-button--ghost,
 [data-theme="dark"] .ae-drawer,
 [data-theme="dark"] .ae-drawer__close {
   background: var(--color-surface);
+}
+
+[data-theme="dark"] .ae-select select,
+[data-theme="dark"] .ae-search {
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border);
 }
 
 [data-theme="dark"] .ae-page {

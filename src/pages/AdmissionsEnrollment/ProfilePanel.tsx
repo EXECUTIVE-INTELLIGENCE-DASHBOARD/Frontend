@@ -15,9 +15,11 @@ const dimensions: Array<{ id: ProfileDimension; label: string }> = [
 
 interface ProfilePanelProps {
   summary: Aggregate;
+  /** Overrides the "learners in the current scope" caption. */
+  sub?: string;
 }
 
-export function ProfilePanel({ summary }: ProfilePanelProps) {
+export function ProfilePanel({ summary, sub }: ProfilePanelProps) {
   const [dimension, setDimension] = useState<ProfileDimension>("gender");
 
   const items = useMemo(() => {
@@ -72,7 +74,7 @@ export function ProfilePanel({ summary }: ProfilePanelProps) {
             Who the learners are
           </h2>
           <p className="ae-block__sub">
-            {formatNumber(summary.learners)} learners in the current scope
+            {sub ?? `${formatNumber(summary.learners)} learners in the current scope`}
           </p>
         </div>
         <span className="ae-chip">{activeLabel}</span>
