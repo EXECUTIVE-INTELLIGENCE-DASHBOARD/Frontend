@@ -34,8 +34,48 @@ export interface RetentionDashboardData {
   withdrawal_reasons: WithdrawalReason[];
 }
 
+export interface EnrollmentStageData {
+  stage: string;
+  label: string;
+  count: number;
+  rate: number | null;
+}
+
+export interface EnrollmentCampusData {
+  campus: string;
+  campus_display: string;
+  boys: number;
+  girls: number;
+  total: number;
+}
+
+export interface EnrollmentSchoolData {
+  id: number;
+  name: string;
+  campus: string;
+  enrolled: number;
+  capacity: number;
+  minimum_enrolment: number;
+  below_minimum: boolean;
+}
+
 export interface EnrollmentDashboardData {
-  [key: string]: unknown;
+  term: { id: number; label: string } | null;
+  summary: {
+    total_active_enrolment: number;
+    admissions_conversion: number | null;
+    capacity: number;
+    capacity_utilisation: number | null;
+  };
+  gender: {
+    boys: number;
+    girls: number;
+    boys_pct: number | null;
+    girls_pct: number | null;
+  };
+  campuses: EnrollmentCampusData[];
+  schools: EnrollmentSchoolData[];
+  pipeline: EnrollmentStageData[];
 }
 
 export interface AcademicDashboardFilters {
@@ -58,10 +98,11 @@ export const academicsApi = {
 
   getEnrollmentDashboard: async (
     filters: AcademicDashboardFilters = {},
+    signal?: AbortSignal,
   ): Promise<EnrollmentDashboardData> => {
     const response = await api.get<EnrollmentDashboardData>(
       "/academics/enrollment/dashboard/",
-      { params: filters },
+      { params: filters, signal },
     );
 
     return response.data;

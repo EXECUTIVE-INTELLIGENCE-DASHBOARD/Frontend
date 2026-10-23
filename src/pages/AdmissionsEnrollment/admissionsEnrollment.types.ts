@@ -221,7 +221,8 @@ export interface TransitionFigure {
   rate: number;
 }
 
-export interface ReasonFigure extends Figure<ReasonId> {}
+/** Figure<ReasonId> carries the label, so no extra members are needed. */
+export type ReasonFigure = Figure<ReasonId>;
 
 interface LearnerBase {
   id: string;
