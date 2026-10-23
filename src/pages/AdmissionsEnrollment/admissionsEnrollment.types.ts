@@ -2,7 +2,18 @@ export type YearId = "2026/27" | "2025/26" | "2024/25";
 
 export type TermId = "t1" | "t2" | "t3" | "full";
 
-export type SchoolId = "kibuli" | "buwaate" | "annex";
+/**
+ * The six campuses that make up the group. Nursery, primary and secondary sit
+ * under Kibuli, nursery and primary under Buwaate, and the international school
+ * runs the full range on its own Kansanga campus.
+ */
+export type SchoolId =
+  | "kibuli-nursery"
+  | "kibuli-primary"
+  | "kibuli-secondary"
+  | "buwaate-nursery"
+  | "buwaate-primary"
+  | "kansanga-gis";
 
 export type SchoolSelection = SchoolId | "all";
 

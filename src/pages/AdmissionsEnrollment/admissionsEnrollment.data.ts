@@ -25,19 +25,84 @@ import type {
 
 /* ------------------------------------------------------------------ Labels */
 
-export const schools = [
-  { id: "kibuli", name: "Kibuli Main", short: "Kibuli", scale: 1.2 },
-  { id: "buwaate", name: "Buwaate", short: "Buwaate", scale: 1.02 },
-  { id: "annex", name: "Annex Preschool", short: "Annex", scale: 0.85 },
-] as const satisfies ReadonlyArray<{
+export interface SchoolProfile {
   id: SchoolId;
   name: string;
   short: string;
+  /** Relative size used to derive the deterministic sample figures. */
   scale: number;
-}>;
+  /** Boarding uptake multiplier; nursery campuses have no boarders. */
+  boardingFactor: number;
+  /** Percentage-point adjustment applied to the transition figures. */
+  transitionOffset: number;
+}
 
-const allSchools: SchoolId[] = ["kibuli", "buwaate", "annex"];
-const secondarySchools: SchoolId[] = ["kibuli", "buwaate"];
+export const schools: readonly SchoolProfile[] = [
+  {
+    id: "kibuli-nursery",
+    name: "Greenhill Academy Nursery – Kibuli",
+    short: "Kibuli Nursery",
+    scale: 0.82,
+    boardingFactor: 1,
+    transitionOffset: 1.4,
+  },
+  {
+    id: "kibuli-primary",
+    name: "Greenhill Academy Primary – Kibuli",
+    short: "Kibuli Primary",
+    scale: 1.18,
+    boardingFactor: 1.15,
+    transitionOffset: 1.4,
+  },
+  {
+    id: "kibuli-secondary",
+    name: "Greenhill Academy Secondary – Kibuli",
+    short: "Kibuli Secondary",
+    scale: 1.12,
+    boardingFactor: 1.15,
+    transitionOffset: 1.4,
+  },
+  {
+    id: "buwaate-nursery",
+    name: "Greenhill Academy Nursery – Buwaate",
+    short: "Buwaate Nursery",
+    scale: 0.7,
+    boardingFactor: 1,
+    transitionOffset: -1.2,
+  },
+  {
+    id: "buwaate-primary",
+    name: "Greenhill Academy Primary – Buwaate",
+    short: "Buwaate Primary",
+    scale: 0.95,
+    boardingFactor: 0.85,
+    transitionOffset: -1.2,
+  },
+  {
+    id: "kansanga-gis",
+    name: "Greenhill International School (GIS) – Kansanga",
+    short: "GIS Kansanga",
+    scale: 0.78,
+    boardingFactor: 1,
+    transitionOffset: 0.6,
+  },
+];
+
+/** Number of campuses in the group — the divisor for the board average. */
+export const schoolCount = schools.length;
+
+const allSchools: SchoolId[] = schools.map((school) => school.id);
+const nurserySchools: SchoolId[] = [
+  "kibuli-nursery",
+  "buwaate-nursery",
+  "kansanga-gis",
+];
+const primarySchools: SchoolId[] = [
+  "kibuli-primary",
+  "buwaate-primary",
+  "kansanga-gis",
+];
+const secondarySchools: SchoolId[] = ["kibuli-secondary", "kansanga-gis"];
 
 export const levelLabels: Record<LevelId, string> = {
   nursery: "Nursery",
@@ -47,17 +112,17 @@ export const levelLabels: Record<LevelId, string> = {
 };
 
 export const classDefinitions: ClassDefinition[] = [
-  { id: "baby", label: "Baby Class", level: "nursery", schools: allSchools, base: 26, withdrawal: 0.09, boarding: 0 },
-  { id: "middle", label: "Middle Class", level: "nursery", schools: allSchools, base: 28, withdrawal: 0.09, boarding: 0 },
-  { id: "top", label: "Top Class", level: "nursery", schools: allSchools, base: 30, withdrawal: 0.09, boarding: 0 },
+  { id: "baby", label: "Baby Class", level: "nursery", schools: nurserySchools, base: 26, withdrawal: 0.09, boarding: 0 },
+  { id: "middle", label: "Middle Class", level: "nursery", schools: nurserySchools, base: 28, withdrawal: 0.09, boarding: 0 },
+  { id: "top", label: "Top Class", level: "nursery", schools: nurserySchools, base: 30, withdrawal: 0.09, boarding: 0 },
 
-  { id: "p1", label: "P.1", level: "primary", schools: allSchools, base: 36, withdrawal: 0.08, boarding: 0.12 },
-  { id: "p2", label: "P.2", level: "primary", schools: allSchools, base: 34, withdrawal: 0.08, boarding: 0.12 },
-  { id: "p3", label: "P.3", level: "primary", schools: allSchools, base: 33, withdrawal: 0.08, boarding: 0.12 },
-  { id: "p4", label: "P.4", level: "primary", schools: allSchools, base: 32, withdrawal: 0.08, boarding: 0.12 },
-  { id: "p5", label: "P.5", level: "primary", schools: allSchools, base: 31, withdrawal: 0.08, boarding: 0.12 },
-  { id: "p6", label: "P.6", level: "primary", schools: allSchools, base: 30, withdrawal: 0.08, boarding: 0.12 },
-  { id: "p7", label: "P.7", level: "primary", schools: allSchools, base: 29, withdrawal: 0.08, boarding: 0.12 },
+  { id: "p1", label: "P.1", level: "primary", schools: primarySchools, base: 36, withdrawal: 0.08, boarding: 0.12 },
+  { id: "p2", label: "P.2", level: "primary", schools: primarySchools, base: 34, withdrawal: 0.08, boarding: 0.12 },
+  { id: "p3", label: "P.3", level: "primary", schools: primarySchools, base: 33, withdrawal: 0.08, boarding: 0.12 },
+  { id: "p4", label: "P.4", level: "primary", schools: primarySchools, base: 32, withdrawal: 0.08, boarding: 0.12 },
+  { id: "p5", label: "P.5", level: "primary", schools: primarySchools, base: 31, withdrawal: 0.08, boarding: 0.12 },
+  { id: "p6", label: "P.6", level: "primary", schools: primarySchools, base: 30, withdrawal: 0.08, boarding: 0.12 },
+  { id: "p7", label: "P.7", level: "primary", schools: primarySchools, base: 29, withdrawal: 0.08, boarding: 0.12 },
 
   { id: "s1", label: "S.1", level: "olevel", schools: secondarySchools, base: 36, withdrawal: 0.11, boarding: 0.48 },
   { id: "s2", label: "S.2", level: "olevel", schools: secondarySchools, base: 34, withdrawal: 0.11, boarding: 0.48 },
@@ -321,10 +386,7 @@ function buildRow(
   );
   const withdrawn = Math.round(continuing * withdrawalRate);
 
-  const boardingShare =
-    school.id === "annex"
-      ? 0
-      : definition.boarding * (school.id === "kibuli" ? 1.15 : 0.85);
+  const boardingShare = definition.boarding * school.boardingFactor;
   const boarding = Math.min(learners, Math.round(learners * boardingShare));
   const day = learners - boarding;
 
@@ -566,6 +628,80 @@ export function aggregateFor(filters: Filters): Aggregate {
   return aggregate(filteredRows(filters));
 }
 
+/**
+ * Board view: the mean of the six campuses instead of the group total.
+ *
+ * Counts are rounded means so a figure like "412" reads as "per school", and
+ * rates are the mean of each campus's own rate — averaging the rates keeps a
+ * small nursery from being drowned out by Kibuli Secondary.
+ */
+export function averageAcrossSchools(filters: Filters): Aggregate {
+  const perSchool = schools
+    .map((school) => aggregate(filteredRows({ ...filters, school: school.id })))
+    .filter((entry) => entry.learners > 0 || entry.capacity > 0);
+
+  if (perSchool.length === 0) {
+    return aggregate([]);
+  }
+
+  const mean = (pick: (entry: Aggregate) => number) =>
+    perSchool.reduce((sum, entry) => sum + pick(entry), 0) / perSchool.length;
+  const whole = (pick: (entry: Aggregate) => number) => Math.round(mean(pick));
+
+  const learners = whole((entry) => entry.learners);
+
+  const figures = <T extends string>(
+    keys: T[],
+    labels: Record<T, string>,
+    pick: (entry: Aggregate) => Array<Figure<T>>,
+  ): Array<Figure<T>> =>
+    keys.map((id) => {
+      const value = whole(
+        (entry) => pick(entry).find((figure) => figure.id === id)?.value ?? 0,
+      );
+
+      return { id, label: labels[id], value, share: shareOf(value, learners) };
+    });
+
+  return {
+    learners,
+    boys: whole((entry) => entry.boys),
+    girls: whole((entry) => entry.girls),
+    day: whole((entry) => entry.day),
+    boarding: whole((entry) => entry.boarding),
+    capacity: whole((entry) => entry.capacity),
+    opening: whole((entry) => entry.opening),
+    newLearners: whole((entry) => entry.newLearners),
+    continuing: whole((entry) => entry.continuing),
+    withdrawn: whole((entry) => entry.withdrawn),
+
+    applicants: whole((entry) => entry.applicants),
+    shortlisted: whole((entry) => entry.shortlisted),
+    interviewed: whole((entry) => entry.interviewed),
+    offered: whole((entry) => entry.offered),
+    accepted: whole((entry) => entry.accepted),
+    reported: whole((entry) => entry.reported),
+
+    retentionRate: mean((entry) => entry.retentionRate),
+    withdrawalRate: mean((entry) => entry.withdrawalRate),
+    utilization: mean((entry) => entry.utilization),
+    conversionRate: mean((entry) => entry.conversionRate),
+    noShowRate: mean((entry) => entry.noShowRate),
+
+    byAge: figures(ageBandKeys, ageBandLabels, (entry) => entry.byAge),
+    byNationality: figures(
+      nationalityKeys,
+      nationalityLabels,
+      (entry) => entry.byNationality,
+    ),
+    byReligion: figures(
+      religionKeys,
+      religionLabels,
+      (entry) => entry.byReligion,
+    ),
+  };
+}
+
 export function classBreakdown(rows: CohortRow[]): ClassAggregate[] {
   const order = new Map(
     classDefinitions.map((definition, index) => [definition.id, index]),
@@ -743,7 +879,8 @@ export function transitionFigures(filters: Filters): TransitionFigure[] {
   // Transitions compare whole cohorts, so class and stream filters are ignored.
   const rows = filteredRows({ ...filters, classId: "all", stream: "all" });
   const offset =
-    filters.school === "kibuli" ? 1.4 : filters.school === "buwaate" ? -1.2 : 0;
+    schools.find((school) => school.id === filters.school)?.transitionOffset ??
+    0;
 
   return transitionSpecs.map((spec) => {
     const learners = total(
@@ -770,31 +907,31 @@ export function transitionFigures(filters: Filters): TransitionFigure[] {
 /* ------------------------------------------------------------- Learner records */
 
 const withdrawalRecords: WithdrawalRecord[] = [
-  { id: "GH-2026-0417", name: "Nakimuli Joan", schoolId: "kibuli", classId: "p4", stream: "A", gender: "girls", reasonId: "fees", recordedOn: "12 Sep 2026", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0388", name: "Waiswa Moses", schoolId: "kibuli", classId: "s3", stream: "B", gender: "boys", reasonId: "relocation", recordedOn: "03 Sep 2026", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0451", name: "Akello Patience", schoolId: "buwaate", classId: "p6", stream: "A", gender: "girls", reasonId: "family-health", recordedOn: "21 Sep 2026", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0329", name: "Kamya Ronald", schoolId: "buwaate", classId: "s4", stream: "A", gender: "boys", reasonId: "academic-transfer", recordedOn: "15 Aug 2026", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0502", name: "Nassuna Vivian", schoolId: "annex", classId: "middle", stream: "A", gender: "girls", reasonId: "relocation", recordedOn: "28 Sep 2026", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0364", name: "Lubega Ivan", schoolId: "kibuli", classId: "s1", stream: "A", gender: "boys", reasonId: "fees", recordedOn: "09 Aug 2026", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0448", name: "Amongi Sarah", schoolId: "buwaate", classId: "p3", stream: "B", gender: "girls", reasonId: "family-health", recordedOn: "02 Sep 2026", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0291", name: "Ssekandi Paul", schoolId: "kibuli", classId: "p7", stream: "A", gender: "boys", reasonId: "completed", recordedOn: "30 Sep 2026", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0518", name: "Nalubega Maria", schoolId: "annex", classId: "top", stream: "B", gender: "girls", reasonId: "academic-transfer", recordedOn: "18 Sep 2026", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0356", name: "Ochieng Denis", schoolId: "buwaate", classId: "s2", stream: "B", gender: "boys", reasonId: "discipline", recordedOn: "11 Sep 2026", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0417", name: "Nakimuli Joan", schoolId: "kibuli-primary", classId: "p4", stream: "A", gender: "girls", reasonId: "fees", recordedOn: "12 Sep 2026", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0388", name: "Waiswa Moses", schoolId: "kibuli-secondary", classId: "s3", stream: "B", gender: "boys", reasonId: "relocation", recordedOn: "03 Sep 2026", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0451", name: "Akello Patience", schoolId: "buwaate-primary", classId: "p6", stream: "A", gender: "girls", reasonId: "family-health", recordedOn: "21 Sep 2026", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0329", name: "Kamya Ronald", schoolId: "kansanga-gis", classId: "s4", stream: "A", gender: "boys", reasonId: "academic-transfer", recordedOn: "15 Aug 2026", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0502", name: "Nassuna Vivian", schoolId: "kibuli-nursery", classId: "middle", stream: "A", gender: "girls", reasonId: "relocation", recordedOn: "28 Sep 2026", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0364", name: "Lubega Ivan", schoolId: "kibuli-secondary", classId: "s1", stream: "A", gender: "boys", reasonId: "fees", recordedOn: "09 Aug 2026", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0448", name: "Amongi Sarah", schoolId: "buwaate-primary", classId: "p3", stream: "B", gender: "girls", reasonId: "family-health", recordedOn: "02 Sep 2026", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0291", name: "Ssekandi Paul", schoolId: "kibuli-primary", classId: "p7", stream: "A", gender: "boys", reasonId: "completed", recordedOn: "30 Sep 2026", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0518", name: "Nalubega Maria", schoolId: "buwaate-nursery", classId: "top", stream: "B", gender: "girls", reasonId: "academic-transfer", recordedOn: "18 Sep 2026", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0356", name: "Ochieng Denis", schoolId: "kibuli-secondary", classId: "s2", stream: "B", gender: "boys", reasonId: "discipline", recordedOn: "11 Sep 2026", period: "Term 2, 2026/27" },
 ];
 
 const atRiskRecords: AtRiskRecord[] = [
-  { id: "GH-2026-0142", name: "Achieng Mercy", schoolId: "kibuli", classId: "s2", stream: "A", gender: "girls", attendance: 68, academic: 41, arrearsDays: 62, risk: "high", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0119", name: "Okello Brian", schoolId: "kibuli", classId: "s4", stream: "B", gender: "boys", attendance: 71, academic: 45, arrearsDays: 48, risk: "high", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0234", name: "Nakato Grace", schoolId: "buwaate", classId: "p5", stream: "A", gender: "girls", attendance: 74, academic: 52, arrearsDays: 31, risk: "medium", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0207", name: "Mugisha Daniel", schoolId: "buwaate", classId: "s3", stream: "B", gender: "boys", attendance: 62, academic: 38, arrearsDays: 74, risk: "high", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0176", name: "Namutebi Sarah", schoolId: "kibuli", classId: "p6", stream: "A", gender: "girls", attendance: 81, academic: 58, arrearsDays: 12, risk: "low", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0134", name: "Byaruhanga Peter", schoolId: "kibuli", classId: "s1", stream: "B", gender: "boys", attendance: 77, academic: 49, arrearsDays: 27, risk: "medium", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0261", name: "Atim Faith", schoolId: "buwaate", classId: "p2", stream: "A", gender: "girls", attendance: 69, academic: 44, arrearsDays: 55, risk: "high", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0158", name: "Ssemakula Joel", schoolId: "kibuli", classId: "p3", stream: "B", gender: "boys", attendance: 83, academic: 61, arrearsDays: 8, risk: "low", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0482", name: "Kirabo Esther", schoolId: "annex", classId: "top", stream: "A", gender: "girls", attendance: 72, academic: 47, arrearsDays: 36, risk: "medium", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0225", name: "Tumusiime Mark", schoolId: "buwaate", classId: "p5", stream: "B", gender: "boys", attendance: 66, academic: 40, arrearsDays: 68, risk: "high", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0163", name: "Nankya Diana", schoolId: "kibuli", classId: "s2", stream: "B", gender: "girls", attendance: 79, academic: 55, arrearsDays: 19, risk: "medium", period: "Term 2, 2026/27" },
-  { id: "GH-2026-0496", name: "Opio Samuel", schoolId: "annex", classId: "p1", stream: "A", gender: "boys", attendance: 85, academic: 63, arrearsDays: 5, risk: "low", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0142", name: "Achieng Mercy", schoolId: "kibuli-secondary", classId: "s2", stream: "A", gender: "girls", attendance: 68, academic: 41, arrearsDays: 62, risk: "high", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0119", name: "Okello Brian", schoolId: "kibuli-secondary", classId: "s4", stream: "B", gender: "boys", attendance: 71, academic: 45, arrearsDays: 48, risk: "high", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0234", name: "Nakato Grace", schoolId: "buwaate-primary", classId: "p5", stream: "A", gender: "girls", attendance: 74, academic: 52, arrearsDays: 31, risk: "medium", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0207", name: "Mugisha Daniel", schoolId: "kansanga-gis", classId: "s3", stream: "B", gender: "boys", attendance: 62, academic: 38, arrearsDays: 74, risk: "high", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0176", name: "Namutebi Sarah", schoolId: "kibuli-primary", classId: "p6", stream: "A", gender: "girls", attendance: 81, academic: 58, arrearsDays: 12, risk: "low", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0134", name: "Byaruhanga Peter", schoolId: "kibuli-secondary", classId: "s1", stream: "B", gender: "boys", attendance: 77, academic: 49, arrearsDays: 27, risk: "medium", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0261", name: "Atim Faith", schoolId: "buwaate-primary", classId: "p2", stream: "A", gender: "girls", attendance: 69, academic: 44, arrearsDays: 55, risk: "high", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0158", name: "Ssemakula Joel", schoolId: "kibuli-primary", classId: "p3", stream: "B", gender: "boys", attendance: 83, academic: 61, arrearsDays: 8, risk: "low", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0482", name: "Kirabo Esther", schoolId: "kibuli-nursery", classId: "top", stream: "A", gender: "girls", attendance: 72, academic: 47, arrearsDays: 36, risk: "medium", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0225", name: "Tumusiime Mark", schoolId: "buwaate-primary", classId: "p5", stream: "B", gender: "boys", attendance: 66, academic: 40, arrearsDays: 68, risk: "high", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0163", name: "Nankya Diana", schoolId: "kansanga-gis", classId: "s2", stream: "B", gender: "girls", attendance: 79, academic: 55, arrearsDays: 19, risk: "medium", period: "Term 2, 2026/27" },
+  { id: "GH-2026-0496", name: "Opio Samuel", schoolId: "kansanga-gis", classId: "p1", stream: "A", gender: "boys", attendance: 85, academic: 63, arrearsDays: 5, risk: "low", period: "Term 2, 2026/27" },
 ];
 
 function learnerInScope(filters: Filters) {
