@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { X } from "lucide-react";
 
 import type { RosterLearner } from "./admissionsEnrollment.data";
-import { dataFreshness } from "./admissionsEnrollment.data";
 
 interface LearnerDrawerProps {
   learner: RosterLearner | null;
@@ -102,8 +101,8 @@ export function LearnerDrawer({ learner, onClose }: LearnerDrawerProps) {
         )}
 
         <p className="ae-drawer__foot">
-          Learner-level details are limited to authorised staff. Source:{" "}
-          {dataFreshness.source}, synced {dataFreshness.lastSync}.
+          Learner-level details are limited to authorised staff. Learner records
+          are not reported by the API yet.
         </p>
       </aside>
     </>

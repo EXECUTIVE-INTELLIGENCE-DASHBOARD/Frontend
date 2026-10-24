@@ -1,12 +1,7 @@
 import { ArrowDown } from "lucide-react";
 
 import type { Aggregate } from "./admissionsEnrollment.types";
-import {
-  dataFreshness,
-  formatNumber,
-  formatPercent,
-  funnelStages,
-} from "./admissionsEnrollment.data";
+import { formatNumber, formatPercent, funnelStages } from "./admissionsEnrollment.data";
 
 const stageIds = [
   "applicants",
@@ -107,9 +102,7 @@ export function AdmissionsFunnel({ summary, live = false }: AdmissionsFunnelProp
           </>
         ) : (
           <span className="ae-funnel__note-warn">
-            Funnel figures unavailable —{" "}
-            {formatNumber(dataFreshness.missingStageRecords)} stage records
-            incomplete
+            Funnel figures unavailable — the API does not report this stage.
           </span>
         )}
       </p>

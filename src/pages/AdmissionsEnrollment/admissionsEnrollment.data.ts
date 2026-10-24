@@ -188,12 +188,17 @@ export const defaultFilters: Filters = {
   student: "",
 };
 
+/**
+ * Freshness metadata.
+ *
+ * The API does not report a sync time or a count of incomplete records, so
+ * these are `null` and the UI renders a dash rather than inventing a date.
+ */
 export const dataFreshness = {
-  source: "SMIS nightly sync + Registrar CSV import",
-  lastSync: "23 Oct 2026, 05:30 EAT",
-  nextSync: "24 Oct 2026, 05:30 EAT",
-  missingAgeRecords: 34,
-  missingStageRecords: 18,
+  source: null as string | null,
+  lastSync: null as string | null,
+  missingAgeRecords: null as number | null,
+  missingStageRecords: null as number | null,
   scopeNote:
     "Aggregates use authorised enrolment data. Learner names are only shown in the withdrawals and risk-review tables.",
 };
