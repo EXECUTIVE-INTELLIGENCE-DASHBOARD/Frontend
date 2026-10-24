@@ -47,6 +47,38 @@ export const navigationItems: NavigationItem[] = [
   },
 
   {
+    id: "operations",
+    label: "Operational",
+    icon: Landmark,
+    children: [
+      {
+        id: "hr-workforce",
+        label: "HR & Workforce",
+      },
+      // Absorbs the old "Work Orders" entry: work orders are the same thing as
+      // maintenance requests, so they are handled on this page.
+      {
+        id: "facilities-maintenance",
+        label: "Facilities & Maintenance",
+      },
+      {
+        id: "fleet-transport",
+        label: "Fleet & Transport",
+      },
+      // Absorbs the old "ICT Systems" entry: ICT equipment is part of the asset
+      // register and its annual stocktake.
+      {
+        id: "asset-management",
+        label: "Asset Management",
+      },
+      {
+        id: "incidents-security",
+        label: "Incidents & Security",
+      },
+    ],
+  },
+
+  {
     id: "finance-procurement",
     label: "Finance & Procurement",
     icon: WalletCards,
@@ -104,38 +136,6 @@ export const navigationItems: NavigationItem[] = [
   id: "procurement-requests",
   label: "Procurement Requests",
 },
-    ],
-  },
-
-  {
-    id: "operations",
-    label: "Operational",
-    icon: Landmark,
-    children: [
-      {
-        id: "hr-workforce",
-        label: "HR & Workforce",
-      },
-      {
-        id: "facilities-maintenance",
-        label: "Facilities & Maintenance",
-      },
-      {
-        id: "fleet-transport",
-        label: "Fleet & Transport",
-      },
-      {
-        id: "ict-systems",
-        label: "ICT Systems",
-      },
-      {
-        id: "asset-management",
-        label: "Asset Management",
-      },
-      {
-        id: "work-orders",
-        label: "Work Orders",
-      },
     ],
   },
 

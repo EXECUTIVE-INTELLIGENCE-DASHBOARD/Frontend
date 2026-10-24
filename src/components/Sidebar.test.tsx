@@ -92,15 +92,20 @@ describe("Sidebar", () => {
 
     await user.click(screen.getByRole("button", { name: /operational/i }));
 
+    expect(screen.getByText("HR & Workforce")).toBeInTheDocument();
+
     expect(screen.getByText("Facilities & Maintenance")).toBeInTheDocument();
 
     expect(screen.getByText("Fleet & Transport")).toBeInTheDocument();
 
-    expect(screen.getByText("ICT Systems")).toBeInTheDocument();
-
     expect(screen.getByText("Asset Management")).toBeInTheDocument();
 
-    expect(screen.getByText("Work Orders")).toBeInTheDocument();
+    expect(screen.getByText("Incidents & Security")).toBeInTheDocument();
+
+    // Folded into their parents by the approved menu.
+    expect(screen.queryByText("ICT Systems")).not.toBeInTheDocument();
+
+    expect(screen.queryByText("Work Orders")).not.toBeInTheDocument();
 
     expect(screen.queryByText("Operational Overview")).not.toBeInTheDocument();
   });

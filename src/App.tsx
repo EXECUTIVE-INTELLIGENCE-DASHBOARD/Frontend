@@ -56,7 +56,10 @@ const pages: Record<string, ReactElement> = {
   "inventory-stock": <InventoryStock />,
   "procurement-requests": <ProcurementRequests />,
   
-  /* Operational group */
+  /* Operational group — approved menu. `facilities-maintenance`,
+     `fleet-transport` and `incidents-security` have no page component yet, so
+     they render `PlaceholderPage`; work orders live inside facilities and ICT
+     equipment inside asset management. */
   "hr-workforce": <HrWorkforce />,
   "asset-management": <AssetsEquipment />,
 
