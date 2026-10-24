@@ -15,7 +15,7 @@ describe("AdmissionsEnrollment", () => {
     const kpis = screen.getByRole("region", { name: "Enrolment summary" });
 
     expect(within(kpis).getByText("Total students")).toBeInTheDocument();
-    expect(within(kpis).getByText("Roll at start")).toBeInTheDocument();
+    expect(within(kpis).getByText("Capacity")).toBeInTheDocument();
     expect(within(kpis).getByText("New students")).toBeInTheDocument();
     expect(within(kpis).getByText("Returning")).toBeInTheDocument();
     expect(within(kpis).getByText("Join rate")).toBeInTheDocument();

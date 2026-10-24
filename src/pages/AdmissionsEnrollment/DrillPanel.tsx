@@ -21,6 +21,8 @@ interface DrillPanelProps {
   total: number;
   onDrill: (dimension: DrillDimension, value: string) => void;
   onOpenLearner: (learner: RosterLearner) => void;
+  /** Where the rows come from, when that differs from the live endpoint. */
+  note?: string;
 }
 
 const MAX_ROWS = 60;
@@ -34,6 +36,7 @@ export function DrillPanel({
   total,
   onDrill,
   onOpenLearner,
+  note,
 }: DrillPanelProps) {
   const max = groups.reduce((peak, group) => Math.max(peak, group.learners), 0);
   const visible = learners.slice(0, MAX_ROWS);
@@ -52,6 +55,7 @@ export function DrillPanel({
             {heading}
           </h2>
           <p className="ae-block__sub">{sub}</p>
+          {note ? <p className="ae-block__note">{note}</p> : null}
         </div>
         <span className="ae-chip">{formatNumber(total)} in view</span>
       </div>

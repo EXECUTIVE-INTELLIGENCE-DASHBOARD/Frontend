@@ -1,110 +1,97 @@
 import { DonutChart } from "../../components/DonutChart";
-import { formatNumber } from "./studentRetention.data";
+import type { WithdrawalReason } from "../../api/academics.api";
+import { dash, formatMetric } from "./studentRetention.data";
 
-const COLORS = {
-  financial: "#0B2E75",
-  transfer: "#2AA4DD",
-  death: "#F1BA1B",
-  academic: "#4B6FAE",
-} as const;
+/**
+ * The backend ships its own reasons and counts, so there is no local weight
+ * table any more. Anything it does not report is drawn as an em dash rather than
+ * a made-up slice.
+ */
+const COLORS = ["#0B2E75", "#2AA4DD", "#F1BA1B", "#4B6FAE", "#8FA8D3"];
 
-const withdrawalReasons = [
-  {
-    id: "financial",
-    label: "Financial Constraints",
-    value: 44,
-    color: COLORS.financial,
-  },
-  {
-    id: "transfer",
-    label: "Transfer to Another School",
-    value: 34,
-    color: COLORS.transfer,
-  },
-  {
-    id: "death",
-    label: "Death",
-    value: 23,
-    color: COLORS.death,
-  },
-  {
-    id: "academic",
-    label: "Academic Performance",
-    value: 23,
-    color: COLORS.academic,
-  },
-] as const;
+interface ReasonsCardProps {
+  reasons: WithdrawalReason[];
+  /** `withdrawals_total` from the API, or `null` when it is missing. */
+  total: number | null;
+}
 
-const totalWithdrawals = withdrawalReasons.reduce(
-  (total, reason) => total + reason.value,
-  0,
-);
+export function GenderRetentionCard({ reasons, total }: ReasonsCardProps) {
+  const reported = reasons.filter((reason) => (reason.count ?? 0) > 0);
 
-export function GenderRetentionCard() {
+  const sum = reported.reduce((figure, reason) => figure + reason.count, 0);
+  const denominator = total && total > 0 ? total : sum;
+
+  const segments = reported.map((reason, index) => ({
+    id: reason.reason,
+    value: reason.count,
+    color: COLORS[index % COLORS.length],
+  }));
+
   return (
     <section className="sr-card sr-gender">
       <div className="sr-card__header">
-        <h2 className="sr-card__title">
-          Reasons for Withdrawal
-        </h2>
+        <h2 className="sr-card__title">Reasons for Withdrawal</h2>
       </div>
 
       <div className="sr-gender__body">
         <div className="sr-gender__chart">
-          <DonutChart
-            segments={withdrawalReasons.map((reason) => ({
-              id: reason.id,
-              value: reason.value,
-              color: reason.color,
-            }))}
-            centerValue={formatNumber(totalWithdrawals)}
-            centerLabel="Total Withdrawals"
-            ariaLabel="Student withdrawals by reason"
-            size={150}
-            thickness={20}
-          />
+          {segments.length === 0 ? (
+            <p className="sr-dash sr-dash--chart" title="Not reported by the API">
+              {dash}
+            </p>
+          ) : (
+            <DonutChart
+              segments={segments}
+              centerValue={formatMetric(denominator)}
+              centerLabel="Total Withdrawals"
+              ariaLabel="Student withdrawals by reason"
+              size={150}
+              thickness={20}
+            />
+          )}
         </div>
 
         <div className="sr-withdrawal__details">
-          <ul className="sr-gender__list">
-            {withdrawalReasons.map((reason) => {
-              const percentage = (
-                (reason.value / totalWithdrawals) *
-                100
-              ).toFixed(1);
+          {segments.length === 0 ? (
+            <p className="sr-dash" title="Not reported by the API">
+              Withdrawal reasons are not reported by the API.
+            </p>
+          ) : (
+            <ul className="sr-gender__list">
+              {reported.map((reason, index) => {
+                const color = COLORS[index % COLORS.length];
+                const share =
+                  reason.share ??
+                  (denominator === 0 ? 0 : (reason.count / denominator) * 100);
 
-              return (
-                <li
-                  key={reason.id}
-                  className="sr-withdrawal__item"
-                >
-                  <span
-                    className="sr-gender__dot"
-                    style={{ background: reason.color }}
-                    aria-hidden="true"
-                  />
+                return (
+                  <li key={reason.reason} className="sr-withdrawal__item">
+                    <span
+                      className="sr-gender__dot"
+                      style={{ background: color }}
+                      aria-hidden="true"
+                    />
 
-                  <span className="sr-gender__label">
-                    {reason.label}
-                  </span>
+                    <span className="sr-gender__label">{reason.label}</span>
 
-                  <span className="sr-gender__count">
-                    {formatNumber(reason.value)}
-                  </span>
+                    <span className="sr-gender__count">
+                      {formatMetric(reason.count)}
+                    </span>
 
-                  <span
-                    className="sr-pill"
-                    style={{
-                      color: reason.color,
-                      backgroundColor: `${reason.color}20`,
-                    }}
-                  >
-                    {percentage}%
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
+                    <span
+                      className="sr-pill"
+                      style={{
+                        color,
+                        backgroundColor: `${color}20`,
+                      }}
+                    >
+                      {share.toFixed(1)}%
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
       </div>
     </section>

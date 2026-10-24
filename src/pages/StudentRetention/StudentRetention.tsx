@@ -11,31 +11,80 @@ import { NationalityTableCard } from "./NationalityTableCard";
 import { RetentionMetricCard } from "./RetentionMetricCard";
 import {
   allCampusesLabel,
-  formatNumber,
+  formatMetric,
+  formatRate,
   rowsForCampus,
   summaryForCampus,
 } from "./studentRetention.data";
 import { fetchStudentRetention } from "./studentRetention.api";
 import type { RetentionDashboardData } from "./studentRetention.api";
+import type { RetentionSummary } from "./studentRetention.types";
 
 import "../../palette.css";
 import "./StudentRetention.css";
 
+/** What every card shows before the endpoint answers, or when it fails. */
+const unavailableSummary: RetentionSummary = {
+  reEnrolled: null,
+  rate: null,
+  atRisk: null,
+};
+
+interface RetentionState {
+  data: RetentionDashboardData | null;
+  error: string | null;
+  isPending: boolean;
+}
+
 export function StudentRetention() {
   const [campus, setCampus] = useState<CampusOption>(allCampusesLabel);
-  const [data, setData] = useState<RetentionDashboardData | null>(null);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [state, setState] = useState<RetentionState>({
+    data: null,
+    error: null,
+    isPending: true,
+  });
 
+  // One request for the whole dashboard; the campus selector filters the rows
+  // the API already returned, so switching campus never re-fetches.
   useEffect(() => {
-    fetchStudentRetention()
-      .then(setData)
-      .catch((err: Error) => setError(err.message))
-      .finally(() => setLoading(false));
+    const controller = new AbortController();
+    let active = true;
+
+    setState({ data: null, error: null, isPending: true });
+
+    fetchStudentRetention({}, controller.signal)
+      .then((data) => {
+        if (active) {
+          setState({ data, error: null, isPending: false });
+        }
+      })
+      .catch((error: unknown) => {
+        if (!active || controller.signal.aborted) {
+          return;
+        }
+
+        setState({
+          data: null,
+          error: error instanceof Error ? error.message : "Unknown error",
+          isPending: false,
+        });
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, []);
 
-  const summary = data ? summaryForCampus(data, campus) : null;
+  const { data, error, isPending } = state;
+
+  const summary = data
+    ? summaryForCampus(data, campus)
+    : unavailableSummary;
+
   const rows = data ? rowsForCampus(data, campus) : [];
+  const reasons = data?.withdrawal_reasons ?? [];
+  const withdrawalsTotal = data?.withdrawals_total ?? null;
 
   return (
     <div className="sr-page">
@@ -43,45 +92,41 @@ export function StudentRetention() {
         <CampusFilter onCampusChange={setCampus} />
       </div>
 
-      {loading && <p>Loading student retention data...</p>}
+      {isPending ? <p>Loading student retention data...</p> : null}
 
-      {!loading && error && (
+      {!isPending && error ? (
         <p role="alert">
           Unable to load retention data: {error}
         </p>
-      )}
+      ) : null}
 
-      {!loading && !error && data && summary && (
-        <>
-          <div className="sr-metrics">
-            <RetentionMetricCard
-              label="Total Re-enrolled Students"
-              value={formatNumber(summary.reEnrolled)}
-              icon={Users}
-              tone="navy"
-            />
+      <div className="sr-metrics">
+        <RetentionMetricCard
+          label="Total Re-enrolled Students"
+          value={formatMetric(summary.reEnrolled)}
+          icon={Users}
+          tone="navy"
+        />
 
-            <RetentionMetricCard
-              label="Re-enrollment Rate"
-              value={`${summary.rate.toFixed(1)}%`}
-              icon={Check}
-              tone="sky"
-            />
+        <RetentionMetricCard
+          label="Re-enrollment Rate"
+          value={formatRate(summary.rate)}
+          icon={Check}
+          tone="sky"
+        />
 
-            <RetentionMetricCard
-              label="At-Risk Retention"
-              value={formatNumber(summary.atRisk)}
-              icon={AlertTriangle}
-              tone="amber"
-            />
-          </div>
+        <RetentionMetricCard
+          label="At-Risk Retention"
+          value={formatMetric(summary.atRisk)}
+          icon={AlertTriangle}
+          tone="amber"
+        />
+      </div>
 
-          <div className="sr-grid">
-            <NationalityTableCard rows={rows} />
-            <GenderRetentionCard />
-          </div>
-        </>
-      )}
+      <div className="sr-grid">
+        <NationalityTableCard rows={rows} />
+        <GenderRetentionCard reasons={reasons} total={withdrawalsTotal} />
+      </div>
     </div>
   );
 }

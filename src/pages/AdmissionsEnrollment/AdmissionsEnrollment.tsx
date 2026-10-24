@@ -40,6 +40,12 @@ import {
   termOptions,
   years,
 } from "./admissionsEnrollment.data";
+import {
+  aggregateFromDashboard,
+  backendSchoolIdFor,
+  useEnrollmentDashboard,
+  type AcademicDashboardFilters,
+} from "./admissionsEnrollment.api";
 import type {
   Filters,
   LevelId,
@@ -105,11 +111,33 @@ export function AdmissionsEnrollment() {
 
   const isAllSchools = filters.school === "all";
 
+  // The API understands its own numeric school ids, not the dashboard slugs,
+  // so translate first. An unmapped slug means "no filter", never "zero".
+  const liveFilters = useMemo<AcademicDashboardFilters>(() => {
+    if (isAllSchools) {
+      return {};
+    }
+
+    const schoolId = backendSchoolIdFor(filters.school);
+
+    return schoolId === undefined ? {} : { school: schoolId };
+  }, [isAllSchools, filters.school]);
+
+  const live = useEnrollmentDashboard(liveFilters);
+  const isLive = live.data !== null;
+
   // Board members looking at the whole group see the mean of the six campuses.
   // The moment they pick a school every figure comes from that school alone.
-  const summary = useMemo(
+  // These seeded rows are now only the fallback: live figures win whenever the
+  // endpoint answers, and the fallback covers an offline backend.
+  const seededSummary = useMemo(
     () => (isAllSchools ? averageAcrossSchools(filters) : totals),
     [isAllSchools, filters, totals],
+  );
+
+  const summary = useMemo(
+    () => (live.data ? aggregateFromDashboard(live.data) : seededSummary),
+    [live.data, seededSummary],
   );
 
   const availableClasses = useMemo(
@@ -560,50 +588,63 @@ export function AdmissionsEnrollment() {
         </div>
       ) : null}
 
+      {live.error ? (
+        <p className="ae-empty" role="alert">
+          Live enrolment data unavailable ({live.error}). Every figure stays at
+          “—” until the endpoint answers.
+        </p>
+      ) : null}
+
       <section className="ae-kpis" aria-label="Enrolment summary">
         <KpiCard
           icon={Users}
           label="Total students"
-          value={formatNumber(summary.learners)}
-          detail={`${formatNumber(summary.girls)} girls · ${formatNumber(summary.boys)} boys`}
+          value={isLive ? formatNumber(summary.learners) : "—"}
+          detail={
+            !isLive
+              ? "Waiting on the API"
+              : summary.girls + summary.boys === 0
+                ? "Gender split not reported by the API"
+                : `${formatNumber(summary.girls)} girls · ${formatNumber(summary.boys)} boys`
+          }
           tone="navy"
         />
         <KpiCard
           icon={Building2}
-          label="Roll at start"
-          value={formatNumber(summary.opening)}
-          detail={`${formatPercent(summary.utilization)} of capacity`}
+          label="Capacity"
+          value={isLive ? formatNumber(summary.capacity) : "—"}
+          detail={
+            isLive
+              ? `${formatPercent(summary.utilization)} utilised`
+              : "Waiting on the API"
+          }
           tone="sky"
         />
         <KpiCard
           icon={UserPlus}
           label="New students"
-          value={formatNumber(summary.newLearners)}
-          detail={`${formatPercent(
-            summary.learners === 0
-              ? 0
-              : (summary.newLearners / summary.learners) * 100,
-          )} of the roll`}
+          value="—"
+          detail="Not reported by the API"
           tone="sky"
         />
         <KpiCard
           icon={Repeat}
           label="Returning"
-          value={formatNumber(summary.continuing)}
-          detail={`${formatPercent(
-            summary.learners === 0
-              ? 0
-              : (summary.continuing / summary.learners) * 100,
-          )} of the roll`}
+          value="—"
+          detail="Not reported by the API"
           tone="green"
         />
         <KpiCard
           icon={TrendingUp}
           label="Join rate"
-          value={formatPercent(summary.conversionRate)}
-          detail={`${formatNumber(summary.reported)} of ${formatNumber(
-            summary.applicants,
-          )} applicants`}
+          value={isLive ? formatPercent(summary.conversionRate) : "—"}
+          detail={
+            isLive
+              ? `${formatNumber(summary.reported)} of ${formatNumber(
+                  summary.applicants,
+                )} applicants`
+              : "Waiting on the API"
+          }
           tone="amber"
         />
       </section>
@@ -631,6 +672,7 @@ export function AdmissionsEnrollment() {
             total={dimension === "learners" ? matches.length : totals.learners}
             onDrill={drill}
             onOpenLearner={setOpenLearner}
+            note="Class, stream and learner records are not on the API yet — this list is sample data."
           />
 
           <ProfilePanel
@@ -645,7 +687,7 @@ export function AdmissionsEnrollment() {
           />
         </div>
 
-        <AdmissionsFunnel summary={summary} />
+        <AdmissionsFunnel summary={summary} live={isLive} />
       </div>
 
       <LearnerDrawer

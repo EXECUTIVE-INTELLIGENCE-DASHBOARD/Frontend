@@ -13,6 +13,16 @@
 				"$tsc"
 			],
 			"group": "build"
+		},
+		{
+			"label": "test",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"test"
+			],
+			"group": "test"
 		}
 	]
 }

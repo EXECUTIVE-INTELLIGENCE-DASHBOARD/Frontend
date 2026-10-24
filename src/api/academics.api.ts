@@ -87,10 +87,11 @@ export interface AcademicDashboardFilters {
 export const academicsApi = {
   getRetentionDashboard: async (
     filters: AcademicDashboardFilters = {},
+    signal?: AbortSignal,
   ): Promise<RetentionDashboardData> => {
     const response = await api.get<RetentionDashboardData>(
       "/academics/retention/dashboard/",
-      { params: filters },
+      { params: filters, signal },
     );
 
     return response.data;

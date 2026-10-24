@@ -5,6 +5,9 @@ coverage/
 .env
 .env.*
 !.env.example
+# Committed on purpose: the dev server proxies /api so the browser never has to
+# resolve the backend host itself. See server.proxy in vite.config.ts.
+!.env.development
 .DS_Store
 
 # Build, test and log output that must never be committed

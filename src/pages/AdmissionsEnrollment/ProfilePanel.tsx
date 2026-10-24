@@ -97,25 +97,36 @@ export function ProfilePanel({ summary, sub }: ProfilePanelProps) {
       </div>
 
       <ul className="ae-barlist ae-barlist--wide">
-        {items.map((item) => (
-          <li key={item.id} className="ae-barlist__item">
-            <div className="ae-barlist__head">
-              <span className="ae-barlist__label">{item.label}</span>
-              <span className="ae-barlist__value">
-                {formatNumber(item.value)}
-                <span className="ae-barlist__share">
-                  {formatPercent(item.share)}
-                </span>
-              </span>
-            </div>
-            <div className="ae-barlist__track" aria-hidden="true">
-              <span
-                className="ae-barlist__fill"
-                style={{ width: `${Math.max(item.width, 1.5)}%` }}
-              />
-            </div>
+        {items.length === 0 ? (
+          <li className="ae-barlist__item">
+            <p
+              className="ae-nodata"
+              title={`${activeLabel} is not reported by the API`}
+            >
+              — Not reported by the API
+            </p>
           </li>
-        ))}
+        ) : (
+          items.map((item) => (
+            <li key={item.id} className="ae-barlist__item">
+              <div className="ae-barlist__head">
+                <span className="ae-barlist__label">{item.label}</span>
+                <span className="ae-barlist__value">
+                  {formatNumber(item.value)}
+                  <span className="ae-barlist__share">
+                    {formatPercent(item.share)}
+                  </span>
+                </span>
+              </div>
+              <div className="ae-barlist__track" aria-hidden="true">
+                <span
+                  className="ae-barlist__fill"
+                  style={{ width: `${Math.max(item.width, 1.5)}%` }}
+                />
+              </div>
+            </li>
+          ))
+        )}
       </ul>
     </section>
   );

@@ -582,6 +582,25 @@
   font-size: 11.5px;
 }
 
+/* States where the rows come from somewhere other than the live endpoint. */
+
+.ae-block__note {
+  margin: 3px 0 0;
+  color: var(--ae-soft);
+  font-size: 10.5px;
+  font-style: italic;
+}
+
+/* The em dash used wherever the API reports nothing, so a blank never reads as
+   a real zero. */
+
+.ae-nodata {
+  margin: 0;
+  padding: 10px 0;
+  color: var(--ae-muted);
+  font-size: 12px;
+}
+
 .ae-block__foot {
   margin: 0;
   color: var(--ae-soft);
