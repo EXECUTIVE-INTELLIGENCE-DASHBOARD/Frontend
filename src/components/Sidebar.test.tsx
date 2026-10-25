@@ -30,7 +30,7 @@ describe("Sidebar", () => {
 
     expect(screen.getByText("Co-Curricular Activities")).toBeInTheDocument();
 
-    expect(screen.getByText("Attendance Rates")).toBeInTheDocument();
+    expect(screen.getByText("Attendance")).toBeInTheDocument();
 
     expect(screen.getByText("Academic Performance")).toBeInTheDocument();
 
@@ -74,7 +74,7 @@ describe("Sidebar", () => {
 
     expect(screen.queryByText("Admissions & Enrolment")).not.toBeInTheDocument();
 
-    expect(screen.queryByText("Attendance Rates")).not.toBeInTheDocument();
+    expect(screen.queryByText("Attendance")).not.toBeInTheDocument();
 
     expect(screen.queryByText("Academic Performance")).not.toBeInTheDocument();
 
