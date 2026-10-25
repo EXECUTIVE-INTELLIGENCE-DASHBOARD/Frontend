@@ -84,12 +84,12 @@ describe("Hero", () => {
     fireEvent.focus(search);
 
     const result = screen.getByRole("button", {
-      name: /Attendance Rates/,
+      name: /Attendance/,
     });
 
     fireEvent.click(result);
 
-    expect(onSelectPage).toHaveBeenCalledWith("attendance-rates");
+    expect(onSelectPage).toHaveBeenCalledWith("attendance");
     expect(search).toHaveValue("");
   });
 
