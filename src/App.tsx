@@ -8,7 +8,7 @@ import { findNavigationLabel } from "./navigation/navigation.config";
 import { AcademicPerformance } from "./pages/academic-performance/AcademicPerformance";
 import { ExecutiveOverview } from "./pages/ExecutiveOverview/ExecutiveOverview";
 import { PlaceholderPage } from "./pages/Placeholder/PlaceholderPage";
-import { AttendanceRates } from "./pages/AttendanceRates/AttendanceRates";
+import AttendanceAnalysis from "./pages/Attendance/AttendanceAnalysis";
 import { Revenue } from "./pages/Revenue";
 import { Liabilities } from "./pages/Liabilities/Liabilities";
 import { ProcurementFinancials } from "./pages/ProcurementFinancials/ProcurementFinancials";
@@ -36,7 +36,7 @@ const pages: Record<string, ReactElement> = {
   overview: <ExecutiveOverview />,
   "admissions-enrollment": <AdmissionsEnrollment />,
   "academic-performance": <AcademicPerformance />,
-  "attendance-rates": <AttendanceRates />,
+    "attendance-rates": <AttendanceAnalysis />,
   "co-curricular-activities": <CoCurricularActivities />,
   "student-retention": <StudentRetention />,
 
