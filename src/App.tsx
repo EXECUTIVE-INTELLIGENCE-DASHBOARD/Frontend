@@ -28,6 +28,7 @@ import InventoryStock from "./pages/Procurement/InventoryStock";
 import ProcurementRequests from "./pages/Procurement/ProcurementRequests";
 
 import { AssetsEquipment } from "./pages/AssetsEquipment/AssetsEquipment";
+import { FleetTransport } from "./pages/FleetTransport/FleetTransport";
 import { Sales, Inventory, Budget } from "./pages/services";
 
 const pages: Record<string, ReactElement> = {
@@ -56,11 +57,12 @@ const pages: Record<string, ReactElement> = {
   "inventory-stock": <InventoryStock />,
   "procurement-requests": <ProcurementRequests />,
   
-  /* Operational group — approved menu. `facilities-maintenance`,
-     `fleet-transport` and `incidents-security` have no page component yet, so
-     they render `PlaceholderPage`; work orders live inside facilities and ICT
-     equipment inside asset management. */
+  /* Operational group — approved menu. `facilities-maintenance` and
+     `incidents-security` have no page component yet, so they render
+     `PlaceholderPage`; work orders live inside facilities and ICT equipment
+     inside asset management. */
   "hr-workforce": <HrWorkforce />,
+  "fleet-transport": <FleetTransport />,
   "asset-management": <AssetsEquipment />,
 
   /* Services group  */
