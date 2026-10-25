@@ -1,3 +1,4 @@
+
 /* Brand typography (Greenhill brand guidelines 2026): Montserrat.
    Loaded here so it only affects this page. */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
@@ -14,7 +15,7 @@
 
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 20px;
 
   /* Headline: Bold. Subhead: Semibold. Body copy: Regular. */
   font-family:
@@ -28,7 +29,7 @@
   font-weight: 400;
 }
 
-/* --------------------------------------------------------------- Toolbar */
+/* Toolbar */
 
 /* The campus dropdown is the shared CampusFilter component. */
 .cc-toolbar {
@@ -36,9 +37,10 @@
   justify-content: flex-end;
 }
 
-/* --------------------------------------------------------------- Metrics */
+/*  Metrics */
 
 .cc-metrics {
+  margin-top: 12px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
@@ -48,15 +50,6 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-
-  min-height: 122px;
-  padding: 16px 14px;
-
-  border: 1px solid var(--cc-border);
-  border-radius: 12px;
-
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
 }
 
 .cc-metric__top {
@@ -131,7 +124,7 @@
   background: var(--cc-warning);
 }
 
-/* ---------------------------------------------------------------- Card */
+/*  Card */
 
 .cc-card {
   display: flex;
@@ -257,7 +250,7 @@
   outline-offset: 2px;
 }
 
-/* ---------------------------------------------------------------- Table */
+/*  Table */
 
 .cc-table-wrap {
   overflow-x: auto;
@@ -271,7 +264,7 @@
 }
 
 .cc-table thead th {
-padding: 9px 14px;
+  padding: 9px 14px;
   border-bottom: 1px solid var(--cc-border);
   background: var(--color-surface-subtle);
   color: var(--cc-heading);
@@ -286,7 +279,7 @@ padding: 9px 14px;
 
 .cc-table tbody td {
   padding: 10px 14px;
-line-height: 1.4;
+  line-height: 1.4;
   border-bottom: 1px solid var(--color-border-soft);
   color: var(--color-text);
   vertical-align: middle;
@@ -365,10 +358,66 @@ line-height: 1.4;
   text-align: center;
 }
 
-/* ------------------------------------------------------------ Responsive */
+/* Responsive */
 
 @media (max-width: 860px) {
   .cc-metrics {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* KPI icon: solid blue badge, white glyph */
+.cc-page .cc-metric__icon.cc-tone--accent,
+.cc-page .cc-metric__icon.cc-tone--navy,
+.cc-page .cc-metric__icon.cc-tone--warning {
+  background: #2ba3dc;
+  color: #ffffff;
+}
+
+
+/* KPI card: icon on the left, text stacked beside it */
+.cc-page .cc-metric {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  column-gap: 16px;
+  row-gap: 4px;
+  align-items: start;
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.cc-page .cc-metric__top {
+  display: contents;
+}
+
+.cc-page .cc-metric__icon {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+}
+
+.cc-page .cc-metric__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.cc-page .cc-metric__label {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.cc-page .cc-metric__value {
+  grid-column: 2;
+  grid-row: 2;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
 }
