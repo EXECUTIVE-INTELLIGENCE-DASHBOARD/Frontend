@@ -1,13 +1,10 @@
-import type { ActivityRow } from "./coCurricularActivities.types";
+import type { CoCurricularActivityRow } from "../../api/academics.api";
 
 const HEADERS = [
-  "Activity / Club",
-  "Society",
-  "Events held",
-  "Total attended",
-  "Girls attended",
-  "Boys attended",
-  "Non participatory",
+  "Activity",
+  "Category",
+  "School",
+  "Participants",
 ];
 
 /** Wrap a cell in quotes when it holds a comma, quote or line break. */
@@ -17,17 +14,14 @@ const escapeCell = (value: string | number) => {
   return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 };
 
-export function buildCsv(rows: ActivityRow[]): string {
+export function buildCsv(rows: CoCurricularActivityRow[]): string {
   const lines = [
     HEADERS,
     ...rows.map((row) => [
       row.name,
-      row.domain,
-      row.events,
-      row.attended,
-      row.girls,
-      row.boys,
-      row.nonParticipatory,
+      row.category_display,
+      row.school,
+      row.participants,
     ]),
   ];
 

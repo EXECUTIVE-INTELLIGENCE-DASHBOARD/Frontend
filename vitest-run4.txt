@@ -1,0 +1,2216 @@
+
+> greenhill-eid-frontend@0.1.0 test
+> vitest run
+
+
+ RUN  v4.1.11 C:/Users/Zee/Desktop/Frontend
+
+ ❯ src/components/Sidebar.test.tsx (7 tests | 2 failed) 98892ms
+     × no longer lists Overview inside the Academics dropdown 80584ms
+     × hides Academics dropdown items when Academics is clicked again 5764ms
+ ❯ src/pages/FleetTransport/FleetTransport.test.tsx (18 tests | 6 failed) 1526138ms
+     × reads the vehicle category of the asset dashboard 1427962ms
+     × renders the live fleet register 1677ms
+     × shows a dash instead of a zero for records the API does not report 84220ms
+     × omits the next-service date when no valid schedule exists 6185ms
+     × keeps every section on one screen with no tab strip 3964ms
+     × covers OI-07 with availability, ownership and mileage, all dashed 1627ms
+ ❯ src/pages/CoCurricularActivities/CoCurricularActivities.test.tsx (10 tests | 1 failed) 99248ms
+     × lists the five clubs with their figures 91369ms
+ ❯ src/pages/LibraryResourceUsage/LibraryResourceUsage.test.tsx (5 tests | 1 failed) 98151ms
+     × renders the page heading 94625ms
+ ❯ src/pages/Revenue.test.tsx (4 tests | 1 failed) 10498ms
+     × renders the revenue page 8212ms
+ ❯ src/pages/ExpenseManagement/ExpenseManagement.test.tsx (10 tests | 1 failed) 103320ms
+     × renders the page heading and breadcrumb 92689ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/Sidebar.test.tsx > Sidebar > no longer lists Overview inside the Academics dropdown
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/components/Sidebar.test.tsx:46:3
+     44|   });
+     45|
+     46|   it("no longer lists Overview inside the Academics dropdown", async (…
+       |   ^
+     47|     const user = userEvent.setup();
+     48|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/components/Sidebar.test.tsx > Sidebar > hides Academics dropdown items when Academics is clicked again
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/components/Sidebar.test.tsx:60:3
+     58|   });
+     59|
+     60|   it("hides Academics dropdown items when Academics is clicked again",…
+       |   ^
+     61|     const user = userEvent.setup();
+     62|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/pages/Revenue.test.tsx > Revenue > renders the revenue page
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/pages/Revenue.test.tsx:6:3
+      4|
+      5| describe("Revenue", () => {
+      6|   it("renders the revenue page", () => {
+       |   ^
+      7|     render(<Revenue />);
+      8|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/pages/CoCurricularActivities/CoCurricularActivities.test.tsx > CoCurricularActivities > lists the five clubs with their figures
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/pages/CoCurricularActivities/CoCurricularActivities.test.tsx:41:3
+     39|   });
+     40|
+     41|   it("lists the five clubs with their figures", () => {
+       |   ^
+     42|     render(<CoCurricularActivities />);
+     43|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/pages/ExpenseManagement/ExpenseManagement.test.tsx > ExpenseManagement > renders the page heading and breadcrumb
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/pages/ExpenseManagement/ExpenseManagement.test.tsx:33:3
+     31|
+     32| describe("ExpenseManagement", () => {
+     33|   it("renders the page heading and breadcrumb", () => {
+       |   ^
+     34|     render(<ExpenseManagement />);
+     35|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  src/pages/FleetTransport/FleetTransport.test.tsx > Fleet & Transport page > reads the vehicle category of the asset dashboard
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/pages/FleetTransport/FleetTransport.test.tsx:61:3
+     59|
+     60| describe("Fleet & Transport page", () => {
+     61|   it("reads the vehicle category of the asset dashboard", () => {
+       |   ^
+     62|     render(<FleetTransport />);
+     63|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  src/pages/FleetTransport/FleetTransport.test.tsx > Fleet & Transport page > renders the live fleet register
+TestingLibraryElementError: Found multiple elements with the text: 67-Seater Student Transport Buses
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ft-page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-toolbar"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ft-period"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-calendar-days"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 2v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 2v3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 9h18"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 17h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m01 Feb 2026 → 17 Oct 2026[0m
+        [36m</span>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"ft-select"[39m
+        [36m>[39m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Campus"[39m
+            [33mclass[39m=[32m"ft-select__field"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0mAll Campuses[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"kibuli"[39m
+            [36m>[39m
+              [0mKibuli Main Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"buwaate"[39m
+            [36m>[39m
+              [0mBuwaate Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"annex"[39m
+            [36m>[39m
+              [0mAnnex / Preschool Branch[0m
+            [36m</option>[39m
+          [36m</select>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-down"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 9 6 6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-grid"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ft-panel"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"ft-panel__head"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"ft-panel__title"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ft-panel__icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-bus"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"13"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"13"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M8 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M15 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M2 12h19.6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"7"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M9 18h5"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"16"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [0mFleet Register[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ft-panel__stats"[39m
+            [36m>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"ft-stat"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__label"[39m
+                [36m>[39m
+                  [0mFleet Size[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__value"[39m
+                [36m>[39m
+                  [0m6 vehicles[0m
+                [...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ft-page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-toolbar"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ft-period"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-calendar-days"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 2v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 2v3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 9h18"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 17h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m01 Feb 2026 → 17 Oct 2026[0m
+        [36m</span>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"ft-select"[39m
+        [36m>[39m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Campus"[39m
+            [33mclass[39m=[32m"ft-select__field"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0mAll Campuses[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"kibuli"[39m
+            [36m>[39m
+              [0mKibuli Main Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"buwaate"[39m
+            [36m>[39m
+              [0mBuwaate Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"annex"[39m
+            [36m>[39m
+              [0mAnnex / Preschool Branch[0m
+            [36m</option>[39m
+          [36m</select>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-down"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 9 6 6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-grid"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ft-panel"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"ft-panel__head"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"ft-panel__title"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ft-panel__icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-bus"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"13"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"13"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M8 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M15 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M2 12h19.6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"7"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M9 18h5"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"16"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [0mFleet Register[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ft-panel__stats"[39m
+            [36m>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"ft-stat"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__label"[39m
+                [36m>[39m
+                  [0mFleet Size[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__value"[39m
+                [36m>[39m
+                  [0m6 vehicles[0m
+                [...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/pages/FleetTransport/FleetTransport.test.tsx:73:25
+     71|     render(<FleetTransport />);
+     72|
+     73|     expect(await screen.findByText("67-Seater Student Transport Buses"…
+       |                         ^
+     74|     expect(screen.getByText("6 vehicles")).toBeInTheDocument();
+     75|     expect(screen.getByText("Transport Depot · Kibuli Main Campus")).t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  src/pages/FleetTransport/FleetTransport.test.tsx > Fleet & Transport page > shows a dash instead of a zero for records the API does not report
+TestingLibraryElementError: Found multiple elements with the text: 67-Seater Student Transport Buses
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ft-page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-toolbar"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ft-period"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-calendar-days"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 2v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 2v3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 9h18"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 17h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m01 Feb 2026 → 17 Oct 2026[0m
+        [36m</span>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"ft-select"[39m
+        [36m>[39m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Campus"[39m
+            [33mclass[39m=[32m"ft-select__field"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0mAll Campuses[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"kibuli"[39m
+            [36m>[39m
+              [0mKibuli Main Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"buwaate"[39m
+            [36m>[39m
+              [0mBuwaate Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"annex"[39m
+            [36m>[39m
+              [0mAnnex / Preschool Branch[0m
+            [36m</option>[39m
+          [36m</select>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-down"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 9 6 6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-grid"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ft-panel"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"ft-panel__head"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"ft-panel__title"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ft-panel__icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-bus"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"13"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"13"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M8 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M15 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M2 12h19.6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"7"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M9 18h5"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"16"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [0mFleet Register[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ft-panel__stats"[39m
+            [36m>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"ft-stat"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__label"[39m
+                [36m>[39m
+                  [0mFleet Size[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__value"[39m
+                [36m>[39m
+                  [0m6 vehicles[0m
+                [...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ft-page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-toolbar"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ft-period"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-calendar-days"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 2v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 2v3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 9h18"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 17h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m01 Feb 2026 → 17 Oct 2026[0m
+        [36m</span>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"ft-select"[39m
+        [36m>[39m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Campus"[39m
+            [33mclass[39m=[32m"ft-select__field"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0mAll Campuses[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"kibuli"[39m
+            [36m>[39m
+              [0mKibuli Main Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"buwaate"[39m
+            [36m>[39m
+              [0mBuwaate Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"annex"[39m
+            [36m>[39m
+              [0mAnnex / Preschool Branch[0m
+            [36m</option>[39m
+          [36m</select>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-down"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 9 6 6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-grid"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ft-panel"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"ft-panel__head"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"ft-panel__title"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ft-panel__icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-bus"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"13"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"13"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M8 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M15 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M2 12h19.6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"7"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M9 18h5"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"16"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [0mFleet Register[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ft-panel__stats"[39m
+            [36m>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"ft-stat"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__label"[39m
+                [36m>[39m
+                  [0mFleet Size[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__value"[39m
+                [36m>[39m
+                  [0m6 vehicles[0m
+                [...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/pages/FleetTransport/FleetTransport.test.tsx:81:18
+     79|   it("shows a dash instead of a zero for records the API does not repo…
+     80|     render(<FleetTransport />);
+     81|     await screen.findByText("67-Seater Student Transport Buses");
+       |                  ^
+     82|
+     83|     // A zero would claim the fleet had no incidents, which is a stron…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+ FAIL  src/pages/FleetTransport/FleetTransport.test.tsx > Fleet & Transport page > omits the next-service date when no valid schedule exists
+TestingLibraryElementError: Found multiple elements with the text: 67-Seater Student Transport Buses
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ft-page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-toolbar"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ft-period"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-calendar-days"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 2v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 2v3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 9h18"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 17h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m01 Feb 2026 → 17 Oct 2026[0m
+        [36m</span>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"ft-select"[39m
+        [36m>[39m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Campus"[39m
+            [33mclass[39m=[32m"ft-select__field"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0mAll Campuses[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"kibuli"[39m
+            [36m>[39m
+              [0mKibuli Main Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"buwaate"[39m
+            [36m>[39m
+              [0mBuwaate Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"annex"[39m
+            [36m>[39m
+              [0mAnnex / Preschool Branch[0m
+            [36m</option>[39m
+          [36m</select>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-down"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 9 6 6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-grid"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ft-panel"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"ft-panel__head"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"ft-panel__title"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ft-panel__icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-bus"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"13"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"13"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M8 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M15 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M2 12h19.6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"7"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M9 18h5"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"16"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [0mFleet Register[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ft-panel__stats"[39m
+            [36m>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"ft-stat"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__label"[39m
+                [36m>[39m
+                  [0mFleet Size[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__value"[39m
+                [36m>[39m
+                  [0m6 vehicles[0m
+                [...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ft-page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-toolbar"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ft-period"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-calendar-days"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 2v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 2v3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 9h18"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 17h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m01 Feb 2026 → 17 Oct 2026[0m
+        [36m</span>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"ft-select"[39m
+        [36m>[39m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Campus"[39m
+            [33mclass[39m=[32m"ft-select__field"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0mAll Campuses[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"kibuli"[39m
+            [36m>[39m
+              [0mKibuli Main Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"buwaate"[39m
+            [36m>[39m
+              [0mBuwaate Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"annex"[39m
+            [36m>[39m
+              [0mAnnex / Preschool Branch[0m
+            [36m</option>[39m
+          [36m</select>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-down"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 9 6 6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-grid"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ft-panel"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"ft-panel__head"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"ft-panel__title"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ft-panel__icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-bus"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"13"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"13"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M8 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M15 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M2 12h19.6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"7"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M9 18h5"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"16"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [0mFleet Register[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ft-panel__stats"[39m
+            [36m>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"ft-stat"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__label"[39m
+                [36m>[39m
+                  [0mFleet Size[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__value"[39m
+                [36m>[39m
+                  [0m6 vehicles[0m
+                [...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/pages/FleetTransport/FleetTransport.test.tsx:92:18
+     90|   it("omits the next-service date when no valid schedule exists", asyn…
+     91|     render(<FleetTransport />);
+     92|     await screen.findByText("67-Seater Student Transport Buses");
+       |                  ^
+     93|
+     94|     expect(screen.getAllByText("Not recorded").length).toBeGreaterThan…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/12]⎯
+
+ FAIL  src/pages/FleetTransport/FleetTransport.test.tsx > Fleet & Transport page > keeps every section on one screen with no tab strip
+TestingLibraryElementError: Found multiple elements with the text: 67-Seater Student Transport Buses
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ft-page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-toolbar"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ft-period"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-calendar-days"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 2v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 2v3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 9h18"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 17h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m01 Feb 2026 → 17 Oct 2026[0m
+        [36m</span>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"ft-select"[39m
+        [36m>[39m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Campus"[39m
+            [33mclass[39m=[32m"ft-select__field"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0mAll Campuses[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"kibuli"[39m
+            [36m>[39m
+              [0mKibuli Main Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"buwaate"[39m
+            [36m>[39m
+              [0mBuwaate Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"annex"[39m
+            [36m>[39m
+              [0mAnnex / Preschool Branch[0m
+            [36m</option>[39m
+          [36m</select>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-down"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 9 6 6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-grid"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ft-panel"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"ft-panel__head"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"ft-panel__title"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ft-panel__icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-bus"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"13"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"13"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M8 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M15 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M2 12h19.6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"7"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M9 18h5"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"16"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [0mFleet Register[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ft-panel__stats"[39m
+            [36m>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"ft-stat"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__label"[39m
+                [36m>[39m
+                  [0mFleet Size[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__value"[39m
+                [36m>[39m
+                  [0m6 vehicles[0m
+                [...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ft-page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-toolbar"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ft-period"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-calendar-days"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 2v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 2v3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 9h18"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 17h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m01 Feb 2026 → 17 Oct 2026[0m
+        [36m</span>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"ft-select"[39m
+        [36m>[39m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Campus"[39m
+            [33mclass[39m=[32m"ft-select__field"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0mAll Campuses[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"kibuli"[39m
+            [36m>[39m
+              [0mKibuli Main Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"buwaate"[39m
+            [36m>[39m
+              [0mBuwaate Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"annex"[39m
+            [36m>[39m
+              [0mAnnex / Preschool Branch[0m
+            [36m</option>[39m
+          [36m</select>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-down"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 9 6 6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-grid"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ft-panel"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"ft-panel__head"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"ft-panel__title"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ft-panel__icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-bus"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"13"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"13"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M8 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M15 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M2 12h19.6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"7"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M9 18h5"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"16"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [0mFleet Register[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ft-panel__stats"[39m
+            [36m>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"ft-stat"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__label"[39m
+                [36m>[39m
+                  [0mFleet Size[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__value"[39m
+                [36m>[39m
+                  [0m6 vehicles[0m
+                [...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/pages/FleetTransport/FleetTransport.test.tsx:99:18
+     97|   it("keeps every section on one screen with no tab strip", async () =…
+     98|     render(<FleetTransport />);
+     99|     await screen.findByText("67-Seater Student Transport Buses");
+       |                  ^
+    100|
+    101|     expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/12]⎯
+
+ FAIL  src/pages/FleetTransport/FleetTransport.test.tsx > Fleet & Transport page > covers OI-07 with availability, ownership and mileage, all dashed
+TestingLibraryElementError: Found multiple elements with the text: 67-Seater Student Transport Buses
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ft-cell--name"[39m
+[36m>[39m
+  [0m67-Seater Student Transport Buses[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ft-page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-toolbar"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ft-period"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-calendar-days"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 2v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 2v3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 9h18"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 17h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m01 Feb 2026 → 17 Oct 2026[0m
+        [36m</span>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"ft-select"[39m
+        [36m>[39m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Campus"[39m
+            [33mclass[39m=[32m"ft-select__field"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0mAll Campuses[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"kibuli"[39m
+            [36m>[39m
+              [0mKibuli Main Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"buwaate"[39m
+            [36m>[39m
+              [0mBuwaate Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"annex"[39m
+            [36m>[39m
+              [0mAnnex / Preschool Branch[0m
+            [36m</option>[39m
+          [36m</select>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-down"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 9 6 6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-grid"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ft-panel"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"ft-panel__head"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"ft-panel__title"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ft-panel__icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-bus"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"13"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"13"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M8 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M15 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M2 12h19.6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"7"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M9 18h5"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"16"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [0mFleet Register[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ft-panel__stats"[39m
+            [36m>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"ft-stat"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__label"[39m
+                [36m>[39m
+                  [0mFleet Size[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__value"[39m
+                [36m>[39m
+                  [0m6 vehicles[0m
+                [...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ft-page"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-toolbar"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"ft-period"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-calendar-days"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 2v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 2v3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 9h18"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 13h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 17h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 17h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m01 Feb 2026 → 17 Oct 2026[0m
+        [36m</span>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"ft-select"[39m
+        [36m>[39m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Campus"[39m
+            [33mclass[39m=[32m"ft-select__field"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0mAll Campuses[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"kibuli"[39m
+            [36m>[39m
+              [0mKibuli Main Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"buwaate"[39m
+            [36m>[39m
+              [0mBuwaate Campus[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"annex"[39m
+            [36m>[39m
+              [0mAnnex / Preschool Branch[0m
+            [36m</option>[39m
+          [36m</select>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-down"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 9 6 6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ft-grid"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"ft-panel"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"ft-panel__head"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"ft-panel__title"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ft-panel__icon"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-bus"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"13"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"13"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M8 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M15 6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M2 12h19.6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"7"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M9 18h5"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"16"[39m
+                    [33mcy[39m=[32m"18"[39m
+                    [33mr[39m=[32m"2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [0mFleet Register[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ft-panel__stats"[39m
+            [36m>[39m
+              [36m<article[39m
+                [33mclass[39m=[32m"ft-stat"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__label"[39m
+                [36m>[39m
+                  [0mFleet Size[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ft-stat__value"[39m
+                [36m>[39m
+                  [0m6 vehicles[0m
+                [...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/pages/FleetTransport/FleetTransport.test.tsx:116:18
+    114|   it("covers OI-07 with availability, ownership and mileage, all dashe…
+    115|     render(<FleetTransport />);
+    116|     await screen.findByText("67-Seater Student Transport Buses");
+       |                  ^
+    117|
+    118|     for (const label of ["Available Now", "Hired Transport", "Daily Mi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/12]⎯
+
+ FAIL  src/pages/LibraryResourceUsage/LibraryResourceUsage.test.tsx > LibraryResourceUsage > renders the page heading
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/pages/LibraryResourceUsage/LibraryResourceUsage.test.tsx:15:3
+     13|
+     14| describe("LibraryResourceUsage", () => {
+     15|   it("renders the page heading", () => {
+       |   ^
+     16|     render(<LibraryResourceUsage />);
+     17|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/12]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 2 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files C:/Users/Zee/Desktop/Frontend/src/components/academic-performance/AcademicAnalytics.test.tsx.
+ ❯ node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:94
+ ❯ runNextTicks node:internal/process/task_queues:65:5
+ ❯ processTimers node:internal/timers:538:9
+ ❯ Pool.schedule node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ ❯ Timeout.<anonymous> node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3108:58
+ ❯ listOnTimeout node:internal/timers:605:17
+ ❯ processTimers node:internal/timers:541:7
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files C:/Users/Zee/Desktop/Frontend/src/pages/Liabilities/Liabilities.test.tsx.
+ ❯ node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:94
+ ❯ Pool.schedule node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ ❯ Timeout.<anonymous> node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3108:58
+ ❯ listOnTimeout node:internal/timers:605:17
+ ❯ processTimers node:internal/timers:541:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  6 failed | 24 passed (30)
+      Tests  12 failed | 252 passed (264)
+     Errors  2 errors
+   Start at  00:37:14
+   Duration  1582.42s (transform 4299.92s, setup 40.00s, import 7276.75s, tests 2035.26s, environment 144.52s)
+

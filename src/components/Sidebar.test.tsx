@@ -24,20 +24,26 @@ describe("Sidebar", () => {
 
     await user.click(screen.getByRole("button", { name: /academics/i }));
 
-    expect(screen.getByText("Student Enrollment")).toBeInTheDocument();
+    expect(screen.getByText("Admissions & Enrolment")).toBeInTheDocument();
 
-    expect(screen.getByText("Attendance Rates")).toBeInTheDocument();
+    expect(screen.getByText("Student Retention")).toBeInTheDocument();
+
+    expect(screen.getByText("Co-Curricular Activities")).toBeInTheDocument();
+
+    expect(screen.getByText("Attendance")).toBeInTheDocument();
 
     expect(screen.getByText("Academic Performance")).toBeInTheDocument();
 
-    expect(screen.getByText("My Child's Progress")).toBeInTheDocument();
+    expect(screen.queryByText("My Child's Progress")).not.toBeInTheDocument();
 
-    expect(screen.getByText("Library & Resource Usage")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Library & Resource Usage"),
+    ).not.toBeInTheDocument();
 
     expect(screen.queryByText("Academic Overview")).not.toBeInTheDocument();
   });
 
-  it("shows an Overview entry inside the Academics dropdown", async () => {
+  it("no longer lists Overview inside the Academics dropdown", async () => {
     const user = userEvent.setup();
 
     render(<Sidebar />);
@@ -48,9 +54,7 @@ describe("Sidebar", () => {
 
     expect(submenu).not.toBeNull();
 
-    expect(
-      within(submenu as HTMLElement).getByText("Overview"),
-    ).toBeInTheDocument();
+    expect(within(submenu as HTMLElement).queryByText("Overview")).toBeNull();
   });
 
   it("hides Academics dropdown items when Academics is clicked again", async () => {
@@ -64,13 +68,13 @@ describe("Sidebar", () => {
 
     await user.click(academicsButton);
 
-    expect(screen.getByText("Student Enrollment")).toBeInTheDocument();
+    expect(screen.getByText("Admissions & Enrolment")).toBeInTheDocument();
 
     await user.click(academicsButton);
 
-    expect(screen.queryByText("Student Enrollment")).not.toBeInTheDocument();
+    expect(screen.queryByText("Admissions & Enrolment")).not.toBeInTheDocument();
 
-    expect(screen.queryByText("Attendance Rates")).not.toBeInTheDocument();
+    expect(screen.queryByText("Attendance")).not.toBeInTheDocument();
 
     expect(screen.queryByText("Academic Performance")).not.toBeInTheDocument();
 
@@ -88,15 +92,20 @@ describe("Sidebar", () => {
 
     await user.click(screen.getByRole("button", { name: /operational/i }));
 
+    expect(screen.getByText("HR & Workforce")).toBeInTheDocument();
+
     expect(screen.getByText("Facilities & Maintenance")).toBeInTheDocument();
 
     expect(screen.getByText("Fleet & Transport")).toBeInTheDocument();
 
-    expect(screen.getByText("ICT Systems")).toBeInTheDocument();
-
     expect(screen.getByText("Asset Management")).toBeInTheDocument();
 
-    expect(screen.getByText("Work Orders")).toBeInTheDocument();
+    expect(screen.getByText("Incidents & Security")).toBeInTheDocument();
+
+    // Folded into their parents by the approved menu.
+    expect(screen.queryByText("ICT Systems")).not.toBeInTheDocument();
+
+    expect(screen.queryByText("Work Orders")).not.toBeInTheDocument();
 
     expect(screen.queryByText("Operational Overview")).not.toBeInTheDocument();
   });
@@ -138,11 +147,11 @@ describe("Sidebar", () => {
 
     await user.click(academicsButton);
 
-    expect(screen.getByText("Student Enrollment")).toBeInTheDocument();
+    expect(screen.getByText("Admissions & Enrolment")).toBeInTheDocument();
 
     await user.click(operationalButton);
 
-    expect(screen.queryByText("Student Enrollment")).not.toBeInTheDocument();
+    expect(screen.queryByText("Admissions & Enrolment")).not.toBeInTheDocument();
 
     expect(screen.queryByText("Academic Performance")).not.toBeInTheDocument();
 

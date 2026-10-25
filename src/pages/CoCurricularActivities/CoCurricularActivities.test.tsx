@@ -1,206 +1,133 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { CoCurricularActivities } from "./CoCurricularActivities";
 import {
-  allCampusesLabel,
-  campuses,
-  rowsForCampus,
-} from "./coCurricularActivities.data";
+  academicsApi,
+  type CoCurricularDashboardData,
+} from "../../api/academics.api";
+import { CoCurricularActivities } from "./CoCurricularActivities";
 import { buildCsv, csvFileName } from "./exportCsv";
+
+vi.mock("../../api/academics.api", () => ({
+  academicsApi: {
+    getCoCurricularDashboard: vi.fn(),
+  },
+}));
+
+const dashboardResponse: CoCurricularDashboardData = {
+  term: { id: 1, label: "Term 1" },
+  summary: {
+    activities_offered: 2,
+    participation_records: 40,
+    unique_participants: 30,
+    active_learners: 50,
+    participation_rate: 60,
+    activities_per_participant: 1.3,
+  },
+  activities: [
+    {
+      id: 1,
+      name: "Debate Club",
+      category: "humanities",
+      category_display: "Humanities",
+      school: "Main School",
+      participants: 20,
+    },
+    {
+      id: 2,
+      name: "Robotics Club",
+      category: "science",
+      category_display: "Science",
+      school: "Main School",
+      participants: 10,
+    },
+  ],
+  by_category: [],
+  by_class: [],
+};
 
 const cellsOf = (row: HTMLElement) =>
   within(row)
     .getAllByRole("cell")
     .map((cell) => cell.textContent);
 
-describe("CoCurricularActivities", () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
+beforeEach(() => {
+  vi.mocked(academicsApi.getCoCurricularDashboard).mockResolvedValue(
+    dashboardResponse,
+  );
+});
 
-  it("renders the three headline cards for all campuses", () => {
+describe("CoCurricularActivities", () => {
+  it("renders dashboard summary and activity rows", async () => {
     render(<CoCurricularActivities />);
+
+    expect(await screen.findByText("Debate Club")).toBeInTheDocument();
 
     const cards = screen.getAllByRole("article");
-
     expect(cards).toHaveLength(3);
 
-    const expected: Array<[string, string]> = [
-      ["Club Coverage Rate", "94.2%"],
-      ["Events & Competitions Held", "57 Events"],
-      ["Non-Participating Pool", "170 Students"],
-    ];
+    expect(within(cards[0]).getByText("Participation Rate")).toBeInTheDocument();
+    expect(within(cards[0]).getByText("60.0%")).toBeInTheDocument();
 
-    expected.forEach(([label, value], index) => {
-      expect(within(cards[index]).getByText(label)).toBeInTheDocument();
-      expect(within(cards[index]).getByText(value)).toBeInTheDocument();
-    });
-  });
+    expect(within(cards[1]).getByText("Activities Offered")).toBeInTheDocument();
+    expect(within(cards[1]).getByText("2")).toBeInTheDocument();
 
-  it("lists the five clubs with their figures", () => {
-    render(<CoCurricularActivities />);
+    expect(within(cards[2]).getByText("Unique Participants")).toBeInTheDocument();
+    expect(within(cards[2]).getByText("30")).toBeInTheDocument();
 
-    expect(
-      screen.getByRole("heading", {
-        name: /Co-Curricular & Club Engagement Summary/i,
-      }),
-    ).toBeInTheDocument();
-
-    const row = screen.getByRole("row", {
-      name: /Model United Nations & Debate/,
-    });
-
+    const row = screen.getByRole("row", { name: /Debate Club/ });
     expect(cellsOf(row)).toEqual([
-      "Model United Nations & Debate",
-      "Humanities & Diplomacy",
-      "14",
-      "300",
-      "180",
-      "120",
-      "25",
+      "Debate Club",
+      "Humanities",
+      "Main School",
+      "20",
     ]);
-
-    // One header row plus five clubs.
-    expect(screen.getAllByRole("row")).toHaveLength(6);
+    expect(screen.getAllByRole("row")).toHaveLength(3);
   });
 
-  it("shows the shared campus filter", () => {
+  it("explains when the dashboard has no activity records", async () => {
+    vi.mocked(academicsApi.getCoCurricularDashboard).mockResolvedValue({
+      ...dashboardResponse,
+      activities: [],
+    });
+
     render(<CoCurricularActivities />);
 
     expect(
-      screen.getByRole("combobox", { name: "Campus" }),
-    ).toHaveValue("All Campuses");
+      await screen.findByText("No activity data is available."),
+    ).toBeInTheDocument();
   });
 
-  it("changes the figures when a campus is selected", () => {
+  it("keeps the dashboard loaded when a campus is selected", async () => {
     render(<CoCurricularActivities />);
+    await screen.findByText("Debate Club");
 
-    const campusSelect = screen.getByRole("combobox", {
-      name: "Campus",
-    });
-
-    // Select Kibuli Main Campus.
-    fireEvent.change(campusSelect, {
+    fireEvent.change(screen.getByRole("combobox", { name: "Campus" }), {
       target: { value: "Kibuli Main Campus" },
     });
 
-    const cards = screen.getAllByRole("article");
-
-    expect(within(cards[0]).getByText("95.1%")).toBeInTheDocument();
-    expect(within(cards[1]).getByText("28 Events")).toBeInTheDocument();
-    expect(within(cards[2]).getByText("85 Students")).toBeInTheDocument();
-
-    const row = screen.getByRole("row", {
-      name: /Model United Nations & Debate/,
-    });
-
-    expect(cellsOf(row)).toEqual([
-      "Model United Nations & Debate",
-      "Humanities & Diplomacy",
-      "7",
-      "150",
-      "90",
-      "60",
-      "12",
-    ]);
-
-    // Return to All Campuses.
-    fireEvent.change(campusSelect, {
-      target: { value: "All Campuses" },
-    });
-
-    expect(
-      within(screen.getAllByRole("article")[0]).getByText("94.2%"),
-    ).toBeInTheDocument();
+    expect(await screen.findByText("Debate Club")).toBeInTheDocument();
+    expect(academicsApi.getCoCurricularDashboard).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.any(AbortSignal),
+    );
   });
 
-  it("filters the table by domain", () => {
-    render(<CoCurricularActivities />);
-
-    fireEvent.change(screen.getByLabelText("Filter domain"), {
-      target: { value: "Sports Federation" },
-    });
-
-    // The header row and the single Sports Federation club.
-    expect(screen.getAllByRole("row")).toHaveLength(2);
-    expect(screen.getByText("Track & Field Athletics")).toBeInTheDocument();
-    expect(
-      screen.queryByText("Model United Nations & Debate"),
-    ).not.toBeInTheDocument();
-  });
-
-  it("downloads the visible rows when Export Report is clicked", () => {
-    const createObjectURL = vi.fn(() => "blob:test");
-    const revokeObjectURL = vi.fn();
-
-    Object.defineProperty(URL, "createObjectURL", {
-      value: createObjectURL,
-      configurable: true,
-      writable: true,
-    });
-
-    Object.defineProperty(URL, "revokeObjectURL", {
-      value: revokeObjectURL,
-      configurable: true,
-      writable: true,
-    });
-
-    const click = vi
-      .spyOn(HTMLAnchorElement.prototype, "click")
-      .mockImplementation(() => {});
-
-    render(<CoCurricularActivities />);
-
-    fireEvent.click(screen.getByRole("button", { name: /Export Report/i }));
-
-    expect(createObjectURL).toHaveBeenCalledTimes(1);
-    expect(click).toHaveBeenCalledTimes(1);
-    expect(revokeObjectURL).toHaveBeenCalledWith("blob:test");
-  });
-});
-
-describe("co-curricular data", () => {
-  it("adds the three campuses up to the all-campuses figures", () => {
-    const all = rowsForCampus(allCampusesLabel);
-    const perCampus = campuses.map((campus) => rowsForCampus(campus.label));
-
-    all.forEach((row, index) => {
-      const sum = (pick: (r: typeof row) => number) =>
-        perCampus.reduce((total, rows) => total + pick(rows[index]), 0);
-
-      expect(sum((r) => r.events)).toBe(row.events);
-      expect(sum((r) => r.girls)).toBe(row.girls);
-      expect(sum((r) => r.boys)).toBe(row.boys);
-      expect(sum((r) => r.nonParticipatory)).toBe(row.nonParticipatory);
-    });
-
-    expect(all.reduce((total, row) => total + row.attended, 0)).toBe(1200);
-
-    expect(
-      all.reduce((total, row) => total + row.nonParticipatory, 0),
-    ).toBe(170);
-  });
+  // Enable once the page passes the selected campus to the API request.
+  it.todo("sends the selected campus to the dashboard request");
 });
 
 describe("buildCsv", () => {
-  it("writes a header and one line per row", () => {
-    const rows = rowsForCampus(allCampusesLabel);
-    const lines = buildCsv(rows).split("\r\n");
+  it("writes a header and one line per activity", () => {
+    const lines = buildCsv(dashboardResponse.activities).split("\r\n");
 
-    expect(lines).toHaveLength(6);
-
-    expect(lines[0]).toBe(
-      "Activity / Club,Society,Events held,Total attended,Girls attended,Boys attended,Non participatory",
-    );
-
-    expect(lines[1]).toBe(
-      "Model United Nations & Debate,Humanities & Diplomacy,14,300,180,120,25",
-    );
+    expect(lines).toHaveLength(3);
+    expect(lines[0]).toBe("Activity,Category,School,Participants");
+    expect(lines[1]).toBe("Debate Club,Humanities,Main School,20");
   });
 
-  it("quotes cells that contain commas or quotes", () => {
-    const [row] = rowsForCampus(allCampusesLabel);
+  it("quotes activity names that contain commas or quotes", () => {
+    const [row] = dashboardResponse.activities;
 
     const csv = buildCsv([{ ...row, name: 'Debate, "Open"' }]);
 

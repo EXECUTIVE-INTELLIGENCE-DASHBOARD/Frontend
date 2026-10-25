@@ -1,0 +1,28 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "typecheck",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"typecheck"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "test",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"test"
+			],
+			"group": "test"
+		}
+	]
+}

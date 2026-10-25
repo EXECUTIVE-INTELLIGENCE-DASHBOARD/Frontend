@@ -5,20 +5,18 @@ import "./layout.css";
 import { Hero } from "./components/Hero";
 import { Sidebar } from "./components/Sidebar";
 import { findNavigationLabel } from "./navigation/navigation.config";
+import { ExecutiveOverview } from "./pages/ExecutiveOverview/ExecutiveOverview";
+import { PlaceholderPage } from "./pages/Placeholder/PlaceholderPage";
+import AttendanceAnalysis from "./pages/Attendance/AttendanceAnalysis";
+import { Revenue } from "./pages/Revenue";
 import { AcademicOverview } from "./pages/AcademicOverview/AcademicOverview";
 import AcademicPerformance from "./pages/academic-performance/AcademicPerformance";
-import { ExecutiveOverview } from "./pages/ExecutiveOverview/ExecutiveOverview";
-import { LibraryResourceUsage } from "./pages/LibraryResourceUsage/LibraryResourceUsage";
-import { MyChildProgress } from "./pages/MyChildProgress/MyChildProgress";
-import { PlaceholderPage } from "./pages/Placeholder/PlaceholderPage";
-import { StudentEnrollment } from "./pages/StudentEnrollment/StudentEnrollment";
-import { AttendanceRates } from "./pages/AttendanceRates/AttendanceRates";
-import { Revenue } from "./pages/Revenue";
 import { Liabilities } from "./pages/Liabilities/Liabilities";
 import { ProcurementFinancials } from "./pages/ProcurementFinancials/ProcurementFinancials";
 import { ExpenseManagement } from "./pages/ExpenseManagement/ExpenseManagement";
 import { CoCurricularActivities } from "./pages/CoCurricularActivities/CoCurricularActivities";
 import { StudentRetention } from "./pages/StudentRetention/StudentRetention";
+import { AdmissionsEnrollment } from "./pages/AdmissionsEnrollment/AdmissionsEnrollment";
 import { HrWorkforce } from "./pages/HrWorkforce/HrWorkforce";
 
 import { FinanceOverview } from "./pages/FinanceOverview/FinanceOverview";
@@ -31,17 +29,16 @@ import InventoryStock from "./pages/Procurement/InventoryStock";
 import ProcurementRequests from "./pages/Procurement/ProcurementRequests";
 
 import { AssetsEquipment } from "./pages/AssetsEquipment/AssetsEquipment";
+import { FleetTransport } from "./pages/FleetTransport/FleetTransport";
 import { Sales, Inventory, Budget } from "./pages/services";
 
 const pages: Record<string, ReactElement> = {
   /* Overview + academic group */
   overview: <ExecutiveOverview />,
-  "academics-overview": <AcademicOverview />,
-  "student-enrollment": <StudentEnrollment />,
+  "academic-overview": <AcademicOverview />,
+  "admissions-enrollment": <AdmissionsEnrollment />,
   "academic-performance": <AcademicPerformance />,
-  "parent-access": <MyChildProgress />,
-  "library-resource-usage": <LibraryResourceUsage />,
-  "attendance-rates": <AttendanceRates />,
+  attendance: <AttendanceAnalysis />,
   "co-curricular-activities": <CoCurricularActivities />,
   "student-retention": <StudentRetention />,
 
@@ -61,14 +58,18 @@ const pages: Record<string, ReactElement> = {
   "supplier-performance": <SupplierPerformance />,
   "inventory-stock": <InventoryStock />,
   "procurement-requests": <ProcurementRequests />,
-  
-  /* Operational group */
+
+  /* Operational group — approved menu. `facilities-maintenance` and
+     `incidents-security` have no page component yet, so they render
+     `PlaceholderPage`; work orders live inside facilities and ICT equipment
+     inside asset management. */
   "hr-workforce": <HrWorkforce />,
+  "fleet-transport": <FleetTransport />,
   "asset-management": <AssetsEquipment />,
 
   /* Services group  */
-  "sales": <Sales />,
-  "inventory": <Inventory />,
+  sales: <Sales />,
+  inventory: <Inventory />,
   "budget-utilisation": <Budget />,
 };
 

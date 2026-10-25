@@ -1,0 +1,553 @@
+/* Fleet & Transport.
+   Mirrors the HR & Workforce card vocabulary so the two operational screens
+   read as one family. Brand typography is Montserrat. */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+.ft-page {
+  --ft-heading: var(--color-heading);
+  --ft-muted: var(--color-text-muted);
+  --ft-soft: var(--color-text-soft);
+  --ft-border: var(--color-border);
+
+  /* Navy is the app heading colour; the accents come from palette.css. */
+  --ft-navy: var(--color-heading);
+  --ft-sky: var(--pal-sky);
+  --ft-steel: var(--pal-steel);
+  --ft-amber: var(--pal-amber);
+  --ft-amber-ink: var(--pal-amber-ink);
+  --ft-green: var(--pal-green);
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  font-family: "Montserrat", Inter, ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------------- Toolbar */
+
+.ft-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.ft-period {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  height: 34px;
+  padding: 0 12px;
+
+  border: 1px solid var(--ft-border);
+  border-radius: 10px;
+
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.ft-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  height: 34px;
+  padding: 0 10px;
+
+  border: 1px solid var(--ft-border);
+  border-radius: 10px;
+
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+
+.ft-select:focus-within {
+  outline: 2px solid var(--ft-sky);
+  outline-offset: 2px;
+}
+
+.ft-select__field {
+  appearance: none;
+
+  border: 0;
+  background: transparent;
+  color: inherit;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.ft-select__field:focus-visible {
+  outline: none;
+}
+
+/* ---------------------------------------------------------------- Notice */
+
+.ft-alert {
+  margin: 0;
+  padding: 10px 14px;
+
+  border: 1px solid color-mix(in srgb, var(--ft-amber) 45%, transparent);
+  border-radius: 12px;
+
+  background: color-mix(in srgb, var(--ft-amber) 12%, transparent);
+  color: var(--ft-amber-ink);
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------- Layout */
+
+.ft-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-items: start;
+}
+
+@media (max-width: 1180px) {
+  .ft-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ----------------------------------------------------------------- Panels */
+
+.ft-panel {
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid var(--ft-border);
+  border-radius: 12px;
+
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+
+  overflow: hidden;
+}
+
+/* A panel carrying a wide table takes the whole row so its columns fit. */
+.ft-panel--wide {
+  grid-column: 1 / -1;
+}
+
+.ft-panel__head {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  padding: 8px 12px 7px;
+
+  border-bottom: 1px solid var(--ft-border);
+
+  background: var(--color-surface-subtle);
+}
+
+.ft-panel__title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin: 0;
+
+  color: var(--ft-heading);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.ft-panel__icon {
+  display: grid;
+  place-items: center;
+
+  width: 22px;
+  height: 22px;
+
+  border-radius: 6px;
+
+  background: color-mix(in srgb, var(--ft-sky) 14%, transparent);
+  color: var(--ft-steel);
+}
+
+/* The headline figures read as one dense line, not a wall of boxes. */
+.ft-panel__stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 1px 16px;
+}
+
+.ft-panel__body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ------------------------------------------------------------------ Stats */
+
+.ft-stat {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 5px;
+
+  min-width: 0;
+}
+
+.ft-stat__label {
+  color: var(--ft-muted);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1.35;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ft-stat__value {
+  color: var(--ft-heading);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+/* A withheld figure is quiet, not bold: it must not read as a real number. */
+.ft-stat__value--dash {
+  color: var(--ft-muted);
+  font-weight: 600;
+}
+
+/* ----------------------------------------------------------------- Blocks */
+
+.ft-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.ft-block + .ft-block {
+  border-top: 1px solid var(--ft-border);
+}
+
+.ft-block__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  padding: 5px 12px;
+
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.ft-block__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  margin: 0;
+
+  color: var(--color-heading-alt);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* The record count sits with the title so an empty table is obvious at a
+   glance without reading the rows. */
+.ft-block__count {
+  padding: 0 5px;
+
+  border-radius: 999px;
+
+  background: color-mix(in srgb, var(--ft-sky) 12%, transparent);
+  color: var(--ft-steel);
+
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.ft-block__count--empty {
+  background: color-mix(in srgb, var(--ft-navy) 6%, transparent);
+  color: var(--ft-muted);
+}
+
+/* An empty block says so in one line rather than showing a header-only table. */
+.ft-block__empty {
+  margin: 0;
+  padding: 9px 12px;
+
+  color: var(--ft-muted);
+  font-size: 10.5px;
+  font-style: italic;
+}
+
+.ft-icon-button {
+  display: grid;
+  place-items: center;
+
+  width: 22px;
+  height: 22px;
+
+  border: 1px solid var(--ft-border);
+  border-radius: 6px;
+
+  background: var(--color-surface);
+  color: var(--ft-steel);
+
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+.ft-icon-button:hover {
+  background: color-mix(in srgb, var(--ft-sky) 12%, transparent);
+}
+
+.ft-icon-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ft-icon-button:focus-visible {
+  outline: 2px solid var(--ft-sky);
+  outline-offset: 1px;
+}
+
+/* ----------------------------------------------------------------- Table */
+
+.ft-table-wrap {
+  max-height: 172px;
+  overflow: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--ft-sky) 28%, transparent) transparent;
+}
+
+.ft-table-wrap::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.ft-table-wrap::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+
+  background: color-mix(in srgb, var(--ft-sky) 26%, transparent);
+  background-clip: content-box;
+}
+
+.ft-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  font-size: 11.5px;
+}
+
+.ft-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  padding: 5px 8px;
+
+  border-bottom: 1px solid var(--ft-border);
+
+  background: var(--color-surface-subtle);
+  color: var(--ft-soft);
+
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ft-table tbody td {
+  padding: 6px 8px;
+
+  border-bottom: 1px solid var(--color-border-soft);
+
+  color: var(--color-text);
+  line-height: 1.45;
+  vertical-align: middle;
+}
+
+/* Faint banding keeps long rows readable across eleven columns. */
+.ft-table tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--ft-sky) 3.5%, transparent);
+}
+
+.ft-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.ft-table tbody tr:hover {
+  background: color-mix(in srgb, var(--ft-sky) 8%, transparent);
+}
+
+/* Alignment is declared per column so numbers line up down the table. */
+.ft-table .ft-align--right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ft-table .ft-align--center {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* The cell colour rule is more specific than a single class, so the empty
+   state repeats "tbody td". */
+.ft-table tbody td.ft-empty {
+  padding: 14px 12px;
+
+  border-bottom: 0;
+
+  color: var(--ft-muted);
+  font-size: 10.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.ft-cell--name {
+  color: var(--ft-heading);
+  font-weight: 600;
+}
+
+.ft-cell--num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* "Not reported" reads differently from a real value. */
+.ft-dash {
+  color: var(--ft-muted);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ Pills */
+
+.ft-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 2px 8px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.ft-pill__dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.ft-pill--good {
+  background: color-mix(in srgb, var(--ft-green) 14%, transparent);
+  color: var(--ft-green);
+}
+
+.ft-pill--warn {
+  background: color-mix(in srgb, var(--ft-amber) 20%, transparent);
+  color: var(--ft-amber-ink);
+}
+
+.ft-pill--bad {
+  background: rgba(217, 72, 63, 0.12);
+  color: #c0392b;
+}
+
+.ft-pill--muted {
+  background: color-mix(in srgb, var(--ft-navy) 7%, transparent);
+  color: var(--ft-muted);
+}
+
+/* ------------------------------------------------------- Awaiting backend */
+
+.ft-gaps {
+  border: 1px dashed var(--ft-border);
+  border-radius: 10px;
+
+  background: var(--color-surface-subtle);
+}
+
+.ft-gaps__summary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 7px 12px;
+
+  color: var(--ft-muted);
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.ft-gaps__summary:focus-visible {
+  outline: 2px solid var(--ft-sky);
+  outline-offset: 2px;
+}
+
+.ft-gaps__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 3px 16px;
+
+  margin: 0;
+  padding: 0 12px 9px;
+
+  list-style: none;
+}
+
+.ft-gaps__list li {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.ft-gaps__story {
+  flex-shrink: 0;
+
+  color: var(--ft-steel);
+
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}

@@ -24,12 +24,8 @@ export const navigationItems: NavigationItem[] = [
     icon: GraduationCap,
     children: [
       {
-        id: "academics-overview",
-        label: "Overview",
-      },
-      {
-        id: "student-enrollment",
-        label: "Student Enrollment",
+        id: "admissions-enrollment",
+        label: "Admissions & Enrolment",
       },
       {
         id: "student-retention",
@@ -40,20 +36,44 @@ export const navigationItems: NavigationItem[] = [
         label: "Co-Curricular Activities",
       },
       {
-        id: "attendance-rates",
-        label: "Attendance Rates",
+        id: "attendance",
+        label: "Attendance",
       },
       {
         id: "academic-performance",
         label: "Academic Performance",
       },
+    ],
+  },
+
+  {
+    id: "operations",
+    label: "Operational",
+    icon: Landmark,
+    children: [
       {
-        id: "parent-access",
-        label: "My Child's Progress",
+        id: "hr-workforce",
+        label: "HR & Workforce",
+      },
+      // Absorbs the old "Work Orders" entry: work orders are the same thing as
+      // maintenance requests, so they are handled on this page.
+      {
+        id: "facilities-maintenance",
+        label: "Facilities & Maintenance",
       },
       {
-        id: "library-resource-usage",
-        label: "Library & Resource Usage",
+        id: "fleet-transport",
+        label: "Fleet & Transport",
+      },
+      // Absorbs the old "ICT Systems" entry: ICT equipment is part of the asset
+      // register and its annual stocktake.
+      {
+        id: "asset-management",
+        label: "Asset Management",
+      },
+      {
+        id: "incidents-security",
+        label: "Incidents & Security",
       },
     ],
   },
@@ -116,38 +136,6 @@ export const navigationItems: NavigationItem[] = [
   id: "procurement-requests",
   label: "Procurement Requests",
 },
-    ],
-  },
-
-  {
-    id: "operations",
-    label: "Operational",
-    icon: Landmark,
-    children: [
-      {
-        id: "hr-workforce",
-        label: "HR & Workforce",
-      },
-      {
-        id: "facilities-maintenance",
-        label: "Facilities & Maintenance",
-      },
-      {
-        id: "fleet-transport",
-        label: "Fleet & Transport",
-      },
-      {
-        id: "ict-systems",
-        label: "ICT Systems",
-      },
-      {
-        id: "asset-management",
-        label: "Asset Management",
-      },
-      {
-        id: "work-orders",
-        label: "Work Orders",
-      },
     ],
   },
 

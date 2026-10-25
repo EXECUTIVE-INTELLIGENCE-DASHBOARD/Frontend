@@ -1,0 +1,13 @@
+
+> greenhill-eid-frontend@0.1.0 test
+> vitest run src/pages/FleetTransport
+
+
+ RUN  v4.1.11 C:/Users/Zee/Desktop/Frontend
+
+
+ Test Files  1 passed (1)
+      Tests  18 passed (18)
+   Start at  01:10:08
+   Duration  8.06s (transform 446ms, setup 633ms, import 783ms, tests 3.52s, environment 2.44s)
+

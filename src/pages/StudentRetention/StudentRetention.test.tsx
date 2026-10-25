@@ -50,6 +50,33 @@ const mockRetentionData = {
       retention_rate: 87.4,
     },
   ],
+  withdrawals_total: 124,
+  withdrawal_reasons: [
+    {
+      reason: "financial_hardship",
+      label: "Financial Constraints",
+      count: 44,
+      share: 35.5,
+    },
+    {
+      reason: "relocated",
+      label: "Transfer to Another School",
+      count: 34,
+      share: 27.4,
+    },
+    {
+      reason: "deceased",
+      label: "Death",
+      count: 23,
+      share: 18.5,
+    },
+    {
+      reason: "academic",
+      label: "Academic Performance",
+      count: 23,
+      share: 18.5,
+    },
+  ],
 } as RetentionDashboardData;
 
 beforeEach(() => {
@@ -283,8 +310,9 @@ describe("StudentRetention", () => {
       ),
     ).toBeInTheDocument();
 
+    /* No rows for the campus means the total is unknown, so it is dashed. */
     expect(
-      within(screen.getAllByRole("article")[0]).getByText("0"),
+      within(screen.getAllByRole("article")[0]).getByText("—"),
     ).toBeInTheDocument();
   });
 });

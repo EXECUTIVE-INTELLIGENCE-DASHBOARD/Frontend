@@ -1,0 +1,13 @@
+
+> greenhill-eid-frontend@0.1.0 test
+> vitest run
+
+
+ RUN  v4.1.11 C:/Users/Zee/Desktop/Frontend
+
+
+ Test Files  32 passed (32)
+      Tests  283 passed (283)
+   Start at  01:07:21
+   Duration  57.70s (transform 16.53s, setup 39.33s, import 53.68s, tests 136.49s, environment 123.55s)
+

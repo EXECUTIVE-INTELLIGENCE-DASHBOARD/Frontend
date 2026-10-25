@@ -1,12 +1,31 @@
 import {
   campusShortName,
-  formatNumber,
+  formatMetric,
+  formatRate,
   retentionTarget,
 } from "./studentRetention.data";
 import type { NationalityRow } from "./studentRetention.types";
 
 interface NationalityTableCardProps {
   rows: NationalityRow[];
+}
+
+function RetentionPill({ rate }: { rate: number | null }) {
+  if (rate === null) {
+    return (
+      <span className="sr-pill" title="Not reported by the API">
+        —
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className={`sr-pill ${rate >= retentionTarget ? "sr-pill--good" : ""}`}
+    >
+      {formatRate(rate)}
+    </span>
+  );
 }
 
 export function NationalityTableCard({ rows }: NationalityTableCardProps) {
@@ -54,16 +73,10 @@ export function NationalityTableCard({ rows }: NationalityTableCardProps) {
                   </td>
                   <td className="sr-muted">{campusShortName(row.campus)}</td>
                   <td className="sr-num sr-strong">
-                    {formatNumber(row.reEnrolled)}
+                    {formatMetric(row.reEnrolled)}
                   </td>
                   <td className="sr-num">
-                    <span
-                      className={`sr-pill ${
-                        row.retention >= retentionTarget ? "sr-pill--good" : ""
-                      }`}
-                    >
-                      {row.retention.toFixed(1)}%
-                    </span>
+                    <RetentionPill rate={row.retention} />
                   </td>
                 </tr>
               ))
