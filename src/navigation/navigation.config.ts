@@ -36,8 +36,8 @@ export const navigationItems: NavigationItem[] = [
         label: "Co-Curricular Activities",
       },
       {
-        id: "attendance-rates",
-        label: "Attendance Rates",
+        id: "attendance",
+        label: "Attendance",
       },
       {
         id: "academic-performance",

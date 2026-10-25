@@ -36,7 +36,7 @@ const pages: Record<string, ReactElement> = {
   overview: <ExecutiveOverview />,
   "admissions-enrollment": <AdmissionsEnrollment />,
   "academic-performance": <AcademicPerformance />,
-    "attendance-rates": <AttendanceAnalysis />,
+  "attendance": <AttendanceAnalysis />,
   "co-curricular-activities": <CoCurricularActivities />,
   "student-retention": <StudentRetention />,
 
