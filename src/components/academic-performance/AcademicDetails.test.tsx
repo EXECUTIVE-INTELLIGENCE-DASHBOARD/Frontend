@@ -1,106 +1,245 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import api from "../../api/axios";
+import type { AcademicFilterValues } from "../filters/academicFilters.types";
 import { AcademicDetails } from "./AcademicDetails";
 
+vi.mock("../../api/axios", () => ({
+  default: {
+    get: vi.fn(),
+  },
+}));
+
+const currentYear = new Date().getFullYear();
+
+const syllabusRecords = [
+  ...[
+    "Mathematics",
+    "English Language",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "History",
+    "Literature",
+  ].map((subject, index) => ({
+    id: index + 1,
+    subject_name: subject,
+    class_level: "S3",
+    topics_planned: 100,
+    topics_covered: 88,
+    school: 1,
+    term: 1,
+  })),
+  ...["Mathematics", "English Language", "Physics", "Chemistry", "Biology"].map(
+    (subject, index) => ({
+      id: index + 8,
+      subject_name: subject,
+      class_level: "S5",
+      topics_planned: 100,
+      topics_covered: 84,
+      school: 1,
+      term: 1,
+    }),
+  ),
+];
+
+const nationalExamRecords = [
+  {
+    id: 1,
+    exam_display: "UCE",
+    division_display: "Division 1",
+    exam: "uce",
+    year: currentYear,
+    division: "1",
+    aggregate: 8,
+    principal_passes: null,
+    passed: true,
+    student: 1,
+    school: 1,
+  },
+  {
+    id: 2,
+    exam_display: "UACE",
+    division_display: "Principal passes",
+    exam: "uace",
+    year: currentYear,
+    division: "1",
+    aggregate: null,
+    principal_passes: 3,
+    passed: true,
+    student: 2,
+    school: 1,
+  },
+];
+
+function renderAcademicDetails(filters: Partial<AcademicFilterValues> = {}) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchInterval: false,
+        refetchOnWindowFocus: false,
+        gcTime: 0,
+      },
+    },
+  });
+
+  const completeFilters: AcademicFilterValues = {
+    school: "",
+    campus: "",
+    section: "",
+    term: "",
+    year: String(currentYear),
+    ...filters,
+  };
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <AcademicDetails filters={completeFilters} />
+    </QueryClientProvider>,
+  );
+}
+
+function getCard(headingName: string): HTMLElement {
+  const heading = screen.getByRole("heading", {
+    name: headingName,
+  });
+  const card = heading.closest("article");
+
+  if (!card) {
+    throw new Error(`Could not find card: ${headingName}`);
+  }
+
+  return card;
+}
+
 describe("AcademicDetails", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    vi.mocked(api.get).mockImplementation(async (url) => {
+      if (url === "/academics/syllabus-coverage/") {
+        return { data: syllabusRecords };
+      }
+
+      if (url === "/academics/national-exam-results/") {
+        return { data: nationalExamRecords };
+      }
+
+      return { data: [] };
+    });
+  });
+
   it("renders the academic details section", () => {
-    render(<AcademicDetails />);
+    renderAcademicDetails();
 
     expect(
       screen.getByRole("region", {
-        name: "Subject comparison and test results",
+        name: "Subject comparison and national examination results",
       }),
     ).toBeInTheDocument();
   });
 
-  it("renders both subject comparison and test results cards", () => {
-    render(<AcademicDetails />);
+  it("renders both detail cards", async () => {
+    renderAcademicDetails();
 
     expect(
-      screen.getByRole("heading", { name: "Subject Comparison" }),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByRole("heading", { name: "Test Results" }),
-    ).toBeInTheDocument();
-  });
-
-  it("renders the subject comparison column headings", () => {
-    render(<AcademicDetails />);
-
-    const card = screen
-      .getByRole("heading", { name: "Subject Comparison" })
-      .closest("article");
-
-    expect(card).not.toBeNull();
-
-    const comparison = within(card as HTMLElement);
-
-    expect(comparison.getByText("Subject")).toBeInTheDocument();
-    expect(comparison.getByText("Level")).toBeInTheDocument();
-    expect(comparison.getByText("Pass rate")).toBeInTheDocument();
-    expect(comparison.getByText("Change")).toBeInTheDocument();
-  });
-
-  it("renders all 12 subjects by default", () => {
-    render(<AcademicDetails />);
-
-    const card = screen
-      .getByRole("heading", { name: "Subject Comparison" })
-      .closest("article");
-
-    expect(card).not.toBeNull();
-
-    const rows = card!.querySelectorAll(".acad-details__subject-row");
-
-    expect(rows).toHaveLength(12);
-  });
-
-  it("displays subject pass rates and changes", () => {
-    render(<AcademicDetails />);
-
-    const comparison = screen
-      .getByRole("heading", {
+      await screen.findByRole("heading", {
         name: "Subject Comparison",
-      })
-      .closest("article");
+      }),
+    ).toBeInTheDocument();
 
-    expect(comparison).not.toBeNull();
-
-    // Mathematics has an 88% pass rate at both levels.
-    expect(within(comparison!).getAllByText("88%")).toHaveLength(2);
-
-    // Multiple subjects can have the same change.
-    expect(within(comparison!).getAllByText("+4%").length).toBeGreaterThan(1);
-
-    // At least one subject has a negative change.
-    expect(within(comparison!).getByText("-2%")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", {
+        name: "National Examinations",
+      }),
+    ).toBeInTheDocument();
   });
 
-  it("filters subjects by academic level", async () => {
-    const user = userEvent.setup();
-    render(<AcademicDetails />);
+  it("renders the subject comparison table headings", async () => {
+    renderAcademicDetails();
 
-    const card = screen
-      .getByRole("heading", { name: "Subject Comparison" })
-      .closest("article");
+    const subjectHeader = await screen.findByRole("columnheader", {
+      name: "Subject",
+    });
 
+    const card = subjectHeader.closest("article");
     expect(card).not.toBeNull();
 
     const comparison = within(card as HTMLElement);
 
-    await user.selectOptions(
-      comparison.getByRole("combobox", {
-        name: "Academic level",
+    expect(
+      comparison.getByRole("columnheader", { name: "Level" }),
+    ).toBeInTheDocument();
+
+    expect(
+      comparison.getByRole("columnheader", {
+        name: "Syllabus coverage",
       }),
-      "O Level",
-    );
+    ).toBeInTheDocument();
+  });
 
-    const rows = card!.querySelectorAll(".acad-details__subject-row");
+  it("renders grouped subject rows from the API", async () => {
+    renderAcademicDetails();
 
-    expect(rows).toHaveLength(7);
+    await screen.findByRole("columnheader", { name: "Subject" });
+
+    const card = getCard("Subject Comparison");
+    const rows = card.querySelectorAll(".acad-details__subject-row");
+
+    expect(rows).toHaveLength(4);
+    expect(within(card).getAllByText("SCIENCES")).toHaveLength(2);
+    expect(within(card).getAllByText("ARTS")).toHaveLength(2);
+  });
+
+  it("displays the calculated syllabus coverage percentages", async () => {
+    renderAcademicDetails();
+
+    await screen.findByRole("columnheader", { name: "Subject" });
+
+    const card = getCard("Subject Comparison");
+
+    expect(within(card).getAllByText("88.0%")).toHaveLength(2);
+    expect(within(card).getAllByText("84.0%")).toHaveLength(2);
+  });
+
+  it("does not render the old subject category filter", async () => {
+    renderAcademicDetails();
+
+    await screen.findByRole("columnheader", { name: "Subject" });
+
+    const card = getCard("Subject Comparison");
+
+    expect(
+      within(card).queryByRole("combobox", {
+        name: "Subject category",
+      }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("filters subjects to O Level when selected", async () => {
+    const user = userEvent.setup();
+
+    renderAcademicDetails({
+      school: "1",
+      section: "Secondary",
+    });
+
+    const levelSelect = await screen.findByRole("combobox", {
+      name: "Academic level",
+    });
+
+    await screen.findByRole("columnheader", { name: "Subject" });
+
+    await user.selectOptions(levelSelect, "O Level");
+
+    const card = getCard("Subject Comparison");
+    const rows = card.querySelectorAll(".acad-details__subject-row");
+
+    expect(rows).toHaveLength(2);
 
     rows.forEach((row) => {
       expect(row).toHaveTextContent("O Level");
@@ -108,192 +247,115 @@ describe("AcademicDetails", () => {
     });
   });
 
-  it("filters subjects by category", async () => {
+  it("filters subjects to A Level when selected", async () => {
     const user = userEvent.setup();
-    render(<AcademicDetails />);
 
-    const card = screen
-      .getByRole("heading", { name: "Subject Comparison" })
-      .closest("article");
+    renderAcademicDetails({
+      school: "1",
+      section: "Secondary",
+    });
 
-    expect(card).not.toBeNull();
+    const levelSelect = await screen.findByRole("combobox", {
+      name: "Academic level",
+    });
 
-    const comparison = within(card as HTMLElement);
+    await screen.findByRole("columnheader", { name: "Subject" });
 
-    await user.selectOptions(
-      comparison.getByRole("combobox", {
-        name: "Subject category",
-      }),
-      "Science",
-    );
+    await user.selectOptions(levelSelect, "A Level");
 
-    expect(comparison.getAllByText("Physics")).toHaveLength(2);
-    expect(comparison.getAllByText("Mathematics")).toHaveLength(2);
-    expect(comparison.getAllByText("Chemistry")).toHaveLength(2);
-    expect(comparison.getByText("Biology")).toBeInTheDocument();
+    const card = getCard("Subject Comparison");
+    const rows = card.querySelectorAll(".acad-details__subject-row");
 
-    expect(comparison.queryByText("English Language")).not.toBeInTheDocument();
+    expect(rows).toHaveLength(2);
 
-    expect(comparison.queryByText("History")).not.toBeInTheDocument();
-    expect(comparison.queryByText("Literature")).not.toBeInTheDocument();
-    expect(comparison.queryByText("Economics")).not.toBeInTheDocument();
+    rows.forEach((row) => {
+      expect(row).toHaveTextContent("A Level");
+    });
   });
 
-  it("combines the academic level and category filters", async () => {
+  it("renders national examination results from the API", async () => {
+    renderAcademicDetails();
+
+    expect(await screen.findByText("UCE")).toBeInTheDocument();
+    expect(screen.getByText("Division 1")).toBeInTheDocument();
+    expect(screen.getByText("UACE")).toBeInTheDocument();
+    expect(screen.getByText("3 principal passes")).toBeInTheDocument();
+  });
+it("displays examination candidate, pass and pass-rate summaries", async () => {
+  renderAcademicDetails();
+
+  const candidates = await screen.findAllByText("Candidates");
+  const card = candidates[0].closest("article");
+
+  expect(card).not.toBeNull();
+
+  const summaryElement = (card as HTMLElement).querySelector(
+    ".acad-details__exam-summary",
+  );
+
+  expect(summaryElement).not.toBeNull();
+
+  const summary = within(summaryElement as HTMLElement);
+
+  expect(summary.getByText("Candidates")).toBeInTheDocument();
+  expect(summary.getByText("Passed")).toBeInTheDocument();
+  expect(summary.getByText("Pass rate")).toBeInTheDocument();
+
+  // Both summary metrics should show 2.
+  expect(summary.getAllByText("2")).toHaveLength(2);
+
+  expect(summary.getByText("100.0%")).toBeInTheDocument();
+});
+ 
+
+  it("shows UACE results when A Level is selected", async () => {
     const user = userEvent.setup();
-    render(<AcademicDetails />);
 
-    const card = screen
-      .getByRole("heading", { name: "Subject Comparison" })
-      .closest("article");
+    renderAcademicDetails({
+      school: "1",
+      section: "Secondary",
+    });
 
-    expect(card).not.toBeNull();
+    const levelSelect = await screen.findByRole("combobox", {
+      name: "Academic level",
+    });
 
-    const comparison = within(card as HTMLElement);
+    await user.selectOptions(levelSelect, "A Level");
 
-    await user.selectOptions(
-      comparison.getByRole("combobox", {
-        name: "Academic level",
-      }),
-      "A Level",
-    );
-
-    await user.selectOptions(
-      comparison.getByRole("combobox", {
-        name: "Subject category",
-      }),
-      "Science",
-    );
-
-    const rows = card!.querySelectorAll(".acad-details__subject-row");
-
-    expect(rows).toHaveLength(3);
-
-    expect(comparison.getByText("Physics")).toBeInTheDocument();
-    expect(comparison.getByText("Mathematics")).toBeInTheDocument();
-    expect(comparison.getByText("Chemistry")).toBeInTheDocument();
-
-    expect(comparison.queryByText("Literature")).not.toBeInTheDocument();
+    expect(screen.getByText("UACE results")).toBeInTheDocument();
+    expect(await screen.findByText("UACE")).toBeInTheDocument();
+    expect(screen.queryByText("UCE")).not.toBeInTheDocument();
   });
 
-  it("renders Test 2 as the default assessment", () => {
-    render(<AcademicDetails />);
+  it("shows UCE results when O Level is selected", async () => {
+    const user = userEvent.setup();
+
+    renderAcademicDetails({
+      school: "1",
+      section: "Secondary",
+    });
+
+    const levelSelect = await screen.findByRole("combobox", {
+      name: "Academic level",
+    });
+
+    await user.selectOptions(levelSelect, "O Level");
+
+    expect(screen.getByText("UCE results")).toBeInTheDocument();
+    expect(await screen.findByText("UCE")).toBeInTheDocument();
+    expect(screen.queryByText("UACE")).not.toBeInTheDocument();
+  });
+
+  it("shows the nursery-specific examination message", () => {
+    renderAcademicDetails({
+      school: "1",
+      section: "Nursery",
+    });
 
     expect(
-      screen.getByRole("columnheader", {
-        name: "Test 2 score",
-      }),
+      screen.getByText(
+        "National examination results are not applicable to nursery schools.",
+      ),
     ).toBeInTheDocument();
-
-    expect(
-      screen.getByRole("columnheader", {
-        name: "Students assessed",
-      }),
-    ).toBeInTheDocument();
-  });
-
-  it("renders all eight test result rows by default", () => {
-    render(<AcademicDetails />);
-
-    const card = screen
-      .getByRole("heading", { name: "Test Results" })
-      .closest("article");
-
-    expect(card).not.toBeNull();
-
-    const rows = card!.querySelectorAll("tbody tr");
-
-    expect(rows).toHaveLength(8);
-  });
-
-  it("displays Test 2 scores by default", () => {
-    render(<AcademicDetails />);
-
-    const card = screen
-      .getByRole("heading", { name: "Test Results" })
-      .closest("article");
-
-    expect(card).not.toBeNull();
-
-    const results = within(card as HTMLElement);
-
-    expect(results.getByText("78%")).toBeInTheDocument();
-    expect(results.getByText("84%")).toBeInTheDocument();
-    expect(results.getByText("81%")).toBeInTheDocument();
-  });
-
-  it("updates the score column when Test 1 is selected", async () => {
-    const user = userEvent.setup();
-    render(<AcademicDetails />);
-
-    const card = screen
-      .getByRole("heading", { name: "Test Results" })
-      .closest("article");
-
-    expect(card).not.toBeNull();
-
-    const results = within(card as HTMLElement);
-
-    await user.selectOptions(
-      results.getByRole("combobox", {
-        name: "Assessment",
-      }),
-      "Test 1",
-    );
-
-    expect(
-      results.getByRole("columnheader", {
-        name: "Test 1 score",
-      }),
-    ).toBeInTheDocument();
-
-    expect(results.getByText("72%")).toBeInTheDocument();
-    expect(results.getByText("81%")).toBeInTheDocument();
-  });
-
-  it("filters test results by academic level", async () => {
-    const user = userEvent.setup();
-    render(<AcademicDetails />);
-
-    const card = screen
-      .getByRole("heading", { name: "Test Results" })
-      .closest("article");
-
-    expect(card).not.toBeNull();
-
-    const results = within(card as HTMLElement);
-
-    await user.selectOptions(
-      results.getByRole("combobox", {
-        name: "Academic level",
-      }),
-      "A Level",
-    );
-
-    const rows = card!.querySelectorAll("tbody tr");
-
-    expect(rows).toHaveLength(4);
-
-    expect(results.getByText("Literature")).toBeInTheDocument();
-    expect(results.getByText("Economics")).toBeInTheDocument();
-
-    expect(results.queryByText("English Language")).not.toBeInTheDocument();
-  });
-
-  it("displays the correct student assessment counts", () => {
-    render(<AcademicDetails />);
-
-    const card = screen
-      .getByRole("heading", { name: "Test Results" })
-      .closest("article");
-
-    expect(card).not.toBeNull();
-
-    const results = within(card as HTMLElement);
-
-    expect(results.getAllByText("120")).toHaveLength(2);
-    expect(results.getAllByText("96")).toHaveLength(2);
-    expect(results.getAllByText("54")).toHaveLength(2);
-    expect(results.getAllByText("42")).toHaveLength(2);
   });
 });

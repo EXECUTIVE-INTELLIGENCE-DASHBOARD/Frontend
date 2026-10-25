@@ -1,0 +1,132 @@
+.academic-performance__filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: end;
+  gap: 14px;
+
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.academic-performance__filter {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.academic-performance__filter-label {
+  color: var(--color-text, #526273);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Dropdown wrapper */
+.academic-performance__select-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Dropdown field */
+.academic-performance__select-wrapper select {
+  appearance: none;
+  -webkit-appearance: none;
+
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  box-sizing: border-box;
+  padding: 0 42px 0 13px;
+
+  border: 1px solid var(--color-border, #d1d9e0);
+  border-radius: 8px;
+
+  background: var(--color-surface, #ffffff);
+  color: var(--color-heading, #263746);
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Chevron icon inside the dropdown */
+.academic-performance__select-icon {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+
+  color: #71819a;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+/* Hover */
+.academic-performance__select-wrapper select:hover {
+  border-color: var(--pal-steel, #9baab8);
+}
+
+/* Keyboard focus */
+.academic-performance__select-wrapper select:focus-visible {
+  outline: none;
+  border-color: var(--pal-steel, #8095aa);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--pal-steel, #8095aa) 16%, transparent);
+}
+
+/* Disabled state */
+.academic-performance__select-wrapper select:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* Dropdown options */
+.academic-performance__select-wrapper select option {
+  background: var(--color-surface, #ffffff);
+  color: var(--color-heading, #263746);
+}
+
+.academic-performance__filter-message {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  color: var(--color-text, #526273);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.academic-performance__filter-message[role="alert"] {
+  color: #b42318;
+}
+
+@media (max-width: 900px) {
+  .academic-performance__filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (max-width: 560px) {
+  .academic-performance__filters {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 11px;
+  }
+  .academic-performance__select-wrapper select {
+    height: 42px;
+    font-size: 12px;
+  }
+}

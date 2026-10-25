@@ -1,9 +1,29 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { App } from "./App";
 import { ThemeProvider } from "./context/ThemeContext";
+
+function renderApp() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchInterval: false,
+      },
+    },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
+    </QueryClientProvider>,
+  );
+}
 
 afterEach(() => {
   cleanup();
@@ -11,11 +31,7 @@ afterEach(() => {
 
 describe("App", () => {
   it("renders the EID application shell", () => {
-    render(
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>,
-    );
+    renderApp();
 
     expect(
       screen.getByRole("navigation", {
@@ -23,12 +39,9 @@ describe("App", () => {
       }),
     ).toBeInTheDocument();
   });
+
   it("renders the default Academic Performance page", () => {
-    render(
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>,
-    );
+    renderApp();
 
     expect(
       document.querySelector("main.app-shell.layout-content"),
@@ -36,11 +49,7 @@ describe("App", () => {
   });
 
   it("renders a main content area", () => {
-    render(
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>,
-    );
+    renderApp();
 
     expect(
       document.querySelector("main.app-shell.layout-content"),
@@ -50,11 +59,7 @@ describe("App", () => {
   it("opens the Academic Overview screen from the Academics section", async () => {
     const user = userEvent.setup();
 
-    render(
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>,
-    );
+    renderApp();
 
     const submenu = document.getElementById("academics-submenu");
 

@@ -6,7 +6,7 @@ import { Hero } from "./components/Hero";
 import { Sidebar } from "./components/Sidebar";
 import { findNavigationLabel } from "./navigation/navigation.config";
 import { AcademicOverview } from "./pages/AcademicOverview/AcademicOverview";
-import { AcademicPerformance } from "./pages/academic-performance/AcademicPerformance";
+import AcademicPerformance from "./pages/academic-performance/AcademicPerformance";
 import { ExecutiveOverview } from "./pages/ExecutiveOverview/ExecutiveOverview";
 import { LibraryResourceUsage } from "./pages/LibraryResourceUsage/LibraryResourceUsage";
 import { MyChildProgress } from "./pages/MyChildProgress/MyChildProgress";

@@ -17,9 +17,8 @@
   color: var(--color-text);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-box-shadow: none;
+  box-shadow: none;
   border-radius: 12px;
-
 }
 
 .acad-analytics__header {
@@ -277,6 +276,315 @@ box-shadow: none;
 @media (prefers-reduced-motion: reduce) {
   .acad-analytics__grade-fill,
   .acad-analytics__completion-bar-fill {
+    transition: none;
+  }
+}
+/* National Examination Results — preserve Grade Distribution styling */
+
+.acad-analytics__card:nth-child(2) {
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Examination card content */
+.acad-exams {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  color: var(--color-text);
+}
+
+/* Table container */
+.acad-exams__table-wrap {
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+/* Table layout */
+.acad-exams__table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+  border-collapse: collapse;
+  color: var(--color-text);
+  background: var(--color-surface);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* Align every table column */
+.acad-exams__table th:first-child,
+.acad-exams__table td:first-child {
+  width: 22%;
+  text-align: left;
+}
+
+.acad-exams__table th:not(:first-child),
+.acad-exams__table td:not(:first-child) {
+  width: 13%;
+  text-align: center;
+}
+
+/* Table headings and data cells */
+.acad-exams__table th,
+.acad-exams__table td {
+  box-sizing: border-box;
+  padding: 16px 4px;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.acad-exams__table th {
+  color: var(--color-text-secondary);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.acad-exams__table td {
+  color: var(--color-text-secondary);
+  font-size: 10px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.acad-exams__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.acad-exams__table tbody tr:hover {
+  background: var(--color-surface-subtle);
+}
+
+/* Campus names remain left-aligned */
+.acad-exams__table td:first-child {
+  color: var(--color-heading);
+  font-weight: 500;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Pass rate */
+.acad-exams__table td:last-child,
+.acad-exams__pass-rate {
+  color: var(--color-heading);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.acad-exams__pass-rate {
+  display: inline-block;
+  font-size: 10px;
+}
+
+/* Detailed results below the table */
+.acad-exams__details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Individual campus / school examination section */
+.acad-exams__detail {
+  min-width: 0;
+  padding: 12px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.acad-exams__detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.acad-exams__detail-header h3 {
+  min-width: 0;
+  margin: 0;
+  color: var(--color-heading);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.acad-exams__detail-header > span {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  font-size: 9px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+/* Summary figures */
+.acad-exams__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px 10px;
+  min-width: 0;
+  margin-bottom: 15px;
+}
+
+.acad-exams__metrics > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.acad-exams__metrics > div > span {
+  color: var(--color-text-muted);
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.acad-exams__metrics > div > strong {
+  color: var(--color-heading);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* Division / principal-pass distribution */
+.acad-exams__distribution {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding-top: 11px;
+  border-top: 1px solid var(--color-border);
+}
+
+.acad-exams__distribution h4 {
+  margin: 0 0 2px;
+  color: var(--color-text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.acad-exams__division-row {
+  display: grid;
+  grid-template-columns: minmax(72px, 0.8fr) minmax(45px, 1.5fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.acad-exams__division-row > span:first-child {
+  min-width: 0;
+  color: var(--color-text-secondary);
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.acad-exams__division-row > span:last-child {
+  color: var(--color-text-muted);
+  font-size: 9px;
+  font-weight: 400;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Use the existing dashboard track and chart colors */
+.acad-exams__division-track {
+  height: 5px;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--color-track);
+  border-radius: 999px;
+}
+
+.acad-exams__division-track > span {
+  display: block;
+  height: 100%;
+  background: var(--chart-blue);
+  border-radius: inherit;
+  transition: width 180ms ease;
+}
+
+/* Empty state */
+.acad-analytics__card:nth-child(2) > p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Dark theme uses the existing system variables */
+[data-theme="dark"] .acad-analytics__card:nth-child(2),
+[data-theme="dark"] .acad-exams__detail,
+[data-theme="dark"] .acad-exams__table {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+
+[data-theme="dark"] .acad-exams__table thead {
+  background: var(--color-surface-subtle);
+}
+
+[data-theme="dark"] .acad-exams__table tbody tr:hover {
+  background: var(--color-surface-subtle);
+}
+
+/* Tablet */
+@media (max-width: 1000px) {
+  .acad-exams__detail {
+    padding: 11px;
+  }
+
+  .acad-exams__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .acad-exams {
+    gap: 12px;
+  }
+
+  .acad-exams__detail {
+    padding: 10px;
+  }
+
+  .acad-exams__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 10px;
+  }
+
+  .acad-exams__division-row {
+    grid-template-columns: minmax(65px, 0.8fr) minmax(35px, 1fr) auto;
+    gap: 7px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acad-exams__division-track > span {
     transition: none;
   }
 }

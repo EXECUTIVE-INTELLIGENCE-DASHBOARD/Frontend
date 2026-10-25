@@ -1,417 +1,571 @@
 import { useState } from "react";
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+// import { useMemo } from "react";
+import api from "../../api/axios";
+import type { AcademicFilterValues } from "../filters/academicFilters.types";
 
 import "./AcademicDetails.css";
 
-type SubjectResult = {
+interface AcademicDetailsProps {
+  filters?: AcademicFilterValues;
+}
+
+interface SyllabusRecord {
+  id: number;
+  subject_name: string;
+  class_level: string;
+  topics_planned: number | null;
+  topics_covered: number | null;
+  school: number;
+  term: number;
+}
+
+interface NationalExamResult {
+  id: number;
+  exam_display: string;
+  division_display: string;
+  exam: string;
+  year: number;
+  division: string;
+  aggregate: number | null;
+  principal_passes: number | null;
+  passed: boolean;
+  student: number;
+  school: number;
+}
+
+interface SubjectRow {
+  key: string;
   subject: string;
-  level: "O Level" | "A Level";
-  category: "Science" | "Arts";
-  average: number;
-  passRate: number;
-  previousPassRate: number;
+  level: string;
+  planned: number;
+  covered: number;
+  records: number;
+}
+
+interface ExamRow {
+  key: string;
+  exam: string;
+  result: string;
+  candidates: number;
+  passed: number;
+}
+
+const REFRESH_INTERVAL = 30_000;
+
+const DEFAULT_FILTERS: AcademicFilterValues = {
+  school: "",
+  campus: "",
+  section: "",
+  term: "",
+  year: String(new Date().getFullYear()),
 };
 
-type TestResult = {
-  subject: string;
-  level: "O Level" | "A Level";
-  testOne: number;
-  testTwo: number;
-  passRate: number;
-  studentsAssessed: number;
-};
+const SCIENCE_SUBJECTS = new Set([
+  "biology",
+  "chemistry",
+  "physics",
+  "mathematics",
+  "integrated science",
+]);
 
-const subjectResults: SubjectResult[] = [
-  {
-    subject: "Mathematics",
-    level: "O Level",
-    category: "Science",
-    average: 76,
-    passRate: 88,
-    previousPassRate: 84,
-  },
-  {
-    subject: "Biology",
-    level: "O Level",
-    category: "Science",
-    average: 81,
-    passRate: 91,
-    previousPassRate: 87,
-  },
-  {
-    subject: "Chemistry",
-    level: "O Level",
-    category: "Science",
-    average: 72,
-    passRate: 83,
-    previousPassRate: 85,
-  },
-  {
-    subject: "Physics",
-    level: "O Level",
-    category: "Science",
-    average: 69,
-    passRate: 79,
-    previousPassRate: 76,
-  },
-  {
-    subject: "English Language",
-    level: "O Level",
-    category: "Arts",
-    average: 84,
-    passRate: 94,
-    previousPassRate: 90,
-  },
-  {
-    subject: "History",
-    level: "O Level",
-    category: "Arts",
-    average: 78,
-    passRate: 89,
-    previousPassRate: 86,
-  },
-  {
-    subject: "Geography",
-    level: "O Level",
-    category: "Arts",
-    average: 75,
-    passRate: 86,
-    previousPassRate: 83,
-  },
-  {
-    subject: "Literature",
-    level: "A Level",
-    category: "Arts",
-    average: 82,
-    passRate: 92,
-    previousPassRate: 89,
-  },
-  {
-    subject: "Physics",
-    level: "A Level",
-    category: "Science",
-    average: 74,
-    passRate: 85,
-    previousPassRate: 82,
-  },
-  {
-    subject: "Economics",
-    level: "A Level",
-    category: "Arts",
-    average: 79,
-    passRate: 90,
-    previousPassRate: 87,
-  },
-  {
-    subject: "Mathematics",
-    level: "A Level",
-    category: "Science",
-    average: 77,
-    passRate: 88,
-    previousPassRate: 85,
-  },
-  {
-    subject: "Chemistry",
-    level: "A Level",
-    category: "Science",
-    average: 73,
-    passRate: 84,
-    previousPassRate: 81,
-  },
-];
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
 
-const testResults: TestResult[] = [
-  {
-    subject: "Mathematics",
-    level: "O Level",
-    testOne: 72,
-    testTwo: 78,
-    passRate: 88,
-    studentsAssessed: 120,
-  },
-  {
-    subject: "English Language",
-    level: "O Level",
-    testOne: 81,
-    testTwo: 84,
-    passRate: 94,
-    studentsAssessed: 120,
-  },
-  {
-    subject: "Biology",
-    level: "O Level",
-    testOne: 76,
-    testTwo: 81,
-    passRate: 91,
-    studentsAssessed: 96,
-  },
-  {
-    subject: "Chemistry",
-    level: "O Level",
-    testOne: 75,
-    testTwo: 72,
-    passRate: 83,
-    studentsAssessed: 96,
-  },
-  {
-    subject: "Physics",
-    level: "A Level",
-    testOne: 70,
-    testTwo: 74,
-    passRate: 85,
-    studentsAssessed: 54,
-  },
-  {
-    subject: "Mathematics",
-    level: "A Level",
-    testOne: 74,
-    testTwo: 77,
-    passRate: 88,
-    studentsAssessed: 54,
-  },
-  {
-    subject: "Literature",
-    level: "A Level",
-    testOne: 79,
-    testTwo: 82,
-    passRate: 92,
-    studentsAssessed: 42,
-  },
-  {
-    subject: "Economics",
-    level: "A Level",
-    testOne: 76,
-    testTwo: 79,
-    passRate: 90,
-    studentsAssessed: 42,
-  },
-];
+function normalizeArray<T>(response: unknown): T[] {
+  if (Array.isArray(response)) {
+    return response as T[];
+  }
 
-type LevelFilter = "All Levels" | "O Level" | "A Level";
-type CategoryFilter = "All Subjects" | "Science" | "Arts";
-type TestFilter = "Test 1" | "Test 2";
+  if (isRecord(response)) {
+    for (const key of ["results", "data", "records", "items"]) {
+      if (Array.isArray(response[key])) {
+        return response[key] as T[];
+      }
+    }
+  }
 
-function SubjectComparison() {
-  const [levelFilter, setLevelFilter] = useState<LevelFilter>("All Levels");
+  return [];
+}
 
-  const [categoryFilter, setCategoryFilter] =
-    useState<CategoryFilter>("All Subjects");
+function toNumber(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
 
-  const filteredSubjects = subjectResults.filter((item) => {
+  if (typeof value === "string" && value.trim()) {
+    const parsed = Number(value);
+
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+
+  return null;
+}
+
+function formatNumber(value: number): string {
+  return value.toLocaleString("en-US");
+}
+
+function getErrorMessage(error: unknown): string {
+  if (
+    isRecord(error) &&
+    isRecord(error.response) &&
+    typeof error.response.status === "number"
+  ) {
+    return `Unable to load data (HTTP ${error.response.status})`;
+  }
+
+  return "Unable to load data. Please try again.";
+}
+
+function getSchoolId(school: string): number | null {
+  if (!school.trim()) {
+    return null;
+  }
+
+  const id = Number(school);
+
+  return Number.isInteger(id) && id > 0 ? id : null;
+}
+
+function getStage(classLevel: string): string {
+  const normalized = classLevel.trim().toUpperCase();
+  const match = normalized.match(/^S(\d+)$/);
+
+  if (match) {
+    return Number(match[1]) <= 4 ? "O Level" : "A Level";
+  }
+
+  if (/^P\d+$/.test(normalized)) {
+    return "Primary";
+  }
+
+  return "Nursery";
+}
+
+function isScienceSubject(subject: string): boolean {
+  return SCIENCE_SUBJECTS.has(subject.trim().toLowerCase());
+}
+
+function getSecondaryStage(
+  classLevel: string,
+  selectedLevel: "O Level" | "A Level",
+): boolean {
+  const stage = getStage(classLevel);
+  return stage === selectedLevel;
+}
+
+function buildSubjectRows(
+  records: SyllabusRecord[],
+  selectedSchool: number | null,
+  section: string,
+  secondaryLevel: "O Level" | "A Level",
+): SubjectRow[] {
+  const selectedSection = selectedSchool ? section.trim().toLowerCase() : "";
+
+  const schoolRecords = records.filter(
+    (record) => selectedSchool === null || record.school === selectedSchool,
+  );
+
+  const grouped = new Map<string, SubjectRow>();
+
+  for (const record of schoolRecords) {
+    const stage = getStage(record.class_level);
+    let subject: string;
+    let level: string;
+
+    if (selectedSection === "secondary") {
+      if (stage !== "O Level" && stage !== "A Level") {
+        continue;
+      }
+
+      if (!getSecondaryStage(record.class_level, secondaryLevel)) {
+        continue;
+      }
+
+      subject = isScienceSubject(record.subject_name) ? "SCIENCES" : "ARTS";
+
+      level = secondaryLevel;
+    } else if (selectedSection === "primary") {
+      if (stage !== "Primary") {
+        continue;
+      }
+
+      subject = record.subject_name;
+      level = "Primary";
+    } else if (selectedSection === "nursery") {
+      subject = record.subject_name;
+      level = "Nursery";
+    } else {
+      // All Schools: keep primary subjects individually and
+      // group secondary subjects into ARTS and SCIENCES.
+      if (stage === "O Level" || stage === "A Level") {
+        subject = isScienceSubject(record.subject_name) ? "SCIENCES" : "ARTS";
+
+        level = stage;
+      } else {
+        subject = record.subject_name;
+        level = stage;
+      }
+    }
+
+    const key = `${level}:${subject}`;
+
+    if (!grouped.has(key)) {
+      grouped.set(key, {
+        key,
+        subject,
+        level,
+        planned: 0,
+        covered: 0,
+        records: 0,
+      });
+    }
+
+    const row = grouped.get(key)!;
+    const planned = toNumber(record.topics_planned);
+    const covered = toNumber(record.topics_covered);
+
+    if (planned !== null && covered !== null && planned > 0 && covered >= 0) {
+      row.planned += planned;
+      row.covered += covered;
+      row.records += 1;
+    }
+  }
+
+  return Array.from(grouped.values()).sort((a, b) => {
+    const levelOrder = ["Nursery", "Primary", "O Level", "A Level"];
+
+    const levelDifference =
+      levelOrder.indexOf(a.level) - levelOrder.indexOf(b.level);
+
+    if (levelDifference !== 0) {
+      return levelDifference;
+    }
+
+    return a.subject.localeCompare(b.subject);
+  });
+}
+
+function getCoverage(row: SubjectRow): string {
+  if (row.planned <= 0) {
+    return "—";
+  }
+
+  return `${((row.covered / row.planned) * 100).toFixed(1)}%`;
+}
+
+function buildExamRows(results: NationalExamResult[]): ExamRow[] {
+  const grouped = new Map<
+    string,
+    {
+      exam: string;
+      result: string;
+      candidates: number;
+      passed: number;
+    }
+  >();
+
+  for (const record of results) {
+    let resultLabel: string;
+
+    if (record.exam.toLowerCase() === "uace") {
+      resultLabel =
+        record.principal_passes === null
+          ? "Principal passes not recorded"
+          : `${record.principal_passes} principal passes`;
+    } else {
+      resultLabel =
+        record.division_display || (record.passed ? "Passed" : "Not passed");
+    }
+
+    const key = `${record.exam}:${record.year}:${resultLabel}`;
+
+    if (!grouped.has(key)) {
+      grouped.set(key, {
+        exam: record.exam_display || record.exam.toUpperCase(),
+        result: resultLabel,
+        candidates: 0,
+        passed: 0,
+      });
+    }
+
+    const row = grouped.get(key)!;
+
+    row.candidates += 1;
+
+    if (record.passed) {
+      row.passed += 1;
+    }
+  }
+
+  return Array.from(grouped.entries()).map(([key, row]) => ({
+    key,
+    ...row,
+  }));
+}
+
+function getAllowedExams(
+  section: string,
+  secondaryLevel: "O Level" | "A Level",
+): string[] | null {
+  switch (section.toLowerCase()) {
+    case "primary":
+      return ["ple"];
+
+    case "secondary":
+      return [secondaryLevel === "A Level" ? "uace" : "uce"];
+
+    case "nursery":
+      return [];
+
+    default:
+      return null;
+  }
+}
+
+export function AcademicDetails({
+  filters = DEFAULT_FILTERS,
+}: AcademicDetailsProps) {
+  const [secondaryLevel, setSecondaryLevel] = useState<"O Level" | "A Level">(
+    "O Level",
+  );
+
+  const schoolId = getSchoolId(filters.school);
+
+  const section = schoolId === null ? "" : filters.section.trim().toLowerCase();
+
+  const syllabusQuery = useQuery({
+    queryKey: ["academic-details-syllabus"],
+    queryFn: async ({ signal }) => {
+      const response = await api.get<unknown>("/academics/syllabus-coverage/", {
+        signal,
+      });
+
+      return normalizeArray<SyllabusRecord>(response.data);
+    },
+    refetchInterval: REFRESH_INTERVAL,
+    refetchOnWindowFocus: true,
+  });
+
+  const nationalExamsQuery = useQuery({
+    queryKey: ["academic-national-exam-results"],
+    queryFn: async ({ signal }) => {
+      const response = await api.get<unknown>(
+        "/academics/national-exam-results/",
+        { signal },
+      );
+
+      return normalizeArray<NationalExamResult>(response.data);
+    },
+    refetchInterval: REFRESH_INTERVAL,
+    refetchOnWindowFocus: true,
+  });
+
+  const allSyllabusRecords = syllabusQuery.data ?? [];
+
+  const subjectRows = buildSubjectRows(
+    allSyllabusRecords,
+    schoolId,
+    section,
+    secondaryLevel,
+  );
+
+  const allowedExams = getAllowedExams(section, secondaryLevel);
+  const selectedYear = Number(filters.year);
+
+  const nationalResults = (nationalExamsQuery.data ?? []).filter((record) => {
+    const matchesSchool = schoolId === null || record.school === schoolId;
+
+    const matchesYear = !filters.year || record.year === selectedYear;
+
     const matchesLevel =
-      levelFilter === "All Levels" || item.level === levelFilter;
+      allowedExams === null || allowedExams.includes(record.exam.toLowerCase());
 
-    const matchesCategory =
-      categoryFilter === "All Subjects" || item.category === categoryFilter;
-
-    return matchesLevel && matchesCategory;
+    return matchesSchool && matchesYear && matchesLevel;
   });
 
-  return (
-    <article className="acad-details__card">
-      <div className="acad-details__heading">
-        <div className="acad-details__title">
-          <h2>Subject Comparison</h2>
-        </div>
-      </div>
+  const examRows = buildExamRows(nationalResults);
+  const candidateCount = nationalResults.length;
+  const passedCount = nationalResults.filter((record) => record.passed).length;
 
-      <div className="acad-details__filters">
-        <label className="acad-details__filter">
-          <span>Academic level</span>
-          <select
-            value={levelFilter}
-            onChange={(event) =>
-              setLevelFilter(event.target.value as LevelFilter)
-            }
-          >
-            <option>All Levels</option>
-            <option>O Level</option>
-            <option>A Level</option>
-          </select>
-        </label>
+  const passRate =
+    candidateCount > 0
+      ? `${((passedCount / candidateCount) * 100).toFixed(1)}%`
+      : "—";
 
-        <label className="acad-details__filter">
-          <span>Subject category</span>
-          <select
-            value={categoryFilter}
-            onChange={(event) =>
-              setCategoryFilter(event.target.value as CategoryFilter)
-            }
-          >
-            <option>All Subjects</option>
-            <option>Science</option>
-            <option>Arts</option>
-          </select>
-        </label>
-      </div>
+  const isNursery = section === "nursery";
 
-      <div className="acad-details__subject-list">
-        <div className="acad-details__list-header">
-          <span>Subject</span>
-          <span>Level</span>
-          <span>Pass rate</span>
-          <span>Change</span>
-        </div>
-
-        {filteredSubjects.map((item) => {
-          const change = item.passRate - item.previousPassRate;
-
-          return (
-            <div
-              className="acad-details__subject-row"
-              key={`${item.level}-${item.subject}`}
-            >
-              <div className="acad-details__subject-name">
-                <strong>{item.subject}</strong>
-              </div>
-
-              <span className="acad-details__level">{item.level}</span>
-
-              <strong className="acad-details__pass-rate">
-                {item.passRate}%
-              </strong>
-
-              <span
-                className={
-                  change >= 0
-                    ? "acad-details__change acad-details__change--up"
-                    : "acad-details__change acad-details__change--down"
-                }
-              >
-                {change >= 0 ? (
-                  <ArrowUpRight size={14} />
-                ) : (
-                  <ArrowDownRight size={14} />
-                )}
-                {change > 0 ? "+" : ""}
-                {change}%
-              </span>
-            </div>
-          );
-        })}
-
-        {filteredSubjects.length === 0 && (
-          <p className="acad-details__empty">
-            No subjects match the selected filters.
-          </p>
-        )}
-      </div>
-    </article>
-  );
-}
-
-function TestResultsTable() {
-  const [selectedTest, setSelectedTest] = useState<TestFilter>("Test 2");
-
-  const [selectedLevel, setSelectedLevel] = useState<LevelFilter>("All Levels");
-
-  const filteredResults = testResults.filter((item) => {
-    return selectedLevel === "All Levels" || item.level === selectedLevel;
-  });
-
-  return (
-    <article className="acad-details__card acad-details__tests">
-      <div className="acad-details__heading">
-        <div className="acad-details__title">
-          <h2>Test Results</h2>
-        </div>
-      </div>
-
-      <div className="acad-details__table-filters">
-        <label className="acad-details__filter">
-          <span>Assessment</span>
-          <select
-            value={selectedTest}
-            onChange={(event) =>
-              setSelectedTest(event.target.value as TestFilter)
-            }
-          >
-            <option>Test 1</option>
-            <option>Test 2</option>
-          </select>
-        </label>
-
-        <label className="acad-details__filter">
-          <span>Academic level</span>
-          <select
-            value={selectedLevel}
-            onChange={(event) =>
-              setSelectedLevel(event.target.value as LevelFilter)
-            }
-          >
-            <option>All Levels</option>
-            <option>O Level</option>
-            <option>A Level</option>
-          </select>
-        </label>
-      </div>
-
-      <div className="acad-details__table-scroll">
-        <table className="acad-details__table">
-          <thead>
-            <tr>
-              <th>Subject</th>
-              <th>Level</th>
-              <th>{selectedTest} score</th>
-              <th>Pass rate</th>
-              <th>Students assessed</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredResults.map((item) => {
-              const score =
-                selectedTest === "Test 1" ? item.testOne : item.testTwo;
-
-              return (
-                <tr key={`${item.level}-${item.subject}`}>
-                  <td className="acad-details__table-subject">
-                    {item.subject}
-                  </td>
-
-                  <td>
-                    <span className="acad-details__level-badge">
-                      {item.level}
-                    </span>
-                  </td>
-
-                  <td>
-                    <div className="acad-details__score">
-                      <strong>{score}%</strong>
-                    </div>
-                  </td>
-
-                  <td>
-                    <span className="acad-details__table-pass">
-                      {item.passRate}%
-                    </span>
-                  </td>
-
-                  <td>{item.studentsAssessed}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-
-        {filteredResults.length === 0 && (
-          <p className="acad-details__empty">
-            No test results are available for these filters.
-          </p>
-        )}
-      </div>
-    </article>
-  );
-}
-
-export function AcademicDetails() {
   return (
     <section
       className="acad-details"
-      aria-label="Subject comparison and test results"
+      aria-label="Subject comparison and national examination results"
+      aria-busy={syllabusQuery.isLoading || nationalExamsQuery.isLoading}
     >
-      <SubjectComparison />
-      <TestResultsTable />
+      <div className="acad-details__grid">
+        <article className="acad-details__card">
+          <header className="acad-details__header">
+            <div>
+              <h2>Subject Comparison</h2>
+              <p>
+                {schoolId === null
+                  ? "Subject coverage across all schools"
+                  : "Subject coverage for the selected school"}
+              </p>
+            </div>
+
+            {section === "secondary" && (
+              <label className="acad-details__filter">
+                <span>Academic level</span>
+
+                <select
+                  aria-label="Academic level"
+                  value={secondaryLevel}
+                  onChange={(event) =>
+                    setSecondaryLevel(
+                      event.target.value as "O Level" | "A Level",
+                    )
+                  }
+                >
+                  <option value="O Level">O Level</option>
+                  <option value="A Level">A Level</option>
+                </select>
+              </label>
+            )}
+          </header>
+
+          {syllabusQuery.isLoading ? (
+            <p role="status">Loading subject coverage...</p>
+          ) : syllabusQuery.isError ? (
+            <p role="alert">{getErrorMessage(syllabusQuery.error)}</p>
+          ) : (
+            <div className="acad-details__table-wrapper">
+              <table className="acad-details__table">
+                <thead>
+                  <tr>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Level</th>
+                    <th scope="col">Syllabus coverage</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {subjectRows.length === 0 ? (
+                    <tr>
+                      <td colSpan={3}>
+                        No syllabus records available for this selection.
+                      </td>
+                    </tr>
+                  ) : (
+                    subjectRows.map((row) => (
+                      <tr className="acad-details__subject-row" key={row.key}>
+                        <td>{row.subject}</td>
+                        <td>{row.level}</td>
+                        <td>
+                          <span>{getCoverage(row)}</span>
+
+                          <span className="acad-details__coverage-detail">
+                            {" "}
+                            ({formatNumber(row.covered)} /{" "}
+                            {formatNumber(row.planned)})
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </article>
+
+        <article className="acad-details__card">
+          <header className="acad-details__header">
+            <div>
+              <h2>National Examinations</h2>
+              <p>
+                {section === "secondary"
+                  ? secondaryLevel === "A Level"
+                    ? "UACE results"
+                    : "UCE results"
+                  : section === "primary"
+                    ? "PLE results"
+                    : isNursery
+                      ? "National examinations are not applicable to this nursery selection."
+                      : "National examination results across schools"}
+              </p>
+            </div>
+          </header>
+
+          {isNursery ? (
+            <p>
+              National examination results are not applicable to nursery
+              schools.
+            </p>
+          ) : nationalExamsQuery.isLoading ? (
+            <p role="status">Loading national examination results...</p>
+          ) : nationalExamsQuery.isError ? (
+            <p role="alert">{getErrorMessage(nationalExamsQuery.error)}</p>
+          ) : nationalResults.length === 0 ? (
+            <p>
+              No national examination results are available for{" "}
+              {filters.year || "the selected year"}.
+            </p>
+          ) : (
+            <>
+              <div className="acad-details__exam-summary">
+                <div>
+                  <span>Candidates</span>
+                  <strong>{formatNumber(candidateCount)}</strong>
+                </div>
+
+                <div>
+                  <span>Passed</span>
+                  <strong>{formatNumber(passedCount)}</strong>
+                </div>
+
+                <div>
+                  <span>Pass rate</span>
+                  <strong>{passRate}</strong>
+                </div>
+              </div>
+
+              <div className="acad-details__table-wrapper">
+                <table className="acad-details__table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Examination</th>
+                      <th scope="col">Result / Division</th>
+                      <th scope="col">Candidates</th>
+                      <th scope="col">Pass rate</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {examRows.map((row) => (
+                      <tr key={row.key}>
+                        <td>{row.exam}</td>
+                        <td>{row.result}</td>
+                        <td>{formatNumber(row.candidates)}</td>
+                        <td>
+                          {row.candidates > 0
+                            ? `${((row.passed / row.candidates) * 100).toFixed(
+                                1,
+                              )}%`
+                            : "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+        </article>
+      </div>
     </section>
   );
 }
