@@ -61,7 +61,7 @@ export function rowsForCampus(
   label: string,
 ): NationalityRow[] {
   const selectedCampus = campuses.find(
-    (campus) => campus.label === label,
+    (campus) => campus.label === label || campus.key === label,
   );
 
   return data.by_nationality
@@ -84,7 +84,7 @@ export function summaryForCampus(
   label: string,
 ): RetentionSummary {
   const selectedCampus = campuses.find(
-    (campus) => campus.label === label,
+    (campus) => campus.label === label || campus.key === label,
   );
 
   const rows = data.by_nationality.filter(
