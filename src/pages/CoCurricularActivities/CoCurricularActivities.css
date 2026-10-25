@@ -40,52 +40,17 @@
 /*  Metrics */
 
 .cc-metrics {
-  margin-top: 12px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
-.cc-metric {
+.cc-content {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-}
-
-.cc-metric__top {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.cc-metric__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
-
-  border-radius: 9px;
-}
-
-.cc-metric__label {
-  color: var(--cc-muted);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  line-height: 1.4;
-  text-transform: uppercase;
-  align-items: center;
-}
-
-.cc-metric__value {
-  color: var(--cc-heading);
-  font-size: 1rem;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
 }
 
 .cc-metric__track {
@@ -360,12 +325,6 @@
 
 /* Responsive */
 
-@media (max-width: 860px) {
-  .cc-metrics {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
 /* KPI icon: solid blue badge, white glyph */
 .cc-page .cc-metric__icon.cc-tone--accent,
 .cc-page .cc-metric__icon.cc-tone--navy,
@@ -374,50 +333,15 @@
   color: #ffffff;
 }
 
-
-/* KPI card: icon on the left, text stacked beside it */
-.cc-page .cc-metric {
-  display: grid;
-  grid-template-columns: 48px minmax(0, 1fr);
-  column-gap: 16px;
-  row-gap: 4px;
-  align-items: start;
-  padding: 24px;
-  border-radius: 20px;
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
+@media (max-width: 900px) {
+  .cc-metrics {
+    gap: 10px;
+  }
 }
 
-.cc-page .cc-metric__top {
-  display: contents;
-}
-
-.cc-page .cc-metric__icon {
-  grid-column: 1;
-  grid-row: 1 / span 2;
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-}
-
-.cc-page .cc-metric__icon svg {
-  width: 24px;
-  height: 24px;
-}
-
-.cc-page .cc-metric__label {
-  grid-column: 2;
-  grid-row: 1;
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.cc-page .cc-metric__value {
-  grid-column: 2;
-  grid-row: 2;
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1.1;
+@media (max-width: 640px) {
+  .cc-metrics {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
 }
