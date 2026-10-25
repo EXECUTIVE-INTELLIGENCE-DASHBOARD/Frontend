@@ -95,7 +95,7 @@ export function weeklyAttendance(rows: AttendanceRow[], cls: string) {
   if (!sel.length) return null;
   const base = summarise(sel).rate;
   const seed = sel.reduce((a, r) => a ^ r.seed, 0) >>> 0;
-  const points = Array.from({ length: WEEKS }, (_, i) => clamp(base + (((seed >> i) % 9) - 4) * 1.1, 70, 100));
+  const points = Array.from({ length: WEEKS }, (_, i) => clamp(base + (((seed >>> i) % 9) - 4) * 1.1, 70, 100));
   return { points, target: cls ? targetFor(cls) : DEFAULT_TARGET };
 }
 
@@ -109,9 +109,9 @@ export function weeklyResults(
 ): ResultsPoint[] {
   const seed = hash(`${f.year}${f.campus}${subject}${f.term}${cls}${stream}`);
   return Array.from({ length: WEEKS }, (_, i) => {
-    const attendance = Math.min(99, rate + (((seed >> i) % 7) - 3) * 1.2);
-    const missing = (seed >> (i + 3)) % 9 === 0;
-    const score = missing ? null : Math.min(95, 40 + (attendance - 85) * 1.6 + (((seed >> (i + 1)) % 5) - 2) * 2);
+    const attendance = Math.min(99, rate + (((seed >>> i) % 7) - 3) * 1.2);
+    const missing = (seed >>> (i + 3)) % 9 === 0;
+    const score = missing ? null : Math.min(95, 40 + (attendance - 85) * 1.6 + (((seed >>> (i + 1)) % 5) - 2) * 2);
     return { week: i + 1, attendance, score };
   });
 }
