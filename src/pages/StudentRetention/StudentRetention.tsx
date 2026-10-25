@@ -1,14 +1,13 @@
-
 import { useEffect, useState } from "react";
 import { AlertTriangle, Check, Users } from "lucide-react";
 
-import {
-  CampusFilter,
-  type CampusOption,
-} from "../../components/filters/CampusFilter";
+import { AcademicFilters } from "../../components/filters/AcademicFilters";
+import type { AcademicFilterValues } from "../../components/filters/academicFilters.types";
+
 import { GenderRetentionCard } from "./GenderRetentionCard";
 import { NationalityTableCard } from "./NationalityTableCard";
 import { RetentionMetricCard } from "./RetentionMetricCard";
+
 import {
   allCampusesLabel,
   formatMetric,
@@ -16,14 +15,18 @@ import {
   rowsForCampus,
   summaryForCampus,
 } from "./studentRetention.data";
-import { fetchStudentRetention } from "./studentRetention.api";
-import type { RetentionDashboardData } from "./studentRetention.api";
+
+import {
+  fetchStudentRetention,
+  type RetentionDashboardData,
+} from "./studentRetention.api";
+
 import type { RetentionSummary } from "./studentRetention.types";
 
 import "../../palette.css";
 import "./StudentRetention.css";
 
-/** What every card shows before the endpoint answers, or when it fails. */
+/** Default KPI values while the dashboard data is unavailable. */
 const unavailableSummary: RetentionSummary = {
   reEnrolled: null,
   rate: null,
@@ -37,96 +40,185 @@ interface RetentionState {
 }
 
 export function StudentRetention() {
-  const [campus, setCampus] = useState<CampusOption>(allCampusesLabel);
+  const [filters, setFilters] = useState<AcademicFilterValues>({
+    school: "",
+    campus: "",
+    section: "",
+    term: "",
+    year: "",
+  });
+
   const [state, setState] = useState<RetentionState>({
     data: null,
     error: null,
     isPending: true,
   });
 
-  // One request for the whole dashboard; the campus selector filters the rows
-  // the API already returned, so switching campus never re-fetches.
+  const [retryCount, setRetryCount] = useState(0);
+
+  // Reload the dashboard whenever a filter changes.
   useEffect(() => {
     const controller = new AbortController();
     let active = true;
 
-    setState({ data: null, error: null, isPending: true });
+    async function loadRetentionData() {
+      setState((previous) => ({
+        ...previous,
+        error: null,
+        isPending: true,
+      }));
 
-    fetchStudentRetention({}, controller.signal)
-      .then((data) => {
+      try {
+        const apiFilters = {
+          ...(filters.school && {
+            school: Number(filters.school),
+          }),
+          ...(filters.campus && {
+            campus: filters.campus,
+          }),
+          ...(filters.section && {
+            level: filters.section,
+          }),
+          ...(filters.term && {
+            term: Number(filters.term),
+          }),
+          ...(filters.year && {
+            academic_year: filters.year,
+          }),
+        };
+
+        const data = await fetchStudentRetention(
+          apiFilters,
+          controller.signal,
+        );
+
         if (active) {
-          setState({ data, error: null, isPending: false });
+          setState({
+            data,
+            error: null,
+            isPending: false,
+          });
         }
-      })
-      .catch((error: unknown) => {
+      } catch (error: unknown) {
         if (!active || controller.signal.aborted) {
           return;
         }
 
-        setState({
-          data: null,
-          error: error instanceof Error ? error.message : "Unknown error",
+        setState((previous) => ({
+          ...previous,
+          error:
+            error instanceof Error
+              ? error.message
+              : "Unable to load student retention data.",
           isPending: false,
-        });
-      });
+        }));
+      }
+    }
+
+    void loadRetentionData();
 
     return () => {
       active = false;
       controller.abort();
     };
-  }, []);
+  }, [
+    filters.school,
+    filters.campus,
+    filters.section,
+    filters.term,
+    filters.year,
+    retryCount,
+  ]);
 
   const { data, error, isPending } = state;
+
+  // Keep the existing dashboard helpers for calculating the displayed values.
+  const campus = filters.campus || allCampusesLabel;
 
   const summary = data
     ? summaryForCampus(data, campus)
     : unavailableSummary;
 
-  const rows = data ? rowsForCampus(data, campus) : [];
+  const rows = data
+    ? rowsForCampus(data, campus)
+    : [];
+
   const reasons = data?.withdrawal_reasons ?? [];
   const withdrawalsTotal = data?.withdrawals_total ?? null;
 
   return (
     <div className="sr-page">
       <div className="sr-toolbar">
-        <CampusFilter onCampusChange={setCampus} />
+        <AcademicFilters
+          values={filters}
+          onChange={setFilters}
+        />
       </div>
 
-      {isPending ? <p>Loading student retention data...</p> : null}
-
-      {!isPending && error ? (
-        <p role="alert">
-          Unable to load retention data: {error}
+      {isPending && (
+        <p role="status">
+          Loading student retention data...
         </p>
-      ) : null}
+      )}
 
-      <div className="sr-metrics">
-        <RetentionMetricCard
-          label="Total Re-enrolled Students"
-          value={formatMetric(summary.reEnrolled)}
-          icon={Users}
-          tone="navy"
-        />
+      {!isPending && error && (
+        <div className="sr-error">
+          <p role="alert">
+            Unable to load retention data: {error}
+          </p>
 
-        <RetentionMetricCard
-          label="Re-enrollment Rate"
-          value={formatRate(summary.rate)}
-          icon={Check}
-          tone="sky"
-        />
+          <button
+            type="button"
+            onClick={() => setRetryCount((count) => count + 1)}
+          >
+            Retry
+          </button>
+        </div>
+      )}
 
-        <RetentionMetricCard
-          label="At-Risk Retention"
-          value={formatMetric(summary.atRisk)}
-          icon={AlertTriangle}
-          tone="amber"
-        />
-      </div>
+      {!error && (
+        <>
+          <div className="sr-metrics">
+            <RetentionMetricCard
+              label="Total Re-enrolled Students"
+              value={formatMetric(summary.reEnrolled)}
+              icon={Users}
+              tone="navy"
+            />
 
-      <div className="sr-grid">
-        <NationalityTableCard rows={rows} />
-        <GenderRetentionCard reasons={reasons} total={withdrawalsTotal} />
-      </div>
+            <RetentionMetricCard
+              label="Re-enrollment Rate"
+              value={formatRate(summary.rate)}
+              icon={Check}
+              tone="sky"
+            />
+
+            <RetentionMetricCard
+              label="At-Risk Retention"
+              value={formatMetric(summary.atRisk)}
+              icon={AlertTriangle}
+              tone="amber"
+            />
+          </div>
+
+          {!isPending && data && (
+            <div className="sr-grid">
+              <NationalityTableCard rows={rows} />
+
+              <GenderRetentionCard
+                reasons={reasons}
+                total={withdrawalsTotal}
+              />
+            </div>
+          )}
+
+          {!isPending && data && rows.length === 0 && (
+            <p>No retention records match the selected filters.</p>
+          )}
+        </>
+      )}
     </div>
   );
 }
+
+export default StudentRetention;
