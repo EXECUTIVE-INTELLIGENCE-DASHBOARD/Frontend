@@ -15,15 +15,14 @@ export function RetentionMetricCard({
 }: RetentionMetricCardProps) {
   return (
     <article className="sr-metric">
-      <div className="sr-metric__top">
-        <div className={`sr-metric__icon sr-chip--${tone}`}>
-          <Icon size={18} aria-hidden="true" />
-        </div>
-
-        <span className="sr-metric__label">{label}</span>
+      <div className={`sr-metric__icon sr-chip--${tone}`}>
+        <Icon size={18} aria-hidden="true" />
       </div>
 
-      <span className="sr-metric__value">{value}</span>
+      <div className="sr-metric__content">
+        <span className="sr-metric__label">{label}</span>
+        <span className="sr-metric__value">{value}</span>
+      </div>
     </article>
   );
 }
