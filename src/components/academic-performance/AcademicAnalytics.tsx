@@ -330,7 +330,6 @@ export function AcademicAnalytics({ filters }: AcademicAnalyticsProps) {
         <header className="acad-analytics__header">
           <div>
             <h2>Grade Distribution</h2>
-            <p>Student grades for the selected campus, section, and term</p>
           </div>
         </header>
 
@@ -393,10 +392,6 @@ export function AcademicAnalytics({ filters }: AcademicAnalyticsProps) {
         <header className="acad-analytics__header">
           <div>
             <h2>National Examination Results</h2>
-            <p>
-              Campus and school examination performance
-              {year ? ` · ${year}` : " · All available years"}
-            </p>
           </div>
         </header>
 

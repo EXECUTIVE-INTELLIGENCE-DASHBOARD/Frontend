@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Award, BookOpenCheck, UsersRound } from "lucide-react";
+import { Award, ClipboardList, UsersRound } from "lucide-react";
 
 import type { AcademicFilterValues } from "../filters/academicFilters.types";
 import api from "../../api/axios";
@@ -31,6 +31,13 @@ interface PerformanceDashboard {
   term: DashboardTerm | null;
   compared_with: DashboardTerm | null;
   summary: DashboardSummary;
+}
+interface Assessment {
+  id: number;
+  kind: string;
+  term: number;
+  school: number;
+  class_level: string;
 }
 
 type DashboardParams = Record<string, string | number>;
@@ -135,16 +142,31 @@ export function AcademicSummary({ filters }: AcademicSummaryProps) {
   });
 
   const summary = dashboardQuery.data?.summary;
+  const assessmentsQuery = useQuery({
+    queryKey: ["academic-assessments", params],
+    queryFn: async ({ signal }): Promise<Assessment[]> => {
+      const response = await api.get<Assessment[]>("/academics/assessments/", {
+        params,
+        signal,
+      });
 
+      return response.data;
+    },
+    refetchInterval: REFRESH_INTERVAL,
+    refetchOnWindowFocus: true,
+    staleTime: 10_000,
+    retry: false,
+  });
   const metrics = [
     {
-      id: "syllabus",
-      title: "Syllabus Coverage",
-      icon: BookOpenCheck,
-      value: formatPercentage(summary?.syllabus_coverage),
-      detail: summary
-        ? `${formatNumber(summary.topics_covered)} of ${formatNumber(summary.topics_planned)} topics covered`
-        : "Syllabus coverage for the selected filters",
+      id: "assessments",
+      title: "Assessments Recorded",
+      icon: ClipboardList,
+      value: assessmentsQuery.isPending
+        ? "Loading..."
+        : assessmentsQuery.isError
+          ? "—"
+          : formatNumber(assessmentsQuery.data?.length ?? 0),
     },
     {
       id: "performance",

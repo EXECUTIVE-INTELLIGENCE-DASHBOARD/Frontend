@@ -20,7 +20,34 @@ const testFilters: AcademicFilterValues = {
   year: "2026",
 };
 
-const dashboardResponse = {
+interface DashboardSummaryMock {
+  syllabus_coverage: number | null;
+  topics_covered: number;
+  topics_planned: number;
+  student_performance: number | null;
+  students_passing: number;
+  students_assessed: number;
+  average_mark: number | null;
+  average_grade: string | null;
+}
+
+interface DashboardResponseMock {
+  term: {
+    id: number;
+    label: string;
+  } | null;
+  compared_with: {
+    id: number;
+    label: string;
+  } | null;
+  summary: DashboardSummaryMock | undefined;
+  grade_distribution: unknown[];
+  national_exams: unknown[];
+  subjects: unknown[];
+  tests: unknown[];
+}
+
+const dashboardResponse: DashboardResponseMock = {
   term: {
     id: 1,
     label: "Term 1, 2026",
@@ -41,6 +68,54 @@ const dashboardResponse = {
   subjects: [],
   tests: [],
 };
+
+const assessmentsResponse = [
+  {
+    id: 1,
+    kind: "test_1",
+    term: 1,
+    school: 9,
+    class_level: "secondary",
+  },
+  {
+    id: 2,
+    kind: "test_2",
+    term: 1,
+    school: 9,
+    class_level: "secondary",
+  },
+  {
+    id: 3,
+    kind: "end_of_term",
+    term: 1,
+    school: 9,
+    class_level: "secondary",
+  },
+  {
+    id: 4,
+    kind: "test_1",
+    term: 1,
+    school: 9,
+    class_level: "secondary",
+  },
+];
+
+let currentDashboardResponse: DashboardResponseMock = dashboardResponse;
+let currentAssessmentsResponse = assessmentsResponse;
+
+function mockApiResponses() {
+  vi.mocked(api.get).mockImplementation(async (url) => {
+    if (url === "/academics/assessments/") {
+      return {
+        data: currentAssessmentsResponse,
+      } as never;
+    }
+
+    return {
+      data: currentDashboardResponse,
+    } as never;
+  });
+}
 
 function renderAcademicSummary(filters: AcademicFilterValues = testFilters) {
   const queryClient = new QueryClient({
@@ -63,13 +138,19 @@ function renderAcademicSummary(filters: AcademicFilterValues = testFilters) {
   };
 }
 
+async function waitForSummary() {
+  await screen.findByText("Assessments Recorded");
+  await screen.findByRole("heading", { name: "B+" });
+}
+
 describe("AcademicSummary", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    vi.mocked(api.get).mockResolvedValue({
-      data: dashboardResponse,
-    });
+    currentDashboardResponse = dashboardResponse;
+    currentAssessmentsResponse = assessmentsResponse;
+
+    mockApiResponses();
   });
 
   it("renders the academic performance summary section", async () => {
@@ -81,7 +162,7 @@ describe("AcademicSummary", () => {
       }),
     ).toBeInTheDocument();
 
-    expect(await screen.findByText("Syllabus Coverage")).toBeInTheDocument();
+    await waitForSummary();
   });
 
   it("renders all three summary metric cards", async () => {
@@ -92,7 +173,7 @@ describe("AcademicSummary", () => {
     });
 
     expect(
-      await within(summary).findByText("Syllabus Coverage"),
+      await within(summary).findByText("Assessments Recorded"),
     ).toBeInTheDocument();
 
     expect(
@@ -105,63 +186,105 @@ describe("AcademicSummary", () => {
   it("renders exactly three metric cards", async () => {
     renderAcademicSummary();
 
+    await waitForSummary();
+
     const summary = screen.getByRole("region", {
       name: "Academic performance summary",
     });
 
-    await within(summary).findByText("Syllabus Coverage");
-
     expect(within(summary).getAllByRole("article")).toHaveLength(3);
+  });
+
+  it("displays the assessment count returned by the assessments API", async () => {
+    renderAcademicSummary();
+
+    const summary = screen.getByRole("region", {
+      name: "Academic performance summary",
+    });
+
+    await within(summary).findByText("Assessments Recorded");
+
+    expect(
+      await within(summary).findByRole("heading", {
+        name: "4",
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("does not display description text under the Assessments Recorded value", async () => {
+    renderAcademicSummary();
+
+    await waitForSummary();
+
+    const summary = screen.getByRole("region", {
+      name: "Academic performance summary",
+    });
+
+    const assessmentCard = within(summary)
+      .getByText("Assessments Recorded")
+      .closest("article");
+
+    expect(assessmentCard).not.toBeNull();
+
+    expect(
+      assessmentCard?.querySelector(".acad-metric__detail"),
+    ).toBeEmptyDOMElement();
+  });
+
+  it("shows zero when the assessments API returns an empty list", async () => {
+    currentAssessmentsResponse = [];
+
+    renderAcademicSummary();
+
+    await waitForSummary();
+
+    const summary = screen.getByRole("region", {
+      name: "Academic performance summary",
+    });
+
+    const assessmentCard = within(summary)
+      .getByText("Assessments Recorded")
+      .closest("article");
+
+    expect(assessmentCard).not.toBeNull();
+
+    expect(
+      within(assessmentCard as HTMLElement).getByRole("heading", {
+        name: "0",
+      }),
+    ).toBeInTheDocument();
   });
 
   it("keeps decorative icons hidden from assistive technology", async () => {
     const { container } = renderAcademicSummary();
 
-    await screen.findByText("150 of 200 topics covered");
+    await waitForSummary();
 
     await waitFor(() => {
-      const icons = container.querySelectorAll(
-        ".acad-metric__icon[aria-hidden='true']",
-      );
-
-      expect(icons).toHaveLength(3);
+      expect(
+        container.querySelectorAll(".acad-metric__icon[aria-hidden='true']"),
+      ).toHaveLength(3);
     });
-  });
-
-  it("displays the syllabus coverage returned by the dashboard API", async () => {
-    vi.mocked(api.get).mockResolvedValueOnce({
-      data: {
-        ...dashboardResponse,
-        summary: {
-          ...dashboardResponse.summary,
-          syllabus_coverage: 75,
-        },
-      },
-    });
-
-    renderAcademicSummary();
-
-    expect(await screen.findByText("75.0%")).toBeInTheDocument();
-
-    expect(screen.getByText("150 of 200 topics covered")).toBeInTheDocument();
   });
 
   it("displays student performance and assessment details", async () => {
-    vi.mocked(api.get).mockResolvedValueOnce({
-      data: {
-        ...dashboardResponse,
-        summary: {
-          ...dashboardResponse.summary,
-          student_performance: 82,
-          students_passing: 820,
-          students_assessed: 1000,
-        },
+    currentDashboardResponse = {
+      ...dashboardResponse,
+      summary: {
+        ...dashboardResponse.summary!,
+        student_performance: 82,
+        students_passing: 820,
+        students_assessed: 1000,
       },
-    });
+    };
 
     renderAcademicSummary();
 
-    expect(await screen.findByText("82.0%")).toBeInTheDocument();
+    await waitForSummary();
+
+    expect(
+      await screen.findByRole("heading", { name: "82.0%" }),
+    ).toBeInTheDocument();
 
     expect(
       screen.getByText("820 of 1,000 students passing"),
@@ -169,106 +292,58 @@ describe("AcademicSummary", () => {
   });
 
   it("displays the average grade and average mark returned by the API", async () => {
-    vi.mocked(api.get).mockResolvedValueOnce({
-      data: {
-        ...dashboardResponse,
-        summary: {
-          ...dashboardResponse.summary,
-          average_grade: "B+",
-          average_mark: 78.5,
-        },
-      },
-    });
-
     renderAcademicSummary();
 
-    expect(await screen.findByText("B+")).toBeInTheDocument();
+    await waitForSummary();
 
     expect(screen.getByText("Average mark: 78.5%")).toBeInTheDocument();
   });
 
-  it("displays a dash when syllabus coverage is unavailable", async () => {
-    vi.mocked(api.get).mockResolvedValueOnce({
-      data: {
-        ...dashboardResponse,
-        summary: {
-          ...dashboardResponse.summary,
-          syllabus_coverage: null,
-        },
-      },
-    });
-
-    renderAcademicSummary();
-
-    const summary = screen.getByRole("region", {
-      name: "Academic performance summary",
-    });
-
-    // Wait until the API response has finished rendering.
-    await within(summary).findByText("150 of 200 topics covered");
-
-    await waitFor(() => {
-      const syllabusCard = within(summary)
-        .getByText("Syllabus Coverage")
-        .closest("article");
-
-      expect(syllabusCard).not.toBeNull();
-      expect(
-        within(syllabusCard as HTMLElement).getByRole("heading", {
-          name: "—",
-        }),
-      ).toBeInTheDocument();
-    });
-  });
   it("displays a dash when student performance is unavailable", async () => {
-    vi.mocked(api.get).mockResolvedValueOnce({
-      data: {
-        ...dashboardResponse,
-        summary: {
-          ...dashboardResponse.summary,
-          student_performance: null,
-        },
+    currentDashboardResponse = {
+      ...dashboardResponse,
+      summary: {
+        ...dashboardResponse.summary!,
+        student_performance: null,
       },
-    });
+    };
 
     renderAcademicSummary();
+
+    await screen.findByRole("heading", { name: "B+" });
 
     const summary = screen.getByRole("region", {
       name: "Academic performance summary",
     });
 
-    // Wait until the API response has finished rendering.
-    await within(summary).findByText("150 of 200 topics covered");
+    const performanceCard = within(summary)
+      .getByText("Student Performance")
+      .closest("article");
 
-    await waitFor(() => {
-      const performanceCard = within(summary)
-        .getByText("Student Performance")
-        .closest("article");
+    expect(performanceCard).not.toBeNull();
 
-      expect(performanceCard).not.toBeNull();
-      expect(
-        within(performanceCard as HTMLElement).getByRole("heading", {
-          name: "—",
-        }),
-      ).toBeInTheDocument();
-    });
+    expect(
+      within(performanceCard as HTMLElement).getByRole("heading", {
+        name: "—",
+      }),
+    ).toBeInTheDocument();
   });
 
   it("falls back to the average mark when no average grade is available", async () => {
-    vi.mocked(api.get).mockResolvedValueOnce({
-      data: {
-        ...dashboardResponse,
-        summary: {
-          ...dashboardResponse.summary,
-          average_grade: null,
-          average_mark: 76.4,
-        },
+    currentDashboardResponse = {
+      ...dashboardResponse,
+      summary: {
+        ...dashboardResponse.summary!,
+        average_grade: null,
+        average_mark: 76.4,
       },
-    });
+    };
 
     renderAcademicSummary();
 
-    expect(await screen.findByText("76.4")).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: "76.4" }),
+    ).toBeInTheDocument();
 
     expect(screen.getByText("Average assessment mark (%)")).toBeInTheDocument();
   });
@@ -276,10 +351,29 @@ describe("AcademicSummary", () => {
   it("requests the dashboard using the selected school, campus, section, and term ID", async () => {
     renderAcademicSummary();
 
-    await screen.findByText("150 of 200 topics covered");
+    await waitForSummary();
 
     expect(api.get).toHaveBeenCalledWith(
       "/academics/performance/dashboard/",
+      expect.objectContaining({
+        params: {
+          school: 9,
+          campus: "kibuli",
+          level: "secondary",
+          term: 1,
+        },
+        signal: expect.any(AbortSignal),
+      }),
+    );
+  });
+
+  it("requests assessments using the selected filters", async () => {
+    renderAcademicSummary();
+
+    await waitForSummary();
+
+    expect(api.get).toHaveBeenCalledWith(
+      "/academics/assessments/",
       expect.objectContaining({
         params: {
           school: 9,
@@ -303,10 +397,20 @@ describe("AcademicSummary", () => {
 
     renderAcademicSummary(allSchoolsFilters);
 
-    await screen.findByText("150 of 200 topics covered");
+    await waitForSummary();
 
     expect(api.get).toHaveBeenCalledWith(
       "/academics/performance/dashboard/",
+      expect.objectContaining({
+        params: {
+          term: 1,
+        },
+        signal: expect.any(AbortSignal),
+      }),
+    );
+
+    expect(api.get).toHaveBeenCalledWith(
+      "/academics/assessments/",
       expect.objectContaining({
         params: {
           term: 1,
@@ -324,7 +428,7 @@ describe("AcademicSummary", () => {
 
     renderAcademicSummary(filtersWithDisplayLabel);
 
-    await screen.findByText("150 of 200 topics covered");
+    await waitForSummary();
 
     expect(api.get).toHaveBeenCalledWith(
       "/academics/performance/dashboard/",
@@ -341,34 +445,27 @@ describe("AcademicSummary", () => {
 
   it("shows an error message when the dashboard request fails", async () => {
     vi.mocked(api.get).mockRejectedValue({
-      response: { status: 500 },
-    });
-
-    renderAcademicSummary();
-
-    await waitFor(() => {
-      expect(api.get).toHaveBeenCalled();
-    });
-
-    expect(
-      await screen.findByRole("alert", {}, { timeout: 7000 }),
-    ).toHaveTextContent("Unable to load academic performance (HTTP 500).");
-  });
-  it("shows an error message when the API response has no summary", async () => {
-    vi.mocked(api.get).mockResolvedValueOnce({
-      data: {
-        ...dashboardResponse,
-        summary: undefined,
+      response: {
+        status: 500,
       },
     });
 
     renderAcademicSummary();
 
-    await waitFor(() => {
-      expect(screen.getByRole("alert")).toBeInTheDocument();
-    });
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Unable to load academic performance (HTTP 500).",
+    );
+  });
 
-    expect(screen.getByRole("alert")).toHaveTextContent(
+  it("shows an error message when the API response has no summary", async () => {
+    currentDashboardResponse = {
+      ...dashboardResponse,
+      summary: undefined,
+    };
+
+    renderAcademicSummary();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
       "The dashboard returned no summary data for these filters.",
     );
   });

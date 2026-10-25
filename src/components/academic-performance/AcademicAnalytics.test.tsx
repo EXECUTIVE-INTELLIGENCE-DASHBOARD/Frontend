@@ -190,15 +190,15 @@ describe("AcademicAnalytics", () => {
     renderAnalytics();
 
     expect(
-      await screen.findByText(
-        "Student grades for the selected campus, section, and term",
-      ),
+      await screen.findByRole("heading", {
+        name: "Grade Distribution",
+      }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(
-        "Campus and school examination performance · All available years",
-      ),
+      screen.getByRole("heading", {
+        name: "National Examination Results",
+      }),
     ).toBeInTheDocument();
   });
 

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-// import { useMemo } from "react";
+
 import api from "../../api/axios";
 import type { AcademicFilterValues } from "../filters/academicFilters.types";
 
@@ -10,45 +10,46 @@ interface AcademicDetailsProps {
   filters?: AcademicFilterValues;
 }
 
-interface SyllabusRecord {
-  id: number;
-  subject_name: string;
-  class_level: string;
-  topics_planned: number | null;
-  topics_covered: number | null;
-  school: number;
-  term: number;
+interface DashboardSubject {
+  id?: number;
+  subject?: string;
+  name?: string;
+  code?: string;
+  level?: string;
+  level_display?: string;
+  category?: string;
+  average_mark?: number | string | null;
+  pass_rate?: number | string | null;
+  previous_pass_rate?: number | string | null;
+  results?: unknown[];
 }
 
-interface NationalExamResult {
-  id: number;
-  exam_display: string;
-  division_display: string;
-  exam: string;
-  year: number;
-  division: string;
-  aggregate: number | null;
-  principal_passes: number | null;
-  passed: boolean;
-  student: number;
-  school: number;
+interface CompletionRecord {
+  level?: string;
+  level_display?: string;
+  campus?: string;
+  campus_display?: string;
+  completed?: number | string;
+  completed_students?: number | string;
+  completion_rate?: number | string;
+  completion_percentage?: number | string;
+}
+
+interface DashboardResponse {
+  subjects?: DashboardSubject[];
+  completion?: CompletionRecord[];
+  student_completion?: CompletionRecord[];
+  completion_rates?: CompletionRecord[];
+  [key: string]: unknown;
 }
 
 interface SubjectRow {
   key: string;
   subject: string;
   level: string;
-  planned: number;
-  covered: number;
-  records: number;
-}
-
-interface ExamRow {
-  key: string;
-  exam: string;
-  result: string;
-  candidates: number;
-  passed: number;
+  averageMark: number | null;
+  passRate: number | null;
+  previousPassRate: number | null;
 }
 
 const REFRESH_INTERVAL = 30_000;
@@ -61,29 +62,17 @@ const DEFAULT_FILTERS: AcademicFilterValues = {
   year: String(new Date().getFullYear()),
 };
 
-const SCIENCE_SUBJECTS = new Set([
-  "biology",
-  "chemistry",
-  "physics",
-  "mathematics",
-  "integrated science",
-]);
-
-function isRecord(value: unknown): value is Record<string, unknown> {
+function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
-function normalizeArray<T>(response: unknown): T[] {
-  if (Array.isArray(response)) {
-    return response as T[];
+function toArray<T>(value: unknown): T[] {
+  if (Array.isArray(value)) {
+    return value as T[];
   }
 
-  if (isRecord(response)) {
-    for (const key of ["results", "data", "records", "items"]) {
-      if (Array.isArray(response[key])) {
-        return response[key] as T[];
-      }
-    }
+  if (isObject(value) && Array.isArray(value.results)) {
+    return value.results as T[];
   }
 
   return [];
@@ -94,388 +83,287 @@ function toNumber(value: unknown): number | null {
     return value;
   }
 
-  if (typeof value === "string" && value.trim()) {
+  if (typeof value === "string" && value.trim() !== "") {
     const parsed = Number(value);
-
-    if (Number.isFinite(parsed)) {
-      return parsed;
-    }
+    return Number.isFinite(parsed) ? parsed : null;
   }
 
   return null;
 }
 
 function formatNumber(value: number): string {
-  return value.toLocaleString("en-US");
+  return value.toLocaleString("en-UG");
 }
 
-function getErrorMessage(error: unknown): string {
+function formatPercent(value: number | null): string {
+  return value === null ? "—" : `${value.toFixed(1)}%`;
+}
+
+function errorMessage(error: unknown): string {
   if (
-    isRecord(error) &&
-    isRecord(error.response) &&
+    isObject(error) &&
+    isObject(error.response) &&
     typeof error.response.status === "number"
   ) {
-    return `Unable to load data (HTTP ${error.response.status})`;
+    return `Unable to load data (HTTP ${error.response.status}).`;
   }
 
   return "Unable to load data. Please try again.";
 }
 
-function getSchoolId(school: string): number | null {
-  if (!school.trim()) {
-    return null;
-  }
+function normalizeLevel(value: string | undefined): string {
+  const level = (value ?? "").trim().toLowerCase().replace(/[- ]/g, "_");
 
-  const id = Number(school);
+  if (["primary", "primary_level"].includes(level)) return "Primary";
+  if (["o_level", "olevel", "ordinary_level"].includes(level)) return "O Level";
+  if (["a_level", "alevel", "advanced_level"].includes(level)) return "A Level";
+  if (level.includes("nursery")) return "Nursery";
 
-  return Number.isInteger(id) && id > 0 ? id : null;
+  return value?.trim() || "Other";
 }
 
-function getStage(classLevel: string): string {
-  const normalized = classLevel.trim().toUpperCase();
-  const match = normalized.match(/^S(\d+)$/);
+function normalizeCategory(value: string | undefined): string {
+  const category = (value ?? "").trim().toLowerCase();
 
-  if (match) {
-    return Number(match[1]) <= 4 ? "O Level" : "A Level";
-  }
+  if (category === "science" || category === "sciences") return "Sciences";
+  if (category === "arts" || category === "art") return "Arts";
 
-  if (/^P\d+$/.test(normalized)) {
-    return "Primary";
-  }
-
-  return "Nursery";
+  return "";
 }
 
-function isScienceSubject(subject: string): boolean {
-  return SCIENCE_SUBJECTS.has(subject.trim().toLowerCase());
-}
+function getSubjectRows(subjects: DashboardSubject[]): SubjectRow[] {
+  const grouped = new Map<
+    string,
+    {
+      key: string;
+      subject: string;
+      level: string;
+      markTotal: number;
+      markCount: number;
+      passTotal: number;
+      passCount: number;
+      previousTotal: number;
+      previousCount: number;
+    }
+  >();
 
-function getSecondaryStage(
-  classLevel: string,
-  selectedLevel: "O Level" | "A Level",
-): boolean {
-  const stage = getStage(classLevel);
-  return stage === selectedLevel;
-}
+  for (const item of subjects) {
+    const level = normalizeLevel(item.level_display || item.level);
+    const category = normalizeCategory(item.category);
 
-function buildSubjectRows(
-  records: SyllabusRecord[],
-  selectedSchool: number | null,
-  section: string,
-  secondaryLevel: "O Level" | "A Level",
-): SubjectRow[] {
-  const selectedSection = selectedSchool ? section.trim().toLowerCase() : "";
+    // Primary subjects remain individual. Secondary subjects are grouped
+    // into Sciences and Arts, using the backend's category field.
+    let subjectName = item.subject || item.name || item.code || "Subject";
 
-  const schoolRecords = records.filter(
-    (record) => selectedSchool === null || record.school === selectedSchool,
-  );
-
-  const grouped = new Map<string, SubjectRow>();
-
-  for (const record of schoolRecords) {
-    const stage = getStage(record.class_level);
-    let subject: string;
-    let level: string;
-
-    if (selectedSection === "secondary") {
-      if (stage !== "O Level" && stage !== "A Level") {
-        continue;
-      }
-
-      if (!getSecondaryStage(record.class_level, secondaryLevel)) {
-        continue;
-      }
-
-      subject = isScienceSubject(record.subject_name) ? "SCIENCES" : "ARTS";
-
-      level = secondaryLevel;
-    } else if (selectedSection === "primary") {
-      if (stage !== "Primary") {
-        continue;
-      }
-
-      subject = record.subject_name;
-      level = "Primary";
-    } else if (selectedSection === "nursery") {
-      subject = record.subject_name;
-      level = "Nursery";
-    } else {
-      // All Schools: keep primary subjects individually and
-      // group secondary subjects into ARTS and SCIENCES.
-      if (stage === "O Level" || stage === "A Level") {
-        subject = isScienceSubject(record.subject_name) ? "SCIENCES" : "ARTS";
-
-        level = stage;
-      } else {
-        subject = record.subject_name;
-        level = stage;
-      }
+    if (level === "O Level" || level === "A Level") {
+      subjectName = category || "Uncategorised";
     }
 
-    const key = `${level}:${subject}`;
+    const key = `${level}:${subjectName}`;
 
     if (!grouped.has(key)) {
       grouped.set(key, {
         key,
-        subject,
+        subject: subjectName,
         level,
-        planned: 0,
-        covered: 0,
-        records: 0,
+        markTotal: 0,
+        markCount: 0,
+        passTotal: 0,
+        passCount: 0,
+        previousTotal: 0,
+        previousCount: 0,
       });
     }
 
     const row = grouped.get(key)!;
-    const planned = toNumber(record.topics_planned);
-    const covered = toNumber(record.topics_covered);
+    const mark = toNumber(item.average_mark);
+    const pass = toNumber(item.pass_rate);
+    const previous = toNumber(item.previous_pass_rate);
 
-    if (planned !== null && covered !== null && planned > 0 && covered >= 0) {
-      row.planned += planned;
-      row.covered += covered;
-      row.records += 1;
+    if (mark !== null) {
+      row.markTotal += mark;
+      row.markCount += 1;
+    }
+
+    if (pass !== null) {
+      row.passTotal += pass;
+      row.passCount += 1;
+    }
+
+    if (previous !== null) {
+      row.previousTotal += previous;
+      row.previousCount += 1;
     }
   }
 
-  return Array.from(grouped.values()).sort((a, b) => {
-    const levelOrder = ["Nursery", "Primary", "O Level", "A Level"];
+  return Array.from(grouped.values())
+    .map((row) => ({
+      key: row.key,
+      subject: row.subject,
+      level: row.level,
+      averageMark: row.markCount > 0 ? row.markTotal / row.markCount : null,
+      passRate: row.passCount > 0 ? row.passTotal / row.passCount : null,
+      previousPassRate:
+        row.previousCount > 0 ? row.previousTotal / row.previousCount : null,
+    }))
+    .sort((a, b) => {
+      const order = ["Nursery", "Primary", "O Level", "A Level", "Other"];
+      const difference = order.indexOf(a.level) - order.indexOf(b.level);
 
-    const levelDifference =
-      levelOrder.indexOf(a.level) - levelOrder.indexOf(b.level);
-
-    if (levelDifference !== 0) {
-      return levelDifference;
-    }
-
-    return a.subject.localeCompare(b.subject);
-  });
+      return difference || a.subject.localeCompare(b.subject);
+    });
 }
 
-function getCoverage(row: SubjectRow): string {
-  if (row.planned <= 0) {
-    return "—";
+function getCompletionRecords(
+  data: DashboardResponse | undefined,
+): CompletionRecord[] {
+  if (!data) return [];
+
+  // Only use completion data actually returned by the backend.
+  for (const key of ["completion", "student_completion", "completion_rates"]) {
+    const records = toArray<CompletionRecord>(data[key]);
+    if (records.length > 0) return records;
   }
 
-  return `${((row.covered / row.planned) * 100).toFixed(1)}%`;
+  return [];
 }
 
-function buildExamRows(results: NationalExamResult[]): ExamRow[] {
-  const grouped = new Map<
-    string,
-    {
-      exam: string;
-      result: string;
-      candidates: number;
-      passed: number;
-    }
-  >();
-
-  for (const record of results) {
-    let resultLabel: string;
-
-    if (record.exam.toLowerCase() === "uace") {
-      resultLabel =
-        record.principal_passes === null
-          ? "Principal passes not recorded"
-          : `${record.principal_passes} principal passes`;
-    } else {
-      resultLabel =
-        record.division_display || (record.passed ? "Passed" : "Not passed");
-    }
-
-    const key = `${record.exam}:${record.year}:${resultLabel}`;
-
-    if (!grouped.has(key)) {
-      grouped.set(key, {
-        exam: record.exam_display || record.exam.toUpperCase(),
-        result: resultLabel,
-        candidates: 0,
-        passed: 0,
-      });
-    }
-
-    const row = grouped.get(key)!;
-
-    row.candidates += 1;
-
-    if (record.passed) {
-      row.passed += 1;
-    }
-  }
-
-  return Array.from(grouped.entries()).map(([key, row]) => ({
-    key,
-    ...row,
-  }));
+function getCompletedCount(record: CompletionRecord): number | null {
+  return toNumber(record.completed_students ?? record.completed);
 }
 
-function getAllowedExams(
-  section: string,
-  secondaryLevel: "O Level" | "A Level",
-): string[] | null {
-  switch (section.toLowerCase()) {
-    case "primary":
-      return ["ple"];
+function getCompletionRate(record: CompletionRecord): number | null {
+  return toNumber(record.completion_rate ?? record.completion_percentage);
+}
 
-    case "secondary":
-      return [secondaryLevel === "A Level" ? "uace" : "uce"];
+function getQueryParams(filters: AcademicFilterValues) {
+  const params: Record<string, string> = {};
 
-    case "nursery":
-      return [];
-
-    default:
-      return null;
+  if (filters.school && filters.school !== "All Schools") {
+    params.school = filters.school;
   }
+
+  if (filters.campus && filters.campus !== "All Campuses") {
+    params.campus = filters.campus;
+  }
+
+  if (filters.term) params.term = filters.term;
+  if (filters.year) params.year = filters.year;
+
+  const section = filters.section.trim().toLowerCase();
+
+  if (section === "primary") {
+    params.level = "primary";
+  }
+
+  return params;
 }
 
 export function AcademicDetails({
   filters = DEFAULT_FILTERS,
 }: AcademicDetailsProps) {
-  const [secondaryLevel, setSecondaryLevel] = useState<"O Level" | "A Level">(
-    "O Level",
-  );
+  const queryParams = useMemo(() => getQueryParams(filters), [filters]);
 
-  const schoolId = getSchoolId(filters.school);
-
-  const section = schoolId === null ? "" : filters.section.trim().toLowerCase();
-
-  const syllabusQuery = useQuery({
-    queryKey: ["academic-details-syllabus"],
+  const dashboardQuery = useQuery({
+    queryKey: ["academic-details-dashboard", queryParams],
     queryFn: async ({ signal }) => {
-      const response = await api.get<unknown>("/academics/syllabus-coverage/", {
-        signal,
-      });
-
-      return normalizeArray<SyllabusRecord>(response.data);
-    },
-    refetchInterval: REFRESH_INTERVAL,
-    refetchOnWindowFocus: true,
-  });
-
-  const nationalExamsQuery = useQuery({
-    queryKey: ["academic-national-exam-results"],
-    queryFn: async ({ signal }) => {
-      const response = await api.get<unknown>(
-        "/academics/national-exam-results/",
-        { signal },
+      const response = await api.get<DashboardResponse>(
+        "/academics/performance/dashboard/",
+        {
+          params: queryParams,
+          signal,
+        },
       );
 
-      return normalizeArray<NationalExamResult>(response.data);
+      return response.data;
     },
     refetchInterval: REFRESH_INTERVAL,
     refetchOnWindowFocus: true,
   });
 
-  const allSyllabusRecords = syllabusQuery.data ?? [];
-
-  const subjectRows = buildSubjectRows(
-    allSyllabusRecords,
-    schoolId,
-    section,
-    secondaryLevel,
+  const subjects = useMemo(
+    () => toArray<DashboardSubject>(dashboardQuery.data?.subjects),
+    [dashboardQuery.data],
   );
 
-  const allowedExams = getAllowedExams(section, secondaryLevel);
-  const selectedYear = Number(filters.year);
+  const subjectRows = useMemo(() => getSubjectRows(subjects), [subjects]);
 
-  const nationalResults = (nationalExamsQuery.data ?? []).filter((record) => {
-    const matchesSchool = schoolId === null || record.school === schoolId;
+  const completionRecords = useMemo(
+    () => getCompletionRecords(dashboardQuery.data),
+    [dashboardQuery.data],
+  );
 
-    const matchesYear = !filters.year || record.year === selectedYear;
+  const selectedSection = filters.section.trim().toLowerCase();
 
-    const matchesLevel =
-      allowedExams === null || allowedExams.includes(record.exam.toLowerCase());
+  const visibleSubjectRows = subjectRows.filter((row) => {
+    if (selectedSection === "primary") return row.level === "Primary";
+    if (selectedSection === "nursery") return row.level === "Nursery";
+    if (selectedSection === "secondary") {
+      return row.level === "O Level" || row.level === "A Level";
+    }
 
-    return matchesSchool && matchesYear && matchesLevel;
+    return true;
   });
-
-  const examRows = buildExamRows(nationalResults);
-  const candidateCount = nationalResults.length;
-  const passedCount = nationalResults.filter((record) => record.passed).length;
-
-  const passRate =
-    candidateCount > 0
-      ? `${((passedCount / candidateCount) * 100).toFixed(1)}%`
-      : "—";
-
-  const isNursery = section === "nursery";
 
   return (
     <section
       className="acad-details"
-      aria-label="Subject comparison and national examination results"
-      aria-busy={syllabusQuery.isLoading || nationalExamsQuery.isLoading}
+      aria-label="Subject comparison and student completion rate"
+      aria-busy={dashboardQuery.isFetching}
     >
       <div className="acad-details__grid">
         <article className="acad-details__card">
           <header className="acad-details__header">
             <div>
               <h2>Subject Comparison</h2>
-              <p>
-                {schoolId === null
-                  ? "Subject coverage across all schools"
-                  : "Subject coverage for the selected school"}
-              </p>
             </div>
-
-            {section === "secondary" && (
-              <label className="acad-details__filter">
-                <span>Academic level</span>
-
-                <select
-                  aria-label="Academic level"
-                  value={secondaryLevel}
-                  onChange={(event) =>
-                    setSecondaryLevel(
-                      event.target.value as "O Level" | "A Level",
-                    )
-                  }
-                >
-                  <option value="O Level">O Level</option>
-                  <option value="A Level">A Level</option>
-                </select>
-              </label>
+            {dashboardQuery.isFetching && !dashboardQuery.isLoading && (
+              <span className="acad-details__live">
+                <span className="acad-details__live-dot" />
+                Updating
+              </span>
             )}
           </header>
 
-          {syllabusQuery.isLoading ? (
-            <p role="status">Loading subject coverage...</p>
-          ) : syllabusQuery.isError ? (
-            <p role="alert">{getErrorMessage(syllabusQuery.error)}</p>
+          {dashboardQuery.isLoading ? (
+            <p className="acad-details__message" role="status">
+              Loading subject performance…
+            </p>
+          ) : dashboardQuery.isError ? (
+            <p
+              className="acad-details__message acad-details__message--error"
+              role="alert"
+            >
+              {errorMessage(dashboardQuery.error)}
+            </p>
+          ) : visibleSubjectRows.length === 0 ? (
+            <p className="acad-details__message">
+              No subject performance data is available for the selected filters.
+            </p>
           ) : (
-            <div className="acad-details__table-wrapper">
+            <div className="acad-details__table-scroll">
               <table className="acad-details__table">
                 <thead>
                   <tr>
-                    <th scope="col">Subject</th>
+                    <th scope="col">Subject / Category</th>
                     <th scope="col">Level</th>
-                    <th scope="col">Syllabus coverage</th>
+                    <th scope="col">Average mark</th>
+                    <th scope="col">Pass rate</th>
                   </tr>
                 </thead>
-
                 <tbody>
-                  {subjectRows.length === 0 ? (
-                    <tr>
-                      <td colSpan={3}>
-                        No syllabus records available for this selection.
-                      </td>
-                    </tr>
-                  ) : (
-                    subjectRows.map((row) => (
-                      <tr className="acad-details__subject-row" key={row.key}>
-                        <td>{row.subject}</td>
+                  {visibleSubjectRows.map((row) => {
+                    return (
+                      <tr key={row.key}>
+                        <td className="acad-details__subject">{row.subject}</td>
                         <td>{row.level}</td>
-                        <td>
-                          <span>{getCoverage(row)}</span>
-
-                          <span className="acad-details__coverage-detail">
-                            {" "}
-                            ({formatNumber(row.covered)} /{" "}
-                            {formatNumber(row.planned)})
-                          </span>
+                        <td>{formatPercent(row.averageMark)}</td>
+                        <td className="acad-details__strong">
+                          {formatPercent(row.passRate)}
                         </td>
                       </tr>
-                    ))
-                  )}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -485,84 +373,71 @@ export function AcademicDetails({
         <article className="acad-details__card">
           <header className="acad-details__header">
             <div>
-              <h2>National Examinations</h2>
-              <p>
-                {section === "secondary"
-                  ? secondaryLevel === "A Level"
-                    ? "UACE results"
-                    : "UCE results"
-                  : section === "primary"
-                    ? "PLE results"
-                    : isNursery
-                      ? "National examinations are not applicable to this nursery selection."
-                      : "National examination results across schools"}
-              </p>
+              <h2>Student Completion Rate</h2>
             </div>
           </header>
 
-          {isNursery ? (
-            <p>
-              National examination results are not applicable to nursery
-              schools.
+          {dashboardQuery.isLoading ? (
+            <p className="acad-details__message" role="status">
+              Loading completion data…
             </p>
-          ) : nationalExamsQuery.isLoading ? (
-            <p role="status">Loading national examination results...</p>
-          ) : nationalExamsQuery.isError ? (
-            <p role="alert">{getErrorMessage(nationalExamsQuery.error)}</p>
-          ) : nationalResults.length === 0 ? (
-            <p>
-              No national examination results are available for{" "}
-              {filters.year || "the selected year"}.
+          ) : dashboardQuery.isError ? (
+            <p
+              className="acad-details__message acad-details__message--error"
+              role="alert"
+            >
+              {errorMessage(dashboardQuery.error)}
             </p>
+          ) : completionRecords.length === 0 ? (
+            <div className="acad-details__empty-state">
+              <p>
+                No student-completion records were returned by the dashboard
+                API.
+              </p>
+            </div>
           ) : (
-            <>
-              <div className="acad-details__exam-summary">
-                <div>
-                  <span>Candidates</span>
-                  <strong>{formatNumber(candidateCount)}</strong>
-                </div>
+            <div className="acad-details__completion-list">
+              {completionRecords.map((record, index) => {
+                const level =
+                  record.level_display || record.level || "Education level";
+                const campus = record.campus_display || record.campus || "";
+                const completed = getCompletedCount(record);
+                const rate = getCompletionRate(record);
 
-                <div>
-                  <span>Passed</span>
-                  <strong>{formatNumber(passedCount)}</strong>
-                </div>
+                return (
+                  <div
+                    className="acad-details__completion-row"
+                    key={`${level}-${campus}-${index}`}
+                  >
+                    <div className="acad-details__completion-top">
+                      <div>
+                        <strong>{normalizeLevel(level)}</strong>
+                        {campus && (
+                          <span className="acad-details__campus">{campus}</span>
+                        )}
+                      </div>
+                      <strong className="acad-details__completion-rate">
+                        {formatPercent(rate)}
+                      </strong>
+                    </div>
 
-                <div>
-                  <span>Pass rate</span>
-                  <strong>{passRate}</strong>
-                </div>
-              </div>
+                    <div className="acad-details__progress-track">
+                      <span
+                        style={{
+                          width: `${Math.min(100, Math.max(0, rate ?? 0))}%`,
+                        }}
+                      />
+                    </div>
 
-              <div className="acad-details__table-wrapper">
-                <table className="acad-details__table">
-                  <thead>
-                    <tr>
-                      <th scope="col">Examination</th>
-                      <th scope="col">Result / Division</th>
-                      <th scope="col">Candidates</th>
-                      <th scope="col">Pass rate</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {examRows.map((row) => (
-                      <tr key={row.key}>
-                        <td>{row.exam}</td>
-                        <td>{row.result}</td>
-                        <td>{formatNumber(row.candidates)}</td>
-                        <td>
-                          {row.candidates > 0
-                            ? `${((row.passed / row.candidates) * 100).toFixed(
-                                1,
-                              )}%`
-                            : "—"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </>
+                    <p className="acad-details__completed">
+                      {completed === null
+                        ? "Completed students: not provided by the API"
+                        : `${formatNumber(completed)} completed students`}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </article>
       </div>

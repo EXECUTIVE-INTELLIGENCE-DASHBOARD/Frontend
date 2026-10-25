@@ -82,14 +82,13 @@
 
 .academic-performance__filter select:focus-visible {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px
-    color-mix(in srgb, var(--color-accent) 14%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 14%, transparent);
 }
 
 .academic-performance__content {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 20px;
   width: 100%;
   min-width: 0;
 }
@@ -107,6 +106,17 @@
   color: var(--color-heading);
   background: var(--color-surface-subtle);
   border-color: var(--color-border);
+}
+/* Keep Academic Performance cards visually light and minimal */
+.academic-performance__content > * {
+  min-width: 0;
+  box-shadow: none;
+}
+
+/* Avoid heavy borders and strong shadows on nested cards */
+.academic-performance__content article {
+  border-width: 1px;
+  box-shadow: none;
 }
 
 @media (max-width: 1000px) {
