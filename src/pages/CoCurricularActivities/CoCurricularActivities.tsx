@@ -5,15 +5,27 @@ import {
   academicsApi,
   type CoCurricularDashboardData,
 } from "../../api/academics.api";
+
 import { EngagementMetricCard } from "./EngagementMetricCard";
 import { EngagementTableCard } from "./EngagementTableCard";
-import SectionFilter from "../../components/filters/sectionFilters";
+
+import { AcademicFilters } from "../../components/filters/AcademicFilters";
+import type { AcademicFilterValues } from "../../components/filters/academicFilters.types";
 
 import "./CoCurricularActivities.css";
 
 export function CoCurricularActivities() {
   const [dashboard, setDashboard] =
     useState<CoCurricularDashboardData | null>(null);
+
+  const [filters, setFilters] = useState<AcademicFilterValues>({
+    school: "",
+    campus: "",
+    section: "",
+    term: "",
+    year: "",
+  });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -26,17 +38,29 @@ export function CoCurricularActivities() {
         setLoading(true);
         setError(null);
 
+        const apiFilters = {
+          ...(filters.campus && { campus: filters.campus }),
+          ...(filters.section && { level: filters.section }),
+          ...(filters.term && { term: Number(filters.term) }),
+          ...(filters.year && { academic_year: filters.year }),
+        };
+
         const data = await academicsApi.getCoCurricularDashboard(
-          {},
+          apiFilters,
           controller.signal,
         );
 
-        setDashboard(data);
-      } catch (err) {
         if (!controller.signal.aborted) {
-          console.error("Co-curricular dashboard request failed:", err);
-          setError("Unable to load co-curricular activities data.");
+          setDashboard(data);
         }
+      } catch (err) {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        console.error("Co-curricular dashboard request failed:", err);
+
+        setError("Unable to load co-curricular activities data.");
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -47,67 +71,70 @@ export function CoCurricularActivities() {
     void loadDashboard();
 
     return () => controller.abort();
-  }, [retryCount]);
-
-  if (loading) {
-    return (
-      <div className="cc-page">
-        <p>Loading co-curricular activities...</p>
-      </div>
-    );
-  }
-
-  if (error || !dashboard) {
-    return (
-      <div className="cc-page">
-        <p role="alert">
-          {error ?? "No dashboard data is available."}
-        </p>
-
-        <button
-          type="button"
-          onClick={() => setRetryCount((count) => count + 1)}
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
-  const summary = dashboard.summary;
+  }, [filters, retryCount]);
 
   return (
     <div className="cc-page">
-      <SectionFilter />
+      <AcademicFilters
+        values={filters}
+        onChange={setFilters}
+      />
 
-      <div className="cc-metrics">
-        <EngagementMetricCard
-          label="Participation Rate"
-          value={
-            summary.participation_rate == null
-              ? "N/A"
-              : `${summary.participation_rate.toFixed(1)}%`
-          }
-          icon={Globe}
-          tone="accent"
-        />
+      {loading && (
+        <p role="status">Loading co-curricular activities...</p>
+      )}
 
-        <EngagementMetricCard
-          label="Activities Offered"
-          value={String(summary.activities_offered)}
-          icon={CalendarDays}
-          tone="navy"
-        />
+      {!loading && error && (
+        <div>
+          <p role="alert">{error}</p>
 
-        <EngagementMetricCard
-          label="Unique Participants"
-          value={String(summary.unique_participants)}
-          icon={Users}
-          tone="warning"
-        />
-      </div>
+          <button
+            type="button"
+            onClick={() => setRetryCount((count) => count + 1)}
+          >
+            Retry
+          </button>
+        </div>
+      )}
 
-      <EngagementTableCard rows={dashboard.activities} />
+      {!loading && !error && dashboard && (
+        <div className="cc-content">
+          <div className="cc-metrics acad-summary">
+            <EngagementMetricCard
+              label="Participation Rate"
+              value={
+                dashboard.summary.participation_rate == null
+                  ? "N/A"
+                  : `${dashboard.summary.participation_rate.toFixed(1)}%`
+              }
+              icon={Globe}
+              tone="accent"
+            />
+
+            <EngagementMetricCard
+              label="Activities Offered"
+              value={String(dashboard.summary.activities_offered)}
+              icon={CalendarDays}
+              tone="navy"
+            />
+
+            <EngagementMetricCard
+              label="Unique Participants"
+              value={String(dashboard.summary.unique_participants)}
+              icon={Users}
+              tone="warning"
+            />
+          </div>
+
+          <EngagementTableCard rows={dashboard.activities} />
+        </div>
+      )}
+
+      {!loading && !error && !dashboard && (
+        <p>No dashboard data is available.</p>
+      )}
     </div>
   );
 }
+
+export default CoCurricularActivities;
