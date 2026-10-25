@@ -1,6 +1,3 @@
-
-import { Globe } from "lucide-react";
-
 import type { CoCurricularActivityRow } from "../../api/academics.api";
 
 import "../../palette.css";
@@ -49,13 +46,6 @@ export function EngagementTableCard({
                 <tr key={row.id}>
                   <td>
                     <span className="cc-activity">
-                      <span
-                        className="cc-activity__icon"
-                        aria-hidden="true"
-                      >
-                        <Globe size={14} />
-                      </span>
-
                       <span className="cc-activity__name">
                         {row.name}
                       </span>
