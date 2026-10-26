@@ -1,6 +1,11 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import AttendanceAnalysis from "./AttendanceAnalysis";
+
+// The backend has no attendance rows yet, so the page falls back to its sample data.
+vi.mock("../../lib/api/academics", () => ({
+  academicsApi: { attendance: { list: vi.fn().mockResolvedValue([]) } },
+}));
 
 describe("AttendanceAnalysis", () => {
   it("shows the first-tier filters and the KPI cards", async () => {
@@ -24,5 +29,11 @@ describe("AttendanceAnalysis", () => {
     expect(screen.getByRole("dialog", { name: "Actual vs Target" })).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("says so when sample data is shown", async () => {
+    render(<AttendanceAnalysis />);
+    await screen.findByText("Below Target");
+    expect(screen.getByRole("status").textContent).toMatch(/sample data/i);
   });
 });

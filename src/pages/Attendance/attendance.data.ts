@@ -40,7 +40,7 @@ export function classesFor(campus: string, section: Section): string[] {
 
 export const targetFor = (cls: string) => (/^Senior|^Year (9|1[0-3])/.test(cls) ? 90 : 92);
 
-function hash(s: string): number {
+export function hash(s: string): number {
   let h = 7;
   for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
   return h;
