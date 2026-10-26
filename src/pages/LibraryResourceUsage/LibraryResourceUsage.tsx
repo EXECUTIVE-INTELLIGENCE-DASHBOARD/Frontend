@@ -32,8 +32,6 @@ export function LibraryResourceUsage() {
 
       <div className="lr-heading">
         <div className="lr-heading__text">
-          <h1 className="lr-heading__title">Library &amp; Resource Usage</h1>
-
           <p className="lr-heading__subtitle">
             Monitor circulation, resource availability and demand to guide
             accession and acquisition planning.

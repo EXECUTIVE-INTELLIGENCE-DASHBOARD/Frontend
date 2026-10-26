@@ -30,19 +30,20 @@ function cardFor(heading: string): HTMLElement {
 }
 
 describe("ExpenseManagement", () => {
-  it("renders the page heading and breadcrumb", () => {
+  it("renders the page intro and breadcrumb", () => {
     render(<ExpenseManagement />);
 
+    /* The screen no longer repeats its own name as a heading; the Hero owns
+       the title and the breadcrumb already says where we are. */
     expect(
-      screen.getByRole("heading", { name: "Expense Management", level: 1 }),
-    ).toBeInTheDocument();
+      screen.queryByRole("heading", { name: "Expense Management", level: 1 }),
+    ).not.toBeInTheDocument();
 
     expect(
       screen.getByText(/Operating and capital expenditure across departments/i),
     ).toBeInTheDocument();
 
-    // Scoped to the breadcrumb: the current crumb repeats the page title, so a
-    // document-wide query for "Expense Management" would match the h1 as well.
+    // Scoped to the breadcrumb, which is now the only place the name appears.
     const breadcrumb = screen.getByRole("navigation", { name: "Breadcrumb" });
 
     expect(

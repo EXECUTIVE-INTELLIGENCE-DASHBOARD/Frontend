@@ -32,8 +32,6 @@ export function MyChildProgress() {
 
       <div className="mc-heading">
         <div className="mc-heading__text">
-          <h1 className="mc-heading__title">My Child&apos;s Progress</h1>
-
           <p className="mc-heading__subtitle">
             Your child&apos;s attendance, results and support — together in one
             parent view.

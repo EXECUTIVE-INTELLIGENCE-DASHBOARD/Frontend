@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { ChangeEvent } from "react";
 import {
   Building2,
   Download,
@@ -14,6 +13,8 @@ import {
 } from "lucide-react";
 
 import { buildCsv, csvFileName, downloadCsv } from "../../lib/csv";
+import { AcademicFilters } from "../../components/filters/AcademicFilters";
+import type { AcademicFilterValues } from "../../components/filters/academicFilters.types";
 import { AdmissionsFunnel } from "./AdmissionsFunnel";
 import { KpiCard } from "./DashboardUi";
 import { DrillPanel } from "./DrillPanel";
@@ -23,6 +24,7 @@ import type { DrillDimension, RosterLearner } from "./admissionsEnrollment.data"
 import {
   aggregate,
   averageAcrossSchools,
+  campusForValue,
   classBreakdown,
   classLabelFor,
   classOptionsFor,
@@ -35,10 +37,8 @@ import {
   levelLabels,
   schoolCount,
   schoolNameFor,
-  schools,
   streams,
-  termOptions,
-  years,
+  yearIdForValue,
 } from "./admissionsEnrollment.data";
 import {
   aggregateFromDashboard,
@@ -50,8 +50,6 @@ import type {
   Filters,
   LevelId,
   SchoolSelection,
-  TermId,
-  YearId,
 } from "./admissionsEnrollment.types";
 
 import "./AdmissionsEnrollment.css";
@@ -77,6 +75,14 @@ export function AdmissionsEnrollment() {
   const [filters, setFilters] = useState<Filters>(defaultFilters);
   const [openLearner, setOpenLearner] = useState<RosterLearner | null>(null);
   const [actionsOpen, setActionsOpen] = useState(false);
+  // The shared row is controlled, so the page holds its raw backend values.
+  const [filterValues, setFilterValues] = useState<AcademicFilterValues>({
+    school: "",
+    campus: "",
+    section: "",
+    term: "",
+    year: "",
+  });
   const actionsRef = useRef<HTMLDivElement | null>(null);
 
   // The quick actions menu closes on an outside click or Escape, like a native menu.
@@ -189,11 +195,17 @@ export function AdmissionsEnrollment() {
   const update = (patch: Partial<Filters>) =>
     setFilters((current) => ({ ...current, ...patch }));
 
-  const handleSchoolChange = (event: ChangeEvent<HTMLSelectElement>) => {
+  // The shared row reports backend values; translate them into this page's own
+  // shape. An unanswered year keeps whatever was already selected.
+  const handleFilterChange = (next: AcademicFilterValues) => {
+    setFilterValues(next);
+
+    const year = yearIdForValue(next.year);
+
     update({
-      school: event.target.value as Filters["school"],
-      classId: "all",
-      stream: "all",
+      campus: campusForValue(next.campus),
+      section: next.section,
+      ...(year ? { year } : {}),
     });
   };
 
@@ -237,6 +249,13 @@ export function AdmissionsEnrollment() {
   const handleReset = () => {
     setFilters(defaultFilters);
     setOpenLearner(null);
+    setFilterValues({
+      school: "",
+      campus: "",
+      section: "",
+      term: "",
+      year: "",
+    });
   };
 
   const handleExport = () => {
@@ -331,7 +350,7 @@ export function AdmissionsEnrollment() {
   };
 
   const trail: Array<{ label: string; target: DrillDimension }> = [
-    { label: "All schools", target: "school" },
+    { label: "All campuses", target: "school" },
   ];
 
   if (filters.school !== "all") {
@@ -355,7 +374,6 @@ export function AdmissionsEnrollment() {
       <header className="ae-head">
         <div className="ae-head__text">
           <span className="ae-eyebrow">Academics</span>
-          <h1 className="ae-head__title">Admissions &amp; enrolment</h1>
         </div>
 
         <div className="ae-head__actions">
@@ -404,67 +422,11 @@ export function AdmissionsEnrollment() {
         </div>
       </header>
 
-      <section
-        className={`ae-filters${isAllSchools ? " ae-filters--board" : ""}`}
-        aria-label="Enrolment filters"
-      >
-        <label className="ae-field ae-field--school">
-          <span className="ae-select">
-            <select
-              aria-label="School"
-              value={filters.school}
-              onChange={handleSchoolChange}
-            >
-              <option value="all">All schools</option>
-              {schools.map((school) => (
-                <option key={school.id} value={school.id}>
-                  {school.name}
-                </option>
-              ))}
-            </select>
-          </span>
-        </label>
+      <section className="ae-filters" aria-label="Enrolment filters">
+        <AcademicFilters values={filterValues} onChange={handleFilterChange} />
 
         {isAllSchools ? null : (
           <>
-            <label className="ae-field ae-field--year">
-              <span className="ae-field__label">Academic year</span>
-              <span className="ae-select">
-                <select
-                  aria-label="Year"
-                  value={filters.year}
-                  onChange={(event) =>
-                    update({ year: event.target.value as YearId })
-                  }
-                >
-                  {years.map((year) => (
-                    <option key={year} value={year}>
-                      AY {year}
-                    </option>
-                  ))}
-                </select>
-              </span>
-            </label>
-
-            <label className="ae-field ae-field--term">
-              <span className="ae-field__label">Term</span>
-              <span className="ae-select">
-                <select
-                  aria-label="Term"
-                  value={filters.term}
-                  onChange={(event) =>
-                    update({ term: event.target.value as TermId })
-                  }
-                >
-                  {termOptions.map((term) => (
-                    <option key={term.id} value={term.id}>
-                      {term.label}
-                    </option>
-                  ))}
-                </select>
-              </span>
-            </label>
-
             <label className="ae-field ae-field--class">
               <span className="ae-field__label">Class</span>
               <span className="ae-select">

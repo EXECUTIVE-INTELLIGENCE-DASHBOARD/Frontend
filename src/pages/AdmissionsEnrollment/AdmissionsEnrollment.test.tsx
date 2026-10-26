@@ -1,12 +1,79 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import api from "../../api/axios";
 import { AdmissionsEnrollment } from "./AdmissionsEnrollment";
+
+vi.mock("../../api/axios", () => ({
+  default: {
+    get: vi.fn(),
+  },
+}));
+
+// The shared academic row reads its campuses and terms from the backend.
+const mockSchools = [
+  {
+    id: 9,
+    name: "Green Hill Academy Secondary School Kibuli",
+    campus: "kibuli",
+    campus_display: "Kibuli Main",
+    level: "secondary",
+  },
+  {
+    id: 11,
+    name: "GreenHill Academy Primary Buwaate",
+    campus: "buwaate",
+    campus_display: "Buwaate",
+    level: "primary",
+  },
+  {
+    id: 24,
+    name: "Annex Campus",
+    campus: "gis",
+    campus_display: "Greenhill International (GIS)",
+    level: "nursery",
+  },
+];
+
+const mockTerms = [1, 2, 3].map((number) => ({
+  id: number + 5,
+  academic_year: "2026",
+  number,
+  start_date: "2025-09-01",
+  end_date: "2026-08-07",
+}));
+
+beforeEach(() => {
+  vi.mocked(api.get).mockImplementation(async (url) => {
+    if (url === "/academics/schools/") {
+      return { data: mockSchools };
+    }
+
+    if (url === "/academics/terms/") {
+      return { data: mockTerms };
+    }
+
+    throw new Error(`Unexpected API endpoint: ${url}`);
+  });
+});
+
+afterEach(() => {
+  vi.clearAllMocks();
+});
 
 const selectByName = (name: string) => screen.getByRole("combobox", { name });
 
-const chooseSchool = (schoolId: string) =>
-  fireEvent.change(selectByName("School"), { target: { value: schoolId } });
+const drillIntoSchool = (name: RegExp) => {
+  fireEvent.click(screen.getByRole("button", { name }));
+};
+
+const kibuliSecondary = /Greenhill Academy Secondary – Kibuli.*Drill down/i;
+
+const backToAllCampuses = () => {
+  const trail = screen.getByRole("navigation", { name: "Drill-down path" });
+
+  fireEvent.click(within(trail).getAllByRole("button")[0]);
+};
 
 describe("AdmissionsEnrollment", () => {
   it("renders the five headline KPI cards", () => {
@@ -21,28 +88,35 @@ describe("AdmissionsEnrollment", () => {
     expect(within(kpis).getByText("Join rate")).toBeInTheDocument();
   });
 
-  it("offers every campus under all schools", () => {
+  it("offers the same filters as the other academic screens", async () => {
     render(<AdmissionsEnrollment />);
 
-    const options = within(selectByName("School")).getAllByRole("option");
+    expect(selectByName("Section")).toBeInTheDocument();
+    expect(selectByName("Term")).toBeInTheDocument();
+    expect(selectByName("Academic Year")).toBeInTheDocument();
 
-    expect(options.map((option) => option.textContent)).toEqual([
-      "All schools",
-      "Greenhill Academy Nursery – Kibuli",
-      "Greenhill Academy Primary – Kibuli",
-      "Greenhill Academy Secondary – Kibuli",
-      "Greenhill Academy Nursery – Buwaate",
-      "Greenhill Academy Primary – Buwaate",
-      "Greenhill International School (GIS) – Kansanga",
-    ]);
+    const campus = selectByName("Campus");
+
+    await waitFor(() =>
+      expect(
+        within(campus)
+          .getAllByRole("option")
+          .map((option) => option.textContent),
+      ).toEqual([
+        "All Campuses",
+        "Buwaate",
+        "Greenhill International (GIS)",
+        "Kibuli Main",
+      ]),
+    );
   });
 
-  it("averages the six schools until a school is chosen", () => {
+  it("averages the six schools until a school is drilled into", () => {
     render(<AdmissionsEnrollment />);
 
     expect(screen.getByText(/average of the 6 schools ·/i)).toBeInTheDocument();
 
-    chooseSchool("kibuli-primary");
+    drillIntoSchool(kibuliSecondary);
 
     expect(screen.queryByText(/average of the 6 schools/i)).toBeNull();
     expect(
@@ -52,20 +126,22 @@ describe("AdmissionsEnrollment", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows a single control until a school is chosen", () => {
+  it("shows campus, section, term and year before a school is drilled into", () => {
     render(<AdmissionsEnrollment />);
 
-    expect(selectByName("School")).toBeInTheDocument();
-    expect(screen.queryByRole("combobox", { name: "Year" })).toBeNull();
-    expect(screen.queryByRole("combobox", { name: "Term" })).toBeNull();
+    // The row is the same set of filters the academic screens share.
+    expect(selectByName("Campus")).toHaveValue("");
+    expect(selectByName("Section")).toHaveValue("");
+    expect(selectByName("Term")).toBeInTheDocument();
+    expect(selectByName("Academic Year")).toBeInTheDocument();
+
+    // Class, stream and the learner search need a school to scope them.
     expect(screen.queryByRole("combobox", { name: "Class" })).toBeNull();
     expect(screen.queryByRole("combobox", { name: "Stream" })).toBeNull();
     expect(screen.queryByLabelText("Find a learner")).toBeNull();
 
-    chooseSchool("kibuli-secondary");
+    drillIntoSchool(kibuliSecondary);
 
-    expect(selectByName("Year")).toBeInTheDocument();
-    expect(selectByName("Term")).toBeInTheDocument();
     expect(selectByName("Class")).toBeInTheDocument();
     expect(selectByName("Stream")).toBeInTheDocument();
     expect(screen.getByLabelText("Find a learner")).toBeInTheDocument();
@@ -74,7 +150,7 @@ describe("AdmissionsEnrollment", () => {
   it("narrows the class options to the levels a campus runs", () => {
     render(<AdmissionsEnrollment />);
 
-    chooseSchool("kibuli-secondary");
+    drillIntoSchool(kibuliSecondary);
 
     const secondary = selectByName("Class");
 
@@ -85,7 +161,8 @@ describe("AdmissionsEnrollment", () => {
       within(secondary).queryByRole("option", { name: "Top Class" }),
     ).not.toBeInTheDocument();
 
-    chooseSchool("kibuli-nursery");
+    backToAllCampuses();
+    drillIntoSchool(/Greenhill Academy Nursery – Kibuli.*Drill down/i);
 
     const nursery = selectByName("Class");
 
@@ -104,16 +181,12 @@ describe("AdmissionsEnrollment", () => {
       screen.getByRole("heading", { name: "Enrolment by school" }),
     ).toBeInTheDocument();
 
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: /Greenhill Academy Secondary – Kibuli.*Drill down/i,
-      }),
-    );
+    drillIntoSchool(kibuliSecondary);
 
     expect(
       screen.getByRole("heading", { name: "Enrolment by class" }),
     ).toBeInTheDocument();
-    expect(selectByName("School")).toHaveValue("kibuli-secondary");
+    expect(selectByName("Class")).toHaveValue("all");
 
     fireEvent.click(
       screen.getByRole("button", { name: /S\.4.*Drill down/i }),
@@ -128,20 +201,15 @@ describe("AdmissionsEnrollment", () => {
   it("walks back up the drill-down path from the breadcrumb", () => {
     render(<AdmissionsEnrollment />);
 
-    fireEvent.change(selectByName("School"), {
-      target: { value: "kibuli-secondary" },
-    });
+    drillIntoSchool(kibuliSecondary);
     fireEvent.change(selectByName("Class"), { target: { value: "s4" } });
 
     expect(
       screen.getByRole("heading", { name: "Enrolment by stream" }),
     ).toBeInTheDocument();
 
-    const trail = screen.getByRole("navigation", { name: "Drill-down path" });
+    backToAllCampuses();
 
-    fireEvent.click(within(trail).getAllByRole("button")[0]);
-
-    expect(selectByName("School")).toHaveValue("all");
     expect(screen.queryByRole("combobox", { name: "Class" })).toBeNull();
     expect(
       screen.getByRole("heading", { name: "Enrolment by school" }),
@@ -151,9 +219,7 @@ describe("AdmissionsEnrollment", () => {
   it("lists learners once a stream is selected and opens a learner record", () => {
     render(<AdmissionsEnrollment />);
 
-    fireEvent.change(selectByName("School"), {
-      target: { value: "kibuli-secondary" },
-    });
+    drillIntoSchool(kibuliSecondary);
     fireEvent.change(selectByName("Class"), { target: { value: "s4" } });
     fireEvent.change(selectByName("Stream"), { target: { value: "A" } });
 
@@ -221,7 +287,7 @@ describe("AdmissionsEnrollment", () => {
   it("raises a banner when a learner search is typed", () => {
     render(<AdmissionsEnrollment />);
 
-    chooseSchool("kibuli-secondary");
+    drillIntoSchool(kibuliSecondary);
 
     fireEvent.change(screen.getByLabelText("Find a learner"), {
       target: { value: "Achieng Mercy" },

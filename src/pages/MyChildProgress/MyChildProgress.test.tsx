@@ -4,12 +4,12 @@ import { describe, expect, it } from "vitest";
 import { MyChildProgress } from "./MyChildProgress";
 
 describe("MyChildProgress", () => {
-  it("renders the page heading", () => {
+  it("renders the page intro without repeating the page name", () => {
     render(<MyChildProgress />);
 
     expect(
-      screen.getByRole("heading", { name: "My Child's Progress" }),
-    ).toBeInTheDocument();
+      screen.queryByRole("heading", { name: "My Child's Progress" }),
+    ).not.toBeInTheDocument();
 
     expect(
       screen.getByText(

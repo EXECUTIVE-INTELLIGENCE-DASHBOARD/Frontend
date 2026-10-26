@@ -446,7 +446,7 @@
 }
 
 .financial-forecast__filters label span {
-  color: var(--fo-muted, #64748b);
+  color: var(--color-text-muted, #64748b);
   font-size: 10px;
   font-weight: 500;
   white-space: nowrap;
@@ -456,19 +456,37 @@
   min-height: 29px;
   min-width: 78px;
   padding: 4px 18px 4px 6px;
-  border: 1px solid var(--fo-border, #dbe3ef);
+  border: 1px solid var(--color-border, #dbe3ef);
   border-radius: 7px;
-  background-color: #fff;
-  color: var(--fo-text, #203468);
+  background-color: var(--color-surface, #ffffff);
+  color: var(--color-heading, #203468);
   font-family: inherit;
   font-size: 10px;
   outline: none;
   cursor: pointer;
 }
 
+/* Native option lists are painted by the OS, so state the theme explicitly. */
+.financial-forecast__filters select option {
+  color: var(--color-heading, #203468);
+  background-color: var(--color-surface, #ffffff);
+}
+
+[data-theme="dark"] .financial-forecast__filters select {
+  background-color: var(--color-surface-subtle, #2a3784);
+  color: var(--color-heading, #f5f5f5);
+  border-color: var(--color-border, #3f4b92);
+}
+
+[data-theme="dark"] .financial-forecast__filters select option {
+  color: var(--color-heading, #f5f5f5);
+  background-color: var(--color-surface-subtle, #2a3784);
+}
+
 .financial-forecast__filters select:focus {
-  border-color: var(--pal-steel, #2aa4dd);
-  box-shadow: 0 0 0 2px rgba(42, 164, 221, 0.1);
+  border-color: var(--color-accent, #2aa4dd);
+  box-shadow: 0 0 0 2px
+    color-mix(in srgb, var(--color-accent, #2aa4dd) 16%, transparent);
 }
 
 @media (max-width: 600px) {

@@ -12,12 +12,12 @@ function findMetricCard(label: string) {
 }
 
 describe("LibraryResourceUsage", () => {
-  it("renders the page heading", () => {
+  it("renders the page intro without repeating the page name", () => {
     render(<LibraryResourceUsage />);
 
     expect(
-      screen.getByRole("heading", { name: "Library & Resource Usage" }),
-    ).toBeInTheDocument();
+      screen.queryByRole("heading", { name: "Library & Resource Usage" }),
+    ).not.toBeInTheDocument();
 
     expect(
       screen.getByText(

@@ -1,4 +1,11 @@
-export type YearId = "2026/27" | "2025/26" | "2024/25";
+import type { CampusOption } from "../../components/filters/CampusFilter";
+
+export type YearId =
+  | "2026/27"
+  | "2025/26"
+  | "2024/25"
+  | "2023/24"
+  | "2022/23";
 
 export type TermId = "t1" | "t2" | "t3" | "full";
 
@@ -80,6 +87,16 @@ export interface ClassDefinition {
 export interface Filters {
   year: YearId;
   term: TermId;
+  /**
+   * The campus control the academic screens share. The enrolment data is
+   * modelled per school, so a campus narrows it to the schools that sit on it.
+   */
+  campus: CampusOption;
+  /**
+   * The shared section control: "nursery", "primary" or "secondary". Empty
+   * means every level the campus runs.
+   */
+  section: string;
   school: SchoolSelection;
   classId: string;
   stream: string;

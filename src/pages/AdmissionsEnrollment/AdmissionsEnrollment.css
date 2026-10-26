@@ -222,16 +222,6 @@
   gap: 12px;
 }
 
-/* Board members start with one control only — the school picker — parked
-   in the right corner of the page. */
-.ae-filters--board {
-  justify-content: flex-end;
-}
-
-.ae-filters--board .ae-field--school {
-  flex: 0 0 268px;
-}
-
 .ae-field {
   display: flex;
   flex-direction: column;
@@ -240,21 +230,6 @@
 }
 
 /* Controls stay compact instead of stretching across the whole row. */
-.ae-field--school {
-  flex: 0 1 268px;
-  max-width: 280px;
-}
-
-.ae-field--year {
-  flex: 0 1 112px;
-  max-width: 124px;
-}
-
-.ae-field--term {
-  flex: 0 1 102px;
-  max-width: 114px;
-}
-
 .ae-field--class {
   flex: 0 1 122px;
   max-width: 134px;

@@ -22,6 +22,7 @@ import type {
   WithdrawalRecord,
   YearId,
 } from "./admissionsEnrollment.types";
+import type { CampusOption } from "../../components/filters/CampusFilter";
 
 /* ------------------------------------------------------------------ Labels */
 
@@ -135,7 +136,13 @@ export const classDefinitions: ClassDefinition[] = [
 
 export const streams = ["A", "B"];
 
-export const years: YearId[] = ["2026/27", "2025/26", "2024/25"];
+export const years: YearId[] = [
+  "2026/27",
+  "2025/26",
+  "2024/25",
+  "2023/24",
+  "2022/23",
+];
 
 export const termOptions: Array<{ id: TermId; label: string }> = [
   { id: "t1", label: "Term 1" },
@@ -181,7 +188,9 @@ export const reasonLabels: Record<ReasonId, string> = {
 
 export const defaultFilters: Filters = {
   year: "2026/27",
-  term: "t2",
+  term: "t1",
+  campus: "All Campuses",
+  section: "",
   school: "all",
   classId: "all",
   stream: "all",
@@ -448,7 +457,60 @@ const periodFactors: Record<YearId, Record<TermId, number>> = {
   "2026/27": { t1: 0.972, t2: 1, t3: 1.011, full: 1 },
   "2025/26": { t1: 0.94, t2: 0.951, t3: 0.958, full: 0.95 },
   "2024/25": { t1: 0.908, t2: 0.917, t3: 0.924, full: 0.916 },
+  "2023/24": { t1: 0.881, t2: 0.889, t3: 0.896, full: 0.888 },
+  "2022/23": { t1: 0.856, t2: 0.863, t3: 0.87, full: 0.862 },
 };
+
+/**
+ * The shared academic filter speaks in backend values: campus keys such as
+ * "kibuli" and academic years such as "2026" or "2026/2027". This page models
+ * data per school and per YearId, so these translate between the two.
+ */
+export const yearIdForValue = (value: string): YearId | null => {
+  const startYear = Number(value.slice(0, 4));
+
+  if (!value || Number.isNaN(startYear)) {
+    return null;
+  }
+
+  const candidate =
+    `${startYear}/${String(startYear + 1).slice(-2)}` as YearId;
+
+  return years.includes(candidate) ? candidate : null;
+};
+
+/** The schools that sit on each campus the academic filter offers. */
+const schoolsByCampus: Record<CampusOption, SchoolId[]> = {
+  "All Campuses": allSchools,
+  "Kibuli Main Campus": [
+    "kibuli-nursery",
+    "kibuli-primary",
+    "kibuli-secondary",
+  ],
+  "Buwaate Campus": ["buwaate-nursery", "buwaate-primary"],
+  "Annex / Preschool Branch": ["kansanga-gis"],
+};
+
+/** Backend campus keys, mapped onto the campus names this page groups by. */
+const campusByApiValue: Record<string, CampusOption> = {
+  kibuli: "Kibuli Main Campus",
+  buwaate: "Buwaate Campus",
+  gis: "Annex / Preschool Branch",
+  annex: "Annex / Preschool Branch",
+};
+
+export const campusForValue = (value: string): CampusOption =>
+  campusByApiValue[value.trim().toLowerCase()] ?? "All Campuses";
+
+/** The class levels each section of the shared filter covers. */
+const levelsBySection: Record<string, LevelId[]> = {
+  nursery: ["nursery"],
+  primary: ["primary"],
+  secondary: ["olevel", "alevel"],
+};
+
+const matchesSection = (level: LevelId, section: string) =>
+  !section || (levelsBySection[section] ?? []).includes(level);
 
 const periodFactor = (year: YearId, term: TermId) =>
   periodFactors[year][term];
@@ -530,6 +592,8 @@ function scaleRow(row: CohortRow, factor: number): CohortRow {
 
 function matchesFilters(row: CohortRow, filters: Filters) {
   return (
+    schoolsByCampus[filters.campus].includes(row.schoolId) &&
+    matchesSection(row.level, filters.section) &&
     (filters.school === "all" || row.schoolId === filters.school) &&
     (filters.classId === "all" || row.classId === filters.classId) &&
     (filters.stream === "all" || row.stream === filters.stream)

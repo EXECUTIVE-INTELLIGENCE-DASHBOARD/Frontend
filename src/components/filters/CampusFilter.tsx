@@ -20,7 +20,7 @@ interface CampusFilterProps {
   onSectionChange?: (section: SectionOption) => void;
 }
 
-const sectionsByCampus: Record<CampusOption, SectionOption[]> = {
+export const sectionsByCampus: Record<CampusOption, SectionOption[]> = {
   "All Campuses": [
     "All Sections",
     "Nursery",
@@ -45,7 +45,7 @@ const sectionsByCampus: Record<CampusOption, SectionOption[]> = {
   ],
 };
 
-const campuses = Object.keys(
+export const campuses = Object.keys(
   sectionsByCampus,
 ) as CampusOption[];
 

@@ -31,7 +31,7 @@
 
 /* --------------------------------------------------------------- Toolbar */
 
-/* The dropdown is the shared CampusFilter component. */
+/* The shared academic filter row sits directly on the page. */
 .sr-toolbar {
   display: flex;
   justify-content: flex-end;

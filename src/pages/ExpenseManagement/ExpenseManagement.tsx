@@ -49,8 +49,6 @@ export function ExpenseManagement() {
 
       <div className="exp-heading">
         <div className="exp-heading__text">
-          <h1 className="exp-heading__title">Expense Management</h1>
-
           <p className="exp-heading__subtitle">
             Operating and capital expenditure across departments and campuses.
           </p>

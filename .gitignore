@@ -12,5 +12,6 @@ coverage/
 
 # Build, test and log output that must never be committed
 test-results.txt
+vitest-*.txt
 *.log
 .tmp/
