@@ -35,7 +35,6 @@ export function useFacilities(q: Query) {
     return () => {
       live = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
   return { ...data, loading, error };
