@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getHrEmployees, getHrWorkforceDashboard } from "./hrWorkforce.api";
@@ -97,6 +97,7 @@ describe("HrWorkforce tabs", () => {
     expect(screen.queryByText("Café")).toBeNull();
     expect(screen.queryByText("Academic & Curriculum Instruction")).toBeNull();
   });
+
   it("shows school workforce data and an unavailable GSL message for all employment", async () => {
     render(<HrWorkforce />);
 
@@ -114,6 +115,7 @@ describe("HrWorkforce tabs", () => {
 
     expect(screen.queryByText("GSL Head Office")).toBeNull();
   });
+
   it("shows an empty state when the employee API returns no records", async () => {
     render(<HrWorkforce />);
 
@@ -126,58 +128,59 @@ describe("HrWorkforce tabs", () => {
     ).toBeTruthy();
   });
 
-  it("switches between exits, contracts and ratings without fabricated records", async () => {
+  it("switches between Talent sections without displaying fabricated records", async () => {
     render(<HrWorkforce />);
 
     openTab("Talent");
 
-    expect(await screen.findByText("Staff Exits & Turnover")).toBeTruthy();
-
     expect(
-      screen.getByText(
-        /Individual staff exit dates, exit reasons, and turnover figures cannot be retrieved/i,
-      ),
+      await screen.findByRole("tab", { name: "Exits & Turnover" }),
     ).toBeTruthy();
 
-    openTab("Contracts");
+    expect(
+      await screen.findByText("No employee records were returned by the API."),
+    ).toBeTruthy();
 
-    expect(screen.getByText("Contract End Dates & Renewals")).toBeTruthy();
+    fireEvent.click(screen.getByRole("tab", { name: "Contracts" }));
 
     expect(
-      screen.getByText(
-        /Contract end dates and renewal statuses are not available/i,
-      ),
+      screen
+        .getByRole("tab", { name: "Contracts" })
+        .getAttribute("aria-selected"),
+    ).toBe("true");
+
+    expect(
+      screen.getByText("No employee records were returned by the API."),
+    ).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Ratings" }));
+
+    expect(
+      screen
+        .getByRole("tab", { name: "Ratings" })
+        .getAttribute("aria-selected"),
+    ).toBe("true");
+
+    expect(
+      screen.getByText("No employee records were returned by the API."),
     ).toBeTruthy();
 
     expect(screen.queryByText("Dr. Peter Ssemakula")).toBeNull();
-
-    openTab("Ratings");
-
-    expect(screen.getByText("Staff Performance Ratings")).toBeTruthy();
-
-    expect(
-      screen.getByText(
-        /Employee performance ratings and review dates are not available/i,
-      ),
-    ).toBeTruthy();
-
     expect(screen.queryByText("Needs improvement")).toBeNull();
   });
 
-  it("shows the unavailable exits message when all employment is chosen", async () => {
+  it("loads employee data when the Talent tab is opened", async () => {
     render(<HrWorkforce />);
 
     openTab("Talent");
-    chooseEmployer("all");
 
-    expect(await screen.findByText("Staff Exits & Turnover")).toBeTruthy();
+    expect(getHrEmployees).toHaveBeenCalled();
 
     expect(
-      screen.getByText(
-        /Individual staff exit dates, exit reasons, and turnover figures cannot be retrieved/i,
-      ),
+      await screen.findByText("No employee records were returned by the API."),
     ).toBeTruthy();
   });
+
   it("shows an empty state when there are no establishment rows to export", async () => {
     render(<HrWorkforce />);
 
