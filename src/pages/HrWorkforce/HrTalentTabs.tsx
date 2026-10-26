@@ -30,7 +30,6 @@ import {
   daysLeft,
   employerLabel,
   exceedsRating,
-  exits,
   formatDate,
   gslAbsenceLabel,
   gslLocation,
@@ -459,7 +458,6 @@ export function TalentTab({ employer }: { employer: EmployerFilter }) {
     };
   }, [retryCount]);
 
-  const exitRows = exits.filter(byEmployer(employer));
   const seniorRows = seniors.filter(byEmployer(employer));
 
   const byDueDate = [...seniorRows].sort(
