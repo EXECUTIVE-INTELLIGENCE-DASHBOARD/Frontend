@@ -12,7 +12,7 @@
 }
 
 /* First tier: Campus, Section, Term, Academic Year */
-.at-filters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.at-filters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 32px; }
 .at-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .at-field label { font-size: 13px; color: var(--color-text-secondary); }
 .at-field select {
