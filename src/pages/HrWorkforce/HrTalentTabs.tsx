@@ -153,7 +153,6 @@ export function EstablishmentTab({ employer }: { employer: EmployerFilter }) {
     </>
   );
 }
-
 /* ---------- Talent: exits, contracts, ratings ---------- */
 
 type TalentView = "exits" | "contracts" | "ratings";
@@ -164,8 +163,181 @@ const talentViews: Array<[TalentView, string]> = [
   ["ratings", "Ratings"],
 ];
 
+const exitColumns: HrColumn<HrEmployee>[] = [
+  {
+    header: "Staff number",
+    cell: (row) => row.staff_number || "—",
+    csv: (row) => row.staff_number || "",
+  },
+  {
+    header: "Staff member",
+    cell: (row) => row.full_name || "—",
+    csv: (row) => row.full_name || "",
+  },
+  {
+    header: "Job title",
+    cell: (row) => row.job_title || "—",
+    csv: (row) => row.job_title || "",
+  },
+  {
+    header: "Unit",
+    cell: (row) => row.unit_name || "—",
+    csv: (row) => row.unit_name || "",
+  },
+  {
+    header: "Hire date",
+    cell: (row) => row.hire_date || "—",
+    csv: (row) => row.hire_date || "",
+  },
+  {
+    header: "Exit date",
+    cell: () => "—",
+    csv: () => "",
+  },
+  {
+    header: "Exit reason",
+    cell: () => "—",
+    csv: () => "",
+  },
+  {
+    header: "Employment status",
+    cell: (row) => (row.is_active ? "Active" : "Inactive"),
+    csv: (row) => (row.is_active ? "Active" : "Inactive"),
+  },
+];
+
+const contractColumns: HrColumn<HrEmployee>[] = [
+  {
+    header: "Staff number",
+    cell: (row) => row.staff_number || "—",
+    csv: (row) => row.staff_number || "",
+  },
+  {
+    header: "Staff member",
+    cell: (row) => row.full_name || "—",
+    csv: (row) => row.full_name || "",
+  },
+  {
+    header: "Job title",
+    cell: (row) => row.job_title || "—",
+    csv: (row) => row.job_title || "",
+  },
+  {
+    header: "Unit",
+    cell: (row) => row.unit_name || "—",
+    csv: (row) => row.unit_name || "",
+  },
+  {
+    header: "Employment type",
+    cell: (row) => row.employment_type || "—",
+    csv: (row) => row.employment_type || "",
+  },
+  {
+    header: "Hire date",
+    cell: (row) => row.hire_date || "—",
+    csv: (row) => row.hire_date || "",
+  },
+  {
+    header: "Contract end date",
+    cell: () => "—",
+    csv: () => "",
+  },
+  {
+    header: "Renewal status",
+    cell: () => "—",
+    csv: () => "",
+  },
+];
+
+const ratingColumns: HrColumn<HrEmployee>[] = [
+  {
+    header: "Staff number",
+    cell: (row) => row.staff_number || "—",
+    csv: (row) => row.staff_number || "",
+  },
+  {
+    header: "Staff member",
+    cell: (row) => row.full_name || "—",
+    csv: (row) => row.full_name || "",
+  },
+  {
+    header: "Job title",
+    cell: (row) => row.job_title || "—",
+    csv: (row) => row.job_title || "",
+  },
+  {
+    header: "Unit",
+    cell: (row) => row.unit_name || "—",
+    csv: (row) => row.unit_name || "",
+  },
+  {
+    header: "Employment status",
+    cell: (row) => (row.is_active ? "Active" : "Inactive"),
+    csv: (row) => (row.is_active ? "Active" : "Inactive"),
+  },
+  {
+    header: "Performance rating",
+    cell: () => "—",
+    csv: () => "",
+  },
+  {
+    header: "Review date",
+    cell: () => "—",
+    csv: () => "",
+  },
+];
+
 export function TalentTab() {
   const [view, setView] = useState<TalentView>("exits");
+  const [employees, setEmployees] = useState<HrEmployee[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    setLoading(true);
+    setError(false);
+
+    getHrEmployees()
+      .then((response) => {
+        if (active) {
+          setEmployees(response);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setError(true);
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const talentTable = {
+    exits: {
+      title: "Staff Exits & Turnover",
+      columns: exitColumns,
+      fileName: "staff-exits-turnover",
+    },
+    contracts: {
+      title: "Contract End Dates & Renewals",
+      columns: contractColumns,
+      fileName: "staff-contracts-renewals",
+    },
+    ratings: {
+      title: "Staff Performance Ratings",
+      columns: ratingColumns,
+      fileName: "staff-performance-ratings",
+    },
+  }[view];
 
   return (
     <>
@@ -188,50 +360,25 @@ export function TalentTab() {
         ))}
       </div>
 
-      {view === "exits" && (
-        <section className="hw-card">
-          <div className="hw-card__header">
-            <h2 className="hw-card__title">
-              <span className="hw-card__dot" aria-hidden="true" />
-              Staff Exits &amp; Turnover
-            </h2>
-          </div>
-          <p className="hw-empty">
-            Individual staff exit dates, exit reasons, and turnover figures
-            cannot be retrieved from the registered HR endpoints currently
-            available in the backend.
-          </p>
-        </section>
-      )}
-
-      {view === "contracts" && (
-        <section className="hw-card">
-          <div className="hw-card__header">
-            <h2 className="hw-card__title">
-              <span className="hw-card__dot" aria-hidden="true" />
-              Contract End Dates &amp; Renewals
-            </h2>
-          </div>
-          <p className="hw-empty">
-            Contract end dates and renewal statuses are not available in the
-            current employee model and API response.
-          </p>
-        </section>
-      )}
-
-      {view === "ratings" && (
-        <section className="hw-card">
-          <div className="hw-card__header">
-            <h2 className="hw-card__title">
-              <span className="hw-card__dot" aria-hidden="true" />
-              Staff Performance Ratings
-            </h2>
-          </div>
-          <p className="hw-empty">
-            Employee performance ratings and review dates are not available in
-            the current HR model and API response.
-          </p>
-        </section>
+      {loading ? (
+        <StatusMessage>Loading Talent employee records…</StatusMessage>
+      ) : error ? (
+        <StatusMessage>
+          Employee records could not be loaded. Please try again later.
+        </StatusMessage>
+      ) : employees.length === 0 ? (
+        <StatusMessage>
+          No employee records were returned by the API.
+        </StatusMessage>
+      ) : (
+        <HrDataCard
+          title={talentTable.title}
+          columns={talentTable.columns}
+          rows={employees}
+          rowKey={(row) => String(row.id)}
+          fileName={talentTable.fileName}
+          scopeLabel="Existing HR employee records"
+        />
       )}
     </>
   );
