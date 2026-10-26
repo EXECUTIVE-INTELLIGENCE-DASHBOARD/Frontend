@@ -104,6 +104,7 @@
 .at-svg__axis { stroke: var(--color-text-muted); }
 .at-svg__bar { fill: var(--color-accent); }
 .at-svg__bar--low { fill: var(--at-gold); }
+.at-svg__bar--navy { fill: var(--color-heading); }
 .at-svg__target { stroke: var(--color-heading); stroke-width: 2; }
 .at-svg__goal { stroke: var(--at-gold); stroke-width: 2; stroke-dasharray: 5 3; }
 .at-svg__line { fill: none; stroke: var(--color-heading); stroke-width: 2.5; }

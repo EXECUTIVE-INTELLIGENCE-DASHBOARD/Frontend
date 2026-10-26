@@ -110,7 +110,7 @@ export function ResultsChart({ data }: { data: ResultsPoint[] }) {
       <text transform="rotate(-90)" x={-88} y={13} textAnchor="middle">Attendance (%)</text>
       <text transform="rotate(90)" x={88} y={-688} textAnchor="middle">Average score (%)</text>
       <text x={347} y={198} textAnchor="middle">Week</text>
-      {data.map((d, i) => <rect key={`b${i}`} className="at-svg__bar" x={xs(i) - 17} y={ya(d.attendance)} width={34} height={150 - ya(d.attendance)} rx={4} />)}
+      {data.map((d, i) => <rect key={`b${i}`} className="at-svg__bar at-svg__bar--navy" x={xs(i) - 17} y={ya(d.attendance)} width={34} height={150 - ya(d.attendance)} rx={4} />)}
       {segments.map((p, i) => <polyline key={i} className="at-svg__score" points={p} />)}
       {data.map((d, i) => (
         <g key={`p${i}`}>

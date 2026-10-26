@@ -151,7 +151,7 @@ export default function AttendanceAnalysis() {
             <section className="at-card">
               <div className="at-card__head"><h3>Attendance and Average Score</h3><div className="at-inline"><Field inline label="Subject" value={subject} onChange={setSubject} options={opts(SUBJECTS)} /></div></div>
               <ResultsChart data={results} />
-              <div className="at-key"><span><i className="at-key__sw at-key__sw--ok" />Attendance %</span><span><i className="at-key__sw at-key__sw--low" />Average score %</span></div>
+              <div className="at-key"><span><i className="at-key__sw at-key__sw--navy" />Attendance %</span><span><i className="at-key__sw at-key__sw--low" />Average score %</span></div>
             </section>
           </div>
         </>
