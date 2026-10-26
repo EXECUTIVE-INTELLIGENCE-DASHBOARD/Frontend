@@ -323,13 +323,13 @@ export function AcademicFilters({ values, onChange }: AcademicFiltersProps) {
       {/* ERROR AND EMPTY STATES */}
       {schoolsError && (
         <p className="academic-performance__filter-message" role="alert">
-          Could not load campuses. Check the backend connection and try again.
+          Could not load campuses. Check your connection and try again.
         </p>
       )}
 
       {termsError && (
         <p className="academic-performance__filter-message" role="alert">
-          Could not load terms and academic years. Check the backend connection
+          Could not load terms and academic years. Check your connection
           and try again.
         </p>
       )}

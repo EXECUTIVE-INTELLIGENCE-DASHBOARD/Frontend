@@ -26,7 +26,6 @@ import type { RetentionSummary } from "./studentRetention.types";
 import "../../palette.css";
 import "./StudentRetention.css";
 
-/** Default KPI values while the dashboard data is unavailable. */
 const unavailableSummary: RetentionSummary = {
   reEnrolled: null,
   rate: null,
@@ -132,7 +131,7 @@ export function StudentRetention() {
 
   const { data, error, isPending } = state;
 
-  // Keep the existing dashboard helpers for calculating the displayed values.
+  // Use the selected campus for the displayed retention data.
   const campus = filters.campus || allCampusesLabel;
 
   const summary = data
@@ -213,7 +212,9 @@ export function StudentRetention() {
           )}
 
           {!isPending && data && rows.length === 0 && (
-            <p>No retention records match the selected filters.</p>
+            <p>
+              No retention records match the selected filters.
+            </p>
           )}
         </>
       )}
