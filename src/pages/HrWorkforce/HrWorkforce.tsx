@@ -227,7 +227,7 @@ export function HrWorkforce() {
 
       {tab === "establishment" && <EstablishmentTab employer={employer} />}
 
-      {tab === "talent" && <TalentTab employer={employer} />}
+      {tab === "talent" && <TalentTab />}
     </div>
   );
 }
