@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   BookOpen,
   Briefcase,
@@ -12,15 +12,8 @@ import {
 } from "lucide-react";
 
 import { buildCsv, csvFileName, downloadCsv } from "../../lib/csv";
-import {
-  absenceLabel,
-  allDepartmentsLabel,
-  attendanceLabel,
-  attendanceTarget,
-  departmentOptions,
-  formatNumber,
-  rowsFor,
-} from "./hrWorkforce.data";
+import type { HrWorkforceUnit } from "./hrWorkforce.api";
+import { formatNumber } from "./hrWorkforce.data";
 import type { DepartmentIcon } from "./hrWorkforce.types";
 
 const ICONS: Record<DepartmentIcon, LucideIcon> = {
@@ -31,14 +24,44 @@ const ICONS: Record<DepartmentIcon, LucideIcon> = {
   wrench: Wrench,
 };
 
-interface WorkforceTableCardProps {
-  campusLabel: string;
+const ALL_DEPARTMENTS = "All Departments";
+
+function iconForUnit(unit: HrWorkforceUnit): DepartmentIcon {
+  switch (unit.staff_category) {
+    case "teaching":
+      return "book";
+    case "non_teaching_support":
+      return "utensils";
+    case "drivers_technicians":
+      return "bus";
+    case "administrative":
+      return "briefcase";
+    case "technical_security":
+      return "wrench";
+    default:
+      return "briefcase";
+  }
 }
 
-export function WorkforceTableCard({ campusLabel }: WorkforceTableCardProps) {
-  const [department, setDepartment] = useState(allDepartmentsLabel);
+interface WorkforceTableCardProps {
+  units: HrWorkforceUnit[];
+}
 
-  const rows = rowsFor(campusLabel, department);
+export function WorkforceTableCard({ units }: WorkforceTableCardProps) {
+  const [department, setDepartment] = useState(ALL_DEPARTMENTS);
+
+  const departments = useMemo(
+    () => [...new Set(units.map((unit) => unit.name))],
+    [units],
+  );
+
+  const rows = useMemo(
+    () =>
+      department === ALL_DEPARTMENTS
+        ? units
+        : units.filter((unit) => unit.name === department),
+    [department, units],
+  );
 
   const handleExport = () => {
     const csv = buildCsv(
@@ -48,19 +71,23 @@ export function WorkforceTableCard({ campusLabel }: WorkforceTableCardProps) {
         "Location & Campus",
         "Total Headcount",
         "Attendance Rate",
-        "Absent",
+        "On Leave",
+        "Absences",
       ],
-      rows.map((row) => [
-        row.name,
-        row.category,
-        row.location,
-        row.headcount,
-        `${row.attendanceRate.toFixed(1)}%`,
-        absenceLabel(row),
+      rows.map((unit) => [
+        unit.name,
+        unit.staff_category_display,
+        unit.location,
+        unit.headcount,
+        unit.attendance_rate == null
+          ? "—"
+          : `${unit.attendance_rate.toFixed(1)}%`,
+        unit.absences?.on_leave ?? 0,
+        Object.keys(unit.absences).length ? JSON.stringify(unit.absences) : "—",
       ]),
     );
 
-    downloadCsv(csvFileName("hr-workforce", campusLabel), csv);
+    downloadCsv(csvFileName("hr-workforce", "All Campuses"), csv);
   };
 
   return (
@@ -81,9 +108,10 @@ export function WorkforceTableCard({ campusLabel }: WorkforceTableCardProps) {
               value={department}
               onChange={(event) => setDepartment(event.target.value)}
             >
-              {departmentOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
+              <option value={ALL_DEPARTMENTS}>{ALL_DEPARTMENTS}</option>
+              {departments.map((name) => (
+                <option key={name} value={name}>
+                  {name}
                 </option>
               ))}
             </select>
@@ -111,65 +139,73 @@ export function WorkforceTableCard({ campusLabel }: WorkforceTableCardProps) {
               <th scope="col">Location &amp; Campus</th>
               <th scope="col">Total Headcount</th>
               <th scope="col">Attendance Rate</th>
-              <th scope="col">Absent Rate</th>
+              <th scope="col">On Leave</th>
+              <th scope="col">Absences</th>
             </tr>
           </thead>
 
           <tbody>
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={6} className="hw-empty">
-                  No staff are recorded for this selection.
+                <td colSpan={7} className="hw-empty">
+                  No workforce units are available for this selection.
                 </td>
               </tr>
             ) : (
-              rows.map((row) => {
-                const Icon = ICONS[row.icon];
+              rows.map((unit) => {
+                const Icon = ICONS[iconForUnit(unit)];
 
                 return (
-                  <tr key={row.id}>
+                  <tr key={unit.id}>
                     <td>
                       <span className="hw-department">
                         <span
-                          className={`hw-department__icon hw-department__icon--${row.icon}`}
+                          className={`hw-department__icon hw-department__icon--${iconForUnit(unit)}`}
                           aria-hidden="true"
                         >
                           <Icon size={15} />
                         </span>
-
-                        <span className="hw-department__name">{row.name}</span>
+                        <span className="hw-department__name">{unit.name}</span>
                       </span>
                     </td>
+
                     <td>
                       <span
-                        className={`hw-tag ${row.teaching ? "hw-tag--teaching" : ""}`}
+                        className={`hw-tag ${
+                          unit.staff_category === "teaching"
+                            ? "hw-tag--teaching"
+                            : ""
+                        }`}
                       >
-                        {row.category}
+                        {unit.staff_category_display}
                       </span>
                     </td>
-                    <td className="hw-muted">{row.location}</td>
+
+                    <td className="hw-muted">{unit.location || "—"}</td>
+
                     <td>
                       <span className="hw-headcount">
-                        <strong>{formatNumber(row.headcount)}</strong>{" "}
+                        <strong>{formatNumber(unit.headcount)}</strong>{" "}
                         <span>Staff</span>
                       </span>
                     </td>
+
                     <td>
-                      <span
-                        className={`hw-pill ${
-                          row.attendanceRate >= attendanceTarget
-                            ? "hw-pill--good"
-                            : "hw-pill--warn"
-                        }`}
-                      >
-                        <span className="hw-pill__dot" aria-hidden="true" />
-                        {attendanceLabel(row.attendanceRate)}
+                      <span className="hw-pill">
+                        {unit.attendance_rate == null
+                          ? "—"
+                          : `${unit.attendance_rate.toFixed(1)}%`}
                       </span>
                     </td>
+
+                    <td>{unit.absences?.on_leave ?? 0}</td>
+
                     <td>
-                      <span className={`hw-absence hw-absence--${row.absenceTone}`}>
-                        {absenceLabel(row)}
-                      </span>
+                      {Object.keys(unit.absences).length
+                        ? Object.entries(unit.absences)
+                            .map(([name, count]) => `${name}: ${count}`)
+                            .join(", ")
+                        : "—"}
                     </td>
                   </tr>
                 );

@@ -1,16 +1,89 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { HrWorkforce } from "./HrWorkforce";
+import { getHrWorkforceDashboard } from "./hrWorkforce.api";
+import type { HrWorkforceDashboard } from "./hrWorkforce.api";
 import {
   absenceLabel,
   allCampusesLabel,
   campuses,
   departments,
-  reportingPeriod,
   rowsFor,
   summaryFor,
 } from "./hrWorkforce.data";
+
+vi.mock("./hrWorkforce.api", () => ({
+  getHrWorkforceDashboard: vi.fn(),
+}));
+
+const dashboardResponse: HrWorkforceDashboard = {
+  start: "2026-10-01",
+  end: "2026-10-26",
+  summary: {
+    total_staff: 10,
+    teaching_staff: 8,
+    non_teaching_staff: 2,
+    staffing_ratio: 10,
+    staffing_ratio_display: "1:10",
+    workforce_attendance_rate: 95,
+  },
+  units: [
+    {
+      id: 1,
+      name: "Academic & Curriculum Instruction",
+      staff_category: "teaching",
+      staff_category_display: "Teaching Staff",
+      campus: "kibuli",
+      location: "Kibuli Main Campus",
+      headcount: 10,
+      attendance_rate: 95,
+      absences: {
+        absent: 0,
+        on_leave: 1,
+        on_training: 0,
+        on_field: 0,
+      },
+    },
+  ],
+};
+
+const buwaateDashboard: HrWorkforceDashboard = {
+  start: "2026-10-01",
+  end: "2026-10-26",
+  summary: {
+    total_staff: 4,
+    teaching_staff: 3,
+    non_teaching_staff: 1,
+    staffing_ratio: 5,
+    staffing_ratio_display: "1:5",
+    workforce_attendance_rate: 90,
+  },
+  units: [
+    {
+      id: 2,
+      name: "Buwaate Teaching Unit",
+      staff_category: "teaching",
+      staff_category_display: "Teaching Staff",
+      campus: "buwaate",
+      location: "Buwaate Campus",
+      headcount: 4,
+      attendance_rate: 90,
+      absences: {
+        absent: 1,
+        on_leave: 0,
+        on_training: 0,
+        on_field: 0,
+      },
+    },
+  ],
+};
 
 const chooseCampus = (from: string, to: string) => {
   const campusSelect = screen.getByRole("combobox", {
@@ -18,202 +91,235 @@ const chooseCampus = (from: string, to: string) => {
   });
 
   expect(campusSelect).toHaveValue(from);
+
   fireEvent.change(campusSelect, {
     target: { value: to },
   });
 };
 
-const cellsOf = (row: HTMLElement) =>
-  within(row)
-    .getAllByRole("cell")
-    .map((cell) => cell.textContent);
+const getMetricValue = (label: string) => {
+  const metricLabel = screen.getByText(label);
+  const metricCard = metricLabel.closest(".hw-metric");
+
+  if (!metricCard) {
+    throw new Error(`Could not find the metric card for "${label}".`);
+  }
+
+  const metricValue = metricCard.querySelector(".hw-metric__value");
+
+  if (!metricValue) {
+    throw new Error(`Could not find the value for "${label}".`);
+  }
+
+  return metricValue;
+};
 
 describe("HrWorkforce", () => {
+  beforeEach(() => {
+    vi.mocked(getHrWorkforceDashboard).mockImplementation(
+      async (filters = {}) => {
+        if (filters.campus === "buwaate") {
+          return buwaateDashboard;
+        }
+
+        if (filters.campus === "annex") {
+          return {
+            ...dashboardResponse,
+            summary: {
+              ...dashboardResponse.summary,
+              total_staff: 0,
+              teaching_staff: 0,
+              non_teaching_staff: 0,
+              staffing_ratio: null,
+              staffing_ratio_display: null,
+              workforce_attendance_rate: null,
+            },
+            units: [],
+          };
+        }
+
+        return dashboardResponse;
+      },
+    );
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it("shows the reporting period and the shared campus filter", () => {
+  it("loads the reporting period and displays the campus filter", async () => {
     render(<HrWorkforce />);
 
-    expect(screen.getByText(reportingPeriod)).toBeInTheDocument();
+    expect(
+      await screen.findByText("01 Oct 2026 – 26 Oct 2026"),
+    ).toBeInTheDocument();
+
     expect(screen.getByRole("combobox", { name: "Campus" })).toHaveValue(
       "All Campuses",
     );
+
+    expect(getHrWorkforceDashboard).toHaveBeenCalled();
   });
 
-  it("renders the three headline cards for all campuses", () => {
+  it("renders the headline metrics from the API response", async () => {
     render(<HrWorkforce />);
 
-    const cards = screen.getAllByRole("article");
+    expect(await screen.findByText("Total Staff")).toBeInTheDocument();
 
-    expect(cards).toHaveLength(3);
+    expect(getMetricValue("Total Staff")).toHaveTextContent("10");
+    expect(getMetricValue("Staffing Ratio")).toHaveTextContent("1:10");
+    expect(getMetricValue("Workforce Attendance")).toHaveTextContent("95.0%");
+  });
 
-    const expected: Array<[string, string]> = [
-      ["Total Staff", "485"],
-      ["Staffing Ratio", "1:1.4"],
-      ["Workforce Attendance", "96.4%"],
-    ];
+  it("renders workforce units returned by the API", async () => {
+    render(<HrWorkforce />);
 
-    expected.forEach(([label, value], index) => {
-      expect(within(cards[index]).getByText(label)).toBeInTheDocument();
-      expect(within(cards[index]).getByText(value)).toBeInTheDocument();
+    const table = await screen.findByRole("table");
+
+    expect(
+      await within(table).findByText("Academic & Curriculum Instruction"),
+    ).toBeInTheDocument();
+
+    expect(within(table).getByText("Teaching Staff")).toBeInTheDocument();
+
+    expect(within(table).getByText("Kibuli Main Campus")).toBeInTheDocument();
+
+    expect(
+      within(table).getByText("10", { selector: "strong" }),
+    ).toBeInTheDocument();
+
+    expect(within(table).getByText("Staff")).toBeInTheDocument();
+  });
+
+  it("requests new dashboard data when the campus changes", async () => {
+    render(<HrWorkforce />);
+
+    await waitFor(() => {
+      expect(
+        within(screen.getByRole("table")).getByText(
+          "Academic & Curriculum Instruction",
+        ),
+      ).toBeInTheDocument();
     });
-  });
-
-  it("lists the five departments with their figures", () => {
-    render(<HrWorkforce />);
-
-    expect(
-      screen.getByRole("heading", {
-        name: "Consolidated Workforce Distribution & Attendance Register",
-      }),
-    ).toBeInTheDocument();
-
-    [
-      "Department / Unit",
-      "Nature / Staff Category",
-      "Location & Campus",
-      "Total Headcount",
-      "Attendance Rate",
-      "Absent Rate",
-    ].forEach((name) =>
-      expect(screen.getByRole("columnheader", { name })).toBeInTheDocument(),
-    );
-
-    // One header row plus five departments.
-    expect(screen.getAllByRole("row")).toHaveLength(6);
-
-    expect(
-      cellsOf(screen.getByRole("row", { name: /Academic & Curriculum/ })),
-    ).toEqual([
-      "Academic & Curriculum Instruction",
-      "Teaching Staff (Full-Time & Contract)",
-      "Kibuli Main & Buwaate",
-      "205 Staff",
-      "98.0% Present",
-      "4 on Leave",
-    ]);
-
-    expect(
-      cellsOf(screen.getByRole("row", { name: /Administration & Executive/ })),
-    ).toEqual([
-      "Administration & Executive Support",
-      "Administrative & Clerical",
-      "Kibuli Main Administrative Block",
-      "80 Staff",
-      "93.8% Present",
-      "7 on Leave/Field",
-    ]);
-
-    expect(
-      within(screen.getByRole("row", { name: /Transport & Fleet/ })).getByText(
-        "1 on Training",
-      ),
-    ).toBeInTheDocument();
-  });
-
-  it("colours attendance green on target and amber below it", () => {
-    render(<HrWorkforce />);
-
-    expect(screen.getByText("98.0% Present")).toHaveClass("hw-pill--good");
-    expect(screen.getByText("93.8% Present")).toHaveClass("hw-pill--warn");
-  });
-
-  it("narrows the table to one department", () => {
-    render(<HrWorkforce />);
-
-    fireEvent.change(screen.getByLabelText("Filter department"), {
-      target: { value: "Transport & Fleet Management" },
-    });
-
-    const table = screen.getByRole("table");
-
-    // The header row and the single department.
-    expect(within(table).getAllByRole("row")).toHaveLength(2);
-    expect(
-      within(table).getByText("Transport & Fleet Management"),
-    ).toBeInTheDocument();
-    expect(
-      within(table).queryByText("Boarding & Catering Operations"),
-    ).not.toBeInTheDocument();
-  });
-
-  it("changes the figures and rows when a campus is selected", () => {
-    render(<HrWorkforce />);
 
     chooseCampus("All Campuses", "Buwaate Campus");
 
-    const cards = screen.getAllByRole("article");
+    await waitFor(() => {
+      expect(getHrWorkforceDashboard).toHaveBeenLastCalledWith({
+        campus: "buwaate",
+      });
+    });
 
-    expect(within(cards[0]).getByText("100")).toBeInTheDocument();
-    expect(within(cards[1]).getByText("1:0.5")).toBeInTheDocument();
-    expect(within(cards[2]).getByText("96.0%")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        within(screen.getByRole("table")).getByText("Buwaate Teaching Unit"),
+      ).toBeInTheDocument();
+    });
 
-    // Header row plus the three departments that work at Buwaate.
-    expect(screen.getAllByRole("row")).toHaveLength(4);
-    expect(
-      within(screen.getByRole("table")).queryByText(
-        "Boarding & Catering Operations",
-      ),
-    ).not.toBeInTheDocument();
-
-    expect(
-      within(screen.getByRole("row", { name: /Transport & Fleet/ })).getByText(
-        "No absences",
-      ),
-    ).toBeInTheDocument();
+    expect(getMetricValue("Staffing Ratio")).toHaveTextContent("1:5");
+    expect(getMetricValue("Workforce Attendance")).toHaveTextContent("90.0%");
   });
 
-  it("explains when a department has no staff on the campus", () => {
+  it("passes no campus filter when all campuses are selected", async () => {
     render(<HrWorkforce />);
 
-    chooseCampus("All Campuses", "Annex / Preschool Branch");
-
-    fireEvent.change(screen.getByLabelText("Filter department"), {
-      target: { value: "Boarding & Catering Operations" },
+    await waitFor(() => {
+      expect(getHrWorkforceDashboard).toHaveBeenCalledWith({
+        campus: undefined,
+      });
     });
 
     expect(
-      screen.getByText("No staff are recorded for this selection."),
+      await within(screen.getByRole("table")).findByText(
+        "Academic & Curriculum Instruction",
+      ),
     ).toBeInTheDocument();
   });
 
-  it("downloads the visible rows when Export Report is clicked", () => {
-    const createObjectURL = vi.fn(() => "blob:test");
+  it("shows a retry option when the API request fails", async () => {
+    vi.mocked(getHrWorkforceDashboard)
+      .mockRejectedValueOnce(new Error("Network error"))
+      .mockResolvedValueOnce(dashboardResponse);
+
+    render(<HrWorkforce />);
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Unable to load workforce data.",
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Retry" }));
+
+    await waitFor(() => {
+      expect(getHrWorkforceDashboard).toHaveBeenCalledTimes(2);
+    });
+
+    const table = await screen.findByRole("table");
+
+    expect(
+      await within(table).findByText("Academic & Curriculum Instruction"),
+    ).toBeInTheDocument();
+  });
+  it("shows a dash when the API returns null attendance and staffing ratio", async () => {
+    vi.mocked(getHrWorkforceDashboard).mockResolvedValue({
+      ...dashboardResponse,
+      summary: {
+        ...dashboardResponse.summary,
+        staffing_ratio: null,
+        staffing_ratio_display: null,
+        workforce_attendance_rate: null,
+      },
+    });
+
+    render(<HrWorkforce />);
+
+    expect(await screen.findByText("Total Staff")).toBeInTheDocument();
+
+    expect(getMetricValue("Staffing Ratio")).toHaveTextContent("—");
+    expect(getMetricValue("Workforce Attendance")).toHaveTextContent("—");
+  });
+
+  it("exports the workforce report", async () => {
+    const createObjectURL = vi.fn(() => "blob:test-url");
     const revokeObjectURL = vi.fn();
-
-    Object.defineProperty(URL, "createObjectURL", {
-      value: createObjectURL,
-      configurable: true,
-      writable: true,
-    });
-    Object.defineProperty(URL, "revokeObjectURL", {
-      value: revokeObjectURL,
-      configurable: true,
-      writable: true,
-    });
-
-    const click = vi
+    const clickSpy = vi
       .spyOn(HTMLAnchorElement.prototype, "click")
       .mockImplementation(() => {});
 
+    Object.defineProperty(URL, "createObjectURL", {
+      configurable: true,
+      writable: true,
+      value: createObjectURL,
+    });
+
+    Object.defineProperty(URL, "revokeObjectURL", {
+      configurable: true,
+      writable: true,
+      value: revokeObjectURL,
+    });
+
     render(<HrWorkforce />);
 
+    const table = await screen.findByRole("table");
+
+    expect(
+      within(table).getByText("Academic & Curriculum Instruction"),
+    ).toBeInTheDocument();
+    // Export the report.
     fireEvent.click(screen.getByRole("button", { name: /Export Report/i }));
 
-    expect(createObjectURL).toHaveBeenCalledTimes(1);
-    expect(click).toHaveBeenCalledTimes(1);
-    expect(revokeObjectURL).toHaveBeenCalledWith("blob:test");
+    expect(createObjectURL).toHaveBeenCalled();
+    expect(clickSpy).toHaveBeenCalled();
+    expect(revokeObjectURL).toHaveBeenCalled();
   });
 });
 
-describe("hr workforce data", () => {
+describe("hr workforce legacy data helpers", () => {
   it("matches the reference for all campuses", () => {
     const rows = rowsFor(allCampusesLabel);
 
     expect(rows.map((row) => row.headcount)).toEqual([205, 95, 45, 80, 60]);
     expect(rows.map((row) => row.absent)).toEqual([4, 3, 1, 7, 3]);
+
     expect(rows.map(absenceLabel)).toEqual([
       "4 on Leave",
       "3 on Leave",
@@ -241,6 +347,7 @@ describe("hr workforce data", () => {
       expect(parts.reduce((sum, part) => sum + part.headcount, 0)).toBe(
         row.headcount,
       );
+
       expect(parts.reduce((sum, part) => sum + part.absent, 0)).toBe(
         row.absent,
       );
@@ -260,7 +367,7 @@ describe("hr workforce data", () => {
     expect(summaryFor("Annex / Preschool Branch").ratio).toBe("1:0.8");
   });
 
-  it("has five departments", () => {
+  it("has five legacy departments", () => {
     expect(departments).toHaveLength(5);
   });
 });

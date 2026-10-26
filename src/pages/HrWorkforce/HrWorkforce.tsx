@@ -1,5 +1,11 @@
-import { useState } from "react";
-import { CalendarCheck, CalendarDays, ChevronDown, Scale, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  CalendarCheck,
+  CalendarDays,
+  ChevronDown,
+  Scale,
+  Users,
+} from "lucide-react";
 
 import {
   CampusFilter,
@@ -8,18 +14,12 @@ import {
 import { WorkforceMetricCard } from "./WorkforceMetricCard";
 import { WorkforceTableCard } from "./WorkforceTableCard";
 import { EstablishmentTab, GslWorkforceCard, TalentTab } from "./HrTalentTabs";
+import { formatNumber } from "./hrWorkforce.data";
 import {
-  allCampusesLabel,
-  formatNumber,
-  reportingPeriod,
-  summaryFor,
-} from "./hrWorkforce.data";
-import {
-  defaultEmployer,
-  employerOptions,
-  gslAttendance,
-  gslHeadcount,
-} from "./hrTalent.data";
+  getHrWorkforceDashboard,
+  type HrWorkforceDashboard,
+} from "./hrWorkforce.api";
+import { defaultEmployer, employerOptions } from "./hrTalent.data";
 import type { EmployerFilter } from "./hrTalent.types";
 
 import "../../palette.css";
@@ -34,26 +34,83 @@ const tabs: Array<[Tab, string]> = [
   ["talent", "Talent"],
 ];
 
+const ALL_CAMPUSES = "All Campuses";
+
+function campusApiValue(campus: CampusOption): string | undefined {
+  const value = String(campus).trim().toLowerCase();
+
+  if (value === "all campuses") return undefined;
+  if (value.includes("kibuli")) return "kibuli";
+  if (value.includes("buwaate")) return "buwaate";
+  if (value.includes("annex") || value === "gis") return "annex";
+
+  return undefined;
+}
+
+function formatReportingDate(date: string): string {
+  const parsed = new Date(`${date}T00:00:00`);
+
+  if (Number.isNaN(parsed.getTime())) return date;
+
+  return parsed.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export function HrWorkforce() {
   const [tab, setTab] = useState<Tab>("workforce");
-  const [campus, setCampus] = useState<CampusOption>("All Campuses");
+  const [campus, setCampus] = useState<CampusOption>(
+    ALL_CAMPUSES as CampusOption,
+  );
   const [employer, setEmployer] = useState<EmployerFilter>(defaultEmployer);
 
-  const summary = summaryFor(campus);
+  const [dashboard, setDashboard] = useState<HrWorkforceDashboard | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
-  /* GSL is not on a school campus: it shows when chosen, or with all campuses. */
+  useEffect(() => {
+    let active = true;
+
+    async function loadDashboard() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const result = await getHrWorkforceDashboard({
+          campus: campusApiValue(campus),
+        });
+
+        if (active) setDashboard(result);
+      } catch {
+        if (active) {
+          setError(
+            "Unable to load workforce data. Please check your connection and try again.",
+          );
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+
+    void loadDashboard();
+
+    return () => {
+      active = false;
+    };
+  }, [campus, retryCount]);
+
   const showSchools = employer !== "gsl";
-  const showGsl = employer === "gsl" || (employer === "all" && campus === allCampusesLabel);
+  const showGsl =
+    employer === "gsl" ||
+    (employer === "all" && String(campus) === ALL_CAMPUSES);
 
-  const schoolStaff = showSchools ? summary.totalStaff : 0;
-  const gslStaff = showGsl ? gslHeadcount : 0;
-  const totalStaff = schoolStaff + gslStaff;
-  const attendance =
-    totalStaff === 0
-      ? 0
-      : ((showSchools ? summary.attendance * schoolStaff : 0) +
-          (showGsl ? gslAttendance * gslStaff : 0)) /
-        totalStaff;
+  const summary = dashboard?.summary;
+  const reportingPeriod = dashboard
+    ? `${formatReportingDate(dashboard.start)} – ${formatReportingDate(dashboard.end)}`
+    : "Loading reporting period…";
 
   return (
     <div className="hw-page">
@@ -85,7 +142,9 @@ export function HrWorkforce() {
             aria-label="Employer"
             className="hw-select__field"
             value={employer}
-            onChange={(event) => setEmployer(event.target.value as EmployerFilter)}
+            onChange={(event) =>
+              setEmployer(event.target.value as EmployerFilter)
+            }
           >
             {employerOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -97,40 +156,75 @@ export function HrWorkforce() {
           <ChevronDown size={14} aria-hidden="true" />
         </div>
 
-        {tab === "workforce" && <CampusFilter onCampusChange={setCampus} />}
+        {tab === "workforce" && showSchools && (
+          <CampusFilter onCampusChange={setCampus} />
+        )}
       </div>
 
       {tab === "workforce" && (
         <>
-          <div className="hw-metrics">
-            <WorkforceMetricCard
-              label="Total Staff"
-              value={formatNumber(totalStaff)}
-              icon={Users}
-              tone="sky"
-            />
+          {showSchools && (
+            <>
+              {loading && (
+                <p className="hw-status" role="status">
+                  Loading workforce data…
+                </p>
+              )}
 
-            <WorkforceMetricCard
-              label="Staffing Ratio"
-              value={showSchools ? summary.ratio : "—"}
-              icon={Scale}
-              tone="slate"
-            />
+              {!loading && error && (
+                <div className="hw-status hw-status--error" role="alert">
+                  <p>{error}</p>
+                  <button
+                    type="button"
+                    className="hw-button"
+                    onClick={() => setRetryCount((count) => count + 1)}
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
 
-            <WorkforceMetricCard
-              label="Workforce Attendance"
-              value={`${attendance.toFixed(1)}%`}
-              icon={CalendarCheck}
-              tone="amber"
-            />
-          </div>
+              {!loading && !error && summary && (
+                <>
+                  <div className="hw-metrics">
+                    <WorkforceMetricCard
+                      label="Total Staff"
+                      value={formatNumber(summary.total_staff)}
+                      icon={Users}
+                      tone="sky"
+                    />
 
-          {showSchools && <WorkforceTableCard campusLabel={campus} />}
+                    <WorkforceMetricCard
+                      label="Staffing Ratio"
+                      value={summary.staffing_ratio_display || "—"}
+                      icon={Scale}
+                      tone="slate"
+                    />
+
+                    <WorkforceMetricCard
+                      label="Workforce Attendance"
+                      value={
+                        summary.workforce_attendance_rate == null
+                          ? "—"
+                          : `${summary.workforce_attendance_rate.toFixed(1)}%`
+                      }
+                      icon={CalendarCheck}
+                      tone="amber"
+                    />
+                  </div>
+
+                  <WorkforceTableCard units={dashboard?.units ?? []} />
+                </>
+              )}
+            </>
+          )}
+
           {showGsl && <GslWorkforceCard />}
         </>
       )}
 
       {tab === "establishment" && <EstablishmentTab employer={employer} />}
+
       {tab === "talent" && <TalentTab employer={employer} />}
     </div>
   );
