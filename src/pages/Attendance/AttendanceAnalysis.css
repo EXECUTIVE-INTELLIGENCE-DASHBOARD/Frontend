@@ -37,7 +37,7 @@
 .at-state { margin: 0; color: var(--color-text-muted); }
 
 /* Second tier: KPI cards, icon stays in the existing blue */
-.at-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.at-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 30px; }
 .at-kpi {
   display: grid;
   grid-template-columns: 38px minmax(0, 1fr);
