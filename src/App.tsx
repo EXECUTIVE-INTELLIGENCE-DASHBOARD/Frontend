@@ -5,11 +5,12 @@ import "./layout.css";
 import { Hero } from "./components/Hero";
 import { Sidebar } from "./components/Sidebar";
 import { findNavigationLabel } from "./navigation/navigation.config";
-import { AcademicPerformance } from "./pages/academic-performance/AcademicPerformance";
 import { ExecutiveOverview } from "./pages/ExecutiveOverview/ExecutiveOverview";
 import { PlaceholderPage } from "./pages/Placeholder/PlaceholderPage";
 import AttendanceAnalysis from "./pages/Attendance/AttendanceAnalysis";
 import { Revenue } from "./pages/Revenue";
+import { AcademicOverview } from "./pages/AcademicOverview/AcademicOverview";
+import AcademicPerformance from "./pages/academic-performance/AcademicPerformance";
 import { Liabilities } from "./pages/Liabilities/Liabilities";
 import { ProcurementFinancials } from "./pages/ProcurementFinancials/ProcurementFinancials";
 import { ExpenseManagement } from "./pages/ExpenseManagement/ExpenseManagement";
@@ -34,9 +35,10 @@ import { Sales, Inventory, Budget } from "./pages/services";
 const pages: Record<string, ReactElement> = {
   /* Overview + academic group */
   overview: <ExecutiveOverview />,
+  "academic-overview": <AcademicOverview />,
   "admissions-enrollment": <AdmissionsEnrollment />,
   "academic-performance": <AcademicPerformance />,
-  "attendance": <AttendanceAnalysis />,
+  attendance: <AttendanceAnalysis />,
   "co-curricular-activities": <CoCurricularActivities />,
   "student-retention": <StudentRetention />,
 
@@ -56,7 +58,7 @@ const pages: Record<string, ReactElement> = {
   "supplier-performance": <SupplierPerformance />,
   "inventory-stock": <InventoryStock />,
   "procurement-requests": <ProcurementRequests />,
-  
+
   /* Operational group — approved menu. `facilities-maintenance` and
      `incidents-security` have no page component yet, so they render
      `PlaceholderPage`; work orders live inside facilities and ICT equipment
@@ -66,8 +68,8 @@ const pages: Record<string, ReactElement> = {
   "asset-management": <AssetsEquipment />,
 
   /* Services group  */
-  "sales": <Sales />,
-  "inventory": <Inventory />,
+  sales: <Sales />,
+  inventory: <Inventory />,
   "budget-utilisation": <Budget />,
 };
 

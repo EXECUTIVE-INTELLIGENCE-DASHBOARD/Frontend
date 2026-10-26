@@ -2,13 +2,44 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import api from "../../api/axios";
 import { StudentRetention } from "./StudentRetention";
 import type { RetentionDashboardData } from "./studentRetention.api";
 import { fetchStudentRetention } from "./studentRetention.api";
 
+vi.mock("../../api/axios", () => ({
+  default: {
+    get: vi.fn(),
+  },
+}));
+
 vi.mock("./studentRetention.api", () => ({
   fetchStudentRetention: vi.fn(),
 }));
+
+const mockSchools = [
+  {
+    id: 1,
+    name: "Kibuli Secondary School",
+    campus: "kibuli",
+    campus_display: "Kibuli Main Campus",
+    level: "secondary",
+  },
+  {
+    id: 2,
+    name: "Buwaate Secondary School",
+    campus: "buwaate",
+    campus_display: "Buwaate Campus",
+    level: "secondary",
+  },
+  {
+    id: 3,
+    name: "Annex Preschool",
+    campus: "annex",
+    campus_display: "Annex / Preschool Branch",
+    level: "nursery",
+  },
+];
 
 const mockRetentionData = {
   summary: {
@@ -81,6 +112,17 @@ const mockRetentionData = {
 
 beforeEach(() => {
   vi.mocked(fetchStudentRetention).mockResolvedValue(mockRetentionData);
+  vi.mocked(api.get).mockImplementation(async (url) => {
+    if (url === "/academics/schools/") {
+      return { data: mockSchools };
+    }
+
+    if (url === "/academics/terms/") {
+      return { data: [] };
+    }
+
+    throw new Error(`Unexpected API endpoint: ${url}`);
+  });
 });
 
 afterEach(() => {
@@ -283,7 +325,7 @@ describe("StudentRetention", () => {
   it("updates the figures and nationality rows when a campus is selected", async () => {
     await renderDashboard();
 
-    await chooseCampus("All Campuses", "Buwaate Campus");
+    await chooseCampus("", "buwaate");
 
     const cards = screen.getAllByRole("article");
 
@@ -296,13 +338,13 @@ describe("StudentRetention", () => {
 
     expect(
       screen.getByRole("combobox", { name: "Campus" }),
-    ).toHaveValue("Buwaate Campus");
+    ).toHaveValue("buwaate");
   });
 
   it("explains when a campus has no nationality rows", async () => {
     await renderDashboard();
 
-    await chooseCampus("All Campuses", "Annex / Preschool Branch");
+    await chooseCampus("", "annex");
 
     expect(
       screen.getByText(

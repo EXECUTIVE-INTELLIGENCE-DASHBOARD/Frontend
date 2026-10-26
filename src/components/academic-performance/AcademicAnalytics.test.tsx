@@ -1,54 +1,212 @@
-import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, within, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import api from "../../api/axios";
+import type { AcademicFilterValues } from "../filters/academicFilters.types";
 import { AcademicAnalytics } from "./AcademicAnalytics";
 
+vi.mock("../../api/axios", () => ({
+  default: {
+    get: vi.fn(),
+  },
+}));
+
+const testFilters: AcademicFilterValues = {
+  school: "",
+  campus: "",
+  section: "",
+  term: "",
+  year: "",
+};
+
+const mockDashboard = {
+  grade_distribution: [
+    {
+      level: "o_level",
+      level_display: "O Level",
+      students: 400,
+      grades: [
+        { grade: "A", students: 42, share: 10.5 },
+        { grade: "B", students: 86, share: 21.5 },
+        { grade: "C", students: 124, share: 31 },
+        { grade: "D", students: 98, share: 24.5 },
+        { grade: "E", students: 38, share: 9.5 },
+        { grade: "U", students: 12, share: 3 },
+      ],
+    },
+    {
+      level: "a_level",
+      level_display: "A Level",
+      students: 226,
+      grades: [
+        { grade: "A", students: 28, share: 12.4 },
+        { grade: "B", students: 56, share: 24.8 },
+        { grade: "C", students: 74, share: 32.7 },
+        { grade: "D", students: 42, share: 18.6 },
+        { grade: "E", students: 18, share: 8 },
+        { grade: "O", students: 8, share: 3.5 },
+      ],
+    },
+  ],
+};
+
+const mockSchools = [
+  {
+    id: 1,
+    name: "Buwaate Secondary School",
+    campus: "buwaate",
+    campus_display: "Buwaate",
+    level: "secondary",
+  },
+  {
+    id: 2,
+    name: "Kibuli Secondary School",
+    campus: "kibuli",
+    campus_display: "Kibuli Main",
+    level: "secondary",
+  },
+];
+
+const mockExamResults = [
+  {
+    id: 1,
+    school: 1,
+    exam: "ple" as const,
+    year: 2025,
+    division: "Division 1",
+    division_display: "Division 1",
+    aggregate: 8,
+    passed: true,
+  },
+  {
+    id: 2,
+    school: 1,
+    exam: "ple" as const,
+    year: 2025,
+    division: "Division 2",
+    division_display: "Division 2",
+    aggregate: 12,
+    passed: true,
+  },
+  {
+    id: 3,
+    school: 1,
+    exam: "ple" as const,
+    year: 2025,
+    division: "Division 3",
+    division_display: "Division 3",
+    aggregate: 18,
+    passed: false,
+  },
+  {
+    id: 4,
+    school: 2,
+    exam: "uce" as const,
+    year: 2025,
+    division: "Division 1",
+    division_display: "Division 1",
+    passed: true,
+  },
+  {
+    id: 5,
+    school: 2,
+    exam: "uace" as const,
+    year: 2025,
+    principal_passes: 2,
+    points: 15,
+    passed: true,
+  },
+];
+
+function mockApiResponses() {
+  vi.mocked(api.get).mockImplementation((url) => {
+    if (url === "/academics/performance/dashboard/") {
+      return Promise.resolve({ data: mockDashboard });
+    }
+
+    if (url === "/academics/schools/") {
+      return Promise.resolve({ data: mockSchools });
+    }
+
+    if (url === "/academics/national-exam-results/") {
+      return Promise.resolve({ data: mockExamResults });
+    }
+
+    return Promise.reject(new Error(`Unexpected API endpoint: ${url}`));
+  });
+}
+
+function renderAnalytics(filters = testFilters) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchInterval: false,
+      },
+    },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <AcademicAnalytics filters={filters} />
+    </QueryClientProvider>,
+  );
+}
+
 describe("AcademicAnalytics", () => {
-  it("renders the academic analytics section", () => {
-    render(<AcademicAnalytics />);
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockApiResponses();
+  });
+
+  it("renders the academic analytics section", async () => {
+    renderAnalytics();
 
     expect(
-      screen.getByRole("region", {
+      await screen.findByRole("region", {
         name: "Academic analytics",
       }),
     ).toBeInTheDocument();
   });
 
-  it("renders both analytics cards", () => {
-    render(<AcademicAnalytics />);
+  it("renders the Grade Distribution and National Examination Results cards", async () => {
+    renderAnalytics();
 
     expect(
-      screen.getByRole("heading", {
+      await screen.findByRole("heading", {
         name: "Grade Distribution",
       }),
     ).toBeInTheDocument();
 
     expect(
       screen.getByRole("heading", {
-        name: "Graduation Rate",
+        name: "National Examination Results",
       }),
     ).toBeInTheDocument();
   });
 
-  it("renders the descriptions for both analytics cards", () => {
-    render(<AcademicAnalytics />);
+  it("renders the current card descriptions", async () => {
+    renderAnalytics();
 
     expect(
-      screen.getByText(
-        "Breakdown of student grades across academic levels",
-      ),
+      await screen.findByRole("heading", {
+        name: "Grade Distribution",
+      }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText("Graduation rates by academic level"),
+      screen.getByRole("heading", {
+        name: "National Examination Results",
+      }),
     ).toBeInTheDocument();
   });
 
-  it("renders O Level and A Level grade distributions", () => {
-    render(<AcademicAnalytics />);
+  it("renders O Level and A Level grade distributions from the API", async () => {
+    renderAnalytics();
 
     expect(
-      screen.getByRole("heading", { name: "O Level" }),
+      await screen.findByRole("heading", { name: "O Level" }),
     ).toBeInTheDocument();
 
     expect(
@@ -59,30 +217,47 @@ describe("AcademicAnalytics", () => {
     expect(screen.getByText("226 students")).toBeInTheDocument();
   });
 
-  it("renders all O Level and A Level grades", () => {
-    render(<AcademicAnalytics />);
+  it("renders the grades returned by the API", async () => {
+    renderAnalytics();
 
-    const gradeLabels = screen.getAllByText(/^[A-EUO]$/);
+    await screen.findByRole("heading", { name: "Grade Distribution" });
 
-    expect(gradeLabels).toHaveLength(12);
+    const oLevel = screen
+      .getByRole("heading", { name: "O Level" })
+      .closest(".acad-analytics__grade-level");
+
+    const aLevel = screen
+      .getByRole("heading", { name: "A Level" })
+      .closest(".acad-analytics__grade-level");
+
+    expect(oLevel).not.toBeNull();
+    expect(aLevel).not.toBeNull();
 
     for (const grade of ["A", "B", "C", "D", "E", "U"]) {
       expect(
-        screen.getAllByText(grade).length,
-      ).toBeGreaterThanOrEqual(1);
+        within(oLevel as HTMLElement).getAllByText(grade).length,
+      ).toBeGreaterThan(0);
     }
 
-    expect(screen.getAllByText("A").length).toBe(2);
-    expect(screen.getAllByText("B").length).toBe(2);
-    expect(screen.getAllByText("C").length).toBe(2);
-    expect(screen.getAllByText("D").length).toBe(2);
-    expect(screen.getAllByText("E").length).toBe(2);
+    for (const grade of ["A", "B", "C", "D", "E", "O"]) {
+      expect(
+        within(aLevel as HTMLElement).getAllByText(grade).length,
+      ).toBeGreaterThan(0);
+    }
   });
 
-  it("renders the correct grade student counts", () => {
-    render(<AcademicAnalytics />);
+  it("renders every grade count returned by the API", async () => {
+    renderAnalytics();
 
-    for (const count of [
+    await screen.findByRole("heading", { name: "Grade Distribution" });
+
+    const gradeCounts = document.querySelectorAll(
+      ".acad-analytics__grade-count",
+    );
+
+    expect(
+      Array.from(gradeCounts).map((element) => element.textContent),
+    ).toEqual([
       "42",
       "86",
       "124",
@@ -92,26 +267,17 @@ describe("AcademicAnalytics", () => {
       "28",
       "56",
       "74",
+      "42",
       "18",
       "8",
-    ]) {
-      expect(screen.getAllByText(count).length).toBeGreaterThanOrEqual(1);
-    }
+    ]);
   });
 
-  it("renders all grade progress bars with accessible labels", () => {
-    render(<AcademicAnalytics />);
-
-    const progressBars = screen.getAllByRole("progressbar");
-
-    const gradeProgressBars = progressBars.filter((bar) =>
-      bar.getAttribute("aria-label")?.includes("grade"),
-    );
-
-    expect(gradeProgressBars).toHaveLength(12);
+  it("renders accessible grade progress bars", async () => {
+    renderAnalytics();
 
     expect(
-      screen.getByRole("progressbar", {
+      await screen.findByRole("progressbar", {
         name: "O Level grade A",
       }),
     ).toHaveAttribute("aria-valuenow", "42");
@@ -123,54 +289,219 @@ describe("AcademicAnalytics", () => {
     ).toHaveAttribute("aria-valuenow", "74");
   });
 
-  it("renders both graduation levels", () => {
-    render(<AcademicAnalytics />);
+  it("renders the Campus heading and all national examination table columns", async () => {
+    renderAnalytics();
+
+    const table = await screen.findByRole("table");
+
+    for (const heading of [
+      "Campus",
+      "Exam",
+      "Year",
+      "Candidates",
+      "Passed",
+      "Failed",
+      "Pass Rate",
+    ]) {
+      expect(
+        within(table).getByRole("columnheader", { name: heading }),
+      ).toBeInTheDocument();
+    }
 
     expect(
-      screen.getByText("O Level", {
-        selector: ".acad-analytics__completion-level-label",
+      within(table).queryByRole("columnheader", {
+        name: "Campus / School",
       }),
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders national examination results grouped by campus, exam, and year", async () => {
+    renderAnalytics();
+
+    const table = await screen.findByRole("table");
+    const rows = within(table).getAllByRole("row");
+
+    // One header row and three result rows:
+    // Buwaate PLE, Kibuli Main UACE, Kibuli Main UCE.
+    expect(rows).toHaveLength(4);
+
+    expect(within(table).getByText("Buwaate")).toBeInTheDocument();
+    expect(within(table).getAllByText("Kibuli Main")).toHaveLength(2);
+
+    expect(within(table).getByText("PLE")).toBeInTheDocument();
+    expect(within(table).getByText("UCE")).toBeInTheDocument();
+    expect(within(table).getByText("UACE")).toBeInTheDocument();
+  });
+
+  it("calculates candidates, passed, failed, and pass rate for each group", async () => {
+    renderAnalytics();
+
+    const table = await screen.findByRole("table");
+    const rows = within(table).getAllByRole("row");
+
+    const buwaateRow = rows.find((row) => within(row).queryByText("Buwaate"));
+
+    expect(buwaateRow).toBeDefined();
+
+    const cells = within(buwaateRow as HTMLElement).getAllByRole("cell");
+
+    expect(cells.map((cell) => cell.textContent?.trim())).toEqual([
+      "Buwaate",
+      "PLE",
+      "2025",
+      "3",
+      "2",
+      "1",
+      "66.7%",
+    ]);
+  });
+
+  it("requests the dashboard using the selected campus, section, school, and term", async () => {
+    renderAnalytics({
+      school: "12",
+      campus: "kibuli",
+      section: "secondary",
+      term: "7",
+      year: "",
+    });
+
+    await screen.findByRole("heading", {
+      name: "National Examination Results",
+    });
+
+    await waitFor(() => {
+      expect(api.get).toHaveBeenCalledWith(
+        "/academics/performance/dashboard/",
+        expect.objectContaining({
+          params: {
+            school: "12",
+            campus: "kibuli",
+            level: "secondary",
+            term: 7,
+          },
+          signal: expect.anything(),
+        }),
+      );
+    });
+  });
+
+  it("requests national examination results using the selected filters", async () => {
+    renderAnalytics({
+      school: "2",
+      campus: "kibuli",
+      section: "secondary",
+      term: "1",
+      year: "2025",
+    });
+
+    await waitFor(() => {
+      expect(api.get).toHaveBeenCalledWith(
+        "/academics/national-exam-results/",
+        expect.objectContaining({
+          params: {
+            school: "2",
+            campus: "kibuli",
+            level: "secondary",
+            year: "2025",
+          },
+          signal: expect.anything(),
+        }),
+      );
+    });
+  });
+
+  it("does not include a term parameter in national examination requests", async () => {
+    renderAnalytics({
+      ...testFilters,
+      term: "2",
+    });
+
+    await waitFor(() => {
+      expect(api.get).toHaveBeenCalledWith(
+        "/academics/national-exam-results/",
+        expect.objectContaining({
+          params: {},
+          signal: expect.anything(),
+        }),
+      );
+    });
+  });
+
+  it("shows a message when no grade distribution data is available", async () => {
+    vi.mocked(api.get).mockImplementation((url) => {
+      if (url === "/academics/performance/dashboard/") {
+        return Promise.resolve({ data: { grade_distribution: [] } });
+      }
+
+      if (url === "/academics/schools/") {
+        return Promise.resolve({ data: mockSchools });
+      }
+
+      if (url === "/academics/national-exam-results/") {
+        return Promise.resolve({ data: mockExamResults });
+      }
+
+      return Promise.reject(new Error(`Unexpected API endpoint: ${url}`));
+    });
+
+    renderAnalytics();
 
     expect(
-      screen.getByText("A Level", {
-        selector: ".acad-analytics__completion-level-label",
-      }),
+      await screen.findByText(
+        "No grade distribution data is available for these filters.",
+      ),
     ).toBeInTheDocument();
   });
 
-  it("calculates and displays the correct graduation rates", () => {
-    render(<AcademicAnalytics />);
+  it("shows a message when no national examination results are available", async () => {
+    vi.mocked(api.get).mockImplementation((url) => {
+      if (url === "/academics/performance/dashboard/") {
+        return Promise.resolve({ data: mockDashboard });
+      }
 
-    expect(screen.getByText("91.9%")).toBeInTheDocument();
-    expect(screen.getByText("90.7%")).toBeInTheDocument();
+      if (url === "/academics/schools/") {
+        return Promise.resolve({ data: mockSchools });
+      }
+
+      if (url === "/academics/national-exam-results/") {
+        return Promise.resolve({ data: [] });
+      }
+
+      return Promise.reject(new Error(`Unexpected API endpoint: ${url}`));
+    });
+
+    renderAnalytics();
+
+    expect(
+      await screen.findByText(
+        "No national examination results are available for the selected filters.",
+      ),
+    ).toBeInTheDocument();
   });
 
-  it("renders the correct graduated and enrolled student counts", () => {
-    render(<AcademicAnalytics />);
+  it("shows an error when the dashboard API request fails", async () => {
+    vi.mocked(api.get).mockRejectedValue(new Error("Request failed"));
 
-    expect(
-      screen.getByText("386 of 420 students"),
-    ).toBeInTheDocument();
+    renderAnalytics();
 
-    expect(
-      screen.getByText("205 of 226 students"),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Unable to load academic analytics. Please try again.",
+    );
   });
 
-  it("renders accessible graduation rate progress bars", () => {
-    render(<AcademicAnalytics />);
+  it("shows an error when national examination requests fail", async () => {
+    vi.mocked(api.get).mockImplementation((url) => {
+      if (url === "/academics/performance/dashboard/") {
+        return Promise.resolve({ data: mockDashboard });
+      }
 
-    expect(
-      screen.getByRole("progressbar", {
-        name: "O Level graduation rate",
-      }),
-    ).toHaveAttribute("aria-valuenow", "91.9");
+      return Promise.reject(new Error("Request failed"));
+    });
 
-    expect(
-      screen.getByRole("progressbar", {
-        name: "A Level graduation rate",
-      }),
-    ).toHaveAttribute("aria-valuenow", "90.7");
+    renderAnalytics();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Unable to load national examination results. Please try again.",
+    );
   });
 });

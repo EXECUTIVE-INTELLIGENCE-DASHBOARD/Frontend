@@ -1,54 +1,16 @@
-import { useState } from "react";
-import {
-  ChevronDown,
-  Cpu,
-  Download,
-  Globe,
-  Leaf,
-  Medal,
-  Music,
-  SlidersHorizontal,
-  type LucideIcon,
-} from "lucide-react";
-
-import {
-  allDomainsLabel,
-  domainOptions,
-  filterRowsByDomain,
-} from "./coCurricularActivities.data";
-import type {
-  ActivityIcon,
-  ActivityRow,
-} from "./coCurricularActivities.types";
-import { buildCsv, csvFileName, downloadCsv } from "./exportCsv";
+import type { CoCurricularActivityRow } from "../../api/academics.api";
 
 import "../../palette.css";
 import "./coCurricularPalette.css";
 
-const ICONS: Record<ActivityIcon, LucideIcon> = {
-  globe: Globe,
-  cpu: Cpu,
-  medal: Medal,
-  music: Music,
-  leaf: Leaf,
-};
-
 interface EngagementTableCardProps {
-  rows: ActivityRow[];
-  campusLabel: string;
+  rows: CoCurricularActivityRow[];
 }
 
 export function EngagementTableCard({
   rows,
-  campusLabel,
 }: EngagementTableCardProps) {
-  const [domain, setDomain] = useState(allDomainsLabel);
-
-  const visibleRows = filterRowsByDomain(rows, domain);
-
-  const handleExport = () => {
-    downloadCsv(csvFileName(campusLabel), buildCsv(visibleRows));
-  };
+  const safeRows = rows ?? [];
 
   return (
     <section className="cc-card">
@@ -57,91 +19,47 @@ export function EngagementTableCard({
           <span className="cc-card__dot" aria-hidden="true" />
           Co-Curricular &amp; Club Engagement Summary
         </h2>
-
-        <div className="cc-card__actions">
-          <div className="cc-select">
-            <SlidersHorizontal size={14} aria-hidden="true" />
-
-            <select
-              aria-label="Filter domain"
-              className="cc-select__field"
-              value={domain}
-              onChange={(event) => setDomain(event.target.value)}
-            >
-              {domainOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-
-            <ChevronDown size={14} aria-hidden="true" />
-          </div>
-
-          <button
-            type="button"
-            className="cc-button cc-button--primary"
-            onClick={handleExport}
-          >
-            <Download size={14} aria-hidden="true" />
-            Export Report
-          </button>
-        </div>
       </div>
 
       <div className="cc-table-wrap">
         <table className="cc-table">
           <thead>
             <tr>
-              <th scope="col">Activity / Club</th>
-              <th scope="col">Society</th>
+              <th scope="col">Activity</th>
+              <th scope="col">Category</th>
+              <th scope="col">School</th>
               <th scope="col" className="cc-num">
-                Events held
-              </th>
-              <th scope="col" className="cc-num">
-                Total attended
-              </th>
-              <th scope="col" className="cc-num">
-                Girls attended
-              </th>
-              <th scope="col" className="cc-num">
-                Boys attended
-              </th>
-              <th scope="col" className="cc-num">
-                Non participatory
+                Participants
               </th>
             </tr>
           </thead>
 
           <tbody>
-            {visibleRows.map((row) => {
-              const Icon = ICONS[row.icon];
-
-              return (
+            {safeRows.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="cc-muted">
+                  No activity data is available.
+                </td>
+              </tr>
+            ) : (
+              safeRows.map((row) => (
                 <tr key={row.id}>
                   <td>
                     <span className="cc-activity">
-                      <span
-                        className={`cc-activity__icon cc-activity__icon--${row.icon}`}
-                        aria-hidden="true"
-                      >
-                        <Icon size={14} />
+                      <span className="cc-activity__name">
+                        {row.name}
                       </span>
-
-                      <span className="cc-activity__name">{row.name}</span>
                     </span>
                   </td>
-                  <td className="cc-muted">{row.domain}</td>
-                  <td className="cc-num">{row.events}</td>
-                  <td className="cc-num cc-strong">{row.attended}</td>
-                  <td className="cc-num cc-girls">{row.girls}</td>
-                  <td className="cc-num cc-boys">{row.boys}</td>
-                  <td className="cc-num">
-                    <span className="cc-pill">{row.nonParticipatory}</span>
+
+                  <td>{row.category_display}</td>
+                  <td>{row.school}</td>
+                  <td className="cc-num cc-strong">
+                    {row.participants}
                   </td>
                 </tr>
-              );
-            })}
+              ))
+            )}
           </tbody>
         </table>
       </div>

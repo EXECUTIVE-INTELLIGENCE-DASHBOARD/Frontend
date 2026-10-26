@@ -1,18 +1,185 @@
-import { describe, it, expect } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { AcademicPerformance } from "./AcademicPerformance";
+import api from "../../api/axios";
+import { academicsApi } from "../../api/academics.api";
+import AcademicPerformance from "./AcademicPerformance";
 
-describe("AcademicPerformance", () => {
-  it("renders the academic performance page", () => {
-    render(<AcademicPerformance />);
+vi.mock("../../api/axios", () => ({
+  default: {
+    get: vi.fn(),
+  },
+}));
 
-    expect(screen.getByRole("main")).toBeInTheDocument();
+vi.mock("../../api/academics.api", () => ({
+  academicsApi: {
+    getPerformanceDashboard: vi.fn(),
+  },
+}));
+
+const currentYear = new Date().getFullYear();
+
+const mockSchools = [
+  {
+    id: 1,
+    name: "Kibuli Main School",
+    campus: "Kibuli Main Campus",
+    campus_display: "Kibuli Main Campus",
+    level: "secondary",
+  },
+  {
+    id: 2,
+    name: "Buwaate School",
+    campus: "Buwaate Campus",
+    campus_display: "Buwaate Campus",
+    level: "secondary",
+  },
+  {
+    id: 3,
+    name: "Annex Preschool",
+    campus: "Annex Preschool",
+    campus_display: "Annex Preschool",
+    level: "nursery",
+  },
+];
+
+const mockTerms = [
+  {
+    id: 1,
+    academic_year: currentYear,
+    number: 1,
+    start_date: `${currentYear}-01-01`,
+    end_date: `${currentYear}-04-30`,
+  },
+  {
+    id: 2,
+    academic_year: currentYear,
+    number: 2,
+    start_date: `${currentYear}-05-01`,
+    end_date: `${currentYear}-08-31`,
+  },
+  {
+    id: 3,
+    academic_year: currentYear,
+    number: 3,
+    start_date: `${currentYear}-09-01`,
+    end_date: `${currentYear}-12-31`,
+  },
+  {
+    id: 4,
+    academic_year: currentYear - 1,
+    number: 1,
+    start_date: `${currentYear - 1}-01-01`,
+    end_date: `${currentYear - 1}-04-30`,
+  },
+  {
+    id: 5,
+    academic_year: currentYear - 1,
+    number: 2,
+    start_date: `${currentYear - 1}-05-01`,
+    end_date: `${currentYear - 1}-08-31`,
+  },
+  {
+    id: 6,
+    academic_year: currentYear - 1,
+    number: 3,
+    start_date: `${currentYear - 1}-09-01`,
+    end_date: `${currentYear - 1}-12-31`,
+  },
+  {
+    id: 7,
+    academic_year: currentYear - 2,
+    number: 1,
+    start_date: `${currentYear - 2}-01-01`,
+    end_date: `${currentYear - 2}-04-30`,
+  },
+  {
+    id: 8,
+    academic_year: currentYear - 3,
+    number: 1,
+    start_date: `${currentYear - 3}-01-01`,
+    end_date: `${currentYear - 3}-04-30`,
+  },
+  {
+    id: 9,
+    academic_year: currentYear - 4,
+    number: 1,
+    start_date: `${currentYear - 4}-01-01`,
+    end_date: `${currentYear - 4}-04-30`,
+  },
+];
+
+const mockDashboard = {
+  term: { id: 1, label: `Term 1, ${currentYear}` },
+  compared_with: null,
+  summary: {
+    syllabus_coverage: 85,
+    topics_covered: 85,
+    topics_planned: 100,
+    student_performance: 78,
+    students_passing: 78,
+    students_assessed: 100,
+    average_mark: 72.5,
+    average_grade: "B",
+  },
+  grade_distribution: [],
+  national_exams: [],
+  subjects: [],
+  tests: [],
+};
+
+function renderAcademicPerformance() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchInterval: false,
+      },
+    },
   });
 
-  it("renders the academic performance filters", () => {
-    render(<AcademicPerformance />);
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <AcademicPerformance />
+    </QueryClientProvider>,
+  );
+}
+
+describe("AcademicPerformance", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    vi.mocked(api.get).mockImplementation(async (url) => {
+      if (url === "/academics/schools/") {
+        return { data: mockSchools };
+      }
+
+      if (url === "/academics/terms/") {
+        return { data: mockTerms };
+      }
+
+      throw new Error(`Unexpected API request: ${String(url)}`);
+    });
+
+    vi.mocked(academicsApi.getPerformanceDashboard).mockResolvedValue(
+      mockDashboard as Awaited<
+        ReturnType<typeof academicsApi.getPerformanceDashboard>
+      >,
+    );
+  });
+
+  it("renders the academic performance page", () => {
+    renderAcademicPerformance();
+
+    expect(
+      screen.getByRole("main", { name: "" }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders all academic performance filters", () => {
+    renderAcademicPerformance();
 
     expect(
       screen.getByRole("region", {
@@ -26,120 +193,67 @@ describe("AcademicPerformance", () => {
     expect(screen.getByLabelText("Academic Year")).toBeInTheDocument();
   });
 
-  it("uses the correct default filter selections", () => {
-    render(<AcademicPerformance />);
-
-    expect(screen.getByLabelText("Campus")).toHaveValue("All Campuses");
-    expect(screen.getByLabelText("Section")).toHaveValue("Secondary");
-    expect(screen.getByLabelText("Term")).toHaveValue("Term 1");
-    expect(screen.getByLabelText("Academic Year")).toHaveValue(
-      String(new Date().getFullYear()),
-    );
-  });
-
-  it("renders all campus options", () => {
-    render(<AcademicPerformance />);
+  it("loads the campus options from the API", async () => {
+    renderAcademicPerformance();
 
     const campusSelect = screen.getByLabelText("Campus");
 
     expect(
-      within(campusSelect).getByRole("option", {
-        name: "All Campuses",
-      }),
-    ).toBeInTheDocument();
-
-    expect(
-      within(campusSelect).getByRole("option", {
+      await within(campusSelect).findByRole("option", {
         name: "Kibuli Main Campus",
       }),
     ).toBeInTheDocument();
 
     expect(
-      within(campusSelect).getByRole("option", {
-        name: "Buwaate Campus",
-      }),
-    ).toBeInTheDocument();
+      within(campusSelect).getAllByRole("option"),
+    ).toHaveLength(4);
 
-    expect(
-      within(campusSelect).getByRole("option", {
-        name: "Annex Preschool",
-      }),
-    ).toBeInTheDocument();
-
-    expect(
-      within(campusSelect).getByRole("option", {
-        name: "Secondary Campus",
-      }),
-    ).toBeInTheDocument();
-
-    expect(
-      within(campusSelect).getByRole("option", {
-        name: "Primary Campus",
-      }),
-    ).toBeInTheDocument();
-
-    expect(within(campusSelect).getAllByRole("option")).toHaveLength(6);
+    expect(api.get).toHaveBeenCalledWith("/academics/schools/");
   });
 
-  it("renders all section options", () => {
-    render(<AcademicPerformance />);
+  it("loads the section options", () => {
+    renderAcademicPerformance();
 
     const sectionSelect = screen.getByLabelText("Section");
 
-    expect(within(sectionSelect).getAllByRole("option")).toHaveLength(3);
-
     expect(
-      within(sectionSelect).getByRole("option", {
-        name: "Nursery",
-      }),
+      within(sectionSelect).getByRole("option", { name: "All Sections" }),
     ).toBeInTheDocument();
 
-    expect(
-      within(sectionSelect).getByRole("option", {
-        name: "Primary",
-      }),
-    ).toBeInTheDocument();
-
-    expect(
-      within(sectionSelect).getByRole("option", {
-        name: "Secondary",
-      }),
-    ).toBeInTheDocument();
+    for (const section of ["Nursery", "Primary", "Secondary"]) {
+      expect(
+        within(sectionSelect).getByRole("option", { name: section }),
+      ).toBeInTheDocument();
+    }
   });
 
-  it("renders all term options", () => {
-    render(<AcademicPerformance />);
+  it("loads term options from the API", async () => {
+    renderAcademicPerformance();
 
     const termSelect = screen.getByLabelText("Term");
 
-    expect(within(termSelect).getAllByRole("option")).toHaveLength(3);
-
     expect(
-      within(termSelect).getByRole("option", {
-        name: "Term 1",
+      await within(termSelect).findByRole("option", {
+        name: `Term 1 · ${currentYear}`,
       }),
     ).toBeInTheDocument();
 
     expect(
-      within(termSelect).getByRole("option", {
-        name: "Term 2",
-      }),
-    ).toBeInTheDocument();
+      within(termSelect).getAllByRole("option"),
+    ).toHaveLength(10);
 
-    expect(
-      within(termSelect).getByRole("option", {
-        name: "Term 3",
-      }),
-    ).toBeInTheDocument();
+    expect(api.get).toHaveBeenCalledWith("/academics/terms/");
   });
 
-  it("renders five academic year options starting from the current year", () => {
-    render(<AcademicPerformance />);
+  it("loads academic year options from the returned terms", async () => {
+    renderAcademicPerformance();
 
     const yearSelect = screen.getByLabelText("Academic Year");
-    const currentYear = new Date().getFullYear();
 
-    expect(within(yearSelect).getAllByRole("option")).toHaveLength(5);
+    await waitFor(() => {
+      expect(yearSelect).toBeEnabled();
+      expect(within(yearSelect).getAllByRole("option")).toHaveLength(6);
+    });
 
     for (let index = 0; index < 5; index += 1) {
       expect(
@@ -153,78 +267,117 @@ describe("AcademicPerformance", () => {
   it("allows the user to change the campus", async () => {
     const user = userEvent.setup();
 
-    render(<AcademicPerformance />);
+    renderAcademicPerformance();
 
     const campusSelect = screen.getByLabelText("Campus");
+
+    await screen.findByRole("option", {
+      name: "Kibuli Main Campus",
+    });
 
     await user.selectOptions(campusSelect, "Kibuli Main Campus");
 
     expect(campusSelect).toHaveValue("Kibuli Main Campus");
   });
 
+  it("allows the user to select all campuses", async () => {
+    const user = userEvent.setup();
+
+    renderAcademicPerformance();
+
+    const campusSelect = screen.getByLabelText("Campus");
+
+    await screen.findByRole("option", {
+      name: "Kibuli Main Campus",
+    });
+
+    await user.selectOptions(campusSelect, "Kibuli Main Campus");
+    await user.selectOptions(campusSelect, "");
+
+    expect(campusSelect).toHaveValue("");
+  });
+
   it("allows the user to change the section", async () => {
     const user = userEvent.setup();
 
-    render(<AcademicPerformance />);
+    renderAcademicPerformance();
 
     const sectionSelect = screen.getByLabelText("Section");
 
-    await user.selectOptions(sectionSelect, "Primary");
+    await user.selectOptions(sectionSelect, "primary");
 
-    expect(sectionSelect).toHaveValue("Primary");
+    expect(sectionSelect).toHaveValue("primary");
   });
 
   it("allows the user to change the term", async () => {
     const user = userEvent.setup();
 
-    render(<AcademicPerformance />);
+    renderAcademicPerformance();
 
     const termSelect = screen.getByLabelText("Term");
 
-    await user.selectOptions(termSelect, "Term 2");
+    await screen.findByRole("option", {
+      name: `Term 2 · ${currentYear}`,
+    });
 
-    expect(termSelect).toHaveValue("Term 2");
+    await user.selectOptions(termSelect, "2");
+
+    expect(termSelect).toHaveValue("2");
   });
 
   it("allows the user to change the academic year", async () => {
     const user = userEvent.setup();
 
-    render(<AcademicPerformance />);
+    renderAcademicPerformance();
 
     const yearSelect = screen.getByLabelText("Academic Year");
-    const previousYear = String(new Date().getFullYear() - 1);
+    const previousYear = String(currentYear - 1);
+
+    await waitFor(() => expect(yearSelect).toBeEnabled());
 
     await user.selectOptions(yearSelect, previousYear);
 
     expect(yearSelect).toHaveValue(previousYear);
   });
 
-  it("renders the academic summary component", () => {
-    render(<AcademicPerformance />);
+  it("renders the academic summary region", async () => {
+    renderAcademicPerformance();
 
     expect(
-      screen.getByRole("region", {
+      await screen.findByRole("region", {
         name: "Academic performance summary",
       }),
     ).toBeInTheDocument();
   });
 
-  it("renders the academic analytics component", () => {
-    render(<AcademicPerformance />);
+  it("renders the academic analytics section", () => {
+    renderAcademicPerformance();
 
-    expect(
-      screen.getByRole("region", {
-        name: "Academic analytics",
-      }),
-    ).toBeInTheDocument();
+    expect(document.querySelector(".acad-analytics")).toBeInTheDocument();
   });
 
-  it("renders the academic details component", () => {
-    render(<AcademicPerformance />);
+  it("renders the academic details section", () => {
+    renderAcademicPerformance();
+
+    expect(document.querySelector(".acad-details")).toBeInTheDocument();
+  });
+
+  it("keeps the academic summary visible after changing the campus", async () => {
+    const user = userEvent.setup();
+
+    renderAcademicPerformance();
+
+    const campusSelect = screen.getByLabelText("Campus");
+
+    await screen.findByRole("option", {
+      name: "Kibuli Main Campus",
+    });
+
+    await user.selectOptions(campusSelect, "Kibuli Main Campus");
 
     expect(
       screen.getByRole("region", {
-        name: "Subject comparison and test results",
+        name: "Academic performance summary",
       }),
     ).toBeInTheDocument();
   });

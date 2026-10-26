@@ -1,5 +1,6 @@
-
 import api from "./axios";
+
+// Retention dashboard types
 
 export interface RetentionSummary {
   eligible_to_return: number;
@@ -33,6 +34,8 @@ export interface RetentionDashboardData {
   withdrawals_total: number;
   withdrawal_reasons: WithdrawalReason[];
 }
+
+// Enrollment dashboard types
 
 export interface EnrollmentStageData {
   stage: string;
@@ -78,11 +81,165 @@ export interface EnrollmentDashboardData {
   pipeline: EnrollmentStageData[];
 }
 
+// Shared academic dashboard filters
+
 export interface AcademicDashboardFilters {
   campus?: string;
   school?: number;
   term?: number;
 }
+export interface PerformanceDashboardFilters {
+  campus?: string;
+  school?: number;
+  level?: string;
+  term?: number;
+  class_level?: string;
+}
+
+export interface PerformanceTerm {
+  id: number;
+  label: string;
+}
+
+export interface PerformanceSummary {
+  syllabus_coverage: number | null;
+  topics_covered: number;
+  topics_planned: number;
+  student_performance: number | null;
+  students_passing: number;
+  students_assessed: number;
+  average_mark: number | null;
+  average_grade: string | null;
+}
+
+export interface GradeCount {
+  grade: string;
+  students: number;
+  share: number | null;
+}
+
+export interface GradeDistribution {
+  level: string;
+  level_display: string;
+  students: number;
+  grades: GradeCount[];
+}
+
+export interface NationalExamDivision {
+  division: string;
+  label: string;
+  candidates: number;
+}
+
+export interface NationalExamSummary {
+  exam: string;
+  label: string;
+  year: number;
+  sat: number;
+  passed: number;
+  pass_rate: number | null;
+  divisions: NationalExamDivision[];
+}
+
+export interface SubjectPerformance {
+  id: number;
+  subject: string;
+  code: string;
+  level: string;
+  level_display: string;
+  category: string;
+  average_mark: number | null;
+  pass_rate: number | null;
+  previous_pass_rate: number | null;
+  results: number;
+}
+
+export interface TestResult {
+  id: number;
+  subject: string;
+  level: string;
+  level_display: string;
+  test_1_average: number | null;
+  test_2_average: number | null;
+  test_1_pass_rate: number | null;
+  test_2_pass_rate: number | null;
+  students_assessed: number;
+}
+
+export interface PerformanceDashboardData {
+  term: PerformanceTerm;
+  compared_with: PerformanceTerm | null;
+  summary: PerformanceSummary;
+  grade_distribution: GradeDistribution[];
+  national_exams: NationalExamSummary[];
+  subjects: SubjectPerformance[];
+  tests: TestResult[];
+}
+
+// Co-curricular dashboard types
+
+export interface CoCurricularDashboardFilters
+  extends AcademicDashboardFilters {
+  category?: string;
+  activity?: number;
+  student?: number;
+  level?: string;
+  class_level?: string;
+}
+
+export interface CoCurricularTerm {
+  id: number;
+  label: string;
+}
+
+export interface CoCurricularActivityRow {
+  id: number;
+  name: string;
+  category: string;
+  category_display: string;
+  school: string;
+  participants: number;
+}
+
+export interface CoCurricularCategoryRow {
+  category: string;
+  label: string;
+  participants: number;
+  records: number;
+}
+
+export interface CoCurricularClassRow {
+  class_level: string;
+  stream: string;
+  active_learners: number;
+  participants: number;
+  participation_rate: number | null;
+}
+
+export interface CoCurricularDashboardSummary {
+  activities_offered: number;
+  participation_records: number;
+  unique_participants: number;
+  active_learners: number;
+  participation_rate: number | null;
+  activities_per_participant: number | null;
+}
+
+export interface CoCurricularDashboardData {
+  term: CoCurricularTerm | null;
+  summary: CoCurricularDashboardSummary;
+  activities: CoCurricularActivityRow[];
+  by_category: CoCurricularCategoryRow[];
+  by_class: CoCurricularClassRow[];
+}
+
+export interface CoCurricularOutcomesData {
+  term: CoCurricularTerm | null;
+  activities: Record<string, unknown>[];
+  academic_comparison: Record<string, unknown> | null;
+}
+
+// Academic API methods
 
 export const academicsApi = {
   getRetentionDashboard: async (
@@ -104,6 +261,40 @@ export const academicsApi = {
     const response = await api.get<EnrollmentDashboardData>(
       "/academics/enrollment/dashboard/",
       { params: filters, signal },
+    );
+
+    return response.data;
+  },
+
+  getCoCurricularDashboard: async (
+    filters: CoCurricularDashboardFilters = {},
+    signal?: AbortSignal,
+  ): Promise<CoCurricularDashboardData> => {
+    const response = await api.get<CoCurricularDashboardData>(
+      "/academics/co-curricular/dashboard/",
+      { params: filters, signal },
+    );
+
+    return response.data;
+  },
+
+  getCoCurricularOutcomes: async (
+    filters: CoCurricularDashboardFilters = {},
+    signal?: AbortSignal,
+  ): Promise<CoCurricularOutcomesData> => {
+    const response = await api.get<CoCurricularOutcomesData>(
+      "/academics/co-curricular/outcomes/",
+      { params: filters, signal },
+    );
+
+    return response.data;
+  },
+  getPerformanceDashboard: async (
+    filters: PerformanceDashboardFilters = {},
+  ): Promise<PerformanceDashboardData> => {
+    const response = await api.get<PerformanceDashboardData>(
+      "/academics/performance/dashboard/",
+      { params: filters },
     );
 
     return response.data;
