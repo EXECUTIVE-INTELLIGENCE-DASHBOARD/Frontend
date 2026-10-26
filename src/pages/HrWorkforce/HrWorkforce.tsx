@@ -41,10 +41,12 @@ function campusApiValue(campus: CampusOption): string | undefined {
 
   if (value === "all campuses") return undefined;
   if (value.includes("kibuli")) return "kibuli";
-  if (value.includes("buwaate")) return "buwaate";
-  if (value.includes("annex") || value === "gis") return "annex";
+  if (value.includes("buwaate") || value.includes("buwate")) {
+    return "buwaate";
+  }
+  if (value.includes("annex") || value === "gis") return "gis";
 
-  return undefined;
+  throw new Error(`Unrecognized HR campus selection: ${campus}`);
 }
 
 function formatReportingDate(date: string): string {

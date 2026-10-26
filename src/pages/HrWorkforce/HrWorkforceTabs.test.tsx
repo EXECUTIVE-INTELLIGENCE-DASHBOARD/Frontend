@@ -211,30 +211,36 @@ describe("HrWorkforce tabs", () => {
     expect(screen.queryByText("GSL Head Office")).toBeNull();
   });
 
-  it("shows the GSL units on the Workforce tab for the GSL employer", () => {
+  it("shows an unavailable-data message for the GSL employer", () => {
     render(<HrWorkforce />);
 
     chooseEmployer("gsl");
 
-    expect(screen.getByText("GSL Head Office")).toBeTruthy();
-    expect(screen.getByText("Café")).toBeTruthy();
+    expect(
+      screen.getByText(/GSL-specific workforce records are not available/i),
+    ).toBeTruthy();
+
+    expect(screen.queryByText("GSL Head Office")).toBeNull();
+    expect(screen.queryByText("Café")).toBeNull();
     expect(screen.queryByText("Academic & Curriculum Instruction")).toBeNull();
   });
-
-  it("shows both registers for all employment", async () => {
+  it("shows school workforce data and an unavailable GSL message for all employment", async () => {
     render(<HrWorkforce />);
 
     chooseEmployer("all");
-
-    expect(screen.getByText("GSL Head Office")).toBeTruthy();
 
     expect(
       await screen.findByRole("cell", {
         name: "Academic & Curriculum Instruction",
       }),
     ).toBeTruthy();
-  });
 
+    expect(
+      screen.getByText(/GSL-specific workforce records are not available/i),
+    ).toBeTruthy();
+
+    expect(screen.queryByText("GSL Head Office")).toBeNull();
+  });
   it("shows establishment figures and department positions from the API", async () => {
     render(<HrWorkforce />);
 
@@ -260,7 +266,7 @@ describe("HrWorkforce tabs", () => {
     expect(getHrEstablishment).toHaveBeenCalledTimes(1);
   });
 
-  it("switches between exits, contracts and ratings on the Talent tab", async () => {
+  it("switches between exits, contracts and ratings without fabricated records", async () => {
     render(<HrWorkforce />);
 
     openTab("Talent");
@@ -275,14 +281,28 @@ describe("HrWorkforce tabs", () => {
     expect(
       screen.getByText("Senior Contract End Dates & Renewals"),
     ).toBeTruthy();
-    expect(screen.getByText("Dr. Peter Ssemakula")).toBeTruthy();
+
+    expect(
+      screen.getByText(
+        /Contract end dates and renewal statuses are not provided/i,
+      ),
+    ).toBeTruthy();
+
+    expect(screen.queryByText("Dr. Peter Ssemakula")).toBeNull();
 
     openTab("Ratings");
 
     expect(
       screen.getByText("Performance Ratings – Board-Appointed Senior Staff"),
     ).toBeTruthy();
-    expect(screen.getByText("Needs improvement")).toBeTruthy();
+
+    expect(
+      screen.getByText(
+        /Performance ratings and review dates are not provided/i,
+      ),
+    ).toBeTruthy();
+
+    expect(screen.queryByText("Needs improvement")).toBeNull();
   });
 
   it("loads the exits summary when all employment is chosen", async () => {

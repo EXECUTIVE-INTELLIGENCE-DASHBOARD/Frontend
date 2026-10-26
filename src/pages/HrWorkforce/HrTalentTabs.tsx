@@ -10,285 +10,193 @@ import {
   Users,
 } from "lucide-react";
 
-import { HrDataCard, HrPill, type HrColumn } from "./HrDataCard";
+import { HrDataCard, type HrColumn } from "./HrDataCard";
 import { WorkforceMetricCard } from "./WorkforceMetricCard";
-
+import { formatNumber } from "./hrWorkforce.data";
 import {
   getHrEstablishment,
   getHrExits,
   type HrEstablishmentDepartment,
+  type HrEstablishmentResponse,
+  type HrExitRecord,
   type HrExitsResponse,
 } from "./hrWorkforce.api";
+import { employerLabel } from "./hrTalent.data";
+import type { EmployerFilter } from "./hrTalent.types";
 
-import {
-  attendanceLabel,
-  attendanceTarget,
-  formatNumber,
-} from "./hrWorkforce.data";
-import {
-  byEmployer,
-  daysLeft,
-  employerLabel,
-  exceedsRating,
-  formatDate,
-  gslAbsenceLabel,
-  gslLocation,
-  gslUnits,
-  needsImprovementBelow,
-  seniors,
-} from "./hrTalent.data";
-import type {
-  EmployerFilter,
-  ExitRecord,
-  GslUnit,
-  SeniorStaff,
-} from "./hrTalent.types";
+type StatusMessageProps = {
+  children: React.ReactNode;
+};
 
-const sum = <T,>(rows: T[], pick: (row: T) => number) =>
-  rows.reduce((total, row) => total + pick(row), 0);
+function StatusMessage({ children }: StatusMessageProps) {
+  return (
+    <div className="hw-card" role="status">
+      <p className="hw-empty">{children}</p>
+    </div>
+  );
+}
 
-/* ---------- GSL rows for the Workforce tab ---------- */
+function formatOptionalNumber(value: number | null | undefined): string {
+  return value == null ? "—" : formatNumber(value);
+}
 
-const gslColumns: HrColumn<GslUnit>[] = [
-  {
-    header: "Department / Unit",
-    cell: (u) => <span className="hw-department__name">{u.name}</span>,
-    csv: (u) => u.name,
-  },
-  {
-    header: "Nature / Staff Category",
-    cell: (u) => <span className="hw-tag">{u.category}</span>,
-    csv: (u) => u.category,
-  },
-  {
-    header: "Employer & Location",
-    cell: () => <span className="hw-muted">{gslLocation}</span>,
-    csv: () => gslLocation,
-  },
-  {
-    header: "Total Headcount",
-    cell: (u) => (
-      <span className="hw-headcount">
-        <strong>{formatNumber(u.headcount)}</strong> <span>Staff</span>
-      </span>
-    ),
-    csv: (u) => u.headcount,
-  },
-  {
-    header: "Attendance Rate",
-    cell: (u) => (
-      <HrPill tone={u.attendanceRate >= attendanceTarget ? "good" : "warn"}>
-        {attendanceLabel(u.attendanceRate)}
-      </HrPill>
-    ),
-    csv: (u) => `${u.attendanceRate.toFixed(1)}%`,
-  },
-  {
-    header: "Absent Rate",
-    cell: (u) => (
-      <span className="hw-absence hw-absence--neutral">
-        {gslAbsenceLabel(u)}
-      </span>
-    ),
-    csv: (u) => gslAbsenceLabel(u),
-  },
-];
+function formatDate(value: string | null | undefined): string {
+  if (!value) return "Not available";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return value;
+
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+/* ---------- GSL workforce ---------- */
 
 export function GslWorkforceCard() {
   return (
-    <HrDataCard
-      title="GSL Services & Head Office – Workforce Register"
-      columns={gslColumns}
-      rows={gslUnits}
-      rowKey={(u) => u.id}
-      fileName="hr-gsl-workforce"
-      scopeLabel="GSL"
-    />
+    <section className="hw-card">
+      <div className="hw-card__header">
+        <h2 className="hw-card__title">
+          <span className="hw-card__dot" aria-hidden="true" />
+          GSL Services &amp; Head Office – Workforce Register
+        </h2>
+      </div>
+
+      <p className="hw-empty">
+        GSL-specific workforce records are not available from the current
+        backend data. No unit headcounts or attendance figures are displayed
+        until they can be retrieved from a reliable source.
+      </p>
+    </section>
   );
 }
 
 /* ---------- Establishment ---------- */
 
-type EstablishmentRow = {
-  id: string;
-  name: string;
-  filled: number;
-  approved: number | null;
-  vacant: number | null;
-};
-
-type EstablishmentSummary = {
-  approved: number | null;
-  filled: number;
-  vacant: number | null;
-};
-
-const establishmentColumns: HrColumn<EstablishmentRow>[] = [
+const establishmentColumns: HrColumn<HrEstablishmentDepartment>[] = [
   {
-    header: "Department / Unit",
-    cell: (row) => row.name,
-    csv: (row) => row.name,
+    header: "Department",
+    cell: (row) => row.department,
+    csv: (row) => row.department,
+  },
+  {
+    header: "Staff category",
+    cell: (row) =>
+      row.staff_category_display || row.staff_category || "Not available",
+    csv: (row) =>
+      row.staff_category_display || row.staff_category || "Not available",
   },
   {
     header: "Approved posts",
-    cell: (row) => row.approved ?? "—",
-    csv: (row) => row.approved ?? "Not available",
+    cell: (row) =>
+      row.approved_posts == null
+        ? "Approval data unavailable"
+        : formatNumber(row.approved_posts),
+    csv: (row) => row.approved_posts ?? "Not available",
   },
   {
     header: "Filled posts",
-    cell: (row) => formatNumber(row.filled),
-    csv: (row) => row.filled,
+    cell: (row) => formatNumber(row.filled_positions),
+    csv: (row) => row.filled_positions,
   },
   {
     header: "Vacant posts",
-    cell: (row) => row.vacant ?? "—",
-    csv: (row) => row.vacant ?? "Not available",
+    cell: (row) =>
+      row.vacant_positions == null ? "—" : formatNumber(row.vacant_positions),
+    csv: (row) => row.vacant_positions ?? "Not available",
   },
   {
-    header: "Fill rate",
-    cell: () => "—",
-    csv: () => "Not available",
-  },
-  {
-    header: "Status",
-    cell: () => <HrPill tone="warn">Approval data unavailable</HrPill>,
-    csv: () => "Approval data unavailable",
+    header: "Over establishment",
+    cell: (row) =>
+      row.over_establishment == null
+        ? "—"
+        : formatNumber(row.over_establishment),
+    csv: (row) => row.over_establishment ?? "Not available",
   },
 ];
 
-function mapEstablishmentDepartment(
-  department: HrEstablishmentDepartment,
-  index: number,
-): EstablishmentRow {
-  return {
-    id: String(department.id ?? index),
-    name: department.department,
-    filled: department.filled_positions,
-    approved: department.approved_posts,
-    vacant: department.vacant_positions,
-  };
-}
-
 export function EstablishmentTab({ employer }: { employer: EmployerFilter }) {
-  const [departments, setDepartments] = useState<EstablishmentRow[]>([]);
-  const [summary, setSummary] = useState<EstablishmentSummary | null>(null);
+  const [data, setData] = useState<HrEstablishmentResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     let active = true;
 
-    async function loadEstablishment() {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(false);
 
-      try {
-        const response = await getHrEstablishment();
-
-        if (!active) return;
-
-        setDepartments(response.departments.map(mapEstablishmentDepartment));
-
-        setSummary({
-          approved: response.summary.approved_posts,
-          filled: response.summary.filled_positions,
-          vacant: response.summary.vacant_positions,
-        });
-      } catch {
-        if (active) {
-          setError("Unable to load establishment data. Please try again.");
-        }
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
-    }
-
-    void loadEstablishment();
+    getHrEstablishment()
+      .then((response) => {
+        if (active) setData(response);
+      })
+      .catch(() => {
+        if (active) setError(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
 
     return () => {
       active = false;
     };
-  }, [retryCount]);
+  }, []);
 
   if (loading) {
+    return <StatusMessage>Loading establishment data…</StatusMessage>;
+  }
+
+  if (error || !data) {
     return (
-      <p className="hw-status" role="status">
-        Loading establishment data…
-      </p>
+      <StatusMessage>
+        Establishment data could not be loaded. Please try again later.
+      </StatusMessage>
     );
   }
 
-  if (error) {
-    return (
-      <div className="hw-status hw-status--error" role="alert">
-        <p>{error}</p>
-        <button
-          type="button"
-          className="hw-button"
-          onClick={() => setRetryCount((count) => count + 1)}
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
-  if (!summary) {
-    return (
-      <p className="hw-status" role="status">
-        No establishment data is available.
-      </p>
-    );
-  }
-
-  if (employer === "gsl") {
-    return (
-      <p className="hw-status" role="status">
-        GSL establishment figures are not provided separately by the existing
-        establishment endpoint.
-      </p>
-    );
-  }
+  const summary = data.summary;
+  const rows = data.departments;
 
   return (
     <>
       <div className="hw-metrics">
         <WorkforceMetricCard
           label="Approved Positions"
-          value={
-            summary.approved === null ? "—" : formatNumber(summary.approved)
-          }
+          value={formatOptionalNumber(summary.approved_posts)}
           icon={Briefcase}
           tone="sky"
         />
         <WorkforceMetricCard
           label="Filled Positions"
-          value={formatNumber(summary.filled)}
+          value={formatNumber(summary.filled_positions)}
           icon={Check}
           tone="slate"
         />
         <WorkforceMetricCard
           label="Vacancies"
-          value={summary.vacant === null ? "—" : formatNumber(summary.vacant)}
+          value={formatOptionalNumber(summary.vacant_positions)}
           icon={TriangleAlert}
           tone="amber"
         />
       </div>
 
-      <p className="hw-status" role="status">
-        Approved-post and vacancy figures are not available in the current
-        backend data. Fill rates and vacancy status cannot be calculated
-        reliably until approved-post figures are populated.
-      </p>
+      {summary.departments_without_approved_posts > 0 && (
+        <p className="hw-muted">
+          Approved-post information is unavailable for{" "}
+          {summary.departments_without_approved_posts} departments. Vacancy
+          figures cannot be reliably calculated for those departments.
+        </p>
+      )}
 
       <HrDataCard
         title="Approved vs Filled Positions"
         columns={establishmentColumns}
-        rows={departments}
-        rowKey={(row) => row.id}
+        rows={rows}
+        rowKey={(row) => String(row.id)}
         fileName="hr-establishment"
         scopeLabel={employerLabel(employer)}
       />
@@ -306,169 +214,63 @@ const talentViews: Array<[TalentView, string]> = [
   ["ratings", "Ratings"],
 ];
 
-const exitColumns: HrColumn<ExitRecord>[] = [
-  { header: "Staff member", cell: (r) => r.name, csv: (r) => r.name },
-  { header: "Role", cell: (r) => r.role, csv: (r) => r.role },
+const exitColumns: HrColumn<HrExitRecord>[] = [
+  {
+    header: "Staff member",
+    cell: (row) => row.full_name || row.staff_number || "Not available",
+    csv: (row) => row.full_name || row.staff_number || "Not available",
+  },
+  {
+    header: "Role",
+    cell: (row) => row.job_title || "Not available",
+    csv: (row) => row.job_title || "Not available",
+  },
   {
     header: "Unit / Outlet",
-    cell: (r) => <span className="hw-muted">{r.unit}</span>,
-    csv: (r) => r.unit,
+    cell: (row) => row.unit_name || "Not available",
+    csv: (row) => row.unit_name || "Not available",
   },
   {
     header: "Exit date",
-    cell: (r) => formatDate(r.date),
-    csv: (r) => r.date,
-  },
-  { header: "Reason", cell: (r) => r.reason, csv: (r) => r.reason },
-  {
-    header: "Exit type",
-    cell: (r) => (
-      <HrPill
-        tone={
-          r.type === "Involuntary"
-            ? "bad"
-            : r.type === "Voluntary"
-              ? "warn"
-              : "good"
-        }
-      >
-        {r.type}
-      </HrPill>
-    ),
-    csv: (r) => r.type,
-  },
-];
-
-const contractTone = (days: number): ["good" | "warn" | "bad", string] =>
-  days <= 90
-    ? ["bad", "Due soon"]
-    : days <= 180
-      ? ["warn", "Within 6 months"]
-      : ["good", "Active"];
-
-const contractColumns: HrColumn<SeniorStaff>[] = [
-  { header: "Staff member", cell: (r) => r.name, csv: (r) => r.name },
-  { header: "Position", cell: (r) => r.position, csv: (r) => r.position },
-  {
-    header: "Contract end",
-    cell: (r) => formatDate(r.contractEnd),
-    csv: (r) => r.contractEnd,
+    cell: (row) => formatDate(row.exit_date),
+    csv: (row) => row.exit_date || "Not available",
   },
   {
-    header: "Days left",
-    cell: (r) => daysLeft(r.contractEnd),
-    csv: (r) => daysLeft(r.contractEnd),
-  },
-  {
-    header: "Renewal status",
-    cell: (r) => (
-      <HrPill
-        tone={
-          r.renewal === "Not yet due"
-            ? "good"
-            : r.renewal === "Under review"
-              ? "warn"
-              : "good"
-        }
-      >
-        {r.renewal}
-      </HrPill>
-    ),
-    csv: (r) => r.renewal,
-  },
-  {
-    header: "Time to end",
-    cell: (r) => {
-      const [tone, label] = contractTone(daysLeft(r.contractEnd));
-
-      return <HrPill tone={tone}>{label}</HrPill>;
-    },
-    csv: (r) => contractTone(daysLeft(r.contractEnd))[1],
-  },
-];
-
-const bandFor = (rating: number): ["good" | "warn" | "bad", string] =>
-  rating >= exceedsRating
-    ? ["good", "Exceeds expectations"]
-    : rating >= needsImprovementBelow
-      ? ["warn", "Meets expectations"]
-      : ["bad", "Needs improvement"];
-
-const ratingColumns: HrColumn<SeniorStaff>[] = [
-  { header: "Staff member", cell: (r) => r.name, csv: (r) => r.name },
-  { header: "Position", cell: (r) => r.position, csv: (r) => r.position },
-  {
-    header: "Score (out of 5)",
-    cell: (r) => r.rating.toFixed(1),
-    csv: (r) => r.rating.toFixed(1),
-  },
-  {
-    header: "Band",
-    cell: (r) => {
-      const [tone, label] = bandFor(r.rating);
-
-      return <HrPill tone={tone}>{label}</HrPill>;
-    },
-    csv: (r) => bandFor(r.rating)[1],
-  },
-  {
-    header: "Last review",
-    cell: (r) => r.lastReview,
-    csv: (r) => r.lastReview,
+    header: "Reason",
+    cell: (row) => row.exit_reason_display || row.exit_reason || "Not recorded",
+    csv: (row) => row.exit_reason_display || row.exit_reason || "Not recorded",
   },
 ];
 
 export function TalentTab({ employer }: { employer: EmployerFilter }) {
   const [view, setView] = useState<TalentView>("exits");
   const [exitData, setExitData] = useState<HrExitsResponse | null>(null);
-  const [loadingExits, setLoadingExits] = useState(true);
-  const [exitError, setExitError] = useState<string | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
-
-  const scope = employerLabel(employer);
+  const [loadingExits, setLoadingExits] = useState(false);
+  const [exitError, setExitError] = useState(false);
 
   useEffect(() => {
+    if (view !== "exits") return;
+
     let active = true;
 
-    async function loadExits() {
-      setLoadingExits(true);
-      setExitError(null);
+    setLoadingExits(true);
+    setExitError(false);
 
-      try {
-        const response = await getHrExits();
-
-        if (active) {
-          setExitData(response);
-        }
-      } catch {
-        if (active) {
-          setExitError("Unable to load staff exits. Please try again.");
-        }
-      } finally {
-        if (active) {
-          setLoadingExits(false);
-        }
-      }
-    }
-
-    void loadExits();
+    getHrExits()
+      .then((response) => {
+        if (active) setExitData(response);
+      })
+      .catch(() => {
+        if (active) setExitError(true);
+      })
+      .finally(() => {
+        if (active) setLoadingExits(false);
+      });
 
     return () => {
       active = false;
     };
-  }, [retryCount]);
-
-  const seniorRows = seniors.filter(byEmployer(employer));
-
-  const byDueDate = [...seniorRows].sort(
-    (a, b) => daysLeft(a.contractEnd) - daysLeft(b.contractEnd),
-  );
-
-  const byRating = [...seniorRows].sort((a, b) => b.rating - a.rating);
-
-  const averageRating = seniorRows.length
-    ? sum(seniorRows, (r) => r.rating) / seniorRows.length
-    : 0;
+  }, [view, employer]);
 
   return (
     <>
@@ -494,22 +296,13 @@ export function TalentTab({ employer }: { employer: EmployerFilter }) {
       {view === "exits" && (
         <>
           {loadingExits && (
-            <p className="hw-status" role="status">
-              Loading staff exits…
-            </p>
+            <StatusMessage>Loading staff exits and turnover…</StatusMessage>
           )}
 
           {exitError && (
-            <div className="hw-status hw-status--error" role="alert">
-              <p>{exitError}</p>
-              <button
-                type="button"
-                className="hw-button"
-                onClick={() => setRetryCount((count) => count + 1)}
-              >
-                Retry
-              </button>
-            </div>
+            <StatusMessage>
+              Staff exits data could not be loaded. Please try again later.
+            </StatusMessage>
           )}
 
           {!loadingExits && !exitError && exitData && (
@@ -535,11 +328,11 @@ export function TalentTab({ employer }: { employer: EmployerFilter }) {
                 />
               </div>
 
-              <p className="hw-status" role="status">
+              <p className="hw-muted">
                 Reporting period: {formatDate(exitData.start)} –{" "}
                 {formatDate(exitData.end)}.
                 {exitData.completeness?.leavers_without_exit_date
-                  ? ` ${exitData.completeness.leavers_without_exit_date} leaver records do not have an exit date.`
+                  ? ` ${exitData.completeness.leavers_without_exit_date} leaver records do not have an exit date recorded.`
                   : ""}
               </p>
 
@@ -547,89 +340,94 @@ export function TalentTab({ employer }: { employer: EmployerFilter }) {
                 title="Staff Exits & Turnover"
                 columns={exitColumns}
                 rows={[]}
-                rowKey={(row) => row.id}
+                rowKey={(row) =>
+                  String(row.id ?? row.staff_number ?? row.full_name)
+                }
                 fileName="hr-exits"
-                scopeLabel={scope}
+                scopeLabel={employerLabel(employer)}
               />
+
+              {exitData.total_exits === 0 && (
+                <p className="hw-muted">
+                  The API reports no exits for this reporting period. Individual
+                  exit records are not available in the current response.
+                </p>
+              )}
             </>
           )}
         </>
       )}
 
       {view === "contracts" && (
-        <>
+        <section className="hw-card">
+          <div className="hw-card__header">
+            <h2 className="hw-card__title">
+              <span className="hw-card__dot" aria-hidden="true" />
+              Senior Contract End Dates &amp; Renewals
+            </h2>
+          </div>
+          <p className="hw-empty">
+            Contract end dates and renewal statuses are not provided by the
+            current HR API. This section will display them when a reliable
+            backend source becomes available.
+          </p>
           <div className="hw-metrics">
             <WorkforceMetricCard
               label="Senior Staff"
-              value={formatNumber(byDueDate.length)}
+              value="—"
               icon={Users}
               tone="sky"
             />
             <WorkforceMetricCard
               label="Contracts Ending ≤ 90 Days"
-              value={formatNumber(
-                byDueDate.filter((r) => daysLeft(r.contractEnd) <= 90).length,
-              )}
+              value="—"
               icon={Clock}
               tone="slate"
             />
             <WorkforceMetricCard
               label="Renewals Pending"
-              value={formatNumber(
-                byDueDate.filter((r) => r.renewal !== "Not yet due").length,
-              )}
+              value="—"
               icon={Briefcase}
               tone="amber"
             />
           </div>
-
-          <HrDataCard
-            title="Senior Contract End Dates & Renewals"
-            columns={contractColumns}
-            rows={byDueDate}
-            rowKey={(r) => r.id}
-            fileName="hr-contracts"
-            scopeLabel={scope}
-          />
-        </>
+        </section>
       )}
 
       {view === "ratings" && (
-        <>
+        <section className="hw-card">
+          <div className="hw-card__header">
+            <h2 className="hw-card__title">
+              <span className="hw-card__dot" aria-hidden="true" />
+              Performance Ratings – Board-Appointed Senior Staff
+            </h2>
+          </div>
+          <p className="hw-empty">
+            Performance ratings and review dates are not provided by the current
+            HR API. No staff scores or rating bands are shown because those
+            figures cannot be verified from the available data.
+          </p>
           <div className="hw-metrics">
             <WorkforceMetricCard
               label="Average Rating"
-              value={averageRating ? `${averageRating.toFixed(1)} / 5` : "—"}
+              value="—"
               icon={Star}
               tone="sky"
             />
             <WorkforceMetricCard
               label="Exceeds Expectations"
-              value={formatNumber(
-                byRating.filter((r) => r.rating >= exceedsRating).length,
-              )}
+              value="—"
               icon={TrendingUp}
               tone="slate"
             />
             <WorkforceMetricCard
               label="Needs Improvement"
-              value={formatNumber(
-                byRating.filter((r) => r.rating < needsImprovementBelow).length,
-              )}
+              value="—"
               icon={TriangleAlert}
               tone="amber"
             />
           </div>
-
-          <HrDataCard
-            title="Performance Ratings – Board-Appointed Senior Staff"
-            columns={ratingColumns}
-            rows={byRating}
-            rowKey={(r) => r.id}
-            fileName="hr-ratings"
-            scopeLabel={scope}
-          />
-        </>
+        </section>
       )}
     </>
   );
