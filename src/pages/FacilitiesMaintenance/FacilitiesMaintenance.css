@@ -4,7 +4,7 @@
   padding-top: var(--fm-hero-gap, 28px); /* space under the app hero bar */
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 32px;
   min-width: 0;
   color: var(--color-text);
   font-size: 12.5px;
