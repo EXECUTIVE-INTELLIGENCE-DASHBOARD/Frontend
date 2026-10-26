@@ -5,8 +5,15 @@ import {
   academicsApi,
   type CoCurricularDashboardData,
 } from "../../api/academics.api";
+import api from "../../api/axios";
 import { CoCurricularActivities } from "./CoCurricularActivities";
 import { buildCsv, csvFileName } from "./exportCsv";
+
+vi.mock("../../api/axios", () => ({
+  default: {
+    get: vi.fn(),
+  },
+}));
 
 vi.mock("../../api/academics.api", () => ({
   academicsApi: {
@@ -17,6 +24,8 @@ vi.mock("../../api/academics.api", () => ({
 const dashboardResponse: CoCurricularDashboardData = {
   term: { id: 1, label: "Term 1" },
   summary: {
+    total_clubs: 2,
+    events_held: 6,
     activities_offered: 2,
     participation_records: 40,
     unique_participants: 30,
@@ -31,6 +40,8 @@ const dashboardResponse: CoCurricularDashboardData = {
       category: "humanities",
       category_display: "Humanities",
       school: "Main School",
+      girls: 12,
+      boys: 8,
       participants: 20,
     },
     {
@@ -39,11 +50,21 @@ const dashboardResponse: CoCurricularDashboardData = {
       category: "science",
       category_display: "Science",
       school: "Main School",
+      girls: 4,
+      boys: 6,
       participants: 10,
     },
   ],
   by_category: [],
-  by_class: [],
+  by_class: [
+    {
+      class_level: "Primary 5",
+      stream: "East",
+      active_learners: 25,
+      participants: 15,
+      participation_rate: 60,
+    },
+  ],
 };
 
 const cellsOf = (row: HTMLElement) =>
@@ -55,34 +76,74 @@ beforeEach(() => {
   vi.mocked(academicsApi.getCoCurricularDashboard).mockResolvedValue(
     dashboardResponse,
   );
+  vi.mocked(api.get).mockImplementation(async (url) => {
+    if (url === "/academics/schools/") {
+      return {
+        data: [
+          {
+            id: 1,
+            name: "Kibuli Secondary School",
+            campus: "kibuli",
+            campus_display: "Kibuli Main Campus",
+            level: "secondary",
+          },
+        ],
+      };
+    }
+
+    if (url === "/academics/terms/") {
+      return { data: [] };
+    }
+
+    throw new Error(`Unexpected API endpoint: ${url}`);
+  });
 });
 
 describe("CoCurricularActivities", () => {
-  it("renders dashboard summary and activity rows", async () => {
+  it("renders the three backend summary metrics and the activity table", async () => {
     render(<CoCurricularActivities />);
 
-    expect(await screen.findByText("Debate Club")).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: "Activities & Categories" }),
+    ).toBeInTheDocument();
 
     const cards = screen.getAllByRole("article");
     expect(cards).toHaveLength(3);
 
-    expect(within(cards[0]).getByText("Participation Rate")).toBeInTheDocument();
-    expect(within(cards[0]).getByText("60.0%")).toBeInTheDocument();
+    expect(within(cards[0]).getByText("Total Clubs")).toBeInTheDocument();
+    expect(within(cards[0]).getByText("2")).toBeInTheDocument();
 
-    expect(within(cards[1]).getByText("Activities Offered")).toBeInTheDocument();
+    expect(
+      within(cards[1]).getByText("Total Activities"),
+    ).toBeInTheDocument();
     expect(within(cards[1]).getByText("2")).toBeInTheDocument();
 
-    expect(within(cards[2]).getByText("Unique Participants")).toBeInTheDocument();
-    expect(within(cards[2]).getByText("30")).toBeInTheDocument();
+    expect(within(cards[2]).getByText("Participation Rate")).toBeInTheDocument();
+    expect(within(cards[2]).getByText("60.0%")).toBeInTheDocument();
 
-    const row = screen.getByRole("row", { name: /Debate Club/ });
+    const activitySection = screen
+      .getByRole("heading", { name: "Activities & Categories" })
+      .closest("section") as HTMLElement;
+    const row = within(activitySection).getByRole("row", { name: /Debate Club/ });
     expect(cellsOf(row)).toEqual([
       "Debate Club",
       "Humanities",
-      "Main School",
+      "12",
+      "8",
       "20",
     ]);
-    expect(screen.getAllByRole("row")).toHaveLength(3);
+    expect(
+      cellsOf(within(activitySection).getByRole("row", { name: /Robotics Club/ })),
+    ).toEqual(["Robotics Club", "Science", "4", "6", "10"]);
+    expect(screen.getAllByRole("table")).toHaveLength(1);
+    expect(
+      screen.queryByRole("heading", { name: "Participation by Class & Stream" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", {
+        name: "Learner Progress & Activity Achievements",
+      }),
+    ).not.toBeInTheDocument();
   });
 
   it("explains when the dashboard has no activity records", async () => {
@@ -100,21 +161,18 @@ describe("CoCurricularActivities", () => {
 
   it("keeps the dashboard loaded when a campus is selected", async () => {
     render(<CoCurricularActivities />);
-    await screen.findByText("Debate Club");
+    await screen.findByRole("heading", { name: "Activities & Categories" });
 
     fireEvent.change(screen.getByRole("combobox", { name: "Campus" }), {
-      target: { value: "Kibuli Main Campus" },
+      target: { value: "kibuli" },
     });
 
-    expect(await screen.findByText("Debate Club")).toBeInTheDocument();
-    expect(academicsApi.getCoCurricularDashboard).toHaveBeenCalledWith(
-      expect.any(Object),
+    await screen.findByRole("heading", { name: "Activities & Categories" });
+    expect(academicsApi.getCoCurricularDashboard).toHaveBeenLastCalledWith(
+      expect.objectContaining({ campus: "kibuli" }),
       expect.any(AbortSignal),
     );
   });
-
-  // Enable once the page passes the selected campus to the API request.
-  it.todo("sends the selected campus to the dashboard request");
 });
 
 describe("buildCsv", () => {

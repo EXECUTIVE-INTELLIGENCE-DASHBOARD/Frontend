@@ -4,65 +4,60 @@ import "../../palette.css";
 import "./coCurricularPalette.css";
 
 interface EngagementTableCardProps {
-  rows: CoCurricularActivityRow[];
+  activities: CoCurricularActivityRow[];
 }
 
 export function EngagementTableCard({
-  rows,
+  activities,
 }: EngagementTableCardProps) {
-  const safeRows = rows ?? [];
-
   return (
     <section className="cc-card">
-      <div className="cc-card__header">
-        <h2 className="cc-card__title">
-          <span className="cc-card__dot" aria-hidden="true" />
-          Co-Curricular &amp; Club Engagement Summary
-        </h2>
-      </div>
+        <div className="cc-card__header">
+          <h2 className="cc-card__title">
+            <span className="cc-card__dot" aria-hidden="true" />
+            Activities &amp; Categories
+          </h2>
+        </div>
 
-      <div className="cc-table-wrap">
-        <table className="cc-table">
-          <thead>
-            <tr>
-              <th scope="col">Activity</th>
-              <th scope="col">Category</th>
-              <th scope="col">School</th>
-              <th scope="col" className="cc-num">
-                Participants
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {safeRows.length === 0 ? (
+        <div className="cc-table-wrap">
+          <table className="cc-table">
+            <thead>
               <tr>
-                <td colSpan={4} className="cc-muted">
-                  No activity data is available.
-                </td>
+                <th scope="col">Activities</th>
+                <th scope="col" className="cc-category">Category</th>
+                <th scope="col" className="cc-num">Girls</th>
+                <th scope="col" className="cc-num">Boys</th>
+                <th scope="col" className="cc-num">Total Participants</th>
               </tr>
-            ) : (
-              safeRows.map((row) => (
-                <tr key={row.id}>
-                  <td>
-                    <span className="cc-activity">
-                      <span className="cc-activity__name">
-                        {row.name}
-                      </span>
-                    </span>
-                  </td>
+            </thead>
 
-                  <td>{row.category_display}</td>
-                  <td>{row.school}</td>
-                  <td className="cc-num cc-strong">
-                    {row.participants}
+            <tbody>
+              {activities.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="cc-muted">
+                    No activity data is available.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ) : (
+                activities.map((activity) => (
+                  <tr key={activity.id}>
+                    <td>
+                      <span className="cc-activity">
+                        <span className="cc-activity__name">
+                          {activity.name}
+                        </span>
+                      </span>
+                    </td>
+                    <td className="cc-category">{activity.category_display}</td>
+                    <td className="cc-num">{activity.girls}</td>
+                    <td className="cc-num">{activity.boys}</td>
+                    <td className="cc-num cc-strong">{activity.participants}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
     </section>
   );
 }

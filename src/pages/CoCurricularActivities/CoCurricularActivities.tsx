@@ -60,7 +60,7 @@ export function CoCurricularActivities() {
 
         console.error("Co-curricular dashboard request failed:", err);
 
-        setError("Unable to load co-curricular activities data.");
+        setError("Unable to load co-curricular dashboard data.");
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -101,6 +101,20 @@ export function CoCurricularActivities() {
         <div className="cc-content">
           <div className="cc-metrics acad-summary">
             <EngagementMetricCard
+              label="Total Clubs"
+              value={String(dashboard.summary.total_clubs)}
+              icon={Users}
+              tone="navy"
+            />
+
+            <EngagementMetricCard
+              label="Total Activities"
+              value={String(dashboard.summary.activities_offered)}
+              icon={CalendarDays}
+              tone="accent"
+            />
+
+            <EngagementMetricCard
               label="Participation Rate"
               value={
                 dashboard.summary.participation_rate == null
@@ -108,25 +122,13 @@ export function CoCurricularActivities() {
                   : `${dashboard.summary.participation_rate.toFixed(1)}%`
               }
               icon={Globe}
-              tone="accent"
-            />
-
-            <EngagementMetricCard
-              label="Activities Offered"
-              value={String(dashboard.summary.activities_offered)}
-              icon={CalendarDays}
-              tone="navy"
-            />
-
-            <EngagementMetricCard
-              label="Unique Participants"
-              value={String(dashboard.summary.unique_participants)}
-              icon={Users}
               tone="warning"
             />
           </div>
 
-          <EngagementTableCard rows={dashboard.activities} />
+          <EngagementTableCard
+            activities={dashboard.activities}
+          />
         </div>
       )}
 

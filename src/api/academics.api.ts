@@ -195,9 +195,12 @@ export interface CoCurricularTerm {
 export interface CoCurricularActivityRow {
   id: number;
   name: string;
+  club?: string | null;
   category: string;
   category_display: string;
   school: string;
+  girls: number;
+  boys: number;
   participants: number;
 }
 
@@ -217,6 +220,8 @@ export interface CoCurricularClassRow {
 }
 
 export interface CoCurricularDashboardSummary {
+  total_clubs: number;
+  events_held: number;
   activities_offered: number;
   participation_records: number;
   unique_participants: number;
@@ -231,12 +236,6 @@ export interface CoCurricularDashboardData {
   activities: CoCurricularActivityRow[];
   by_category: CoCurricularCategoryRow[];
   by_class: CoCurricularClassRow[];
-}
-
-export interface CoCurricularOutcomesData {
-  term: CoCurricularTerm | null;
-  activities: Record<string, unknown>[];
-  academic_comparison: Record<string, unknown> | null;
 }
 
 // Academic API methods
@@ -278,17 +277,6 @@ export const academicsApi = {
     return response.data;
   },
 
-  getCoCurricularOutcomes: async (
-    filters: CoCurricularDashboardFilters = {},
-    signal?: AbortSignal,
-  ): Promise<CoCurricularOutcomesData> => {
-    const response = await api.get<CoCurricularOutcomesData>(
-      "/academics/co-curricular/outcomes/",
-      { params: filters, signal },
-    );
-
-    return response.data;
-  },
   getPerformanceDashboard: async (
     filters: PerformanceDashboardFilters = {},
   ): Promise<PerformanceDashboardData> => {
