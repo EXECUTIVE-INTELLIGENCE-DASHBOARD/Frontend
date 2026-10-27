@@ -3,7 +3,6 @@ import {
   Building2,
   Download,
   MoreHorizontal,
-  Repeat,
   RotateCcw,
   Search,
   TrendingUp,
@@ -585,16 +584,17 @@ export function AdmissionsEnrollment() {
         <KpiCard
           icon={UserPlus}
           label="New students"
-          value="—"
-          detail="Not reported by the API"
+          value={isLive ? formatNumber(summary.newLearners) : "—"}
+          detail={
+            isLive
+              ? `${formatPercent(
+                  summary.learners === 0
+                    ? 0
+                    : (summary.newLearners / summary.learners) * 100,
+                )} of the roll`
+              : "Waiting on the API"
+          }
           tone="sky"
-        />
-        <KpiCard
-          icon={Repeat}
-          label="Returning"
-          value="—"
-          detail="Not reported by the API"
-          tone="green"
         />
         <KpiCard
           icon={TrendingUp}

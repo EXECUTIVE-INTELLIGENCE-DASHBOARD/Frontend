@@ -76,7 +76,7 @@ const backToAllCampuses = () => {
 };
 
 describe("AdmissionsEnrollment", () => {
-  it("renders the five headline KPI cards", () => {
+  it("renders the four headline KPI cards", () => {
     render(<AdmissionsEnrollment />);
 
     const kpis = screen.getByRole("region", { name: "Enrolment summary" });
@@ -84,8 +84,8 @@ describe("AdmissionsEnrollment", () => {
     expect(within(kpis).getByText("Total students")).toBeInTheDocument();
     expect(within(kpis).getByText("Capacity")).toBeInTheDocument();
     expect(within(kpis).getByText("New students")).toBeInTheDocument();
-    expect(within(kpis).getByText("Returning")).toBeInTheDocument();
     expect(within(kpis).getByText("Join rate")).toBeInTheDocument();
+    expect(within(kpis).queryByText("Returning")).not.toBeInTheDocument();
   });
 
   it("offers the same filters as the other academic screens", async () => {
