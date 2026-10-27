@@ -12,7 +12,7 @@ const configuredBaseUrl =
 export const apiBaseUrl = String(configuredBaseUrl).replace(/\/+$/, "");
 
 /** Methods Django's CSRF middleware does not guard. */
-const SAFE_METHODS = new Set(["get", "head", "options", "trace"]);
+const SAFE_METHODS = new Set(["get", "head", "options", "trace"]); 
 
 const CSRF_COOKIE_NAME = "csrftoken";
 const CSRF_HEADER_NAME = "X-CSRFToken";
