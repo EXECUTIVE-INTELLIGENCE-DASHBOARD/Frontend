@@ -131,7 +131,6 @@ export interface CohortRow {
   applicants: number;
   shortlisted: number;
   interviewed: number;
-  offered: number;
   accepted: number;
   reported: number;
 
@@ -162,7 +161,6 @@ export interface Aggregate {
   applicants: number;
   shortlisted: number;
   interviewed: number;
-  offered: number;
   accepted: number;
   reported: number;
 
@@ -197,7 +195,6 @@ export interface ClassAggregate {
   withdrawn: number;
 
   applicants: number;
-  offered: number;
   accepted: number;
   reported: number;
 
