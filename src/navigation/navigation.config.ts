@@ -89,15 +89,7 @@ export const navigationItems: NavigationItem[] = [
         label: "Dashboard",
       },
       
-       {
-  id: "cost-centre-analysis",
-  label: "Cost Centre Analysis",
-},
-{
-  id: "financial-forecasts",
-  label: "Financial Forecasts",
-},
-{
+      {
         id: "liabilities-management",
         label: "Liabilities Management",
       },
