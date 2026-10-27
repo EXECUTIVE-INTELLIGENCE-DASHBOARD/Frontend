@@ -91,7 +91,7 @@ export function Hero({ onSelectPage }: HeroProps) {
     }
   }
 
-  // Close the popovers when the user clicks away.
+  // Close either popover when the user clicks outside or presses Escape.
   useEffect(() => {
     if (!searchOpen && !profileOpen) {
       return;
@@ -109,17 +109,6 @@ export function Hero({ onSelectPage }: HeroProps) {
       }
     }
 
-    document.addEventListener("mousedown", handlePointerDown);
-
-    return () => document.removeEventListener("mousedown", handlePointerDown);
-  }, [searchOpen, profileOpen]);
-
-  // Escape closes whichever popover is open.
-  useEffect(() => {
-    if (!searchOpen && !profileOpen) {
-      return;
-    }
-
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setSearchOpen(false);
@@ -127,9 +116,13 @@ export function Hero({ onSelectPage }: HeroProps) {
       }
     }
 
+    document.addEventListener("mousedown", handlePointerDown);
     document.addEventListener("keydown", handleKeyDown);
 
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [searchOpen, profileOpen]);
 
   function goToPage(pageId: string) {
@@ -295,8 +288,6 @@ export function Hero({ onSelectPage }: HeroProps) {
 
             <span className="hero__user-info">
               <span className="hero__user-name">{userProfile.name}</span>
-
-              <span className="hero__user-role">{userProfile.role}</span>
             </span>
 
             <ChevronRight
@@ -314,35 +305,12 @@ export function Hero({ onSelectPage }: HeroProps) {
               id="hero-profile-panel"
               aria-label="Your profile"
             >
-              <div className="hero__profile-head">
-                <span className="hero__profile-avatar" aria-hidden="true">
-                  {userProfile.initials}
-                </span>
-
-                <span className="hero__profile-identity">
-                  <span className="hero__profile-name">
-                    {userProfile.name}
-                  </span>
-
-                  <span className="hero__profile-role">
-                    {userProfile.role}
-                  </span>
-                </span>
-              </div>
-
-              <dl className="hero__profile-fields">
-                {userProfile.fields.map((field) => (
-                  <div className="hero__profile-field" key={field.id}>
-                    <dt className="hero__profile-field-label">
-                      {field.label}
-                    </dt>
-
-                    <dd className="hero__profile-field-value">
-                      {field.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+              <button
+                className="hero__logout"
+                type="button"
+              >
+                Log out
+              </button>
             </div>
           )}
         </div>
