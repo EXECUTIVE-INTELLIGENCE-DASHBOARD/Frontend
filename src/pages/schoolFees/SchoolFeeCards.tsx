@@ -98,11 +98,6 @@ export function RevenueBreakdown({
     <article className="revenue-panel" aria-label={byClass ? "Revenue per class" : "Revenue per school"}>
       <div className="revenue-panel__heading">
         <h2>{byClass ? "Revenue per class" : "Revenue per school"}</h2>
-        <p>
-          {data.has_boarding
-            ? "School fees this term, split into day and boarding."
-            : "School fees this term. This school has day learners only."}
-        </p>
       </div>
       <div className="revenue-panel__chart">
         <ResponsiveContainer width="100%" height="100%">
@@ -164,7 +159,6 @@ export function DayVsBoarding({ data }: { data: SchoolFeesDashboard }) {
     <article className="revenue-panel" aria-label="Day vs boarding">
       <div className="revenue-panel__heading">
         <h2>Day vs boarding</h2>
-        <p>Students and fees in each section. Boarders pay more per student.</p>
       </div>
       <div className="revenue-panel__donut">
         <ResponsiveContainer width="100%" height="100%">
@@ -224,10 +218,6 @@ export function PayingVsEnrolled({
     <article className="revenue-panel" aria-label="Students paying vs students enrolled">
       <div className="revenue-panel__heading">
         <h2>Students paying vs students enrolled</h2>
-        <p>
-          Learners whose fees are paid in full this term, against learners enrolled.
-          "Not paid" is money that may be missing.
-        </p>
       </div>
       <div className="revenue-panel__table-wrap">
         <table className="revenue-panel__table">
