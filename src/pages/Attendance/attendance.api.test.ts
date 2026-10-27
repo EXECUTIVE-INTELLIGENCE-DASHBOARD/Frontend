@@ -2,13 +2,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { academicsApi } from "../../lib/api/academics";
 import type { AttendanceRecord } from "../../lib/api/types";
 import { getAttendance, recordsToRows } from "./attendance.api";
-import type { AttendanceFilters } from "./attendance.types";
 
 vi.mock("../../lib/api/academics", () => ({
   academicsApi: { attendance: { list: vi.fn() } },
 }));
-
-const filters: AttendanceFilters = { campus: "All Campuses", section: "", term: 3, year: "2026" };
 
 const rec = (id: number, name: number, grade: string, value: string): AttendanceRecord => ({
   id,
@@ -16,7 +13,7 @@ const rec = (id: number, name: number, grade: string, value: string): Attendance
   grade,
   student_attendance: value,
   staff_attendance: "",
-  period: "Term 3",
+  period: "2026-10-26",
 });
 
 const primary5 = [
@@ -45,24 +42,21 @@ describe("getAttendance", () => {
   const list = vi.mocked(academicsApi.attendance.list);
   beforeEach(() => list.mockReset());
 
-  it("uses the backend records when there are some", async () => {
+  it("builds rows from the backend records", async () => {
     list.mockResolvedValueOnce(primary5 as never);
-    const result = await getAttendance(filters);
+    const result = await getAttendance();
     expect(result.source).toBe("api");
+    expect(result.rows).toHaveLength(1);
     expect(result.rows[0].cls).toBe("Primary 5");
   });
 
-  it("falls back to sample data when the backend has no records", async () => {
+  it("returns no rows when the backend has no records", async () => {
     list.mockResolvedValueOnce([] as never);
-    const result = await getAttendance(filters);
-    expect(result.source).toBe("empty");
-    expect(result.rows.length).toBeGreaterThan(0);
+    expect(await getAttendance()).toEqual({ rows: [], source: "empty" });
   });
 
-  it("falls back to sample data when the backend cannot be reached", async () => {
-    list.mockRejectedValueOnce(new Error("down"));
-    const result = await getAttendance(filters);
-    expect(result.source).toBe("offline");
-    expect(result.rows.length).toBeGreaterThan(0);
+  it("returns no rows when the server cannot be reached", async () => {
+    list.mockRejectedValueOnce(new Error("network"));
+    expect(await getAttendance()).toEqual({ rows: [], source: "offline" });
   });
 });

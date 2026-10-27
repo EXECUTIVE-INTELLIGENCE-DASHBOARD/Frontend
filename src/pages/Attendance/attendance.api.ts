@@ -1,14 +1,14 @@
 import { academicsApi } from "../../lib/api/academics";
 import type { AttendanceRecord } from "../../lib/api/types";
-import { buildRows, hash, targetFor } from "./attendance.data";
-import type { AttendanceFilters, AttendanceRow } from "./attendance.types";
+import { hash, targetFor } from "./attendance.data";
+import type { AttendanceRow } from "./attendance.types";
 
 /**
  * Where the rows came from:
  *   "api"     built from attendance records returned by the backend
  *   "empty"   the backend answered but has no usable attendance records yet
  *   "offline" the backend could not be reached
- * For "empty" and "offline" the rows are generated sample data.
+ * For "empty" and "offline" there are no rows.
  */
 export type AttendanceSource = "api" | "empty" | "offline";
 
@@ -70,13 +70,11 @@ export function recordsToRows(records: AttendanceRecord[]): AttendanceRow[] {
     .sort((a, b) => a.cls.localeCompare(b.cls, undefined, { numeric: true }));
 }
 
-export async function getAttendance(filters: AttendanceFilters): Promise<AttendanceResult> {
-  let source: AttendanceSource = "empty";
+export async function getAttendance(): Promise<AttendanceResult> {
   try {
     const rows = recordsToRows(asList(await academicsApi.attendance.list({})));
-    if (rows.length) return { rows, source: "api" };
+    return { rows, source: rows.length ? "api" : "empty" };
   } catch {
-    source = "offline";
+    return { rows: [], source: "offline" };
   }
-  return { rows: buildRows(filters), source };
 }

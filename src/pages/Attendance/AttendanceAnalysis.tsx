@@ -58,7 +58,7 @@ export default function AttendanceAnalysis() {
   const [showAll, setShowAll] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
 
-  const { rows: allRows, loading, error, note } = useAttendance(filters);
+  const { rows: allRows, loading, error, note } = useAttendance();
   const classes = useMemo(() => classesFor(filters.campus, filters.section), [filters.campus, filters.section]);
   const classOptions = useMemo(() => [{ value: "", label: "All Classes" }, ...classes.map((c) => ({ value: c, label: c }))], [classes]);
   const rows = useMemo(() => allRows.filter((r) => (!cls || r.cls === cls) && (!stream || r.stream === stream)), [allRows, cls, stream]);
@@ -104,7 +104,7 @@ export default function AttendanceAnalysis() {
       {loading && <p className="at-state" aria-live="polite">Loading…</p>}
       {!loading && !error && note && <p role="status" className="at-state">{note}</p>}
 
-      {!loading && !error && (
+      {!loading && !error && allRows.length > 0 && (
         <>
           <div className="at-kpis">
             <Kpi icon="%" label="Attendance Rate" value={`${f1(totals.rate)}%`} detail={`Across ${fn(totals.learners)} learners`} />
