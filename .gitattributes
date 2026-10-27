@@ -1,0 +1,7 @@
+# Shell scripts run inside Alpine where a CRLF shebang is a fatal
+# "no such file or directory: /bin/sh^M" error, and Docker `COPY` reads the
+# working copy rather than the normalised blob. Force LF on disk regardless of
+# the local core.autocrlf setting.
+*.sh        text eol=lf
+Dockerfile  text eol=lf
+*.template  text eol=lf

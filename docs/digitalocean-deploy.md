@@ -19,13 +19,24 @@ why, plus the settings the App Platform component needs.
 
 * `Dockerfile` (repo root) — production: `node:24-alpine` build stage with
   `npm ci --include=dev` and `npm run build`, then `nginx:alpine` serving
-  `/usr/share/nginx/html` on **port 8080** with a `/healthz` endpoint.
+  `/usr/share/nginx/html` on **port 8080** with `/healthz` and `/upstream`
+  endpoints.
 * `deploy/nginx.conf.template` — SPA fallback (`try_files … /index.html`),
   long-lived caching for hashed `/assets/*`, no-cache for `index.html`, and a
-  `/api/` reverse proxy to `BACKEND_ORIGIN`.
+  `/api/` reverse proxy to `API_UPSTREAM`.
+* `deploy/docker-entrypoint.sh` — defaults `API_UPSTREAM`, refuses to start if it
+  still points at the retired Render host, and ignores legacy `BACKEND_ORIGIN`.
 * `Dockerfile.dev` — the Vite dev server container, used by `compose.yaml` only.
 * `.github/workflows/deploy.yml` — builds the root `Dockerfile`, pushes to GHCR,
   and (once the secrets exist) forces a DigitalOcean deployment.
+
+> **Why the variable is called `API_UPSTREAM` and not `BACKEND_ORIGIN`.**
+> `BACKEND_ORIGIN` was still set to the retired Render host in App Platform env
+> vars, compose files and systemd units. A platform-supplied value beats a
+> Dockerfile `ENV`, so the proxy quietly kept pointing at Render no matter what
+> the repository said. Renaming the variable retires the name: those leftovers
+> are now dead config that nothing reads. **Never reintroduce
+> `BACKEND_ORIGIN`** — if you see it, delete it.
 
 ## App Platform component settings
 
@@ -45,12 +56,19 @@ Environment variables:
 
 | Variable | Scope | Value |
 |----------|-------|-------|
-| `BACKEND_ORIGIN` | Run time | Scheme, host and optional port only — **no** `/api`, **no** trailing slash. Use `http://127.0.0.1:8000` when Django runs beside nginx, or `https://<your-backend-host>` when it is reached over the internet |
+| `API_UPSTREAM` | Run time | Scheme, host and optional port only — **no** `/api`, **no** trailing slash. Defaults to `http://127.0.0.1:8000`; only set it to move the backend |
 | `VITE_API_BASE_URL` | Build time | `/api` (the default; only set it if you want the browser to call the backend directly, e.g. `https://api.example.com/api`) |
 
-If the backend is another component in the *same* app, point `BACKEND_ORIGIN` at
+If the backend is another component in the *same* app, point `API_UPSTREAM` at
 its internal address (for example `http://api:8080`) and add that hostname to the
 Django backend's `ALLOWED_HOSTS`.
+
+Verify what a running container actually rendered — this is the one check that
+cannot be fooled by a stale variable:
+
+```sh
+curl -s http://<host>/upstream     # => proxy_pass http://127.0.0.1:8000/api/
+```
 
 > **`127.0.0.1` is the container itself.** A loopback upstream only works when
 > Django shares the frontend container's network namespace — the same container,
@@ -82,7 +100,7 @@ services:
     instance_count: 1
     instance_size_slug: basic-xxs
     envs:
-      - key: BACKEND_ORIGIN
+      - key: API_UPSTREAM
         value: http://127.0.0.1:8000
         scope: RUN_TIME
       - key: VITE_API_BASE_URL
@@ -123,7 +141,8 @@ Alternatively, drop the container path entirely and deploy the frontend as a
 docker build -t eid-frontend .
 docker run --rm -p 8080:8080 \
   --add-host=host.docker.internal:host-gateway \
-  -e BACKEND_ORIGIN=http://host.docker.internal:8000 \
+  -e API_UPSTREAM=http://host.docker.internal:8000 \
   eid-frontend
 # then open http://localhost:8080/healthz and http://localhost:8080/
+# and confirm the proxy target: http://localhost:8080/upstream
 ```

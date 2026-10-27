@@ -33,19 +33,33 @@ FROM nginx:alpine AS runtime
 
 COPY deploy/nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
+COPY deploy/docker-entrypoint.sh /usr/local/bin/eid-entrypoint.sh
+RUN chmod +x /usr/local/bin/eid-entrypoint.sh
 
-# PORT is what nginx listens on; BACKEND_ORIGIN is where /api is proxied to.
+# PORT is what nginx listens on; API_UPSTREAM is where /api is proxied to.
 # Both are read when the container starts, so they can be changed with run-time
 # environment variables without rebuilding the image.
 #
+# The variable is deliberately NOT called BACKEND_ORIGIN: that name is still set
+# to the retired Render host in App Platform env vars, compose files and systemd
+# units, and a platform-supplied value beats a Dockerfile ENV every time. Under
+# the new name those leftovers are dead config, which is why this class of bug
+# cannot come back.
+#
 # 127.0.0.1:8000 is only reachable when Django shares this container's network
 # namespace (same container, or `docker run --network=host`). If Django runs on
-# the host while this image runs on a bridge network, 127.0.0.1 is this
-# container itself and every /api call returns 502 — override BACKEND_ORIGIN
-# with http://host.docker.internal:8000 (plus
-# `--add-host=host.docker.internal:host-gateway`) or the host's LAN address.
+# the droplet host while this image runs on a bridge network, 127.0.0.1 is this
+# container itself and every /api call returns 502 — override API_UPSTREAM with
+# http://host.docker.internal:8000 (plus
+# `--add-host=host.docker.internal:host-gateway`) or the bridge gateway
+# (typically http://172.17.0.1:8000).
 ENV PORT=8080 \
-    BACKEND_ORIGIN=http://127.0.0.1:8000
+    API_UPSTREAM=http://127.0.0.1:8000
+
+# Entrypoint defaults API_UPSTREAM, refuses a retired Render target, and then
+# hands over to the stock nginx entrypoint so envsubst still runs.
+ENTRYPOINT ["/usr/local/bin/eid-entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
 
 EXPOSE 8080
 
