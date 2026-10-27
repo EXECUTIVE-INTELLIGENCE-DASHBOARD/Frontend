@@ -45,12 +45,24 @@ Environment variables:
 
 | Variable | Scope | Value |
 |----------|-------|-------|
-| `BACKEND_ORIGIN` | Run time | `https://<your-backend-host>` — scheme and host only, **no** `/api`, **no** trailing slash |
+| `BACKEND_ORIGIN` | Run time | Scheme, host and optional port only — **no** `/api`, **no** trailing slash. Use `http://127.0.0.1:8000` when Django runs beside nginx, or `https://<your-backend-host>` when it is reached over the internet |
 | `VITE_API_BASE_URL` | Build time | `/api` (the default; only set it if you want the browser to call the backend directly, e.g. `https://api.example.com/api`) |
 
 If the backend is another component in the *same* app, point `BACKEND_ORIGIN` at
 its internal address (for example `http://api:8080`) and add that hostname to the
 Django backend's `ALLOWED_HOSTS`.
+
+> **`127.0.0.1` is the container itself.** A loopback upstream only works when
+> Django shares the frontend container's network namespace — the same container,
+> or `docker run --network=host`. If Django runs on the droplet host and the
+> frontend runs on a bridge network, every `/api/` request returns **502 Bad
+> Gateway**. In that case use `http://host.docker.internal:8000` together with
+> `--add-host=host.docker.internal:host-gateway`, or the host's LAN address
+> (`http://172.17.0.1:8000` for the default bridge).
+>
+> Since nginx forwards the browser's own `Host` header, Django must also list the
+> hostname the browser uses (`138.197.193.101`) in `ALLOWED_HOSTS`. Adding
+> `127.0.0.1` and `localhost` there is harmless insurance.
 
 ### App spec equivalent
 
@@ -71,7 +83,7 @@ services:
     instance_size_slug: basic-xxs
     envs:
       - key: BACKEND_ORIGIN
-        value: https://eid-backend-4mrm.onrender.com
+        value: http://127.0.0.1:8000
         scope: RUN_TIME
       - key: VITE_API_BASE_URL
         value: /api
@@ -110,7 +122,8 @@ Alternatively, drop the container path entirely and deploy the frontend as a
 ```sh
 docker build -t eid-frontend .
 docker run --rm -p 8080:8080 \
-  -e BACKEND_ORIGIN=https://eid-backend-4mrm.onrender.com \
+  --add-host=host.docker.internal:host-gateway \
+  -e BACKEND_ORIGIN=http://host.docker.internal:8000 \
   eid-frontend
 # then open http://localhost:8080/healthz and http://localhost:8080/
 ```

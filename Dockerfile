@@ -35,9 +35,17 @@ COPY deploy/nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # PORT is what nginx listens on; BACKEND_ORIGIN is where /api is proxied to.
-# Both can be overridden with run-time environment variables on the platform.
+# Both are read when the container starts, so they can be changed with run-time
+# environment variables without rebuilding the image.
+#
+# 127.0.0.1:8000 is only reachable when Django shares this container's network
+# namespace (same container, or `docker run --network=host`). If Django runs on
+# the host while this image runs on a bridge network, 127.0.0.1 is this
+# container itself and every /api call returns 502 — override BACKEND_ORIGIN
+# with http://host.docker.internal:8000 (plus
+# `--add-host=host.docker.internal:host-gateway`) or the host's LAN address.
 ENV PORT=8080 \
-    BACKEND_ORIGIN=https://eid-backend-4mrm.onrender.com
+    BACKEND_ORIGIN=http://127.0.0.1:8000
 
 EXPOSE 8080
 
