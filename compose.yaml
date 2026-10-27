@@ -1,7 +1,10 @@
 services:
   frontend:
     build:
+      # The repo-root `Dockerfile` is the production image; the dev container
+      # runs the Vite dev server so this compose file keeps hot reload.
       context: .
+      dockerfile: Dockerfile.dev
     ports:
       - "5173:5173"
     environment:
