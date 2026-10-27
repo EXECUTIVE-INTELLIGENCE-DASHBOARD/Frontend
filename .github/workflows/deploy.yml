@@ -37,11 +37,36 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: Dockerfile.production
+          file: Dockerfile
           push: true
           tags: |
             ghcr.io/executive-intelligence-dashboard/frontend:dev
             ghcr.io/executive-intelligence-dashboard/frontend:${{ github.sha }}
           build-args: |
             VITE_API_BASE_URL=/api
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # App Platform does NOT redeploy automatically when a new image is pushed
+      # to Docker Hub or GHCR, so a fresh tag alone changes nothing on the live
+      # app. This forces a deployment once the repository has these secrets:
+      #   DIGITALOCEAN_ACCESS_TOKEN  token with app:update scope
+      #   DO_APP_ID                  the app UUID (`doctl apps list`)
+      # Without them the step succeeds and does nothing.
+      - name: Trigger DigitalOcean deployment
+        env:
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          DO_APP_ID: ${{ secrets.DO_APP_ID }}
+        run: |
+          if [ -z "$DIGITALOCEAN_ACCESS_TOKEN" ] || [ -z "$DO_APP_ID" ]; then
+            echo "DigitalOcean secrets are not configured; skipping redeploy."
+            echo "Add DIGITALOCEAN_ACCESS_TOKEN and DO_APP_ID to enable it."
+            exit 0
+          fi
+          curl -sSf -X POST \
+            -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"force_build": true}' \
+            "https://api.digitalocean.com/v2/apps/$DO_APP_ID/deployments"
+
 
