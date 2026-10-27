@@ -1,4 +1,4 @@
-import { apiClient } from "../../lib/api/client";
+import api from "../../api/axios";
 import type {
   IncidentDashboardData,
   IncidentDashboardFilters,
@@ -8,7 +8,7 @@ export async function getIncidentDashboard(
   filters: IncidentDashboardFilters = {},
   signal?: AbortSignal,
 ): Promise<IncidentDashboardData> {
-  const response = await apiClient.get<IncidentDashboardData>(
+  const response = await api.get<IncidentDashboardData>(
     "/operations/incidents/dashboard/",
     { params: filters, signal },
   );
