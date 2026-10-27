@@ -131,7 +131,6 @@ export function aggregateFromDashboard(
     applicants: stage("applied"),
     shortlisted: stage("qualified"),
     interviewed: stage("interviewed"),
-    offered: accepted,
     accepted,
     reported: stage("enrolled"),
 

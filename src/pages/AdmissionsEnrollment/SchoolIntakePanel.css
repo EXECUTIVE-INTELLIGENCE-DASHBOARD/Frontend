@@ -1,0 +1,107 @@
+/* ------------------------------------------------------- Intake table block */
+
+.ae-intake__stage {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-bottom: 10px;
+  padding: 2px;
+  border: 1px solid var(--ae-border);
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+}
+
+.ae-intake__stage-option {
+  padding: 5px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ae-muted);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ae-intake__stage-option:hover {
+  color: var(--color-text);
+}
+
+.ae-intake__stage-option.is-active {
+  background: var(--color-surface);
+  color: var(--color-heading);
+  box-shadow: 0 1px 2px rgb(16 32 64 / 12%);
+}
+
+.ae-intake__stage-option:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.ae-table--intake tbody th {
+  white-space: nowrap;
+}
+
+/* Nine columns is more than the drill table carries. These rules are scoped
+   twice (`.ae-table.ae-table--intake`) because this sheet is loaded before the
+   page sheet, so `.ae-table th` would otherwise win the cascade. */
+.ae-table.ae-table--intake th,
+.ae-table.ae-table--intake td {
+  padding-inline: 5px;
+}
+
+/* The uppercased header cells are the widest thing in this table, so they wrap
+   here instead of pushing the nine columns past the panel. */
+.ae-table.ae-table--intake thead th {
+  white-space: normal;
+}
+
+.ae-table.ae-table--intake .ae-num {
+  font-variant-numeric: tabular-nums;
+}
+
+.ae-table.ae-table--intake td:last-child {
+  white-space: normal;
+}
+
+.ae-intake__row:hover {
+  background: var(--color-surface-hover);
+}
+
+/* The school name is the drill handle, so it reads as a link, not a button. */
+.ae-intake__school {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-accent);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ae-intake__school:hover {
+  text-decoration: underline;
+}
+
+.ae-intake__school:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.ae-intake__mix {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 1px;
+  white-space: nowrap;
+}
+
+.ae-intake__mix-label {
+  color: var(--color-text);
+}
+
+.ae-intake__mix-share {
+  color: var(--ae-muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}

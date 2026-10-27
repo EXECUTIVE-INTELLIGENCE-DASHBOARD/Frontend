@@ -4,20 +4,19 @@ import type { Aggregate } from "./admissionsEnrollment.types";
 import { formatNumber, formatPercent, funnelStages } from "./admissionsEnrollment.data";
 
 const stageIds = [
-  "applicants",
-  "shortlisted",
+  "applied",
+  "qualified",
   "interviewed",
-  "offered",
   "accepted",
-  "reported",
+  "enrolled",
 ] as const;
 
 interface AdmissionsFunnelProps {
   summary: Aggregate;
   /**
-   * `true` when the figures come from the enrollment endpoint. Its pipeline has
-   * no separate "offers made" step — it goes straight from `accepted` — so that
-   * stage is drawn as an em dash instead of repeating the accepted count.
+   * `true` when the figures come from the enrollment endpoint. Without it the
+   * seeded sample is shown and every stage is drawn as an em dash, because the
+   * API is the only source of pipeline counts.
    */
   live?: boolean;
 }
@@ -26,7 +25,7 @@ export function AdmissionsFunnel({ summary, live = false }: AdmissionsFunnelProp
   const stages = funnelStages(summary);
 
   /* Without live data every stage is unknown, so the whole funnel is dashed. */
-  const unavailable: readonly string[] = live ? ["offered"] : stageIds;
+  const unavailable: readonly string[] = live ? [] : stageIds;
 
   const isMissing = (id: string) => unavailable.includes(id);
 
@@ -98,7 +97,7 @@ export function AdmissionsFunnel({ summary, live = false }: AdmissionsFunnelProp
             <strong>
               {formatNumber(Math.max(0, summary.accepted - summary.reported))}
             </strong>{" "}
-            offers not taken
+            accepted but never enrolled
           </>
         ) : (
           <span className="ae-funnel__note-warn">
