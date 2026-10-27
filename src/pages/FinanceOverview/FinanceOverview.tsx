@@ -3,14 +3,13 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
   LabelList,
   ResponsiveContainer,
   XAxis,
   YAxis,
 } from "recharts";
 
-import { campusColours, formatUgx, shortSchoolName } from "../../lib/finance.format";
+import { chartColour, formatUgx, shortSchoolName } from "../../lib/finance.format";
 import {
   getFinanceDashboard,
   type DashboardSchool,
@@ -80,10 +79,7 @@ function SchoolBars({
           <div className="finance-overview__bar-track">
             <div
               className="finance-overview__bar-fill"
-              style={{
-                width: `${(value(school) / max) * 100}%`,
-                background: campusColours[school.campus],
-              }}
+              style={{ width: `${(value(school) / max) * 100}%`, background: chartColour }}
             />
           </div>
           <strong>{formatUgx(value(school))}</strong>
@@ -97,7 +93,6 @@ function RevenueCard({ data }: { data: FinanceDashboard }) {
   const rows = data.schools.map((school) => ({
     label: shortSchoolName(school.name, school.campus),
     revenue: school.revenue,
-    campus: school.campus,
   }));
 
   return (
@@ -120,10 +115,8 @@ function RevenueCard({ data }: { data: FinanceDashboard }) {
               tickFormatter={formatUgx}
               tick={{ fill: "var(--color-text-muted)", fontSize: 11 }}
             />
-            <Bar dataKey="revenue" radius={[5, 5, 0, 0]} maxBarSize={64} isAnimationActive={false}>
-              {rows.map((row) => (
-                <Cell key={row.label} fill={campusColours[row.campus]} />
-              ))}
+            <Bar dataKey="revenue" fill={chartColour} radius={[5, 5, 0, 0]} maxBarSize={64}
+              isAnimationActive={false}>
               <LabelList
                 dataKey="revenue"
                 position="top"
@@ -134,11 +127,6 @@ function RevenueCard({ data }: { data: FinanceDashboard }) {
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <div className="finance-overview__legend">
-        <span><i style={{ background: campusColours.kibuli }} />Kibuli</span>
-        <span><i style={{ background: campusColours.buwaate }} />Buwaate</span>
-        <span><i style={{ background: campusColours.gis }} />GIS</span>
-      </div>
     </Panel>
   );
 }
@@ -148,10 +136,9 @@ function LiabilitiesCard({ data }: { data: FinanceDashboard }) {
     ...data.schools.map((school) => ({
       key: String(school.id),
       label: shortSchoolName(school.name, school.campus),
-      campus: school.campus,
       ...school.liabilities,
     })),
-    { key: "group", label: "Group (GHL)", campus: "", ...data.group.liabilities },
+    { key: "group", label: "Group (GHL)", ...data.group.liabilities },
   ];
 
   return (
@@ -173,13 +160,7 @@ function LiabilitiesCard({ data }: { data: FinanceDashboard }) {
           <tbody>
             {rows.map((row) => (
               <tr key={row.key}>
-                <td>
-                  <i
-                    className="finance-overview__dot"
-                    style={{ background: campusColours[row.campus] ?? "var(--color-text-soft)" }}
-                  />
-                  {row.label}
-                </td>
+                <td>{row.label}</td>
                 <td>{formatUgx(row.owed)}</td>
                 <td>{formatUgx(row.due_30_days)}</td>
                 <td className={row.overdue > 0 ? "is-red" : "is-green"}>
@@ -207,11 +188,10 @@ function BudgetCard({ data }: { data: FinanceDashboard }) {
     ...data.schools.map((school) => ({
       key: String(school.id),
       label: shortSchoolName(school.name, school.campus),
-      campus: school.campus,
       ...school.budget,
     })),
     ...(data.group.budget.budget || data.group.budget.spent
-      ? [{ key: "group", label: "Group (GHL)", campus: "", ...data.group.budget }]
+      ? [{ key: "group", label: "Group (GHL)", ...data.group.budget }]
       : []),
   ];
 
@@ -234,13 +214,7 @@ function BudgetCard({ data }: { data: FinanceDashboard }) {
           <tbody>
             {rows.map((row) => (
               <tr key={row.key}>
-                <td>
-                  <i
-                    className="finance-overview__dot"
-                    style={{ background: campusColours[row.campus] ?? "var(--color-text-soft)" }}
-                  />
-                  {row.label}
-                </td>
+                <td>{row.label}</td>
                 <td>{formatUgx(row.budget)}</td>
                 <td>{formatUgx(row.spent)}</td>
                 <td className={usedTone(row.used_percent)}>

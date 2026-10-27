@@ -37,14 +37,13 @@ export function shortSchoolName(name: string, campus: string): string {
   return level ? `${place} ${level}` : name;
 }
 
-/** Campus colours for the per-school charts (chart-navy turns sky in dark theme). */
-export const campusColours: Record<string, string> = {
-  kibuli: "var(--chart-navy)",
-  buwaate: "var(--pal-indigo)",
-  gis: "var(--brand-gold)",
-};
+/**
+ * The one colour every finance chart uses: brand navy, so the charts need no key.
+ * (chart-navy turns sky in dark theme, where navy is the page background.)
+ */
+export const chartColour = "var(--chart-navy)";
 
-/** Section colours: day and boarding. */
+/** Section colours for the Revenue screen: day and boarding. */
 export const sectionColours = {
   day: "var(--chart-navy)",
   boarding: "var(--brand-gold)",
