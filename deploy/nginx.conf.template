@@ -6,7 +6,9 @@
 #                   the component's public HTTP port to 8080 and marks the
 #                   component UNHEALTHY if nothing answers there.
 #   BACKEND_ORIGIN  scheme://host[:port] of the Django API, with no path and no
-#                   trailing slash, e.g. https://eid-backend-4mrm.onrender.com
+#                   trailing slash. Use http://127.0.0.1:8000 when Django runs
+#                   in the same network namespace as this nginx, or an
+#                   https://host when it is reached across the internet.
 
 gzip on;
 gzip_vary on;
@@ -38,15 +40,20 @@ server {
     # browser needs neither CORS nor a second DNS lookup. The trailing slashes
     # on both sides map /api/<x> here to <BACKEND_ORIGIN>/api/<x>.
     #
-    # Host is set to $proxy_host (the backend's own hostname) rather than the
-    # public one, otherwise Django's ALLOWED_HOSTS rejects the request.
+    # Host forwards the browser's own host (e.g. 138.197.193.101), which Django's
+    # ALLOWED_HOSTS already lists. Do NOT change this to $proxy_host while the
+    # upstream is loopback: that would send `Host: 127.0.0.1:8000` and Django
+    # would answer 400 DisallowedHost unless 127.0.0.1 is listed there as well.
+    #
+    # proxy_ssl_server_name is deliberately absent: SNI only applies to an
+    # https:// upstream. Re-add `proxy_ssl_server_name on;` if BACKEND_ORIGIN
+    # ever points at a TLS host that needs a server name.
     location /api/ {
         proxy_pass ${BACKEND_ORIGIN}/api/;
         proxy_http_version 1.1;
-        proxy_set_header Host $proxy_host;
+        proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_ssl_server_name on;
         proxy_read_timeout 60s;
         proxy_connect_timeout 10s;
     }
