@@ -73,7 +73,12 @@ The GitHub Actions workflow runs the same checks on pushes to Dev and pull reque
 
 ## API configuration
 
-The Axios client is in src/lib/api.ts. Its base URL comes from VITE_API_BASE_URL and falls back to http://localhost:8000/api. TanStack Query is configured in src/main.tsx; feature-specific hooks should be added alongside the feature that uses them.
+There are two clients, both driven by environment variables and both defaulting to the relative path `/api`:
+
+- `src/api/axios.ts` reads `VITE_API_URL`.
+- `src/lib/api/client.ts` reads `VITE_API_BASE_URL`.
+
+Neither file contains a backend hostname. In development `vite.config.ts` proxies `/api` to the backend; in production nginx does the same, so the browser stays same-origin and no CORS configuration is required. TanStack Query is configured in src/main.tsx; feature-specific hooks should be added alongside the feature that uses them.
 
 For local work, start the Backend repository too. The Backend foundation exposes GET /api/health/. CORS is restricted to local development origins there; update the allowed origins deliberately if local ports change.
 
@@ -88,13 +93,20 @@ The repositories are currently on the GitHub Free plan. GitHub displayed the exi
 
 ## Deployment
 
-No deployment workflow is configured. The initial hosting provider is still to be selected, and the project may later move to DigitalOcean. Keep provider credentials out of the repository. Add a production build/deploy workflow only after the team chooses the target and its approval process.
+The frontend runs on DigitalOcean App Platform as a web service built from the repository-root `Dockerfile` (Vite build, then nginx serving the bundle on port 8080). `.github/workflows/deploy.yml` builds that image, pushes it to GHCR and triggers a new App Platform deployment. See docs/digitalocean-deploy.md for the component settings and required secrets. Keep provider credentials out of the repository.
+
+`render.yaml` is a leftover static-site blueprint from an earlier hosting evaluation and is not part of the current deployment path.
 
 ## Repository layout
 
     .github/workflows/ci.yml   Pull-request and Dev validation
+    .github/workflows/deploy.yml  Production image build and App Platform deploy
+    deploy/nginx.conf.template  Production server config (SPA fallback, /api proxy)
+    Dockerfile                 Production image (Vite build -> nginx on 8080)
+    Dockerfile.dev             Vite dev server image used by compose.yaml
     src/App.tsx                Small application shell
-    src/lib/api.ts             Shared Axios client
+    src/api/axios.ts           Axios client used by most pages
+    src/lib/api/client.ts      Fetch/Axios client with CSRF handling
     src/main.tsx               React and TanStack Query bootstrap
     src/test/                  Vitest setup
 

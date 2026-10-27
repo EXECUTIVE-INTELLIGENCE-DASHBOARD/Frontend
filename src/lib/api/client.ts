@@ -2,7 +2,7 @@ import axios, { type InternalAxiosRequestConfig } from "axios";
 
 import { toApiError } from "./errors";
 
-/** Used when `VITE_API_BASE_URL` is not set (see `.env` / `render.yaml`). */
+/** Used when `VITE_API_BASE_URL` is not set (see `.env.example`). */
 export const defaultApiBaseUrl = "/api";
 
 const configuredBaseUrl =

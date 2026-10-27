@@ -1,5 +1,5 @@
 // Sample data from the design prototype (GSL organogram, Q2 2026).
-// TODO: replace each export with a call in src/lib/api.ts when endpoints exist.
+// TODO: replace each export with a call in src/lib/api/ when endpoints exist.
 import type { BudgetRow, InventoryRow, MonthlySales, Outlet, SalesRow } from "./services.types";
 
 export const outlets: Outlet[] = [
