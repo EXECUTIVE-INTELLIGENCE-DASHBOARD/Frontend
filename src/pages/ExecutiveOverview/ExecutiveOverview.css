@@ -1,3 +1,9 @@
+.executive-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
 .eo-page {
   --eo-heading: var(--color-heading);
   --eo-muted: var(--color-text-muted);
@@ -708,5 +714,11 @@
 @media (max-width: 820px) {
   .eo-metrics {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .executive-overview {
+    gap: 32px;
   }
 }
