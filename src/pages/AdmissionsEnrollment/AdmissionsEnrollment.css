@@ -21,7 +21,7 @@
 
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 
   font-family:
     "Montserrat",
@@ -222,6 +222,15 @@
   gap: 12px;
 }
 
+/* The shared academic filters are a full-width grid on their own screen. Here
+   they give up their claim to the whole row so the school field can sit beside
+   them, which keeps the whole filter bar one line deep. */
+.ae-filters > .academic-performance__filters {
+  flex: 1 1 640px;
+  width: auto;
+  grid-template-columns: repeat(4, minmax(110px, 1fr));
+}
+
 .ae-field {
   display: flex;
   flex-direction: column;
@@ -230,6 +239,11 @@
 }
 
 /* Controls stay compact instead of stretching across the whole row. */
+.ae-field--school {
+  flex: 0 1 166px;
+  max-width: 180px;
+}
+
 .ae-field--class {
   flex: 0 1 122px;
   max-width: 134px;
@@ -605,17 +619,14 @@
   text-align: center;
 }
 
-.ae-workbench {
+/* The intake table takes most of the width because it carries nine columns of
+   figures; the funnel closes the page beside it. Both stretch to the same
+   height so the page ends on one line. */
+.ae-lower {
   display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 2.1fr) minmax(0, 1fr);
   gap: 12px;
-  align-items: start;
-}
-
-.ae-workbench__main {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  align-items: stretch;
   min-width: 0;
 }
 
@@ -960,11 +971,6 @@
   background: var(--ae-f4);
 }
 
-.ae-funnel__bar--5 {
-  background: var(--ae-f5);
-  color: var(--ae-f5-ink);
-}
-
 .ae-funnel__rate {
   color: var(--ae-muted);
   font-size: 10.5px;
@@ -1011,7 +1017,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0 4px;
+  /* Sits on the card's bottom edge when the funnel is stretched to the height
+     of the panel beside it. */
   margin: 8px 0 0;
+  margin-top: auto;
   padding-top: 10px;
   border-top: 1px solid var(--color-border-soft);
   color: var(--ae-muted);
@@ -1289,8 +1298,12 @@
   .ae-kpis {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
 
-  .ae-workbench {
+/* Below this width the intake table needs every pixel it can get, so the
+   funnel drops underneath it rather than squeezing both. */
+@media (max-width: 940px) {
+  .ae-lower {
     grid-template-columns: minmax(0, 1fr);
   }
 }
