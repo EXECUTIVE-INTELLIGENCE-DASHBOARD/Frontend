@@ -10,14 +10,17 @@
   --ae-green: var(--pal-green);
 
   /* Chart fills. These are FILL colours, never text colours — keep them
-     opaque so bar values stay readable in both themes. */
-  --ae-f0: #1c3160;
-  --ae-f1: #22518f;
-  --ae-f2: #256fae;
-  --ae-f3: #2589c6;
-  --ae-f4: #2aa4dd;
-  --ae-f5: #a7d9ef;
-  --ae-f5-ink: #142a52;
+     opaque so bar values stay readable in both themes.
+     Only the three GreenHill primaries are used — navy #203468, sky #2AA4DD
+     and gold #F1BA1B — plus a lightened navy for the fourth step, as the
+     design guide allows. */
+  --ae-f0: #203468; /* brand navy */
+  --ae-f1: #3d5aa0; /* navy, lightened */
+  --ae-f2: #2aa4dd; /* brand sky */
+  --ae-f3: #7cc7ea; /* sky, lightened */
+  --ae-f4: #f1ba1b; /* brand gold */
+  --ae-f5: #fae3a4;
+  --ae-f5-ink: #203468;
 
   display: flex;
   flex-direction: column;
@@ -738,12 +741,12 @@
 }
 
 .ae-group__seg--girls {
-  background: var(--ae-f1);
+  background: var(--ae-f4);
 }
 
 .ae-group__seg--boys {
   flex: 1;
-  background: var(--color-accent);
+  background: var(--ae-f0);
 }
 
 .ae-group__count {
@@ -794,11 +797,11 @@
 }
 
 .ae-swatch--girls {
-  background: var(--ae-f1);
+  background: var(--ae-f4);
 }
 
 .ae-swatch--boys {
-  background: var(--color-accent);
+  background: var(--ae-f0);
 }
 
 /* ------------------------------------------------------------------- Tables */
@@ -1394,14 +1397,14 @@
 }
 
 [data-theme="dark"] .ae-page {
-  /* On a dark surface the ramp runs bright instead of navy, so every
-     bar keeps white-to-navy ink contrast. */
-  --ae-f0: #2a6fc4;
-  --ae-f1: #2f81d2;
-  --ae-f2: #3492dd;
-  --ae-f3: #38a0e4;
-  --ae-f4: #2aa4dd;
-  --ae-f5: #9adcf5;
+  /* Navy is the page background on dark surfaces, so sky stands in for it
+     and the ramp runs bright; gold closes the run. */
+  --ae-f0: #2aa4dd; /* sky, standing in for navy */
+  --ae-f1: #5abfe9;
+  --ae-f2: #9adcf5;
+  --ae-f3: #cfebfa;
+  --ae-f4: #f1ba1b; /* brand gold */
+  --ae-f5: #fae3a4;
   --ae-f5-ink: #12233f;
 }
 

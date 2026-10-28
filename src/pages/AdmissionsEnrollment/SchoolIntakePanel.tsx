@@ -1,32 +1,32 @@
 import { useMemo, useState } from "react";
 
-import type { DrillDimension, IntakeFigure } from "./admissionsEnrollment.data";
-import type { CohortRow } from "./admissionsEnrollment.types";
+import type { IntakeFigure } from "./admissionsEnrollment.data";
+import type {
+  CohortRow,
+  LevelId,
+  SchoolSelection,
+} from "./admissionsEnrollment.types";
 import {
   classLabelFor,
+  classOptionsFor,
   formatNumber,
   formatPercent,
   intakeBySchool,
+  levelLabels,
   schoolShortNameFor,
+  streams,
 } from "./admissionsEnrollment.data";
 
 import "./SchoolIntakePanel.css";
 
-/**
- * The two entry points a secondary school takes learners at. Enrolment into
- * S.2, S.3, S.4 and S.6 is continuation, not intake, so those classes are not
- * offered here.
- */
-const stages = [
-  { id: "s1", label: "S.1" },
-  { id: "s5", label: "S.5" },
-] as const;
-
-type StageId = (typeof stages)[number]["id"];
+/** Class order inside the table's class picker. */
+const levels: LevelId[] = ["nursery", "primary", "olevel", "alevel"];
 
 interface SchoolIntakePanelProps {
   rows: CohortRow[];
-  onDrill: (dimension: DrillDimension, value: string) => void;
+  /** The campus currently chosen above the table; it scopes the class list. */
+  school: SchoolSelection;
+  onSelect: (schoolId: string) => void;
 }
 
 function MixCell({ figure }: { figure: IntakeFigure | null }) {
@@ -53,16 +53,36 @@ function CountCell({ value }: { value: number }) {
 
 /**
  * "Enrolment by school" as a table: one row per campus in scope, with columns
- * for the intake's gender split, boarding and day, age, nationality, faith and
- * school of origin. Every campus keeps a row, so a campus that does not admit
- * the selected class shows a dash rather than vanishing. Rows stay drillable so
- * the class and stream levels remain reachable.
+ * for the gender split, boarding and day, age, nationality, faith and school
+ * of origin. It opens on the whole-school roll, so every school's enrolment is
+ * on screen before anything is drilled into. The class and stream pickers sit
+ * on the table itself: choosing a class narrows both the columns and the rows,
+ * so a campus that does not run S.1 or S.5 drops out of the table entirely.
+ * A row picks its campus, which then rescopes the table's own pickers.
  */
-export function SchoolIntakePanel({ rows, onDrill }: SchoolIntakePanelProps) {
-  const [stage, setStage] = useState<StageId>("s1");
+export function SchoolIntakePanel({
+  rows,
+  school,
+  onSelect,
+}: SchoolIntakePanelProps) {
+  const [classId, setClassId] = useState("all");
+  const [stream, setStream] = useState("all");
 
-  const intake = useMemo(() => intakeBySchool(rows, stage), [rows, stage]);
-  const label = classLabelFor(stage);
+  // Switching to a campus that does not run the chosen class falls back to the
+  // whole roll rather than leaving a picker showing a class it cannot offer.
+  const availableClasses = useMemo(() => classOptionsFor(school), [school]);
+  const activeClass = availableClasses.some(
+    (definition) => definition.id === classId,
+  )
+    ? classId
+    : "all";
+
+  const intake = useMemo(
+    () => intakeBySchool(rows, activeClass, stream),
+    [rows, activeClass, stream],
+  );
+  const label = activeClass === "all" ? "Total" : classLabelFor(activeClass);
+  const scope = stream === "all" ? label : `${label}, Stream ${stream}`;
   const inView = intake.reduce((sum, row) => sum + row.learners, 0);
 
   return (
@@ -75,38 +95,66 @@ export function SchoolIntakePanel({ rows, onDrill }: SchoolIntakePanelProps) {
           <h2 className="ae-block__title" id="ae-intake-heading">
             Enrolment by school
           </h2>
-          <p className="ae-block__sub">
-            Who joins in {label}, and where they come from
-          </p>
-          <p className="ae-block__note">
-            Age, nationality, faith and school of origin are modelled sample
-            data — the API does not report them yet. A dash means the campus
-            does not admit {label}.
-          </p>
         </div>
         <span className="ae-chip">{formatNumber(inView)} in view</span>
       </div>
 
-      <div className="ae-intake__stage" role="group" aria-label="Intake class">
-        {stages.map((option) => (
-          <button
-            key={option.id}
-            type="button"
-            className={`ae-intake__stage-option${
-              option.id === stage ? " is-active" : ""
-            }`}
-            aria-pressed={option.id === stage}
-            onClick={() => setStage(option.id)}
-          >
-            {option.label}
-          </button>
-        ))}
+      <div className="ae-intake__filters">
+        <label className="ae-field ae-field--class">
+          <span className="ae-field__label">Class</span>
+          <span className="ae-select">
+            <select
+              aria-label="Class"
+              value={activeClass}
+              onChange={(event) => setClassId(event.target.value)}
+            >
+              <option value="all">All classes</option>
+              {levels.map((level) => {
+                const options = availableClasses.filter(
+                  (definition) => definition.level === level,
+                );
+
+                if (options.length === 0) {
+                  return null;
+                }
+
+                return (
+                  <optgroup key={level} label={levelLabels[level]}>
+                    {options.map((definition) => (
+                      <option key={definition.id} value={definition.id}>
+                        {definition.label}
+                      </option>
+                    ))}
+                  </optgroup>
+                );
+              })}
+            </select>
+          </span>
+        </label>
+
+        <label className="ae-field ae-field--stream">
+          <span className="ae-field__label">Stream</span>
+          <span className="ae-select">
+            <select
+              aria-label="Stream"
+              value={stream}
+              onChange={(event) => setStream(event.target.value)}
+            >
+              <option value="all">All streams</option>
+              {streams.map((option) => (
+                <option key={option} value={option}>
+                  Stream {option}
+                </option>
+              ))}
+            </select>
+          </span>
+        </label>
       </div>
 
       <div className="ae-table-wrap">
         <table className="ae-table ae-table--intake">
           <caption className="ae-sr-only">
-            {label} enrolment by school, with gender, boarding, day, age,
+            {scope} enrolment by school, with gender, boarding, day, age,
             nationality, faith and school of origin
           </caption>
           <thead>
@@ -131,6 +179,13 @@ export function SchoolIntakePanel({ rows, onDrill }: SchoolIntakePanelProps) {
             </tr>
           </thead>
           <tbody>
+            {intake.length === 0 ? (
+              <tr>
+                <td className="ae-muted" colSpan={9}>
+                  No school in scope runs {label.toLowerCase()}.
+                </td>
+              </tr>
+            ) : null}
             {intake.map((row) => (
               <tr key={row.schoolId} className="ae-intake__row">
                 <th scope="row">
@@ -139,10 +194,10 @@ export function SchoolIntakePanel({ rows, onDrill }: SchoolIntakePanelProps) {
                     className="ae-intake__school"
                     aria-label={
                       row.learners === 0
-                        ? `${row.schoolName}, no ${label} intake. Drill down`
+                        ? `${row.schoolName}, no ${label} learners. Drill down`
                         : `${row.schoolName}, ${row.learners} ${label} learners. Drill down`
                     }
-                    onClick={() => onDrill("school", row.schoolId)}
+                    onClick={() => onSelect(row.schoolId)}
                   >
                     {schoolShortNameFor(row.schoolId)}
                   </button>
@@ -177,10 +232,6 @@ export function SchoolIntakePanel({ rows, onDrill }: SchoolIntakePanelProps) {
           </tbody>
         </table>
       </div>
-
-      <p className="ae-block__foot">
-        Select a school to drill into its classes and streams.
-      </p>
     </section>
   );
 }

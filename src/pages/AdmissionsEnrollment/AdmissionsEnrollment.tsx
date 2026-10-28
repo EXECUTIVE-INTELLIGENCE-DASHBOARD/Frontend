@@ -20,24 +20,19 @@ import { KpiCard } from "./DashboardUi";
 import { DrillPanel } from "./DrillPanel";
 import { SchoolIntakePanel } from "./SchoolIntakePanel";
 import { LearnerDrawer } from "./LearnerDrawer";
-import type { DrillDimension, RosterLearner } from "./admissionsEnrollment.data";
+import type { RosterLearner } from "./admissionsEnrollment.data";
 import {
   aggregate,
   averageAcrossSchools,
   campusForValue,
   classBreakdown,
-  classLabelFor,
-  classOptionsFor,
   defaultFilters,
   filteredRows,
   formatNumber,
   formatPercent,
-  groupRows,
   learnerRoster,
   levelLabels,
   schoolNameFor,
-  schools,
-  streams,
   yearIdForValue,
 } from "./admissionsEnrollment.data";
 import {
@@ -46,30 +41,9 @@ import {
   useEnrollmentDashboard,
   type AcademicDashboardFilters,
 } from "./admissionsEnrollment.api";
-import type {
-  Filters,
-  LevelId,
-  SchoolSelection,
-} from "./admissionsEnrollment.types";
+import type { Filters, SchoolSelection } from "./admissionsEnrollment.types";
 
 import "./AdmissionsEnrollment.css";
-
-const levels: LevelId[] = ["nursery", "primary", "olevel", "alevel"];
-
-const dimensionCopy: Record<DrillDimension, { heading: string; sub: string }> = {
-  school: {
-    heading: "Enrolment by school",
-    sub: "Select a school bar to see how its classes are enrolled",
-  },
-  class: {
-    heading: "Enrolment by class",
-    sub: "Select a class bar to see how its streams are enrolled",
-  },
-  stream: {
-    heading: "Enrolment by stream",
-    sub: "Select a stream bar to list every learner in it",
-  },
-};
 
 export function AdmissionsEnrollment() {
   const [filters, setFilters] = useState<Filters>(defaultFilters);
@@ -154,51 +128,24 @@ export function AdmissionsEnrollment() {
     [live.data, seededSummary],
   );
 
-  const availableClasses = useMemo(
-    () => classOptionsFor(filters.school),
-    [filters.school],
-  );
-
-  const isLeaf =
-    filters.school !== "all" &&
-    filters.classId !== "all" &&
-    filters.stream !== "all";
-
   const query = filters.student.trim();
   const searchMode = query.length >= 2;
 
-  const roster = useMemo(
-    () => (isLeaf || searchMode ? learnerRoster(rows, filters.year) : []),
-    [isLeaf, searchMode, rows, filters.year],
-  );
-
+  // Class and stream are narrowed by the pickers on the enrolment table, so the
+  // page's own list is only ever the learner search result.
   const matches = useMemo(() => {
     if (!searchMode) {
-      return roster;
+      return [];
     }
 
     const needle = query.toLowerCase();
 
-    return roster.filter(
+    return learnerRoster(rows, filters.year).filter(
       (learner) =>
         learner.name.toLowerCase().includes(needle) ||
         learner.id.toLowerCase().includes(needle),
     );
-  }, [query, roster, searchMode]);
-
-  const dimension: DrillDimension | "learners" =
-    searchMode || isLeaf
-      ? "learners"
-      : filters.school === "all"
-        ? "school"
-        : filters.classId === "all"
-          ? "class"
-          : "stream";
-
-  const groups = useMemo(
-    () => (dimension === "learners" ? [] : groupRows(rows, dimension)),
-    [dimension, rows],
-  );
+  }, [query, rows, searchMode, filters.year]);
 
   const update = (patch: Partial<Filters>) =>
     setFilters((current) => ({ ...current, ...patch }));
@@ -217,52 +164,18 @@ export function AdmissionsEnrollment() {
     });
   };
 
-  const drill = (target: DrillDimension, value: string) => {
-    if (target === "school") {
-      const nextSchool = value as SchoolSelection;
-      const keepsClass = classOptionsFor(nextSchool).some(
-        (definition) => definition.id === filters.classId,
-      );
-
-      update({
-        school: nextSchool,
-        classId: keepsClass ? filters.classId : "all",
-        stream: "all",
-      });
-      return;
-    }
-
-    if (target === "class") {
-      update({ classId: value, stream: "all" });
-      return;
-    }
-
-    update({ stream: value });
+  // A school is picked from the table itself, which then offers that campus's
+  // classes and streams, so the page only ever moves at campus level.
+  const selectSchool = (schoolId: string) => {
+    update({
+      school: schoolId as SchoolSelection,
+      classId: "all",
+      stream: "all",
+    });
   };
 
-  const clearTo = (level: DrillDimension) => {
-    if (level === "school") {
-      update({ school: "all", classId: "all", stream: "all" });
-      return;
-    }
-
-    if (level === "class") {
-      update({ classId: "all", stream: "all" });
-      return;
-    }
-
-    update({ stream: "all" });
-  };
-
-  // Picking a school from the filter row is the same move as drilling into its
-  // bar: it unlocks the class, stream and learner controls below.
-  const selectSchool = (value: string) => {
-    if (value === "all") {
-      clearTo("school");
-      return;
-    }
-
-    drill("school", value);
+  const clearSchool = () => {
+    update({ school: "all", classId: "all", stream: "all" });
   };
 
   const handleReset = () => {
@@ -278,7 +191,7 @@ export function AdmissionsEnrollment() {
   };
 
   const handleExport = () => {
-    if (dimension === "learners") {
+    if (searchMode) {
       const csv = buildCsv(
         [
           "Admission no.",
@@ -366,24 +279,10 @@ export function AdmissionsEnrollment() {
     );
   };
 
-  const trail: Array<{ label: string; target: DrillDimension }> = [
-    { label: "All campuses", target: "school" },
-  ];
+  const trail: string[] = ["All campuses"];
 
   if (filters.school !== "all") {
-    trail.push({ label: schoolNameFor(filters.school), target: "class" });
-  }
-
-  if (filters.school !== "all" && filters.classId !== "all") {
-    trail.push({ label: classLabelFor(filters.classId), target: "stream" });
-  }
-
-  if (
-    filters.school !== "all" &&
-    filters.classId !== "all" &&
-    filters.stream !== "all"
-  ) {
-    trail.push({ label: `Stream ${filters.stream}`, target: "stream" });
+    trail.push(schoolNameFor(filters.school));
   }
 
   return (
@@ -442,102 +341,30 @@ export function AdmissionsEnrollment() {
       <section className="ae-filters" aria-label="Enrolment filters">
         <AcademicFilters values={filterValues} onChange={handleFilterChange} />
 
-        <label className="ae-field ae-field--school">
-          <span className="ae-field__label">School</span>
-          <span className="ae-select">
-            <select
-              aria-label="School"
-              value={filters.school}
-              onChange={(event) => selectSchool(event.target.value)}
-            >
-              <option value="all">All schools</option>
-              {schools.map((school) => (
-                <option key={school.id} value={school.id}>
-                  {school.short}
-                </option>
-              ))}
-            </select>
-          </span>
-        </label>
-
         {isAllSchools ? null : (
-          <>
-            <label className="ae-field ae-field--class">
-              <span className="ae-field__label">Class</span>
-              <span className="ae-select">
-                <select
-                  aria-label="Class"
-                  value={filters.classId}
-                  onChange={(event) =>
-                    update({ classId: event.target.value, stream: "all" })
-                  }
+          <label className="ae-field ae-field--grow">
+            <span className="ae-field__label">Find a learner</span>
+            <span className="ae-search">
+              <Search size={15} aria-hidden="true" />
+              <input
+                type="search"
+                aria-label="Find a learner"
+                value={filters.student}
+                placeholder="Name or admission number"
+                onChange={(event) => update({ student: event.target.value })}
+              />
+              {filters.student.length > 0 ? (
+                <button
+                  type="button"
+                  className="ae-search__clear"
+                  onClick={() => update({ student: "" })}
+                  aria-label="Clear learner filter"
                 >
-                  <option value="all">All classes</option>
-                  {levels.map((level) => {
-                    const options = availableClasses.filter(
-                      (definition) => definition.level === level,
-                    );
-
-                    if (options.length === 0) {
-                      return null;
-                    }
-
-                    return (
-                      <optgroup key={level} label={levelLabels[level]}>
-                        {options.map((definition) => (
-                          <option key={definition.id} value={definition.id}>
-                            {definition.label}
-                          </option>
-                        ))}
-                      </optgroup>
-                    );
-                  })}
-                </select>
-              </span>
-            </label>
-
-            <label className="ae-field ae-field--stream">
-              <span className="ae-field__label">Stream</span>
-              <span className="ae-select">
-                <select
-                  aria-label="Stream"
-                  value={filters.stream}
-                  onChange={(event) => update({ stream: event.target.value })}
-                >
-                  <option value="all">All streams</option>
-                  {streams.map((stream) => (
-                    <option key={stream} value={stream}>
-                      Stream {stream}
-                    </option>
-                  ))}
-                </select>
-              </span>
-            </label>
-
-            <label className="ae-field ae-field--grow">
-              <span className="ae-field__label">Find a learner</span>
-              <span className="ae-search">
-                <Search size={15} aria-hidden="true" />
-                <input
-                  type="search"
-                  aria-label="Find a learner"
-                  value={filters.student}
-                  placeholder="Name or admission number"
-                  onChange={(event) => update({ student: event.target.value })}
-                />
-                {filters.student.length > 0 ? (
-                  <button
-                    type="button"
-                    className="ae-search__clear"
-                    onClick={() => update({ student: "" })}
-                    aria-label="Clear learner filter"
-                  >
-                    <X size={14} aria-hidden="true" />
-                  </button>
-                ) : null}
-              </span>
-            </label>
-          </>
+                  <X size={14} aria-hidden="true" />
+                </button>
+              ) : null}
+            </span>
+          </label>
         )}
       </section>
 
@@ -548,12 +375,12 @@ export function AdmissionsEnrollment() {
               const isLast = index === trail.length - 1;
 
               return (
-                <span key={`${step.label}-${index}`} className="ae-trail__step">
+                <span key={`${step}-${index}`} className="ae-trail__step">
                   {isLast ? (
-                    <strong aria-current="page">{step.label}</strong>
+                    <strong aria-current="page">{step}</strong>
                   ) : (
-                    <button type="button" onClick={() => clearTo(step.target)}>
-                      {step.label}
+                    <button type="button" onClick={clearSchool}>
+                      {step}
                     </button>
                   )}
                   {isLast ? null : (
@@ -650,41 +477,27 @@ export function AdmissionsEnrollment() {
       <EnrollmentTrends filters={filters} />
 
       <div className="ae-lower">
-        {/* The intake table stays put at every level of the drill-down, so the
-            S.1 / S.5 origin figures are still on screen once Kibuli Secondary
-            is chosen. */}
-        <SchoolIntakePanel rows={intakeRows} onDrill={drill} />
+        {/* One row per campus, with the class and stream pickers on the table
+            itself so the S.1 and S.5 origin figures are a click away. */}
+        <SchoolIntakePanel
+          rows={intakeRows}
+          school={filters.school}
+          onSelect={selectSchool}
+        />
 
         {/* The funnel closes the page beside the table, so the page ends on one
             line instead of one column running past the other. */}
         <AdmissionsFunnel summary={summary} live={isLive} />
       </div>
 
-      {dimension === "school" ? null : (
+      {searchMode ? (
         <DrillPanel
-          dimension={dimension}
-          groups={groups}
           learners={matches}
-          heading={
-            dimension === "learners"
-              ? searchMode
-                ? "Learner matches"
-                : `${classLabelFor(filters.classId)} · Stream ${filters.stream}`
-              : dimensionCopy[dimension].heading
-          }
-          sub={
-            dimension === "learners"
-              ? searchMode
-                ? "Search results across every cohort in the current filters"
-                : "Select a learner to open their admission record"
-              : dimensionCopy[dimension].sub
-          }
-          total={dimension === "learners" ? matches.length : totals.learners}
-          onDrill={drill}
+          heading="Learner matches"
+          total={matches.length}
           onOpenLearner={setOpenLearner}
-          note="Class, stream and learner records are not on the API yet — this list is sample data."
         />
-      )}
+      ) : null}
 
       <LearnerDrawer
         learner={openLearner}

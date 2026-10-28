@@ -36,7 +36,6 @@ export function AdmissionsFunnel({ summary, live = false }: AdmissionsFunnelProp
           <h2 className="ae-block__title" id="ae-funnel-heading">
             Admissions funnel
           </h2>
-          <p className="ae-block__sub">From applying to enrolling</p>
         </div>
         <span className="ae-chip">
           {live ? `${formatPercent(summary.conversionRate)} join` : "— join"}
@@ -86,10 +85,6 @@ export function AdmissionsFunnel({ summary, live = false }: AdmissionsFunnelProp
           );
         })}
       </ol>
-
-      <p className="ae-funnel__hint">
-        Each percentage compares the stage with the one above it.
-      </p>
 
       <p className="ae-funnel__note">
         {live ? (
