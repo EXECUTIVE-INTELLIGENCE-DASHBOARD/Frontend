@@ -83,21 +83,20 @@ export const navigationItems: NavigationItem[] = [
     label: "Finance & Procurement",
     icon: WalletCards,
     children: [
-      
       {
         id: "finance-overview",
         label: "Dashboard",
       },
-      
-       {
-  id: "cost-centre-analysis",
-  label: "Cost Centre Analysis",
-},
-{
-  id: "financial-forecasts",
-  label: "Financial Forecasts",
-},
-{
+
+      {
+        id: "cost-centre-analysis",
+        label: "Cost Centre Analysis",
+      },
+      {
+        id: "financial-forecasts",
+        label: "Financial Forecasts",
+      },
+      {
         id: "liabilities-management",
         label: "Liabilities Management",
       },
@@ -105,7 +104,7 @@ export const navigationItems: NavigationItem[] = [
         id: "revenue-fee-collection",
         label: "Revenue",
       },
-      
+
       {
         id: "expense-management",
         label: "Expense Management",
@@ -114,28 +113,27 @@ export const navigationItems: NavigationItem[] = [
         id: "budget-management",
         label: "Budget Management",
       },
-     
 
-{
+      {
         id: "procurement-financials",
         label: "Procurement Financials",
       },
-{
-  id: "purchase-orders-approvals",
-  label: "Purchase Orders & Approvals",
-},
-{
-  id: "supplier-performance",
-  label: "Supplier Performance",
-},
-{
-  id: "inventory-stock",
-  label: "Inventory Monitoring",
-},
-{
-  id: "procurement-requests",
-  label: "Procurement Requests",
-},
+      {
+        id: "purchase-orders-approvals",
+        label: "Purchase Orders & Approvals",
+      },
+      {
+        id: "supplier-performance",
+        label: "Supplier Performance",
+      },
+      {
+        id: "inventory-stock",
+        label: "Inventory Monitoring",
+      },
+      {
+        id: "procurement-requests",
+        label: "Procurement Requests",
+      },
     ],
   },
 
@@ -153,8 +151,12 @@ export const navigationItems: NavigationItem[] = [
         label: "Inventory",
       },
       {
-       id: "budget-utilisation",
-       label: "Budget Utilisation",
+        id: "budget-utilisation",
+        label: "Budget Utilisation",
+      },
+      {
+        id: "trading-performance",
+        label: "Trading Performance",
       },
       {
         id: "open-incidents",

@@ -31,7 +31,7 @@ import ProcurementRequests from "./pages/Procurement/ProcurementRequests";
 import { AssetsEquipment } from "./pages/AssetsEquipment/AssetsEquipment";
 import FacilitiesMaintenance from "./pages/FacilitiesMaintenance/FacilitiesMaintenance";
 import { FleetTransport } from "./pages/FleetTransport/FleetTransport";
-import { Sales, Inventory, Budget } from "./pages/services";
+import { Sales, Inventory, Budget, TradingPerformance } from "./pages/services";
 
 const pages: Record<string, ReactElement> = {
   /* Overview + academic group */
@@ -68,10 +68,11 @@ const pages: Record<string, ReactElement> = {
   "fleet-transport": <FleetTransport />,
   "asset-management": <AssetsEquipment />,
 
-  /* Services group  */
+  /* Services group */
   sales: <Sales />,
   inventory: <Inventory />,
   "budget-utilisation": <Budget />,
+  "trading-performance": <TradingPerformance />,
 };
 
 const defaultPageId = "academic-performance";
