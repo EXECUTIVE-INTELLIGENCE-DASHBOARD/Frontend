@@ -167,94 +167,7 @@
   background: var(--sr-sky);
 }
 
-/* ---------------------------------------------------------------- Table */
-
-.sr-table-wrap {
-  overflow-x: auto;
-}
-
-.sr-table {
-  width: 100%;
-  border-collapse: collapse;
-
-  font-size: 12px;
-}
-
-.sr-table thead th {
-  padding: 8px 16px;
-
-  border-bottom: 1px solid var(--sr-border);
-
-  background: var(--color-surface-subtle);
-  color: var(--sr-soft);
-
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-align: left;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.sr-table tbody td {
-  padding: 9px 16px;
-
-  border-bottom: 1px solid var(--color-border-soft);
-
-  color: var(--color-text);
-  vertical-align: middle;
-}
-
-.sr-table tbody tr:last-child td {
-  border-bottom: 0;
-}
-
-.sr-table tbody tr:hover {
-  background: var(--color-surface-hover);
-}
-
-.sr-table .sr-num {
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-}
-
-/* The table cell colour rule is more specific than a single class,
-   so these repeat "tbody td". */
-.sr-table tbody td.sr-muted {
-  color: var(--sr-muted);
-}
-
-.sr-table tbody td.sr-strong {
-  color: var(--sr-heading);
-  font-weight: 700;
-}
-
-.sr-table tbody td.sr-empty {
-  padding: 28px 16px;
-
-  color: var(--sr-muted);
-  text-align: center;
-}
-
-.sr-nationality {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.sr-nationality__dot {
-  width: 6px;
-  height: 6px;
-  flex-shrink: 0;
-
-  border-radius: 999px;
-  background: var(--sr-navy);
-}
-
-.sr-nationality__name {
-  color: var(--sr-heading);
-  font-weight: 600;
-}
+/* --------------------------------------------------------------- Data pills */
 
 /* Rate and share pills: grey by default, blue when on target. */
 .sr-pill {
@@ -437,21 +350,6 @@
   font-weight: 700;
 }
 
-/* Fix nationality text visibility in dark mode */
-[data-theme="dark"] .sr-card .sr-table tbody td:first-child {
-  color: #f5f7ff !important;
-}
-
-[data-theme="dark"] .sr-card .sr-table .sr-nationality__name {
-  color: #ffffff !important;
-  font-weight: 600;
-  opacity: 1 !important;
-}
-
-[data-theme="dark"] .sr-card .sr-table .sr-nationality__dot {
-  background-color: #91baff !important;
-  opacity: 1 !important;
-}
 /* Improve withdrawal labels and percentages in dark mode */
 [data-theme="dark"] .sr-withdrawal__item .sr-gender__label {
   color: #f5f7ff !important;

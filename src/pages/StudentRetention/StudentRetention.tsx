@@ -3,16 +3,21 @@ import { AlertTriangle, Check, Users } from "lucide-react";
 
 import { AcademicFilters } from "../../components/filters/AcademicFilters";
 import type { AcademicFilterValues } from "../../components/filters/academicFilters.types";
+import {
+  campusForValue,
+  defaultFilters,
+  yearIdForValue,
+} from "../AdmissionsEnrollment/admissionsEnrollment.data";
+import { enrollmentTrend } from "../AdmissionsEnrollment/admissionsEnrollment.trends";
+import { EntrantRetentionTrendCard } from "../AdmissionsEnrollment/EnrollmentTrends";
 
 import { GenderRetentionCard } from "./GenderRetentionCard";
-import { NationalityTableCard } from "./NationalityTableCard";
 import { RetentionMetricCard } from "./RetentionMetricCard";
 
 import {
   allCampusesLabel,
   formatMetric,
   formatRate,
-  rowsForCampus,
   summaryForCampus,
 } from "./studentRetention.data";
 
@@ -138,9 +143,15 @@ export function StudentRetention() {
     ? summaryForCampus(data, campus)
     : unavailableSummary;
 
-  const rows = data
-    ? rowsForCampus(data, campus)
-    : [];
+  const trendPoints = enrollmentTrend(
+    {
+      ...defaultFilters,
+      campus: campusForValue(filters.campus),
+      section: filters.section,
+      year: yearIdForValue(filters.year) ?? defaultFilters.year,
+    },
+    "term",
+  );
 
   const reasons = data?.withdrawal_reasons ?? [];
   const withdrawalsTotal = data?.withdrawals_total ?? null;
@@ -202,7 +213,7 @@ export function StudentRetention() {
 
           {!isPending && data && (
             <div className="sr-grid">
-              <NationalityTableCard rows={rows} />
+              <EntrantRetentionTrendCard points={trendPoints} />
 
               <GenderRetentionCard
                 reasons={reasons}
@@ -211,7 +222,7 @@ export function StudentRetention() {
             </div>
           )}
 
-          {!isPending && data && rows.length === 0 && (
+          {!isPending && data && summary.reEnrolled === null && (
             <p>
               No retention records match the selected filters.
             </p>

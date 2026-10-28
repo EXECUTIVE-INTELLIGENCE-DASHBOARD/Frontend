@@ -34,8 +34,7 @@ function axisFor(max: number, tickCount = 4): Axis {
 
 /* ------------------------------------------------------------------ Geometry */
 
-/* A short, wide frame keeps both trend cards inside the first screenful even
-   when they sit side by side. */
+/* A short, wide frame keeps the trend readable alongside its dashboard axis. */
 const W = 560;
 const H = 212;
 const L = 46;
@@ -160,25 +159,37 @@ function GenderTrendChart({ points }: { points: EnrollmentTrendPoint[] }) {
  * retention rate drawn over them against a second, right-hand axis.
  */
 function EntrantTrendChart({ points }: { points: EnrollmentTrendPoint[] }) {
+  const chartWidth = 760;
+  const chartHeight = 310;
+  const left = 54;
+  const right = 42;
+  const top = 18;
+  const bottom = 48;
+  const chartPlotWidth = chartWidth - left - right;
+  const chartPlotHeight = chartHeight - top - bottom;
+  const chartBaseline = top + chartPlotHeight;
+  const plotRight = chartWidth - right;
+
   const axis = axisFor(Math.max(...points.map((point) => point.learners)));
-  const y = (value: number) => baseline - (value / axis.top) * plotHeight;
+  const y = (value: number) =>
+    chartBaseline - (value / axis.top) * chartPlotHeight;
 
   const rates = points.map((point) => point.retentionRate);
   const lowest = Math.max(0, Math.floor(Math.min(...rates) - 1));
   const highest = Math.min(100, Math.ceil(Math.max(...rates) + 1));
   const span = Math.max(1, highest - lowest);
   const rateY = (value: number) =>
-    baseline - ((value - lowest) / span) * plotHeight;
+    chartBaseline - ((value - lowest) / span) * chartPlotHeight;
 
-  const slot = plotWidth / Math.max(points.length, 1);
-  const barWidth = Math.min(30, slot * 0.44);
+  const slot = chartPlotWidth / Math.max(points.length, 1);
+  const barWidth = Math.min(42, slot * 0.4);
 
   const rateTicks = [highest, lowest + span / 2, lowest];
 
   return (
     <svg
       className="ae-trend__svg"
-      viewBox={`0 0 ${W} ${H}`}
+      viewBox={`0 0 ${chartWidth} ${chartHeight}`}
       role="img"
       aria-label="New entrants and continuing learners in each period, with the retention rate"
     >
@@ -187,13 +198,13 @@ function EntrantTrendChart({ points }: { points: EnrollmentTrendPoint[] }) {
           <line
             className="ae-trend__gridline"
             x1={L}
-            x2={W - R}
+            x2={plotRight}
             y1={y(tick)}
             y2={y(tick)}
           />
           <text
             className="ae-trend__tick"
-            x={L - 8}
+            x={left - 8}
             y={y(tick) + 3}
             textAnchor="end"
           >
@@ -206,31 +217,38 @@ function EntrantTrendChart({ points }: { points: EnrollmentTrendPoint[] }) {
         <text
           key={index}
           className="ae-trend__tick ae-trend__tick--rate"
-          x={W - R + 2}
+          x={chartWidth - 3}
           y={rateY(tick) + 3}
-          textAnchor="start"
+          textAnchor="end"
         >
           {tick.toFixed(0)}%
         </text>
       ))}
 
-      <line className="ae-trend__axis" x1={L} x2={L} y1={T} y2={baseline} />
       <line
         className="ae-trend__axis"
-        x1={L}
-        x2={W - R}
-        y1={baseline}
-        y2={baseline}
+        x1={left}
+        x2={left}
+        y1={top}
+        y2={chartBaseline}
+      />
+      <line
+        className="ae-trend__axis"
+        x1={left}
+        x2={plotRight}
+        y1={chartBaseline}
+        y2={chartBaseline}
       />
 
       {points.map((point, index) => {
-        const centre = L + slot * (index + 0.5);
+        const centre = left + slot * (index + 0.5);
         const x = centre - barWidth / 2;
 
-        const newHeight = (point.newLearners / axis.top) * plotHeight;
-        const continuingHeight = (point.continuing / axis.top) * plotHeight;
+        const newHeight = (point.newLearners / axis.top) * chartPlotHeight;
+        const continuingHeight =
+          (point.continuing / axis.top) * chartPlotHeight;
 
-        const newTop = baseline - newHeight;
+        const newTop = chartBaseline - newHeight;
         const continuingTop = newTop - continuingHeight;
 
         return (
@@ -272,7 +290,7 @@ function EntrantTrendChart({ points }: { points: EnrollmentTrendPoint[] }) {
             <text
               className="ae-trend__label"
               x={centre}
-              y={baseline + 16}
+              y={chartBaseline + 16}
               textAnchor="middle"
             >
               {point.label}
@@ -282,7 +300,7 @@ function EntrantTrendChart({ points }: { points: EnrollmentTrendPoint[] }) {
               <text
                 className="ae-trend__sublabel"
                 x={centre}
-                y={baseline + 29}
+                y={chartBaseline + 29}
                 textAnchor="middle"
               >
                 {point.subLabel}
@@ -297,7 +315,7 @@ function EntrantTrendChart({ points }: { points: EnrollmentTrendPoint[] }) {
         points={points
           .map(
             (point, index) =>
-              `${L + slot * (index + 0.5)},${rateY(point.retentionRate)}`,
+              `${left + slot * (index + 0.5)},${rateY(point.retentionRate)}`,
           )
           .join(" ")}
       />
@@ -306,7 +324,7 @@ function EntrantTrendChart({ points }: { points: EnrollmentTrendPoint[] }) {
         <circle
           key={point.id}
           className="ae-trend__dot"
-          cx={L + slot * (index + 0.5)}
+          cx={left + slot * (index + 0.5)}
           cy={rateY(point.retentionRate)}
           r={3.5}
         >
@@ -316,6 +334,66 @@ function EntrantTrendChart({ points }: { points: EnrollmentTrendPoint[] }) {
         </circle>
       ))}
     </svg>
+  );
+}
+
+export function EntrantRetentionTrendCard({
+  points,
+}: {
+  points: EnrollmentTrendPoint[];
+}) {
+  const latest = points[points.length - 1];
+
+  if (!latest) {
+    return (
+      <article className="ae-trend-card sr-retention-trend">
+        <h2 className="ae-trend-card__title">New entrants vs retained</h2>
+        <p className="ae-trend__empty">
+          No history to plot for the current filters.
+        </p>
+      </article>
+    );
+  }
+
+  return (
+    <article className="ae-trend-card sr-retention-trend">
+      <header className="ae-trend-card__head">
+        <h2 className="ae-trend-card__title">New entrants vs retained</h2>
+
+        <ul className="ae-trend__legend">
+          <li>
+            <span
+              className="ae-trend__swatch ae-trend__swatch--new"
+              aria-hidden="true"
+            />
+            New
+          </li>
+          <li>
+            <span
+              className="ae-trend__swatch ae-trend__swatch--continuing"
+              aria-hidden="true"
+            />
+            Continuing
+          </li>
+          <li>
+            <span
+              className="ae-trend__swatch ae-trend__swatch--rate"
+              aria-hidden="true"
+            />
+            Retention
+          </li>
+        </ul>
+      </header>
+
+      <EntrantTrendChart points={points} />
+
+      <p className="ae-trend-card__foot">
+        <strong>{formatNumber(latest.newLearners)}</strong> new and{" "}
+        <strong>{formatNumber(latest.continuing)}</strong> continuing in{" "}
+        {latest.description} ·{" "}
+        <strong>{formatPercent(latest.retentionRate)}</strong> retained
+      </p>
+    </article>
   );
 }
 
@@ -336,15 +414,7 @@ export function EnrollmentTrends({ filters }: EnrollmentTrendsProps) {
   const change = trendDelta(points);
 
   return (
-    <section className="ae-trends" aria-labelledby="ae-trends-heading">
-      <div className="ae-trends__head">
-        <div>
-          <h2 className="ae-trends__title" id="ae-trends-heading">
-            Enrolment trends
-          </h2>
-        </div>
-      </div>
-
+    <section className="ae-trends" aria-label="Enrolment trends">
       {latest ? (
         <div className="ae-trends__grid">
           <article className="ae-trend-card">
@@ -394,46 +464,6 @@ export function EnrollmentTrends({ filters }: EnrollmentTrendsProps) {
             </p>
           </article>
 
-          <article className="ae-trend-card">
-            <header className="ae-trend-card__head">
-              <div>
-                <h3 className="ae-trend-card__title">New entrants vs retained</h3>
-              </div>
-
-              <ul className="ae-trend__legend">
-                <li>
-                  <span
-                    className="ae-trend__swatch ae-trend__swatch--new"
-                    aria-hidden="true"
-                  />
-                  New
-                </li>
-                <li>
-                  <span
-                    className="ae-trend__swatch ae-trend__swatch--continuing"
-                    aria-hidden="true"
-                  />
-                  Continuing
-                </li>
-                <li>
-                  <span
-                    className="ae-trend__swatch ae-trend__swatch--rate"
-                    aria-hidden="true"
-                  />
-                  Retention
-                </li>
-              </ul>
-            </header>
-
-            <EntrantTrendChart points={points} />
-
-            <p className="ae-trend-card__foot">
-              <strong>{formatNumber(latest.newLearners)}</strong> new and{" "}
-              <strong>{formatNumber(latest.continuing)}</strong> continuing in{" "}
-              {latest.description} ·{" "}
-              <strong>{formatPercent(latest.retentionRate)}</strong> retained
-            </p>
-          </article>
         </div>
       ) : (
         <p className="ae-trend__empty">

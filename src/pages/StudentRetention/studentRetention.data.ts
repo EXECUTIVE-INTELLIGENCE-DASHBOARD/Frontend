@@ -1,7 +1,6 @@
 
 import type {
   CampusKey,
-  NationalityRow,
   RetentionSummary,
 } from "./studentRetention.types";
 import type { RetentionDashboardData } from "./studentRetention.api";
@@ -11,17 +10,11 @@ export const allCampusesLabel = "All Campuses";
 export const campuses: Array<{
   key: CampusKey;
   label: string;
-  short: string;
 }> = [
-  { key: "kibuli", label: "Kibuli Main Campus", short: "Kibuli" },
-  { key: "buwaate", label: "Buwaate Campus", short: "Buwaate" },
-  { key: "annex", label: "Annex / Preschool Branch", short: "Annex" },
+  { key: "kibuli", label: "Kibuli Main Campus" },
+  { key: "buwaate", label: "Buwaate Campus" },
+  { key: "annex", label: "Annex / Preschool Branch" },
 ];
-
-export const retentionTarget = 88;
-
-export const campusShortName = (key: CampusKey) =>
-  campuses.find((campus) => campus.key === key)?.short ?? key;
 
 export const formatNumber = (value: number) =>
   value.toLocaleString("en-US");
@@ -54,29 +47,6 @@ function matchesCampus(
   selectedCampus: CampusKey,
 ): boolean {
   return getCampusKey(row.campus, row.campus_display) === selectedCampus;
-}
-
-export function rowsForCampus(
-  data: RetentionDashboardData,
-  label: string,
-): NationalityRow[] {
-  const selectedCampus = campuses.find(
-    (campus) => campus.label === label || campus.key === label,
-  );
-
-  return data.by_nationality
-    .filter(
-      (row) =>
-        !selectedCampus ||
-        matchesCampus(row, selectedCampus.key),
-    )
-    .map((row, index) => ({
-      id: `${row.nationality}-${row.campus}-${index}`,
-      nationality: row.nationality,
-      campus: getCampusKey(row.campus, row.campus_display),
-      reEnrolled: row.re_enrolled ?? null,
-      retention: row.retention_rate ?? null,
-    }));
 }
 
 export function summaryForCampus(

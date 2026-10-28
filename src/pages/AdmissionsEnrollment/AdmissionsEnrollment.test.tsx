@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import api from "../../api/axios";
+import type { EnrollmentDashboardData } from "../../api/academics.api";
 import { AdmissionsEnrollment } from "./AdmissionsEnrollment";
 
 vi.mock("../../api/axios", () => ({
@@ -43,6 +44,33 @@ const mockTerms = [1, 2, 3].map((number) => ({
   end_date: "2026-08-07",
 }));
 
+const mockEnrollmentDashboard: EnrollmentDashboardData = {
+  term: null,
+  summary: {
+    total_active_enrolment: 240,
+    new_students: 30,
+    continuing_students: 210,
+    admissions_conversion: 62.5,
+    capacity: 300,
+    capacity_utilisation: 80,
+  },
+  gender: {
+    boys: 120,
+    girls: 120,
+    boys_pct: 50,
+    girls_pct: 50,
+  },
+  campuses: [],
+  schools: [],
+  pipeline: [
+    { stage: "applied", label: "Applied", count: 100, rate: null },
+    { stage: "qualified", label: "Qualified", count: 80, rate: 80 },
+    { stage: "interviewed", label: "Interviewed", count: 70, rate: 87.5 },
+    { stage: "accepted", label: "Accepted", count: 65, rate: 92.9 },
+    { stage: "enrolled", label: "Enrolled", count: 60, rate: 92.3 },
+  ],
+};
+
 beforeEach(() => {
   vi.mocked(api.get).mockImplementation(async (url) => {
     if (url === "/academics/schools/") {
@@ -51,6 +79,10 @@ beforeEach(() => {
 
     if (url === "/academics/terms/") {
       return { data: mockTerms };
+    }
+
+    if (url === "/academics/enrollment/dashboard/") {
+      return { data: mockEnrollmentDashboard };
     }
 
     throw new Error(`Unexpected API endpoint: ${url}`);
@@ -109,6 +141,36 @@ describe("AdmissionsEnrollment", () => {
         "Kibuli Main",
       ]),
     );
+  });
+
+  it("requests enrollment data for the selected campus and term", async () => {
+    render(<AdmissionsEnrollment />);
+
+    await waitFor(() => {
+      expect(selectByName("Campus")).toHaveValue("");
+      expect(selectByName("Term")).toHaveValue("");
+    });
+
+    fireEvent.change(selectByName("Campus"), {
+      target: { value: "kibuli" },
+    });
+    fireEvent.change(selectByName("Term"), {
+      target: { value: "6" },
+    });
+
+    await waitFor(() => {
+      const requests = vi
+        .mocked(api.get)
+        .mock.calls.filter(
+          ([url]) => url === "/academics/enrollment/dashboard/",
+        );
+      const latestRequest = requests[requests.length - 1];
+
+      expect(latestRequest?.[1]?.params).toEqual({
+        campus: "kibuli",
+        term: 6,
+      });
+    });
   });
 
   it("averages the six schools until a school is drilled into", () => {
@@ -273,25 +335,35 @@ describe("AdmissionsEnrollment", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("closes the page with the admissions funnel beside the intake table", () => {
+  it("places the admissions funnel beside the gender trend and keeps the table full width", () => {
     render(<AdmissionsEnrollment />);
 
     const funnel = screen.getByRole("heading", { name: "Admissions funnel" });
     const intake = screen.getByRole("heading", { name: "Enrolment by school" });
+    const gender = screen.getByRole("heading", { name: "Girls vs boys" });
 
-    // Both panels share one row, so neither can drift below the other.
-    expect(funnel.closest("section")?.parentElement).toBe(
-      intake.closest("section")?.parentElement,
+    expect(funnel.closest(".ae-analysis-row")).toBe(
+      gender.closest(".ae-analysis-row"),
     );
+    expect(intake.closest(".ae-analysis-row")).toBeNull();
   });
 
-  it("uses the five pipeline stages the enrollment API records", () => {
+  it("renders the five pipeline counts returned by the enrollment API", async () => {
     render(<AdmissionsEnrollment />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("region", { name: "Enrolment summary" }),
+      ).toHaveTextContent("240");
+    });
 
     const funnel = screen.getByRole("heading", { name: "Admissions funnel" })
       .closest("section") as HTMLElement;
     const labels = Array.from(
       funnel.querySelectorAll(".ae-funnel__label"),
+    ).map((node) => node.textContent);
+    const counts = Array.from(
+      funnel.querySelectorAll(".ae-funnel__bar"),
     ).map((node) => node.textContent);
 
     expect(labels).toEqual([
@@ -301,7 +373,12 @@ describe("AdmissionsEnrollment", () => {
       "Accepted",
       "Enrolled",
     ]);
+    expect(counts).toEqual(["100", "80", "70", "65", "60"]);
     expect(funnel.textContent).not.toMatch(/offers made/i);
+    expect(funnel).toHaveTextContent("From applying to enrolling");
+    expect(funnel).toHaveTextContent(
+      "Each percentage compares the stage with the one above it.",
+    );
   });
 
   it("puts the class and stream pickers on the enrolment table", () => {
@@ -339,7 +416,7 @@ describe("AdmissionsEnrollment", () => {
     render(<AdmissionsEnrollment />);
 
     const table = screen.getByRole("table", {
-      name: /Total enrolment by school, with gender, boarding, day, age/i,
+      name: /Total enrolment by school, with gender, boarding, day and age/i,
     });
 
     // Six campuses plus the header row — every campus keeps its row whatever
@@ -350,11 +427,11 @@ describe("AdmissionsEnrollment", () => {
     ).toBeInTheDocument();
   });
 
-  it("tabulates the whole roll, then S.1 and S.5 intake, by gender, boarding, age, faith and origin", () => {
+  it("tabulates the whole roll by the remaining intake fields", () => {
     render(<AdmissionsEnrollment />);
 
     const table = screen.getByRole("table", {
-      name: /Total enrolment by school, with gender, boarding, day, age/i,
+      name: /Total enrolment by school, with gender, boarding, day and age/i,
     });
 
     expect(
@@ -368,9 +445,6 @@ describe("AdmissionsEnrollment", () => {
       "Boarding",
       "Day",
       "Age",
-      "Nationality",
-      "Faith",
-      "School of origin",
     ]);
 
     const secondary = within(table).getByRole("row", {
@@ -383,9 +457,6 @@ describe("AdmissionsEnrollment", () => {
       Number(cells[0].textContent) + Number(cells[1].textContent),
     );
     expect(cells[4].textContent).toMatch(/yrs/);
-    expect(cells[5].textContent).toMatch(/%/);
-    expect(cells[6].textContent).toMatch(/%/);
-    expect(cells[7].textContent).toMatch(/%/);
 
     const classPicker = selectByName("Class");
 
@@ -431,7 +502,7 @@ describe("AdmissionsEnrollment", () => {
 
     drillIntoSchool(kibuliSecondary);
 
-    // The S.1 / S.5 origin figures stay visible on the table.
+    // The intake table remains visible when a campus is selected.
     expect(
       screen.getByRole("heading", { name: "Enrolment by school" }),
     ).toBeInTheDocument();
@@ -442,11 +513,9 @@ describe("AdmissionsEnrollment", () => {
 
     expect(within(table).getAllByRole("row")).toHaveLength(2);
 
-    const cells = within(
+    expect(
       within(table).getByRole("row", { name: /Kibuli Secondary/ }),
-    ).getAllByRole("cell");
-
-    expect(cells[7].textContent).toMatch(/%/);
+    ).toBeInTheDocument();
   });
 
   it("keeps the authorised export available for the filtered scope", () => {
@@ -457,23 +526,26 @@ describe("AdmissionsEnrollment", () => {
     expect(screen.getByRole("menuitem", { name: /Export/ })).toBeEnabled();
   });
 
-  it("plots gender and new-entrant trends per term", () => {
+  it("keeps the gender chart and funnel on admissions while moving the retention chart", () => {
     render(<AdmissionsEnrollment />);
 
     expect(
-      screen.getByRole("heading", { name: "Enrolment trends" }),
+      screen.getByRole("region", { name: "Enrolment trends" }),
     ).toBeInTheDocument();
 
     const gender = screen.getByRole("img", {
       name: /girls and boys enrolled in each period/i,
     });
-    const entrants = screen.getByRole("img", {
-      name: /new entrants and continuing learners/i,
-    });
-
     // Six trailing terms, ending on the term the KPI cards describe.
     expect(gender.querySelectorAll("rect.ae-trend__bar")).toHaveLength(12);
-    expect(entrants.querySelectorAll("rect.ae-trend__bar")).toHaveLength(12);
+    expect(
+      screen.queryByRole("img", {
+        name: /new entrants and continuing learners/i,
+      }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Admissions funnel" }),
+    ).toBeInTheDocument();
 
     // The Term and Academic Year pickers sit in the filter row, so the charts
     // carry no period switch of their own.

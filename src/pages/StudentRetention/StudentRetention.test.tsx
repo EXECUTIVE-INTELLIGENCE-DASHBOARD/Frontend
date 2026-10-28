@@ -142,11 +142,6 @@ const renderDashboard = async () => {
   ).toBeInTheDocument();
 };
 
-const cellsOf = (row: HTMLElement) =>
-  within(row)
-    .getAllByRole("cell")
-    .map((cell) => cell.textContent);
-
 const chooseCampus = async (from: string, to: string) => {
   const campusSelect = screen.getByRole("combobox", {
     name: "Campus",
@@ -221,7 +216,7 @@ describe("StudentRetention", () => {
 
     const cards = screen.getAllByRole("article");
 
-    expect(cards).toHaveLength(3);
+    expect(cards).toHaveLength(4);
 
     const expected: Array<[string, string]> = [
       ["Total Re-enrolled Students", "1,200"],
@@ -235,51 +230,31 @@ describe("StudentRetention", () => {
     });
   });
 
-  it("lists retention by nationality using the API response", async () => {
+  it("shows the entrants and retention trend instead of nationality rows", async () => {
     await renderDashboard();
 
     expect(
-      screen.getByRole("heading", {
-        name: "Student Retention by Nationality",
+      screen.getByRole("heading", { name: "New entrants vs retained" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", {
+        name: /new entrants and continuing learners/i,
       }),
     ).toBeInTheDocument();
-
-    expect(screen.getAllByRole("row")).toHaveLength(5);
-
-    expect(cellsOf(screen.getByRole("row", { name: /Ugandan/ }))).toEqual([
-      "Ugandan",
-      "Kibuli",
-      "1,100",
-      "88.0%",
-    ]);
-
     expect(
-      cellsOf(
-        screen.getByRole("row", {
-          name: /South Sudanese/,
-        }),
-      ),
-    ).toEqual([
-      "South Sudanese & Other Intl",
-      "Buwaate",
-      "90",
-      "90.0%",
-    ]);
-  });
-
-  it("highlights rates on target and leaves the others grey", async () => {
-    await renderDashboard();
-
-    const ugandan = screen.getByRole("row", { name: /Ugandan/ });
-    const kenyan = screen.getByRole("row", { name: /Kenyan/ });
-
-    expect(within(ugandan).getByText("88.0%")).toHaveClass(
-      "sr-pill--good",
-    );
-
-    expect(within(kenyan).getByText("86.7%")).not.toHaveClass(
-      "sr-pill--good",
-    );
+      screen.getByRole("img", {
+        name: /new entrants and continuing learners/i,
+      }),
+    ).not.toHaveAttribute("preserveAspectRatio", "none");
+    expect(
+      screen
+        .getByRole("heading", { name: "New entrants vs retained" })
+        .closest("article"),
+    ).toHaveTextContent(/\d+ new and [\d,]+ continuing in Term .*retained/);
+    expect(
+      screen.queryByText("Student Retention by Nationality"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Ugandan")).not.toBeInTheDocument();
   });
 
   it("shows the reasons for withdrawal card", async () => {
@@ -322,7 +297,7 @@ describe("StudentRetention", () => {
     ).toBeInTheDocument();
   });
 
-  it("updates the figures and nationality rows when a campus is selected", async () => {
+  it("updates the retention metrics when a campus is selected", async () => {
     await renderDashboard();
 
     await chooseCampus("", "buwaate");
@@ -333,7 +308,6 @@ describe("StudentRetention", () => {
     expect(within(cards[1]).getByText("87.7%")).toBeInTheDocument();
     expect(within(cards[2]).getByText("150")).toBeInTheDocument();
 
-    expect(screen.getAllByRole("row")).toHaveLength(4);
     expect(screen.queryByText("Ugandan")).not.toBeInTheDocument();
 
     expect(
@@ -341,15 +315,13 @@ describe("StudentRetention", () => {
     ).toHaveValue("buwaate");
   });
 
-  it("explains when a campus has no nationality rows", async () => {
+  it("explains when a campus has no retention records", async () => {
     await renderDashboard();
 
     await chooseCampus("", "annex");
 
     expect(
-      screen.getByText(
-        "No nationality data is recorded for this campus yet.",
-      ),
+      screen.getByText("No retention records match the selected filters."),
     ).toBeInTheDocument();
 
     /* No rows for the campus means the total is unknown, so it is dashed. */

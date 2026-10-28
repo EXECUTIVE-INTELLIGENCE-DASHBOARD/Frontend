@@ -117,6 +117,14 @@ describe("Sidebar", () => {
 
     await user.click(screen.getByRole("button", { name: /services/i }));
 
+    const submenu = document.getElementById("service-submenu");
+
+    expect(submenu).not.toBeNull();
+    const submenuItems = within(submenu as HTMLElement).getAllByRole("button");
+
+    expect(submenuItems[0]).toHaveTextContent("Trading Performance");
+    expect(within(submenu as HTMLElement).queryByText("Sales")).not.toBeInTheDocument();
+
     expect(screen.getByText("Open Incidents")).toBeInTheDocument();
 
     expect(screen.getByText("Open Service Requests")).toBeInTheDocument();

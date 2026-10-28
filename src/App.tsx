@@ -31,7 +31,7 @@ import ProcurementRequests from "./pages/Procurement/ProcurementRequests";
 import { AssetsEquipment } from "./pages/AssetsEquipment/AssetsEquipment";
 import FacilitiesMaintenance from "./pages/FacilitiesMaintenance/FacilitiesMaintenance";
 import { FleetTransport } from "./pages/FleetTransport/FleetTransport";
-import { Sales, Inventory, Budget, TradingPerformance } from "./pages/services";
+import { Inventory, Budget, TradingPerformance } from "./pages/services";
 import { IncidentSecurity } from "./pages/operations/IncidentSecurity";
 const pages: Record<string, ReactElement> = {
   /* Overview + academic group */
@@ -69,7 +69,6 @@ const pages: Record<string, ReactElement> = {
   "incidents-security": <IncidentSecurity />,
 
   /* Services group */
-  sales: <Sales />,
   inventory: <Inventory />,
   "budget-utilisation": <Budget />,
   "trading-performance": <TradingPerformance />,

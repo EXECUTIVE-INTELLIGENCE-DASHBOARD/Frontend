@@ -99,17 +99,18 @@ export function AdmissionsEnrollment() {
 
   const isAllSchools = filters.school === "all";
 
-  // The API understands its own numeric school ids, not the dashboard slugs,
-  // so translate first. An unmapped slug means "no filter", never "zero".
+  // Campus and term are backend values from the shared filter row. School
+  // drill-down uses a local slug, so translate it to the API's numeric id.
   const liveFilters = useMemo<AcademicDashboardFilters>(() => {
-    if (isAllSchools) {
-      return {};
-    }
-
     const schoolId = backendSchoolIdFor(filters.school);
+    const term = Number(filterValues.term);
 
-    return schoolId === undefined ? {} : { school: schoolId };
-  }, [isAllSchools, filters.school]);
+    return {
+      ...(filterValues.campus ? { campus: filterValues.campus } : {}),
+      ...(Number.isInteger(term) && term > 0 ? { term } : {}),
+      ...(schoolId === undefined ? {} : { school: schoolId }),
+    };
+  }, [filters.school, filterValues.campus, filterValues.term]);
 
   const live = useEnrollmentDashboard(liveFilters);
   const isLive = live.data !== null;
@@ -153,6 +154,10 @@ export function AdmissionsEnrollment() {
   // The shared row reports backend values; translate them into this page's own
   // shape. An unanswered year keeps whatever was already selected.
   const handleFilterChange = (next: AcademicFilterValues) => {
+    const scopeChanged =
+      next.campus !== filterValues.campus ||
+      next.section !== filterValues.section;
+
     setFilterValues(next);
 
     const year = yearIdForValue(next.year);
@@ -160,6 +165,9 @@ export function AdmissionsEnrollment() {
     update({
       campus: campusForValue(next.campus),
       section: next.section,
+      ...(scopeChanged
+        ? { school: "all", classId: "all", stream: "all" }
+        : {}),
       ...(year ? { year } : {}),
     });
   };
@@ -474,21 +482,16 @@ export function AdmissionsEnrollment() {
         />
       </section>
 
-      <EnrollmentTrends filters={filters} />
-
-      <div className="ae-lower">
-        {/* One row per campus, with the class and stream pickers on the table
-            itself so the S.1 and S.5 origin figures are a click away. */}
-        <SchoolIntakePanel
-          rows={intakeRows}
-          school={filters.school}
-          onSelect={selectSchool}
-        />
-
-        {/* The funnel closes the page beside the table, so the page ends on one
-            line instead of one column running past the other. */}
+      <div className="ae-analysis-row">
+        <EnrollmentTrends filters={filters} />
         <AdmissionsFunnel summary={summary} live={isLive} />
       </div>
+
+      <SchoolIntakePanel
+        rows={intakeRows}
+        school={filters.school}
+        onSelect={selectSchool}
+      />
 
       {searchMode ? (
         <DrillPanel

@@ -13,26 +13,62 @@
   white-space: nowrap;
 }
 
-/* Nine columns is more than the drill table carries. These rules are scoped
-   twice (`.ae-table.ae-table--intake`) because this sheet is loaded before the
-   page sheet, so `.ae-table th` would otherwise win the cascade. */
+/* Keep the table's compact columns inside its full-width panel. These rules
+   are scoped twice (`.ae-table.ae-table--intake`) because this sheet is loaded
+   before the page sheet, so `.ae-table th` would otherwise win the cascade. */
 .ae-table.ae-table--intake th,
 .ae-table.ae-table--intake td {
   padding-inline: 5px;
 }
 
+.ae-table.ae-table--intake {
+  width: 100%;
+  table-layout: fixed;
+  border-spacing: 0;
+}
+
+.ae-intake__school-column {
+  width: 26%;
+}
+
+.ae-intake__count-column {
+  width: 13%;
+}
+
+.ae-intake__age-column {
+  width: 22%;
+}
+
 /* The uppercased header cells are the widest thing in this table, so they wrap
-   here instead of pushing the nine columns past the panel. */
+   instead of pushing the columns past the panel. */
 .ae-table.ae-table--intake thead th {
   white-space: normal;
+  vertical-align: bottom;
+}
+
+.ae-table.ae-table--intake th,
+.ae-table.ae-table--intake td {
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+}
+
+.ae-table.ae-table--intake tbody th {
+  text-align: left;
 }
 
 .ae-table.ae-table--intake .ae-num {
   font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
 .ae-table.ae-table--intake td:last-child {
   white-space: normal;
+}
+
+@media (max-width: 640px) {
+  .ae-table.ae-table--intake {
+    min-width: 640px;
+  }
 }
 
 .ae-intake__row:hover {

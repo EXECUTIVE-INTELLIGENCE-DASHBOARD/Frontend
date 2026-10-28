@@ -144,8 +144,8 @@ export const navigationItems: NavigationItem[] = [
     icon: AlertTriangle,
     children: [
       {
-        id: "sales",
-        label: "Sales",
+        id: "trading-performance",
+        label: "Trading Performance",
       },
       {
         id: "inventory",
@@ -154,10 +154,6 @@ export const navigationItems: NavigationItem[] = [
       {
         id: "budget-utilisation",
         label: "Budget Utilisation",
-      },
-      {
-        id: "trading-performance",
-        label: "Trading Performance",
       },
       {
         id: "open-incidents",

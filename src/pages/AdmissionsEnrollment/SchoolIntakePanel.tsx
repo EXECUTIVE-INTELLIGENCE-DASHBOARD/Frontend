@@ -52,13 +52,9 @@ function CountCell({ value }: { value: number }) {
 }
 
 /**
- * "Enrolment by school" as a table: one row per campus in scope, with columns
- * for the gender split, boarding and day, age, nationality, faith and school
- * of origin. It opens on the whole-school roll, so every school's enrolment is
- * on screen before anything is drilled into. The class and stream pickers sit
- * on the table itself: choosing a class narrows both the columns and the rows,
- * so a campus that does not run S.1 or S.5 drops out of the table entirely.
- * A row picks its campus, which then rescopes the table's own pickers.
+ * "Enrolment by school" as a table: one row per campus in scope, with the
+ * gender, boarding, day and age breakdowns. The class and stream pickers sit
+ * on the table itself, and selecting a campus rescopes those pickers.
  */
 export function SchoolIntakePanel({
   rows,
@@ -154,9 +150,16 @@ export function SchoolIntakePanel({
       <div className="ae-table-wrap">
         <table className="ae-table ae-table--intake">
           <caption className="ae-sr-only">
-            {scope} enrolment by school, with gender, boarding, day, age,
-            nationality, faith and school of origin
+            {scope} enrolment by school, with gender, boarding, day and age
           </caption>
+          <colgroup>
+            <col className="ae-intake__school-column" />
+            <col className="ae-intake__count-column" />
+            <col className="ae-intake__count-column" />
+            <col className="ae-intake__count-column" />
+            <col className="ae-intake__count-column" />
+            <col className="ae-intake__age-column" />
+          </colgroup>
           <thead>
             <tr>
               <th scope="col">School</th>
@@ -173,15 +176,12 @@ export function SchoolIntakePanel({
                 Day
               </th>
               <th scope="col">Age</th>
-              <th scope="col">Nationality</th>
-              <th scope="col">Faith</th>
-              <th scope="col">School of origin</th>
             </tr>
           </thead>
           <tbody>
             {intake.length === 0 ? (
               <tr>
-                <td className="ae-muted" colSpan={9}>
+                <td className="ae-muted" colSpan={6}>
                   No school in scope runs {label.toLowerCase()}.
                 </td>
               </tr>
@@ -208,24 +208,6 @@ export function SchoolIntakePanel({
                 <CountCell value={row.day} />
                 <td>
                   <MixCell figure={row.age} />
-                </td>
-                <td>
-                  <MixCell figure={row.nationality} />
-                </td>
-                <td>
-                  <MixCell figure={row.faith} />
-                </td>
-                <td
-                  title={row.origins
-                    .filter((origin) => origin.learners > 0)
-                    .slice(0, 3)
-                    .map(
-                      (origin) =>
-                        `${origin.label} · ${formatNumber(origin.learners)}`,
-                    )
-                    .join("\n")}
-                >
-                  <MixCell figure={row.origin} />
                 </td>
               </tr>
             ))}
