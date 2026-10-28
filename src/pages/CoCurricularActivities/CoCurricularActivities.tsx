@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, Globe, Users } from "lucide-react";
+import {
+  CalendarDays,
+  Globe,
+  ListChecks,
+  UsersRound,
+} from "lucide-react";
 
 import {
   academicsApi,
@@ -8,6 +13,7 @@ import {
 
 import { EngagementMetricCard } from "./EngagementMetricCard";
 import { EngagementTableCard } from "./EngagementTableCard";
+import { EngagementBreakdowns } from "./EngagementBreakdowns";
 
 import { AcademicFilters } from "../../components/filters/AcademicFilters";
 import type { AcademicFilterValues } from "../../components/filters/academicFilters.types";
@@ -41,8 +47,8 @@ export function CoCurricularActivities() {
         const apiFilters = {
           ...(filters.campus && { campus: filters.campus }),
           ...(filters.section && { level: filters.section }),
+          ...(filters.school && { school: Number(filters.school) }),
           ...(filters.term && { term: Number(filters.term) }),
-          ...(filters.year && { academic_year: filters.year }),
         };
 
         const data = await academicsApi.getCoCurricularDashboard(
@@ -99,21 +105,25 @@ export function CoCurricularActivities() {
 
       {!loading && !error && dashboard && (
         <div className="cc-content">
-          <div className="cc-metrics acad-summary">
+          <section className="cc-metrics" aria-label="Co-curricular summary">
             <EngagementMetricCard
               label="Total Clubs"
               value={String(dashboard.summary.total_clubs)}
-              icon={Users}
+              icon={UsersRound}
               tone="navy"
             />
-
             <EngagementMetricCard
               label="Total Activities"
               value={String(dashboard.summary.activities_offered)}
+              icon={ListChecks}
+              tone="navy"
+            />
+            <EngagementMetricCard
+              label="Total Events Held"
+              value={String(dashboard.summary.events_held)}
               icon={CalendarDays}
               tone="accent"
             />
-
             <EngagementMetricCard
               label="Participation Rate"
               value={
@@ -124,11 +134,37 @@ export function CoCurricularActivities() {
               icon={Globe}
               tone="warning"
             />
-          </div>
+          </section>
 
-          <EngagementTableCard
-            activities={dashboard.activities}
-          />
+          <EngagementTableCard activities={dashboard.activities} />
+
+          <section
+            className="cc-secondary-stats"
+            aria-label="Additional figures"
+          >
+            <span>
+              <strong>
+                {dashboard.summary.participation_records.toLocaleString()}
+              </strong>
+              Participation records
+            </span>
+            <span>
+              <strong>
+                {dashboard.summary.active_learners.toLocaleString()}
+              </strong>
+              Active learners
+            </span>
+            <span>
+              <strong>
+                {dashboard.summary.activities_per_participant == null
+                  ? "—"
+                  : dashboard.summary.activities_per_participant.toFixed(1)}
+              </strong>
+              Activities per participant
+            </span>
+          </section>
+
+          <EngagementBreakdowns data={dashboard} />
         </div>
       )}
 

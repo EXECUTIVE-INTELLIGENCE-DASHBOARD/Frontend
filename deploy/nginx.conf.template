@@ -1,0 +1,78 @@
+# Rendered to /etc/nginx/conf.d/default.conf when the container starts by the
+# nginx image's envsubst hook (docker-entrypoint.d/20-envsubst-on-templates.sh),
+# so these two values are read from the environment at run time:
+#
+#   PORT          port nginx listens on. DigitalOcean App Platform defaults
+#                 the component's public HTTP port to 8080 and marks the
+#                 component UNHEALTHY if nothing answers there.
+#   API_UPSTREAM  scheme://host[:port] of the Django API, no path, no trailing
+#                 slash. Defaults to http://127.0.0.1:8000 in
+#                 deploy/docker-entrypoint.sh, so it always has a value.
+#
+# Do NOT reintroduce `BACKEND_ORIGIN`: that name is still set to the retired
+# Render host in various platforms and would silently win over the default.
+
+gzip on;
+gzip_vary on;
+gzip_min_length 1024;
+gzip_types text/css application/javascript application/json image/svg+xml;
+
+server {
+    listen ${PORT};
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Platform health probe. A component that fails its health check never
+    # receives traffic, so this must answer 200 without touching the backend.
+    location = /healthz {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    # Reports the upstream this container actually rendered, so a stale value can
+    # never be mistaken for a working one. `curl -s http://<host>/upstream`
+    location = /upstream {
+        access_log off;
+        default_type text/plain;
+        return 200 "proxy_pass ${API_UPSTREAM}/api/\n";
+    }
+
+    # Vite emits content-hashed filenames, so these never change in place.
+    location /assets/ {
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        try_files $uri =404;
+    }
+
+    # The dashboard calls the API same-origin (`VITE_API_BASE_URL=/api`), so the
+    # browser needs neither CORS nor a second DNS lookup. The trailing slashes
+    # on both sides map /api/<x> here to <API_UPSTREAM>/api/<x>.
+    #
+    # Host forwards the browser's own host (e.g. 138.197.193.101), which Django's
+    # ALLOWED_HOSTS already lists. Do NOT change this to $proxy_host while the
+    # upstream is loopback: that would send `Host: 127.0.0.1:8000` and Django
+    # would answer 400 DisallowedHost unless 127.0.0.1 is listed there as well.
+    #
+    # proxy_ssl_server_name is deliberately absent: SNI only applies to an
+    # https:// upstream. Re-add `proxy_ssl_server_name on;` if API_UPSTREAM
+    # ever points at a TLS host that needs a server name.
+    location /api/ {
+        proxy_pass ${API_UPSTREAM}/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 60s;
+        proxy_connect_timeout 10s;
+    }
+
+    # index.html must always be revalidated, and unknown paths fall back to it
+    # so the single-page app can restore its own state. Without this a deep
+    # link or a refresh returns nginx's 404 instead of the app.
+    location / {
+        add_header Cache-Control "public, max-age=0, must-revalidate";
+        try_files $uri $uri/ /index.html;
+    }
+}

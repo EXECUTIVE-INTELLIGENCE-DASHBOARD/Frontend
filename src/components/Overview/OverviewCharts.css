@@ -36,6 +36,17 @@ border: 1px solid var(--color-border);
   line-height: 1.4;
 }
 
+.overview-chart-empty {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  margin: 12px 0;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  text-align: center;
+}
+
 /* Budget chart legend */
 .overview-chart-legend {
   display: flex;

@@ -3,7 +3,6 @@ import {
   Building2,
   Download,
   MoreHorizontal,
-  Repeat,
   RotateCcw,
   Search,
   TrendingUp,
@@ -16,10 +15,11 @@ import { buildCsv, csvFileName, downloadCsv } from "../../lib/csv";
 import { AcademicFilters } from "../../components/filters/AcademicFilters";
 import type { AcademicFilterValues } from "../../components/filters/academicFilters.types";
 import { AdmissionsFunnel } from "./AdmissionsFunnel";
+import { EnrollmentTrends } from "./EnrollmentTrends";
 import { KpiCard } from "./DashboardUi";
 import { DrillPanel } from "./DrillPanel";
+import { SchoolIntakePanel } from "./SchoolIntakePanel";
 import { LearnerDrawer } from "./LearnerDrawer";
-import { ProfilePanel } from "./ProfilePanel";
 import type { DrillDimension, RosterLearner } from "./admissionsEnrollment.data";
 import {
   aggregate,
@@ -35,8 +35,8 @@ import {
   groupRows,
   learnerRoster,
   levelLabels,
-  schoolCount,
   schoolNameFor,
+  schools,
   streams,
   yearIdForValue,
 } from "./admissionsEnrollment.data";
@@ -114,6 +114,14 @@ export function AdmissionsEnrollment() {
 
   const rows = useMemo(() => filteredRows(filters), [filters]);
   const totals = useMemo(() => aggregate(rows), [rows]);
+
+  // The intake table carries its own S.1 / S.5 switch, so the class and stream
+  // filters must not narrow it: picking S.2 would leave every row empty even
+  // though the S.1 and S.5 figures are still wanted beside the drill-down.
+  const intakeRows = useMemo(
+    () => filteredRows({ ...filters, classId: "all", stream: "all" }),
+    [filters],
+  );
 
   const isAllSchools = filters.school === "all";
 
@@ -246,6 +254,17 @@ export function AdmissionsEnrollment() {
     update({ stream: "all" });
   };
 
+  // Picking a school from the filter row is the same move as drilling into its
+  // bar: it unlocks the class, stream and learner controls below.
+  const selectSchool = (value: string) => {
+    if (value === "all") {
+      clearTo("school");
+      return;
+    }
+
+    drill("school", value);
+  };
+
   const handleReset = () => {
     setFilters(defaultFilters);
     setOpenLearner(null);
@@ -312,10 +331,9 @@ export function AdmissionsEnrollment() {
         "Continuing",
         "Withdrawals",
         "Retention %",
-        "Applications",
-        "Offers",
+        "Applied",
         "Accepted",
-        "Reported",
+        "Enrolled",
       ],
       classBreakdown(rows).map((row) => [
         schoolNameFor(row.schoolId),
@@ -334,7 +352,6 @@ export function AdmissionsEnrollment() {
         row.withdrawn,
         row.retentionRate.toFixed(1),
         row.applicants,
-        row.offered,
         row.accepted,
         row.reported,
       ]),
@@ -424,6 +441,24 @@ export function AdmissionsEnrollment() {
 
       <section className="ae-filters" aria-label="Enrolment filters">
         <AcademicFilters values={filterValues} onChange={handleFilterChange} />
+
+        <label className="ae-field ae-field--school">
+          <span className="ae-field__label">School</span>
+          <span className="ae-select">
+            <select
+              aria-label="School"
+              value={filters.school}
+              onChange={(event) => selectSchool(event.target.value)}
+            >
+              <option value="all">All schools</option>
+              {schools.map((school) => (
+                <option key={school.id} value={school.id}>
+                  {school.short}
+                </option>
+              ))}
+            </select>
+          </span>
+        </label>
 
         {isAllSchools ? null : (
           <>
@@ -585,16 +620,17 @@ export function AdmissionsEnrollment() {
         <KpiCard
           icon={UserPlus}
           label="New students"
-          value="—"
-          detail="Not reported by the API"
+          value={isLive ? formatNumber(summary.newLearners) : "—"}
+          detail={
+            isLive
+              ? `${formatPercent(
+                  summary.learners === 0
+                    ? 0
+                    : (summary.newLearners / summary.learners) * 100,
+                )} of the roll`
+              : "Waiting on the API"
+          }
           tone="sky"
-        />
-        <KpiCard
-          icon={Repeat}
-          label="Returning"
-          value="—"
-          detail="Not reported by the API"
-          tone="green"
         />
         <KpiCard
           icon={TrendingUp}
@@ -611,46 +647,44 @@ export function AdmissionsEnrollment() {
         />
       </section>
 
-      <div className="ae-workbench">
-        <div className="ae-workbench__main">
-          <DrillPanel
-            dimension={dimension}
-            groups={groups}
-            learners={matches}
-            heading={
-              dimension === "learners"
-                ? searchMode
-                  ? "Learner matches"
-                  : `${classLabelFor(filters.classId)} · Stream ${filters.stream}`
-                : dimensionCopy[dimension].heading
-            }
-            sub={
-              dimension === "learners"
-                ? searchMode
-                  ? "Search results across every cohort in the current filters"
-                  : "Select a learner to open their admission record"
-                : dimensionCopy[dimension].sub
-            }
-            total={dimension === "learners" ? matches.length : totals.learners}
-            onDrill={drill}
-            onOpenLearner={setOpenLearner}
-            note="Class, stream and learner records are not on the API yet — this list is sample data."
-          />
+      <EnrollmentTrends filters={filters} />
 
-          <ProfilePanel
-            summary={summary}
-            sub={
-              isAllSchools
-                ? `Average of the ${schoolCount} schools · ${formatNumber(
-                    totals.learners,
-                  )} learners in total`
-                : undefined
-            }
-          />
-        </div>
+      <div className="ae-lower">
+        {/* The intake table stays put at every level of the drill-down, so the
+            S.1 / S.5 origin figures are still on screen once Kibuli Secondary
+            is chosen. */}
+        <SchoolIntakePanel rows={intakeRows} onDrill={drill} />
 
+        {/* The funnel closes the page beside the table, so the page ends on one
+            line instead of one column running past the other. */}
         <AdmissionsFunnel summary={summary} live={isLive} />
       </div>
+
+      {dimension === "school" ? null : (
+        <DrillPanel
+          dimension={dimension}
+          groups={groups}
+          learners={matches}
+          heading={
+            dimension === "learners"
+              ? searchMode
+                ? "Learner matches"
+                : `${classLabelFor(filters.classId)} · Stream ${filters.stream}`
+              : dimensionCopy[dimension].heading
+          }
+          sub={
+            dimension === "learners"
+              ? searchMode
+                ? "Search results across every cohort in the current filters"
+                : "Select a learner to open their admission record"
+              : dimensionCopy[dimension].sub
+          }
+          total={dimension === "learners" ? matches.length : totals.learners}
+          onDrill={drill}
+          onOpenLearner={setOpenLearner}
+          note="Class, stream and learner records are not on the API yet — this list is sample data."
+        />
+      )}
 
       <LearnerDrawer
         learner={openLearner}

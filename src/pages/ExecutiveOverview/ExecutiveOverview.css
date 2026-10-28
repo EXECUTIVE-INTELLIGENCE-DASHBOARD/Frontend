@@ -1,3 +1,19 @@
+.executive-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.executive-overview__status {
+  margin: -36px 0;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.executive-overview__status[role="alert"] {
+  color: #b42318;
+}
+
 .eo-page {
   --eo-heading: var(--color-heading);
   --eo-muted: var(--color-text-muted);
@@ -708,5 +724,11 @@
 @media (max-width: 820px) {
   .eo-metrics {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .executive-overview {
+    gap: 32px;
   }
 }

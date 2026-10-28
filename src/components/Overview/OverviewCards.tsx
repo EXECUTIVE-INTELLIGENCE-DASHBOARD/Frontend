@@ -6,28 +6,46 @@ import {
 
 import "./OverviewCards.css";
 
-const overviewMetrics = [
-  {
-    id: "enrolment",
-    label: "TOTAL ENROLMENT",
-    value: "2,800",
-    Icon: UsersRound,
-  },
-  {
-    id: "attendance",
-    label: "AVG. ATTENDANCE (YTD)",
-    value: "94.5%",
-    Icon: CalendarCheck,
-  },
-  {
-    id: "staffing",
-    label: "STAFFING HEALTH",
-    value: "98%",
-    Icon: BriefcaseBusiness,
-  },
-];
+interface OverviewCardsProps {
+  enrolment: number | null;
+  attendance: number | null;
+  staffing: number | null;
+}
 
-export function OverviewCards() {
+function formatNumber(value: number | null): string {
+  return value === null ? "—" : Math.round(value).toLocaleString("en-US");
+}
+
+function formatPercent(value: number | null): string {
+  return value === null ? "—" : `${value.toFixed(1)}%`;
+}
+
+export function OverviewCards({
+  enrolment,
+  attendance,
+  staffing,
+}: OverviewCardsProps) {
+  const overviewMetrics = [
+    {
+      id: "enrolment",
+      label: "TOTAL ENROLMENT",
+      value: formatNumber(enrolment),
+      Icon: UsersRound,
+    },
+    {
+      id: "attendance",
+      label: "AVG. ATTENDANCE (YTD)",
+      value: formatPercent(attendance),
+      Icon: CalendarCheck,
+    },
+    {
+      id: "staffing",
+      label: "STAFFING HEALTH",
+      value: formatPercent(staffing),
+      Icon: BriefcaseBusiness,
+    },
+  ];
+
   return (
     <section
       className="overview-cards"

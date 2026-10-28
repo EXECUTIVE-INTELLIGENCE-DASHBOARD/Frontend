@@ -4,8 +4,15 @@ import { render, screen } from "@testing-library/react";
 import { LiabilitiesSummary } from "./LiabilitiesSummary";
 
 describe("LiabilitiesSummary", () => {
+  const metrics = [
+    { label: "Total owed", amount: 142_500_000, kind: "total" as const },
+    { label: "Overdue", amount: 12_300_000, kind: "overdue" as const },
+    { label: "Loan balance", amount: 19_800_000, kind: "loan" as const },
+    { label: "Bank cash balance", amount: 3_400_000, kind: "cash" as const },
+  ];
+
   it("renders the liabilities summary section", () => {
-    render(<LiabilitiesSummary />);
+    render(<LiabilitiesSummary metrics={metrics} />);
 
     expect(
       screen.getByRole("region", {
@@ -15,44 +22,30 @@ describe("LiabilitiesSummary", () => {
   });
 
   it("renders all three liability cards", () => {
-    render(<LiabilitiesSummary />);
+    render(<LiabilitiesSummary metrics={metrics} />);
 
-    expect(screen.getByText("TOTAL LIABILITIES")).toBeInTheDocument();
-
-    expect(screen.getByText("DUE IN NEXT 30 DAYS")).toBeInTheDocument();
-
-    expect(screen.getByText("OVERDUE PAYABLES")).toBeInTheDocument();
+    expect(screen.getByText("Total owed")).toBeInTheDocument();
+    expect(screen.getByText("Overdue")).toBeInTheDocument();
+    expect(screen.getByText("Loan balance")).toBeInTheDocument();
+    expect(screen.getByText("Bank cash balance")).toBeInTheDocument();
   });
 
   it("displays the liability amounts", () => {
-    render(<LiabilitiesSummary />);
-
+    render(<LiabilitiesSummary metrics={metrics} />);
     expect(screen.getByText("UGX 142.5M")).toBeInTheDocument();
-
-    expect(screen.getByText("UGX 94.2M")).toBeInTheDocument();
-
     expect(screen.getByText("UGX 12.3M")).toBeInTheDocument();
+    expect(screen.getByText("UGX 19.8M")).toBeInTheDocument();
+    expect(screen.getByText("UGX 3.4M")).toBeInTheDocument();
   });
 
-  it("provides a description for each liability metric", () => {
-    render(<LiabilitiesSummary />);
-
-    expect(
-      screen.getByText("Total outstanding liabilities across all campuses"),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByText("Liabilities due within the next 30 days")
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByText("Outstanding payments past their due date"),
-    ).toBeInTheDocument();
+  it("does not render supporting descriptions", () => {
+    render(<LiabilitiesSummary metrics={metrics} />);
+    expect(screen.queryByText(/bills and loans|cash due ratio/i)).not.toBeInTheDocument();
   });
 
   it("renders exactly three liability cards", () => {
-    render(<LiabilitiesSummary />);
+    render(<LiabilitiesSummary metrics={metrics} />);
 
-    expect(screen.getAllByRole("article")).toHaveLength(3);
+    expect(screen.getAllByRole("article")).toHaveLength(4);
   });
 });

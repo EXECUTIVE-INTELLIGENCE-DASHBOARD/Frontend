@@ -5,5 +5,9 @@ coverage
 .env
 .env.*
 !.env.example
+# Keep the production defaults: they are the fallback if the VITE_API_BASE_URL
+# build argument is ever omitted, and they stop a stray local `.env` from
+# baking the old Render URL into the bundle.
+!.env.production
 npm-debug.log*
 

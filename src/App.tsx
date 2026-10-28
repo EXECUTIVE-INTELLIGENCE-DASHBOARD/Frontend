@@ -32,7 +32,7 @@ import { AssetsEquipment } from "./pages/AssetsEquipment/AssetsEquipment";
 import FacilitiesMaintenance from "./pages/FacilitiesMaintenance/FacilitiesMaintenance";
 import { FleetTransport } from "./pages/FleetTransport/FleetTransport";
 import { Sales, Inventory, Budget, TradingPerformance } from "./pages/services";
-
+import { IncidentSecurity } from "./pages/operations/IncidentSecurity";
 const pages: Record<string, ReactElement> = {
   /* Overview + academic group */
   overview: <ExecutiveOverview />,
@@ -60,13 +60,13 @@ const pages: Record<string, ReactElement> = {
   "inventory-stock": <InventoryStock />,
   "procurement-requests": <ProcurementRequests />,
 
-  /* Operational group — approved menu. `incidents-security` has no page
-     component yet, so it renders `PlaceholderPage`; work orders live inside
-     facilities and ICT equipment inside asset management. */
+  /* Operational group — approved menu. Work orders live inside facilities
+     and ICT equipment inside asset management. */
   "hr-workforce": <HrWorkforce />,
   "facilities-maintenance": <FacilitiesMaintenance />,
   "fleet-transport": <FleetTransport />,
   "asset-management": <AssetsEquipment />,
+  "incidents-security": <IncidentSecurity />,
 
   /* Services group */
   sales: <Sales />,

@@ -113,9 +113,10 @@ export function aggregateFromDashboard(
     data.pipeline.find((entry) => entry.stage === id)?.count ?? 0;
 
   const accepted = stage("accepted");
+  const learners = data.summary.total_active_enrolment;
 
   return {
-    learners: data.summary.total_active_enrolment,
+    learners,
     boys: data.gender.boys,
     girls: data.gender.girls,
 
@@ -123,14 +124,13 @@ export function aggregateFromDashboard(
     boarding: 0,
     capacity: data.summary.capacity,
     opening: 0,
-    newLearners: 0,
-    continuing: 0,
+    newLearners: data.summary.new_students ?? 0,
+    continuing: data.summary.continuing_students ?? 0,
     withdrawn: 0,
 
     applicants: stage("applied"),
     shortlisted: stage("qualified"),
     interviewed: stage("interviewed"),
-    offered: accepted,
     accepted,
     reported: stage("enrolled"),
 

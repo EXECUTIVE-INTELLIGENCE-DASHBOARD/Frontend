@@ -2,8 +2,8 @@ import axios, { type InternalAxiosRequestConfig } from "axios";
 
 import { toApiError } from "./errors";
 
-/** Used when `VITE_API_BASE_URL` is not set (see `.env` / `render.yaml`). */
-export const defaultApiBaseUrl = "https://eid-backend-4mrm.onrender.com/api";
+/** Used when `VITE_API_BASE_URL` is not set (see `.env.example`). */
+export const defaultApiBaseUrl = "/api";
 
 const configuredBaseUrl =
   import.meta.env.VITE_API_BASE_URL || defaultApiBaseUrl;

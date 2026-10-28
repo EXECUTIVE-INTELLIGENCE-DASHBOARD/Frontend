@@ -66,6 +66,8 @@ export interface EnrollmentDashboardData {
   term: { id: number; label: string } | null;
   summary: {
     total_active_enrolment: number;
+    new_students: number;
+    continuing_students: number;
     admissions_conversion: number | null;
     capacity: number;
     capacity_utilisation: number | null;

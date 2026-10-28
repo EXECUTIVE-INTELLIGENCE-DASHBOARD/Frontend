@@ -5,7 +5,7 @@ import axios, {
 } from "axios";
 
 const api = axios.create({
-  baseURL: "https://eid-backend-4mrm.onrender.com/api",
+  baseURL: import.meta.env.VITE_API_URL || "/api",
   timeout: 15000,
   headers: {
     "Content-Type": "application/json",

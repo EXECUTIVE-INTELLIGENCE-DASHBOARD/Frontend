@@ -3,6 +3,13 @@
 Status: **wired and verified**. The page now reads the Django enrollment API and
 falls back to the seeded dataset only when the request fails.
 
+> **Historical record — do not follow the `.env` step below.** The project now
+> commits `.env.development` and `.env.production`, both set to `/api`, because
+> the Vite dev proxy and the production nginx server both forward `/api` to the
+> backend. Creating a local `.env` with an absolute Render URL hard-codes a host
+> into the bundle and breaks the deployed build. See
+> `docs/digitalocean-deploy.md`.
+
 ---
 
 ## 1. What was broken

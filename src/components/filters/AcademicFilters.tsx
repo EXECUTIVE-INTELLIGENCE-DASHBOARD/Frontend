@@ -63,7 +63,12 @@ function sortYearsDescending(a: string, b: string): number {
   return b.localeCompare(a, undefined, { numeric: true });
 }
 
-export function AcademicFilters({ values, onChange }: AcademicFiltersProps) {
+export function AcademicFilters({
+  values,
+  onChange,
+  showSchoolFilter = false,
+  showAcademicYearFilter = true,
+}: AcademicFiltersProps) {
   const [schools, setSchools] = useState<School[]>([]);
   const [terms, setTerms] = useState<Term[]>([]);
 
@@ -148,6 +153,16 @@ export function AcademicFilters({ values, onChange }: AcademicFiltersProps) {
       label,
     })).sort((a, b) => a.label.localeCompare(b.label));
   }, [schools]);
+
+  const filteredSchools = useMemo(
+    () =>
+      schools.filter(
+        (school) =>
+          (!values.campus || school.campus === values.campus) &&
+          (!values.section || school.level === values.section),
+      ),
+    [schools, values.campus, values.section],
+  );
 
   const academicYears = useMemo(() => {
     return Array.from(
@@ -288,37 +303,72 @@ export function AcademicFilters({ values, onChange }: AcademicFiltersProps) {
         </div>
       </label>
 
-      {/* ACADEMIC YEAR DROPDOWN */}
-      <label className="academic-performance__filter">
-        <span className="academic-performance__filter-label">
-          Academic Year
-        </span>
+      {showSchoolFilter && (
+        <label className="academic-performance__filter">
+          <span className="academic-performance__filter-label">School</span>
 
-        <div className="academic-performance__select-wrapper">
-          <select
-            name="year"
-            aria-label="Academic Year"
-            value={values.year}
-            disabled={loadingTerms || termsError}
-            onChange={(event) => updateFilter("year", event.target.value)}
-          >
-            <option value="">All Years</option>
-
-            {academicYears.map((year) => (
-              <option key={year} value={year}>
-                {year}
+          <div className="academic-performance__select-wrapper">
+            <select
+              name="school"
+              aria-label="School"
+              value={values.school}
+              disabled={loadingSchools || schoolsError}
+              onChange={(event) => updateFilter("school", event.target.value)}
+            >
+              <option value="">
+                {loadingSchools ? "Loading schools..." : "All Schools"}
               </option>
-            ))}
-          </select>
 
-          <ChevronDown
-            className="academic-performance__select-icon"
-            size={18}
-            strokeWidth={2}
-            aria-hidden="true"
-          />
-        </div>
-      </label>
+              {filteredSchools.map((school) => (
+                <option key={school.id} value={String(school.id)}>
+                  {school.name}
+                </option>
+              ))}
+            </select>
+
+            <ChevronDown
+              className="academic-performance__select-icon"
+              size={18}
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+          </div>
+        </label>
+      )}
+
+      {/* ACADEMIC YEAR DROPDOWN */}
+      {showAcademicYearFilter && (
+        <label className="academic-performance__filter">
+          <span className="academic-performance__filter-label">
+            Academic Year
+          </span>
+
+          <div className="academic-performance__select-wrapper">
+            <select
+              name="year"
+              aria-label="Academic Year"
+              value={values.year}
+              disabled={loadingTerms || termsError}
+              onChange={(event) => updateFilter("year", event.target.value)}
+            >
+              <option value="">All Years</option>
+
+              {academicYears.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+
+            <ChevronDown
+              className="academic-performance__select-icon"
+              size={18}
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+          </div>
+        </label>
+      )}
 
       {/* ERROR AND EMPTY STATES */}
       {schoolsError && (

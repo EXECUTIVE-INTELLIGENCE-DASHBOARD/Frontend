@@ -96,6 +96,7 @@ export const navigationItems: NavigationItem[] = [
         id: "financial-forecasts",
         label: "Financial Forecasts",
       },
+
       {
         id: "liabilities-management",
         label: "Liabilities Management",

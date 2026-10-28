@@ -262,6 +262,23 @@ function hash(text: string): number {
 const variation = (seed: string, spread: number) =>
   (hash(seed) % (spread * 2 + 1)) - spread;
 
+/**
+ * Nudges a weight table per seed and renormalises it back to 1, so two
+ * campuses do not report an identical mix.
+ */
+function seededWeights<T extends string>(
+  weights: Array<[T, number]>,
+  seed: string,
+): Array<[T, number]> {
+  const nudged = weights.map(([key, weight], index) => ({
+    key,
+    weight: Math.max(0.01, weight * (1 + variation(`${seed}-${index}`, 22) / 100)),
+  }));
+  const sum = nudged.reduce((result, item) => result + item.weight, 0);
+
+  return nudged.map((item) => [item.key, item.weight / sum] as [T, number]);
+}
+
 function distribute<T extends string>(
   keys: T[],
   weights: Array<[T, number]>,
@@ -405,8 +422,7 @@ function buildRow(
   const day = learners - boarding;
 
   const accepted = Math.ceil(newLearners / 0.88);
-  const offered = Math.ceil(accepted / 0.85);
-  const interviewed = Math.ceil(offered / 0.86);
+  const interviewed = Math.ceil(accepted / 0.86);
   const shortlisted = Math.ceil(interviewed / 0.82);
   const applicants = Math.ceil(shortlisted / 0.72);
 
@@ -433,13 +449,20 @@ function buildRow(
     applicants,
     shortlisted,
     interviewed,
-    offered,
     accepted,
     reported: newLearners,
 
     ageBands: ageBandsFor(definition, learners),
-    nationalities: distribute(nationalityKeys, nationalityWeights, learners),
-    religions: distribute(religionKeys, religionWeights, learners),
+    nationalities: distribute(
+      nationalityKeys,
+      seededWeights(nationalityWeights, `${seed}-nationality`),
+      learners,
+    ),
+    religions: distribute(
+      religionKeys,
+      seededWeights(religionWeights, `${seed}-religion`),
+      learners,
+    ),
   };
 }
 
@@ -554,8 +577,7 @@ function scaleRow(row: CohortRow, factor: number): CohortRow {
 
   const reported = newLearners;
   const accepted = Math.max(reported, scale(row.accepted));
-  const offered = Math.max(accepted, scale(row.offered));
-  const interviewed = Math.max(offered, scale(row.interviewed));
+  const interviewed = Math.max(accepted, scale(row.interviewed));
   const shortlisted = Math.max(interviewed, scale(row.shortlisted));
   const applicants = Math.max(shortlisted, scale(row.applicants));
 
@@ -575,7 +597,6 @@ function scaleRow(row: CohortRow, factor: number): CohortRow {
     applicants,
     shortlisted,
     interviewed,
-    offered,
     accepted,
     reported,
 
@@ -629,7 +650,6 @@ export function aggregate(rows: CohortRow[]): Aggregate {
   const applicants = total(rows, (row) => row.applicants);
   const shortlisted = total(rows, (row) => row.shortlisted);
   const interviewed = total(rows, (row) => row.interviewed);
-  const offered = total(rows, (row) => row.offered);
   const accepted = total(rows, (row) => row.accepted);
   const reported = total(rows, (row) => row.reported);
 
@@ -678,7 +698,6 @@ export function aggregate(rows: CohortRow[]): Aggregate {
     applicants,
     shortlisted,
     interviewed,
-    offered,
     accepted,
     reported,
 
@@ -747,7 +766,6 @@ export function averageAcrossSchools(filters: Filters): Aggregate {
     applicants: whole((entry) => entry.applicants),
     shortlisted: whole((entry) => entry.shortlisted),
     interviewed: whole((entry) => entry.interviewed),
-    offered: whole((entry) => entry.offered),
     accepted: whole((entry) => entry.accepted),
     reported: whole((entry) => entry.reported),
 
@@ -807,7 +825,6 @@ export function classBreakdown(rows: CohortRow[]): ClassAggregate[] {
       withdrawn: row.withdrawn,
 
       applicants: row.applicants,
-      offered: row.offered,
       accepted: row.accepted,
       reported: row.reported,
 
@@ -844,14 +861,18 @@ export function schoolBreakdown(rows: CohortRow[]): SchoolAggregate[] {
     .filter((school) => school.learners > 0);
 }
 
+/**
+ * The funnel the backend actually records. `Stage` in the API model has five
+ * values and nothing between "accepted" and "enrolled", so this list must stay
+ * in step with it — adding a step here invents data the server never sends.
+ */
 export function funnelStages(summary: Aggregate): FunnelStage[] {
   const definitions = [
-    { id: "applicants", label: "Applications", value: summary.applicants },
-    { id: "shortlisted", label: "Shortlisted", value: summary.shortlisted },
+    { id: "applied", label: "Applied", value: summary.applicants },
+    { id: "qualified", label: "Qualified", value: summary.shortlisted },
     { id: "interviewed", label: "Interviewed", value: summary.interviewed },
-    { id: "offered", label: "Offers made", value: summary.offered },
-    { id: "accepted", label: "Offers accepted", value: summary.accepted },
-    { id: "reported", label: "Reported / joined", value: summary.reported },
+    { id: "accepted", label: "Accepted", value: summary.accepted },
+    { id: "enrolled", label: "Enrolled", value: summary.reported },
   ];
 
   return definitions.map((stage, index) => {
@@ -1147,6 +1168,169 @@ export function groupRows(
       }
 
       return left.key.localeCompare(right.key);
+    });
+}
+
+/* --------------------------------------------------------------- Intake mix */
+
+/**
+ * Where new Senior One and Senior Five learners came from. The enrollment
+ * endpoint reports a single aggregate per term and says nothing about a
+ * learner's previous school, so the feeder pool is modelled here and stays
+ * deterministic across renders.
+ */
+export const feederSchools = [
+  "Greenhill Academy – Kibuli",
+  "Greenhill Academy – Buwaate",
+  "Kampala Junior Academy",
+  "St. Peter's Nsambya",
+  "Nakasero Primary",
+  "Buganda Road Primary",
+  "Kiwatule Junior",
+  "Kingsway Primary",
+  "Mengo Junior",
+  "Other schools",
+] as const;
+
+export interface IntakeFigure {
+  label: string;
+  learners: number;
+  share: number;
+}
+
+export interface SchoolIntakeRow {
+  schoolId: SchoolId;
+  /** Full campus name, used for the accessible label on the drill button. */
+  schoolName: string;
+  learners: number;
+  boys: number;
+  girls: number;
+  boarding: number;
+  day: number;
+  /** The largest age band in the intake. */
+  age: IntakeFigure | null;
+  nationality: IntakeFigure | null;
+  /** The largest religious group in the intake. */
+  faith: IntakeFigure | null;
+  /** The single largest feeder school. */
+  origin: IntakeFigure | null;
+  /** Every feeder school, largest first. */
+  origins: IntakeFigure[];
+}
+
+const leading = (figures: IntakeFigure[]): IntakeFigure | null =>
+  figures.reduce<IntakeFigure | null>(
+    (best, figure) =>
+      figure.learners > 0 && (!best || figure.learners > best.learners)
+        ? figure
+        : best,
+    null,
+  );
+
+/** Splits `learners` across the feeder pool using stable, seeded weights. */
+function originMix(
+  schoolId: SchoolId,
+  classId: string,
+  learners: number,
+): IntakeFigure[] {
+  if (learners === 0) {
+    return [];
+  }
+
+  const weights = feederSchools.map(
+    (label) => 1 + (hash(`${schoolId}-${classId}-origin-${label}`) % 9),
+  );
+  const weightTotal = weights.reduce((sum, weight) => sum + weight, 0);
+
+  let remaining = learners;
+
+  return feederSchools
+    .map((label, index) => {
+      const raw =
+        index === feederSchools.length - 1
+          ? remaining
+          : Math.round((weights[index] / weightTotal) * learners);
+      const taken = Math.max(0, Math.min(raw, remaining));
+
+      remaining -= taken;
+
+      return { label, learners: taken, share: shareOf(taken, learners) };
+    })
+    .sort((left, right) => right.learners - left.learners);
+}
+
+/**
+ * One row per campus in scope, carrying the intake mix for the selected entry
+ * class. Every campus the campus / section filters allow gets a row, even one
+ * that does not take the class: a dash row answers "which campuses admit S.1?"
+ * at a glance, where dropping the row left "All campuses" reporting only the
+ * two secondary campuses. `classId` only picks which figures fill the row.
+ */
+export function intakeBySchool(
+  rows: CohortRow[],
+  classId: string,
+): SchoolIntakeRow[] {
+  return allSchools
+    .filter((schoolId) => rows.some((row) => row.schoolId === schoolId))
+    .map((schoolId) => {
+      const cohort = rows.filter(
+        (row) => row.schoolId === schoolId && row.classId === classId,
+      );
+
+      const learners = total(cohort, (row) => row.learners);
+
+      const nationalities = nationalityKeys
+        .map<IntakeFigure>((id) => {
+          const value = total(cohort, (row) => row.nationalities[id]);
+
+          return {
+            label: nationalityLabels[id],
+            learners: value,
+            share: shareOf(value, learners),
+          };
+        })
+        .sort((left, right) => right.learners - left.learners);
+
+      const religions = religionKeys
+        .map<IntakeFigure>((id) => {
+          const value = total(cohort, (row) => row.religions[id]);
+
+          return {
+            label: religionLabels[id],
+            learners: value,
+            share: shareOf(value, learners),
+          };
+        })
+        .sort((left, right) => right.learners - left.learners);
+
+      const ages = ageBandKeys
+        .map<IntakeFigure>((id) => {
+          const value = total(cohort, (row) => row.ageBands[id]);
+
+          return {
+            label: ageBandLabels[id],
+            learners: value,
+            share: shareOf(value, learners),
+          };
+        })
+        .sort((left, right) => right.learners - left.learners);
+
+      const origins = originMix(schoolId, classId, learners);
+
+      return {
+        schoolId,
+        schoolName: schoolNameFor(schoolId),
+        learners,
+        boys: total(cohort, (row) => row.boys),
+        girls: total(cohort, (row) => row.girls),
+        boarding: total(cohort, (row) => row.boarding),
+        day: total(cohort, (row) => row.day),
+        age: leading(ages),
+        nationality: leading(nationalities),
+        faith: leading(religions),
+        origin: leading(origins),
+        origins,
+      };
     });
 }
 

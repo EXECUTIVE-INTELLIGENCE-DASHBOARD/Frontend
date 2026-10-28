@@ -1,4 +1,4 @@
-// Sample data from the design. TODO: replace with calls in src/lib/api.ts when endpoints exist.
+// Sample data from the design. TODO: replace with calls in src/lib/api/ when endpoints exist.
 import type { AssetRow, AssetSummary, CampusFilterValue, CampusOption, Condition } from "./assetsEquipment.types";
 
 export const campusOptions: CampusOption[] = [

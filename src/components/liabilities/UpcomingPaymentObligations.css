@@ -3,9 +3,9 @@
   min-width: 0;
   overflow: hidden;
   border: 1px solid var(--color-border);
-  border-radius: 13px;
+  border-radius: 14px;
   background: var(--color-surface);
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
 }
 
 .upcoming-obligations__header {
@@ -13,7 +13,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 20px;
+  padding: 16px;
 }
 
 .upcoming-obligations__title {
@@ -21,6 +21,20 @@
   align-items: center;
   gap: 12px;
   min-width: 0;
+}
+
+.upcoming-obligations__title h2 {
+  margin: 0;
+  color: var(--color-heading);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.upcoming-obligations__title p {
+  margin: 5px 0 0;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  line-height: 1.4;
 }
 
 .upcoming-obligations__icon {
@@ -44,12 +58,12 @@
 
 .upcoming-obligations__total span {
   color: var(--color-text-muted);
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .upcoming-obligations__total strong {
   color: var(--color-heading);
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .upcoming-obligations__table-wrap {
@@ -71,7 +85,7 @@
   background: color-mix(in srgb, var(--color-border) 22%, var(--color-surface));
   color: var(--color-text-muted);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -80,7 +94,7 @@
   padding: 15px 16px;
   border-bottom: 1px solid var(--color-border);
   color: var(--color-text-muted);
-  font-size: 12px;
+  font-size: 10px;
 }
 
 .upcoming-obligations__table tbody tr:last-child td {
@@ -94,14 +108,14 @@
 
 .upcoming-obligations__creditor {
   color: var(--color-heading);
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
 }
 
 .upcoming-obligations__reference {
   margin-top: 5px;
   color: var(--color-text-muted);
-  font-size: 10px;
+  font-size: 9px;
 }
 
 .upcoming-obligations__amount {
@@ -126,7 +140,8 @@
   background: currentColor;
 }
 
-.upcoming-obligations__status--soon {
+.upcoming-obligations__status--overdue,
+.upcoming-obligations__status--late {
   background: color-mix(in srgb, #d97745 12%, transparent);
   color: #bd5f30;
 }
@@ -136,19 +151,15 @@
   color: var(--pal-steel);
 }
 
+.upcoming-obligations__status--paid {
+  background: color-mix(in srgb, #16a34a 12%, transparent);
+  color: #16834a;
+}
+
 .upcoming-obligations__empty {
   padding: 24px !important;
   text-align: center;
   white-space: normal;
-}
-
-.upcoming-obligations__note {
-  margin: 0;
-  padding: 12px 16px;
-  border-top: 1px solid var(--color-border);
-  color: var(--color-text-muted);
-  font-size: 10px;
-  line-height: 1.5;
 }
 
 @media (max-width: 650px) {

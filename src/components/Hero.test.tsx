@@ -68,9 +68,7 @@ describe("Hero", () => {
     expect(
       screen.getByRole("button", { name: "Open user profile" }),
     ).toBeInTheDocument();
-
-    expect(screen.getByText("Maruf Hossen")).toBeInTheDocument();
-    expect(screen.getByText("UI Designer")).toBeInTheDocument();
+    expect(screen.getByText("Greenhill Academy")).toBeInTheDocument();
   });
 
   it("searches for a screen and navigates to it", () => {
@@ -103,20 +101,17 @@ describe("Hero", () => {
     expect(screen.getByText(/No pages match/i)).toBeInTheDocument();
   });
 
-  it("reveals the signed-in user's details from the profile", () => {
+  it("shows only the logout option in the profile dropdown", () => {
     renderHero();
-
-    // Closed by default.
-    expect(
-      screen.queryByText("maruf.hossen@greenhill.ac.ug"),
-    ).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Open user profile" }));
 
-    expect(
-      screen.getByText("maruf.hossen@greenhill.ac.ug"),
-    ).toBeInTheDocument();
-
-    expect(screen.getByText("GH-STAFF-0284")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Log out" })).toBeInTheDocument();
+    expect(screen.queryByText("UI Designer")).not.toBeInTheDocument();
+    expect(screen.queryByText("maruf.hossen@greenhill.ac.ug")).not.toBeInTheDocument();
+    expect(screen.queryByText("+256 772 480 116")).not.toBeInTheDocument();
+    expect(screen.queryByText("Green Hill Academy Secondary School Kibuli")).not.toBeInTheDocument();
+    expect(screen.queryByText("Digital & Innovation")).not.toBeInTheDocument();
+    expect(screen.queryByText("GH-STAFF-0284")).not.toBeInTheDocument();
   });
 });
