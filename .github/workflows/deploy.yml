@@ -47,26 +47,40 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # App Platform does NOT redeploy automatically when a new image is pushed
-      # to Docker Hub or GHCR, so a fresh tag alone changes nothing on the live
-      # app. This forces a deployment once the repository has these secrets:
-      #   DIGITALOCEAN_ACCESS_TOKEN  token with app:update scope
-      #   DO_APP_ID                  the app UUID (`doctl apps list`)
-      # Without them the step succeeds and does nothing.
-      - name: Trigger DigitalOcean deployment
+      # Pushing a new tag to GHCR does not touch the droplet: the running
+      # container keeps serving the old image until it is replaced. This step
+      # pulls the fresh tag over SSH and recreates the container, and needs
+      # these repository secrets:
+      #   DROPLET_HOST      droplet address
+      #   DROPLET_USER      a user allowed to run docker
+      #   DROPLET_SSH_KEY   private key for that user
+      # Without them the step fails rather than deploying a stale image.
+      - name: Deploy frontend to DigitalOcean Droplet
         env:
-          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          DO_APP_ID: ${{ secrets.DO_APP_ID }}
+          DROPLET_HOST: ${{ secrets.DROPLET_HOST }}
+          DROPLET_USER: ${{ secrets.DROPLET_USER }}
+          DROPLET_SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
         run: |
-          if [ -z "$DIGITALOCEAN_ACCESS_TOKEN" ] || [ -z "$DO_APP_ID" ]; then
-            echo "DigitalOcean secrets are not configured; skipping redeploy."
-            echo "Add DIGITALOCEAN_ACCESS_TOKEN and DO_APP_ID to enable it."
-            exit 0
-          fi
-          curl -sSf -X POST \
-            -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d '{"force_build": true}' \
-            "https://api.digitalocean.com/v2/apps/$DO_APP_ID/deployments"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s\n' "$DROPLET_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          ssh-keyscan -H "$DROPLET_HOST" >> ~/.ssh/known_hosts
+
+          ssh -i ~/.ssh/deploy_key \
+            -o StrictHostKeyChecking=yes \
+            "$DROPLET_USER@$DROPLET_HOST" \
+            'set -e
+             docker pull ghcr.io/executive-intelligence-dashboard/frontend:dev
+             docker rm -f greenhill-frontend >/dev/null 2>&1 || true
+             docker run -d \
+               --name greenhill-frontend \
+               --network greenhill-net \
+               --restart unless-stopped \
+               -p 127.0.0.1:8080:8080 \
+               -e API_UPSTREAM=http://deploy-api-1:8000 \
+               ghcr.io/executive-intelligence-dashboard/frontend:dev'
 
 
