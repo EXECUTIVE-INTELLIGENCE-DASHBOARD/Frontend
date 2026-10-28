@@ -1,10 +1,9 @@
-export type Employment = "All Employment" | "Greenhill Schools" | "GSL";
 export type SectionName = "" | "Nursery" | "Primary" | "Secondary";
 export type OrderStatus = "Completed" | "In progress" | "Overdue";
 export type Compare = "prev" | "year";
 
+
 export interface FacilitiesFilters {
-  employment: Employment;
   /** "All Campuses" or one school. GSL is never a campus. */
   campus: string;
   section: SectionName;
