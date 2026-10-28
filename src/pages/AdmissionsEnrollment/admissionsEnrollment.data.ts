@@ -1261,20 +1261,35 @@ function originMix(
 
 /**
  * One row per campus in scope, carrying the intake mix for the selected entry
- * class. Every campus the campus / section filters allow gets a row, even one
- * that does not take the class: a dash row answers "which campuses admit S.1?"
- * at a glance, where dropping the row left "All campuses" reporting only the
- * two secondary campuses. `classId` only picks which figures fill the row.
+ * class. A campus that does not run the chosen class has no row at all, so
+ * picking S.1 or S.5 leaves only the schools that actually admit into it.
+ * `classId` of "all" keeps every campus in scope.
  */
 export function intakeBySchool(
   rows: CohortRow[],
   classId: string,
+  stream: string = "all",
 ): SchoolIntakeRow[] {
+  // The class definition is the authority on who runs which class, so a campus
+  // is dropped before any figure is summed, not left behind as a dash row.
+  const offering =
+    classId === "all"
+      ? null
+      : (classDefinitions.find((definition) => definition.id === classId)
+          ?.schools ?? []);
+
   return allSchools
-    .filter((schoolId) => rows.some((row) => row.schoolId === schoolId))
+    .filter(
+      (schoolId) =>
+        rows.some((row) => row.schoolId === schoolId) &&
+        (offering === null || offering.includes(schoolId)),
+    )
     .map((schoolId) => {
       const cohort = rows.filter(
-        (row) => row.schoolId === schoolId && row.classId === classId,
+        (row) =>
+          row.schoolId === schoolId &&
+          (classId === "all" || row.classId === classId) &&
+          (stream === "all" || row.stream === stream),
       );
 
       const learners = total(cohort, (row) => row.learners);

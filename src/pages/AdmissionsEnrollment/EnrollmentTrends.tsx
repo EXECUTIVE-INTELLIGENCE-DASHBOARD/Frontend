@@ -1,12 +1,10 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { formatNumber, formatPercent } from "./admissionsEnrollment.data";
 import {
   enrollmentTrend,
   trendDelta,
-  trendGrains,
   type EnrollmentTrendPoint,
-  type TrendGrain,
 } from "./admissionsEnrollment.trends";
 import type { Filters } from "./admissionsEnrollment.types";
 
@@ -329,16 +327,13 @@ interface EnrollmentTrendsProps {
 }
 
 export function EnrollmentTrends({ filters }: EnrollmentTrendsProps) {
-  const [grain, setGrain] = useState<TrendGrain>("term");
-
-  const points = useMemo(
-    () => enrollmentTrend(filters, grain),
-    [filters, grain],
-  );
+  // The page filter row already carries the Term and Academic Year pickers, so
+  // the charts just follow them and plot the trailing terms; there is no second
+  // grain switch to disagree with them.
+  const points = useMemo(() => enrollmentTrend(filters, "term"), [filters]);
 
   const latest = points[points.length - 1];
   const change = trendDelta(points);
-  const periodWord = grain === "term" ? "term" : "academic year";
 
   return (
     <section className="ae-trends" aria-labelledby="ae-trends-heading">
@@ -347,27 +342,6 @@ export function EnrollmentTrends({ filters }: EnrollmentTrendsProps) {
           <h2 className="ae-trends__title" id="ae-trends-heading">
             Enrolment trends
           </h2>
-          <p className="ae-trends__sub">
-            How the roll moves between {periodWord}s
-          </p>
-        </div>
-
-        <div className="ae-trends__grain" role="group" aria-label="Trend period">
-          {trendGrains.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              className={
-                option.id === grain
-                  ? "ae-trends__grain-option is-active"
-                  : "ae-trends__grain-option"
-              }
-              aria-pressed={option.id === grain}
-              onClick={() => setGrain(option.id)}
-            >
-              {option.label}
-            </button>
-          ))}
         </div>
       </div>
 
@@ -377,10 +351,6 @@ export function EnrollmentTrends({ filters }: EnrollmentTrendsProps) {
             <header className="ae-trend-card__head">
               <div>
                 <h3 className="ae-trend-card__title">Girls vs boys</h3>
-                <p className="ae-trend-card__sub">
-                  Headcount per {periodWord}, from {points[0].description} to{" "}
-                  {latest.description}
-                </p>
               </div>
 
               <ul className="ae-trend__legend">
@@ -428,9 +398,6 @@ export function EnrollmentTrends({ filters }: EnrollmentTrendsProps) {
             <header className="ae-trend-card__head">
               <div>
                 <h3 className="ae-trend-card__title">New entrants vs retained</h3>
-                <p className="ae-trend-card__sub">
-                  Continuing learners with the retention rate overlaid
-                </p>
               </div>
 
               <ul className="ae-trend__legend">
@@ -473,11 +440,6 @@ export function EnrollmentTrends({ filters }: EnrollmentTrendsProps) {
           No history to plot for the current filters.
         </p>
       )}
-
-      <p className="ae-trends__note">
-        The enrolment endpoint reports one term at a time, so this history is
-        modelled from the same cohort the drill-down uses.
-      </p>
     </section>
   );
 }

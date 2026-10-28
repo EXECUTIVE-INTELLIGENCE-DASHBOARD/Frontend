@@ -16,11 +16,6 @@ import type { Filters, TermId, YearId } from "./admissionsEnrollment.types";
 
 export type TrendGrain = "term" | "year";
 
-export const trendGrains: ReadonlyArray<{ id: TrendGrain; label: string }> = [
-  { id: "term", label: "By term" },
-  { id: "year", label: "By year" },
-];
-
 /** How many periods each grain plots. Kept short so labels stay readable. */
 const termPoints = 6;
 const yearPoints = 5;

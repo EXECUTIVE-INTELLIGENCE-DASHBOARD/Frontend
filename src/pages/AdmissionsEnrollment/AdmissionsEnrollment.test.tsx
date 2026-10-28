@@ -124,15 +124,22 @@ describe("AdmissionsEnrollment", () => {
     };
     const everywhere = inView();
 
-    expect(selectByName("School")).toHaveValue("all");
+    // The shared row already filters by campus, so the page must not add a
+    // second "all schools" picker of its own.
+    expect(screen.queryByRole("combobox", { name: "School" })).toBeNull();
 
     drillIntoSchool(kibuliSecondary);
 
-    expect(selectByName("School")).toHaveValue("kibuli-secondary");
+    // The campus's own classes are offered on the table itself.
+    expect(
+      within(selectByName("Class")).queryByRole("option", {
+        name: "Top Class",
+      }),
+    ).toBeNull();
     expect(inView()).not.toBe(everywhere);
   });
 
-  it("shows campus, section, term and year before a school is drilled into", () => {
+  it("keeps the class and stream pickers on the table, not the filter row", () => {
     render(<AdmissionsEnrollment />);
 
     // The row is the same set of filters the academic screens share.
@@ -141,15 +148,22 @@ describe("AdmissionsEnrollment", () => {
     expect(selectByName("Term")).toBeInTheDocument();
     expect(selectByName("Academic Year")).toBeInTheDocument();
 
-    // Class, stream and the learner search need a school to scope them.
-    expect(screen.queryByRole("combobox", { name: "Class" })).toBeNull();
-    expect(screen.queryByRole("combobox", { name: "Stream" })).toBeNull();
+    // Class and stream belong to the enrolment table, so they are offered
+    // before any campus is chosen. The learner search still needs a school.
+    const table = screen
+      .getByRole("heading", { name: "Enrolment by school" })
+      .closest("section") as HTMLElement;
+
+    expect(
+      within(table).getByRole("combobox", { name: "Class" }),
+    ).toBeInTheDocument();
+    expect(
+      within(table).getByRole("combobox", { name: "Stream" }),
+    ).toBeInTheDocument();
     expect(screen.queryByLabelText("Find a learner")).toBeNull();
 
     drillIntoSchool(kibuliSecondary);
 
-    expect(selectByName("Class")).toBeInTheDocument();
-    expect(selectByName("Stream")).toBeInTheDocument();
     expect(screen.getByLabelText("Find a learner")).toBeInTheDocument();
   });
 
@@ -186,7 +200,7 @@ describe("AdmissionsEnrollment", () => {
     ).toBeInTheDocument();
   });
 
-  it("drills from schools to classes and then to streams", () => {
+  it("leaves class and stream to the pickers on the table itself", () => {
     render(<AdmissionsEnrollment />);
 
     expect(
@@ -195,48 +209,54 @@ describe("AdmissionsEnrollment", () => {
 
     drillIntoSchool(kibuliSecondary);
 
+    // The table already narrows by class and stream, so the page must not add
+    // a second "Enrolment by class" or "Enrolment by stream" list.
     expect(
-      screen.getByRole("heading", { name: "Enrolment by class" }),
-    ).toBeInTheDocument();
-    expect(selectByName("Class")).toHaveValue("all");
-
-    fireEvent.click(
-      screen.getByRole("button", { name: /S\.4.*Drill down/i }),
-    );
-
+      screen.queryByRole("heading", { name: "Enrolment by class" }),
+    ).not.toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Enrolment by stream" }),
+      screen.queryByRole("heading", { name: "Enrolment by stream" }),
+    ).not.toBeInTheDocument();
+    expect(selectByName("Class")).toBeInTheDocument();
+    expect(selectByName("Stream")).toBeInTheDocument();
+    expect(
+      within(
+        screen.getByRole("navigation", { name: "Drill-down path" }),
+      ).getByText(/Kibuli/),
     ).toBeInTheDocument();
-    expect(selectByName("Class")).toHaveValue("s4");
   });
 
-  it("walks back up the drill-down path from the breadcrumb", () => {
+  it("walks back to every campus from the breadcrumb", () => {
     render(<AdmissionsEnrollment />);
 
     drillIntoSchool(kibuliSecondary);
-    fireEvent.change(selectByName("Class"), { target: { value: "s4" } });
 
-    expect(
-      screen.getByRole("heading", { name: "Enrolment by stream" }),
-    ).toBeInTheDocument();
+    const trail = screen.getByRole("navigation", { name: "Drill-down path" });
+
+    expect(within(trail).getByText("All campuses")).toBeInTheDocument();
 
     backToAllCampuses();
 
-    expect(screen.queryByRole("combobox", { name: "Class" })).toBeNull();
     expect(
       screen.getByRole("heading", { name: "Enrolment by school" }),
     ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("navigation", { name: "Drill-down path" }),
+    ).not.toBeInTheDocument();
   });
 
-  it("lists learners once a stream is selected and opens a learner record", () => {
+  it("lists the learners a search matches and opens a learner record", () => {
     render(<AdmissionsEnrollment />);
 
     drillIntoSchool(kibuliSecondary);
-    fireEvent.change(selectByName("Class"), { target: { value: "s4" } });
-    fireEvent.change(selectByName("Stream"), { target: { value: "A" } });
+
+    // Every admission number starts with GH, so this matches the whole roll.
+    fireEvent.change(screen.getByLabelText("Find a learner"), {
+      target: { value: "GH" },
+    });
 
     const roster = screen.getByRole("table", {
-      name: /Learners in the selected class and stream/,
+      name: /Learners matching the search/,
     });
 
     expect(roster).toBeInTheDocument();
@@ -284,44 +304,57 @@ describe("AdmissionsEnrollment", () => {
     expect(funnel.textContent).not.toMatch(/offers made/i);
   });
 
-  it("reveals class, stream and learner filters as soon as a school is chosen", () => {
+  it("puts the class and stream pickers on the enrolment table", () => {
     render(<AdmissionsEnrollment />);
 
-    const school = selectByName("School");
+    // Unscoped, the table offers every class the group runs.
+    expect(
+      within(selectByName("Class")).getByRole("option", { name: "S.4" }),
+    ).toBeInTheDocument();
+    expect(
+      within(selectByName("Class")).getByRole("option", {
+        name: "Top Class",
+      }),
+    ).toBeInTheDocument();
 
-    expect(school).toHaveValue("all");
-    expect(screen.queryByRole("combobox", { name: "Class" })).toBeNull();
+    drillIntoSchool(kibuliSecondary);
 
-    fireEvent.change(school, { target: { value: "kibuli-secondary" } });
+    // Choosing a campus rescopes the picker to the classes that campus runs.
+    expect(
+      within(selectByName("Class")).getByRole("option", { name: "S.4" }),
+    ).toBeInTheDocument();
+    expect(
+      within(selectByName("Class")).queryByRole("option", {
+        name: "Top Class",
+      }),
+    ).toBeNull();
 
-    expect(selectByName("Class")).toBeInTheDocument();
-    expect(selectByName("Stream")).toBeInTheDocument();
     expect(screen.getByLabelText("Find a learner")).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Enrolment by class" }),
+      screen.queryByRole("heading", { name: "Enrolment by class" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("puts every campus in scope in the enrolment table", () => {
+    render(<AdmissionsEnrollment />);
+
+    const table = screen.getByRole("table", {
+      name: /Total enrolment by school, with gender, boarding, day, age/i,
+    });
+
+    // Six campuses plus the header row — every campus keeps its row whatever
+    // classes it takes.
+    expect(within(table).getAllByRole("row")).toHaveLength(7);
+    expect(
+      within(table).getByRole("row", { name: /Kibuli Nursery/ }),
     ).toBeInTheDocument();
   });
 
-  it("puts every campus in scope in the intake table", () => {
+  it("tabulates the whole roll, then S.1 and S.5 intake, by gender, boarding, age, faith and origin", () => {
     render(<AdmissionsEnrollment />);
 
     const table = screen.getByRole("table", {
-      name: /S\.1 enrolment by school, with gender, boarding, day, age/i,
-    });
-
-    // Six campuses plus the header row — a campus that does not admit S.1
-    // keeps its row and shows a dash rather than disappearing.
-    expect(within(table).getAllByRole("row")).toHaveLength(7);
-    expect(
-      within(table).getByRole("row", { name: /Kibuli Nursery/ }).textContent,
-    ).toContain("—");
-  });
-
-  it("tabulates S.1 and S.5 intake by gender, boarding, age, faith and origin", () => {
-    render(<AdmissionsEnrollment />);
-
-    const table = screen.getByRole("table", {
-      name: /S\.1 enrolment by school, with gender, boarding, day, age/i,
+      name: /Total enrolment by school, with gender, boarding, day, age/i,
     });
 
     expect(
@@ -354,14 +387,43 @@ describe("AdmissionsEnrollment", () => {
     expect(cells[6].textContent).toMatch(/%/);
     expect(cells[7].textContent).toMatch(/%/);
 
-    const s5 = screen.getByRole("button", { name: "S.5", pressed: false });
+    const classPicker = selectByName("Class");
 
-    fireEvent.click(s5);
+    fireEvent.change(classPicker, { target: { value: "s5" } });
 
-    expect(s5).toHaveAttribute("aria-pressed", "true");
+    expect(classPicker).toHaveValue("s5");
+
+    const s5Table = screen.getByRole("table", {
+      name: /S\.5 enrolment by school/i,
+    });
+
+    // Only the campuses that actually run S.5 stay in the table.
+    expect(within(s5Table).getAllByRole("row")).toHaveLength(3);
     expect(
-      screen.getByRole("table", { name: /S\.5 enrolment by school/i }),
-    ).toBeInTheDocument();
+      within(s5Table).queryByRole("row", { name: /Kibuli Nursery/ }),
+    ).toBeNull();
+  });
+
+  it("drops the campuses that do not run the class that is picked", () => {
+    render(<AdmissionsEnrollment />);
+
+    const classPicker = selectByName("Class");
+
+    fireEvent.change(classPicker, { target: { value: "s1" } });
+
+    const s1Table = screen.getByRole("table", {
+      name: /S\.1 enrolment by school/i,
+    });
+    // The campus sits in the row header; the other cells name feeder schools,
+    // some of which are primaries themselves, so only the campus column counts.
+    const campuses = within(s1Table)
+      .getAllByRole("rowheader")
+      .map((cell) => cell.textContent ?? "");
+
+    expect(campuses).toHaveLength(2);
+    expect(campuses.join(" ")).toMatch(/Kibuli Secondary/);
+    expect(campuses.join(" ")).toMatch(/GIS Kansanga/);
+    expect(campuses.join(" ")).not.toMatch(/Nursery|Primary/);
   });
 
   it("keeps the intake table on screen after a school is drilled into", () => {
@@ -369,13 +431,13 @@ describe("AdmissionsEnrollment", () => {
 
     drillIntoSchool(kibuliSecondary);
 
-    // The S.1 / S.5 origin figures stay visible next to the class drill-down.
+    // The S.1 / S.5 origin figures stay visible on the table.
     expect(
-      screen.getByRole("heading", { name: "Enrolment by class" }),
+      screen.getByRole("heading", { name: "Enrolment by school" }),
     ).toBeInTheDocument();
 
     const table = screen.getByRole("table", {
-      name: /S\.1 enrolment by school/i,
+      name: /Total enrolment by school/i,
     });
 
     expect(within(table).getAllByRole("row")).toHaveLength(2);
@@ -395,7 +457,7 @@ describe("AdmissionsEnrollment", () => {
     expect(screen.getByRole("menuitem", { name: /Export/ })).toBeEnabled();
   });
 
-  it("plots gender and new-entrant trends per term and per year", () => {
+  it("plots gender and new-entrant trends per term", () => {
     render(<AdmissionsEnrollment />);
 
     expect(
@@ -413,15 +475,11 @@ describe("AdmissionsEnrollment", () => {
     expect(gender.querySelectorAll("rect.ae-trend__bar")).toHaveLength(12);
     expect(entrants.querySelectorAll("rect.ae-trend__bar")).toHaveLength(12);
 
-    const byYear = screen.getByRole("button", { name: "By year" });
-    fireEvent.click(byYear);
-
-    expect(byYear).toHaveAttribute("aria-pressed", "true");
-    expect(
-      screen
-        .getByRole("img", { name: /girls and boys enrolled in each period/i })
-        .querySelectorAll("rect.ae-trend__bar"),
-    ).toHaveLength(10);
+    // The Term and Academic Year pickers sit in the filter row, so the charts
+    // carry no period switch of their own.
+    expect(screen.queryByRole("group", { name: "Trend period" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "By year" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "By term" })).toBeNull();
   });
 
   it("raises a banner when a learner search is typed", () => {
