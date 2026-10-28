@@ -51,11 +51,10 @@ export const parseDate = (iso: string) => {
   return Date.UTC(y, m - 1, d);
 };
 
-/** Which campuses/entities a filter selection covers. */
-export function scopeCampuses(f: Pick<FacilitiesFilters, "employment" | "campus">): string[] {
-  if (f.employment === "GSL") return [GSL];
+/** Which campuses a filter selection covers. */
+export function scopeCampuses(f: Pick<FacilitiesFilters, "campus">): string[] {
   if (f.campus !== ALL_CAMPUSES) return [f.campus];
-  return f.employment === "Greenhill Schools" ? [...SCHOOLS] : [...SCHOOLS, GSL];
+  return [...SCHOOLS];
 }
 
 export function buildWorkOrders(campuses: string[]): WorkOrder[] {
