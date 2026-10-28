@@ -35,7 +35,7 @@ const opts = (xs: string[]) => xs.map((x) => ({ value: x, label: x }));
 
 function Status({ row }: { row: AttendanceRow }) {
   const low = row.rate < row.target;
-  return <span className={low ? "at-chip" : "at-chip at-chip--ok"}>{low ? "▼ Below target" : "✔ On target"}</span>;
+  return <span className={low ? "at-chip" : "at-chip at-chip--ok"}>{low ? "Below target" : "On target"}</span>;
 }
 
 function Kpi({ icon, label, value, detail }: { icon: string; label: string; value: string; detail: string }) {
