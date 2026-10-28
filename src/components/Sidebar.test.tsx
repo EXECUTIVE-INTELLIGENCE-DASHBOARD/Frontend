@@ -96,11 +96,11 @@ describe("Sidebar", () => {
 
     expect(screen.getByText("Facilities & Maintenance")).toBeInTheDocument();
 
-    expect(screen.getByText("Fleet & Transport")).toBeInTheDocument();
-
-    expect(screen.getByText("Asset Management")).toBeInTheDocument();
-
     expect(screen.getByText("Incidents & Security")).toBeInTheDocument();
+
+     expect(screen.getByText("Asset Management")).toBeInTheDocument();
+
+    expect(screen.getByText("Fleet & Transport")).toBeInTheDocument();
 
     // Folded into their parents by the approved menu.
     expect(screen.queryByText("ICT Systems")).not.toBeInTheDocument();
