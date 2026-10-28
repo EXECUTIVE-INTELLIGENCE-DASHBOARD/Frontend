@@ -55,12 +55,10 @@ describe("AttendanceAnalysis", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it("falls back to sample data and says so when the backend has no records", async () => {
+  it("falls back to sample data when the backend has no records", async () => {
     list.mockResolvedValue([] as never);
     render(<AttendanceAnalysis />);
-    const note = await screen.findByRole("status");
-    expect(note.textContent).toMatch(/No attendance records on the server yet/);
-    expect(note.textContent).toMatch(/Showing sample data/);
     expect(await screen.findByText("Below Target")).toBeTruthy();
+    expect(screen.queryByRole("status")).toBeNull();
   });
 });

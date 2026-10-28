@@ -6,7 +6,7 @@ import type { AttendanceFilters, AttendanceRow } from "./attendance.types";
 
 const NOTES: Record<AttendanceSource, string | null> = {
   api: null,
-  empty: "No attendance records on the server yet. Showing sample data.",
+  empty: null,
   offline: "The attendance server could not be reached. Showing sample data.",
 };
 
