@@ -1,23 +1,24 @@
-
 .outstanding-creditors {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
   height: 100%;
   box-sizing: border-box;
-  padding: 24px;
+  padding: 18px;
   background: var(--color-surface);
-  border: 1px solid var(--color-border-soft);
-  border-radius: 20px;
-  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  box-shadow: none;
 }
 
 .outstanding-creditors__title {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 0 0 20px;
+  margin: 0 0 16px;
   color: var(--color-heading);
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   line-height: 1.4;
 }
 
@@ -41,149 +42,89 @@
   background: var(--color-surface-subtle);
   border: 1px solid var(--color-border-soft);
   border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 10px;
+  font-weight: 600;
 }
 
-.outstanding-creditors__table-wrapper {
-  width: 100%;
-  min-width: 0;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-border-soft) transparent;
-}
-
-.outstanding-creditors__table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  text-align: left;
-}
-
-.outstanding-creditors__table thead {
-  background: var(--color-surface-subtle);
-}
-
-.outstanding-creditors__table th {
-  padding: 13px 10px;
-  color: var(--color-text-soft);
-  font-size: 0.67rem;
-  font-weight: 750;
-  letter-spacing: 0.045em;
-  line-height: 1.45;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.outstanding-creditors__table th:first-child {
-  min-width: 160px;
-  border-radius: 9px 0 0 9px;
-}
-
-.outstanding-creditors__table th:nth-child(2) {
-  min-width: 140px;
-}
-
-.outstanding-creditors__table th:last-child {
-  min-width: 125px;
-  border-radius: 0 9px 9px 0;
-}
-
-.outstanding-creditors__amount-heading {
-  text-align: right;
-}
-
-.outstanding-creditors__table td {
-  padding: 13px 10px;
-  border-bottom: 1px solid var(--color-border-soft);
-  vertical-align: middle;
-}
-
-.outstanding-creditors__table tbody tr {
-  transition: background-color 150ms ease;
-}
-
-.outstanding-creditors__table tbody tr:hover {
-  background: var(--color-surface-subtle);
-}
-
-.outstanding-creditors__table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.creditor-name {
+.outstanding-creditors__chart {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 16px;
+  min-width: 0;
+  margin-top: 4px;
+}
+
+.outstanding-creditors__bar-row {
+  display: grid;
+  grid-template-columns: minmax(100px, 0.8fr) minmax(60px, 1.5fr) auto;
+  align-items: center;
+  gap: 12px;
   min-width: 0;
 }
 
-.creditor-name strong {
-  color: var(--color-heading);
-  font-size: 0.8rem;
-  font-weight: 650;
-  line-height: 1.4;
-}
-
-.creditor-name span {
-  color: var(--color-text-soft);
-  font-size: 0.68rem;
+.outstanding-creditors__name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: 10px;
   line-height: 1.45;
-  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
 }
 
-.creditor-type {
-  display: inline-block;
-  max-width: 100%;
-  padding: 5px 9px;
-  color: var(--color-text);
-  background: var(--color-surface-hover);
-  border: 1px solid var(--color-border-soft);
+.outstanding-creditors__track {
+  height: 10px;
+  overflow: hidden;
   border-radius: 999px;
-  font-size: 0.68rem;
-  font-weight: 550;
-  line-height: 1.4;
+  background: var(--color-surface-subtle);
 }
 
-.outstanding-creditors__amount {
+.outstanding-creditors__bar {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #243a7a;
+}
+
+.outstanding-creditors__value {
   color: var(--color-heading);
-  font-size: 0.8rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
+  font-size: 10px;
+  font-weight: 600;
   white-space: nowrap;
 }
 
-@media (max-width: 1200px) {
-  .outstanding-creditors {
-    padding: 22px 20px;
-  }
+.outstanding-creditors__empty {
+  margin: 0;
+  padding: 18px 0;
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
 
-  .outstanding-creditors__table th,
-  .outstanding-creditors__table td {
-    padding: 11px 8px;
-  }
+.outstanding-creditors__toggle {
+  align-self: flex-start;
+  margin-top: 16px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #159ed3;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 @media (max-width: 600px) {
   .outstanding-creditors {
-    padding: 20px 15px;
-    border-radius: 18px;
+    padding: 16px;
+    border-radius: 14px;
   }
 
-  .outstanding-creditors__title {
-    margin-bottom: 17px;
-    font-size: 0.98rem;
+  .outstanding-creditors__bar-row {
+    grid-template-columns: minmax(80px, 0.9fr) minmax(50px, 1fr) auto;
+    gap: 8px;
   }
 
-  .outstanding-creditors__table {
-    min-width: 520px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .outstanding-creditors__table tbody tr {
-    transition: none;
+  .outstanding-creditors__name,
+  .outstanding-creditors__value {
+    font-size: 9px;
   }
 }
