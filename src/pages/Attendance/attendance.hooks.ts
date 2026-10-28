@@ -1,20 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getAttendance } from "./attendance.api";
 import type { AttendanceSource } from "./attendance.api";
-import type { AttendanceRow } from "./attendance.types";
+import { buildRows } from "./attendance.data";
+import type { AttendanceFilters, AttendanceRow } from "./attendance.types";
 
 const NOTES: Record<AttendanceSource, string | null> = {
   api: null,
-  empty: "No attendance records on the server yet.",
-  offline: "The attendance server could not be reached.",
+  empty: "No attendance records on the server yet. Showing sample data.",
+  offline: "The attendance server could not be reached. Showing sample data.",
 };
 
-/**
- * The backend attendance records have no campus, section, term or year fields yet,
- * so none of the page filters are sent to the server.
- */
-export function useAttendance() {
-  const [rows, setRows] = useState<AttendanceRow[]>([]);
+export function useAttendance(filters: AttendanceFilters) {
+  const [apiRows, setApiRows] = useState<AttendanceRow[]>([]);
   const [source, setSource] = useState<AttendanceSource>("api");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,15 +23,29 @@ export function useAttendance() {
     getAttendance()
       .then((r) => {
         if (!live) return;
-        setRows(r.rows);
+        setApiRows(r.rows);
         setSource(r.source);
       })
-      .catch(() => live && setError("Attendance data could not be loaded."))
+      .catch(() => {
+        if (!live) return;
+        setSource("offline");
+      })
       .finally(() => live && setLoading(false));
     return () => {
       live = false;
     };
   }, []);
+
+  const { campus, section, term, year } = filters;
+
+  // Real data when the backend has some, sample data otherwise.
+  const rows = useMemo(
+    () =>
+      source === "api"
+        ? apiRows
+        : buildRows({ campus, section, term, year }),
+    [source, apiRows, campus, section, term, year],
+  );
 
   return { rows, loading, error, note: NOTES[source] };
 }
