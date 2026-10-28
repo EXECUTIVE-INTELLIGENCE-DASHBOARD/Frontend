@@ -1,51 +1,13 @@
+import type { IncidentDashboardData } from "../../pages/operations/incidentSecurity.types";
+
 import "./OverviewInsights.css";
 
-const incidentMetrics = [
-  {
-    id: "misconduct",
-    label: "Academic Misconduct",
-    actual: 12,
-    threshold: 25,
-  },
-  {
-    id: "behavioral",
-    label: "Behavioral / Attendance",
-    actual: 28,
-    threshold: 40,
-  },
-  {
-    id: "health",
-    label: "Health / Minor Injuries",
-    actual: 15,
-    threshold: 30,
-  },
-  {
-    id: "facilities",
-    label: "Facilities / Property",
-    actual: 4,
-    threshold: 15,
-  },
-];
+function IncidentsPanel({ data }: { data: IncidentDashboardData | null }) {
+  const categories = [...(data?.by_category ?? [])]
+    .sort((a, b) => b.incidents - a.incidents)
+    .slice(0, 4);
+  const maximum = Math.max(0, ...categories.map(({ incidents }) => incidents));
 
-const capitalProjects = [
-  {
-    id: "stem-wing",
-    name: "STEM Wing Modernization (Main Campus)",
-    progress: 78,
-  },
-  {
-    id: "solar",
-    name: "Solar Power Phase II Installation",
-    progress: 45,
-  },
-  {
-    id: "sports-complex",
-    name: "Sports Complex Turf Replacement",
-    progress: 92,
-  },
-];
-
-function IncidentsPanel() {
   return (
     <article className="overview-insight-card overview-incidents-card">
       <h2 className="overview-insight-card__heading">
@@ -53,56 +15,54 @@ function IncidentsPanel() {
       </h2>
 
       <div className="overview-incidents-list">
-        {incidentMetrics.map((incident) => {
-          const percentage = Math.min(
-            (incident.actual / incident.threshold) * 100,
-            100,
-          );
-
-          return (
+        {data === null ? (
+          <p className="overview-insight-empty" role="status">
+            Incident data is unavailable.
+          </p>
+        ) : categories.length === 0 ? (
+          <p className="overview-insight-empty" role="status">
+            No incidents were recorded for this selection.
+          </p>
+        ) : (
+          categories.map((incident) => (
             <div
               className="overview-incident"
-              key={incident.id}
+              key={incident.code}
             >
               <div className="overview-incident__details">
                 <span className="overview-incident__label">
                   {incident.label}
                 </span>
-
                 <span className="overview-incident__figures">
-                  <strong>{incident.actual}</strong>
-                  {" / "}
-                  {incident.threshold} Max Threshold
+                  <strong>{incident.incidents.toLocaleString("en-US")}</strong>
+                  {" recorded"}
                 </span>
               </div>
 
               <div
                 className="overview-incident__track"
                 role="progressbar"
-                aria-label={`${incident.label} threshold usage`}
+                aria-label={`${incident.label} relative incident count`}
                 aria-valuemin={0}
-                aria-valuemax={incident.threshold}
-                aria-valuenow={incident.actual}
+                aria-valuemax={maximum}
+                aria-valuenow={incident.incidents}
               >
                 <div
                   className="overview-incident__fill"
-                  style={{ width: `${percentage}%` }}
+                  style={{
+                    width: `${maximum > 0 ? (incident.incidents / maximum) * 100 : 0}%`,
+                  }}
                 />
               </div>
             </div>
-          );
-        })}
+          ))
+        )}
       </div>
 
       <div className="overview-incidents-legend">
         <span className="overview-incidents-legend__item">
           <span className="overview-incidents-legend__swatch overview-incidents-legend__swatch--actual" />
-          Recorded Actual
-        </span>
-
-        <span className="overview-incidents-legend__item">
-          <span className="overview-incidents-legend__swatch overview-incidents-legend__swatch--threshold" />
-          Threshold Allowance
+          Recorded incidents (bars scaled to highest category)
         </span>
       </div>
     </article>
@@ -116,46 +76,26 @@ function CapitalProjectsPanel() {
         Facilities &amp; Ops - Capital Projects
       </h2>
 
-      <div className="overview-projects-list">
-        {capitalProjects.map((project) => (
-          <div className="overview-project" key={project.id}>
-            <div className="overview-project__details">
-              <span className="overview-project__name">
-                {project.name}
-              </span>
-
-              <span className="overview-project__percentage">
-                {project.progress}%
-              </span>
-            </div>
-
-            <div
-              className="overview-project__track"
-              role="progressbar"
-              aria-label={`${project.name} completion`}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={project.progress}
-            >
-              <div
-                className="overview-project__fill"
-                style={{ width: `${project.progress}%` }}
-              />
-            </div>
-          </div>
-        ))}
+      <div className="overview-projects-list" role="status">
+        <p className="overview-insight-empty">
+          Capital project progress is not available from the backend.
+        </p>
       </div>
     </article>
   );
 }
 
-export function OverviewInsights() {
+export function OverviewInsights({
+  incidents,
+}: {
+  incidents: IncidentDashboardData | null;
+}) {
   return (
     <section
       className="overview-insights"
       aria-label="Incidents and capital projects"
     >
-      <IncidentsPanel />
+      <IncidentsPanel data={incidents} />
       <CapitalProjectsPanel />
     </section>
   );
