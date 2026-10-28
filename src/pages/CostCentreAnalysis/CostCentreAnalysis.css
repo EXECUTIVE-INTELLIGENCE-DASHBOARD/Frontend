@@ -1,4 +1,3 @@
-
 .cost-centre {
   --cc-border: var(--color-border);
 }
@@ -62,6 +61,115 @@
   gap: 0;
 }
 
+.cost-centre .finance-overview__metric {
+  min-height: 120px;
+  padding: 20px;
+}
+/* Three summary cards */
+.cost-centre .finance-overview__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  width: 100%;
+  margin: 12px 0px;
+}
+
+/* Individual cards */
+.cost-centre .finance-overview__metric {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 18px;
+  min-width: 0;
+  min-height: 150px;
+  padding: 21px 26px;
+  background: #ffffff;
+  border: none;
+  border-radius: 26px;
+  box-shadow: 0 2px 8px rgba(32, 52, 104, 0.025);
+  box-sizing: border-box;
+}
+
+/* Smaller blue icon container */
+.cost-centre .finance-overview__icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: #2aa4dd;
+  color: #ffffff;
+}
+
+/* Smaller icons */
+.cost-centre .finance-overview__icon svg {
+  width: 21px;
+  height: 21px;
+  stroke-width: 1.8;
+}
+
+/* Card text layout */
+.cost-centre .finance-overview__metric-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Card labels */
+.cost-centre .finance-overview__metric-label {
+  color: #425675;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.cost-centre .finance-overview__metric-value {
+  color: #203468;
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+/* Responsive layout */
+@media (max-width: 900px) {
+  .cost-centre .finance-overview__metrics {
+    gap: 14px;
+  }
+
+  .cost-centre .finance-overview__metric {
+    gap: 12px;
+    padding: 20px;
+  }
+
+  .cost-centre .finance-overview__icon {
+    width: 44px;
+    height: 50px;
+    border-radius: 15px;
+  }
+
+  .cost-centre .finance-overview__metric-value {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cost-centre .finance-overview__metrics {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .cost-centre .finance-overview__metric {
+    min-height: 120px;
+  }
+}
+
 .cost-centre__legend-item {
   display: grid;
   grid-template-columns: 9px minmax(0, 1fr) auto;
@@ -114,11 +222,7 @@
 }
 
 .cost-centre__table thead th {
-  background: color-mix(
-    in srgb,
-    var(--color-border) 24%,
-    var(--color-surface)
-  );
+  background: color-mix(in srgb, var(--color-border) 24%, var(--color-surface));
   color: var(--color-text-muted);
   font-size: 9px;
   font-weight: 700;
@@ -137,11 +241,7 @@
 }
 
 .cost-centre__table tbody tr:hover {
-  background: color-mix(
-    in srgb,
-    var(--pal-steel) 4%,
-    transparent
-  );
+  background: color-mix(in srgb, var(--pal-steel) 4%, transparent);
 }
 
 .cost-centre__table .cost-centre__department {
@@ -150,11 +250,7 @@
 }
 
 .cost-centre__table tfoot th {
-  background: color-mix(
-    in srgb,
-    var(--color-border) 18%,
-    var(--color-surface)
-  );
+  background: color-mix(in srgb, var(--color-border) 18%, var(--color-surface));
   color: var(--color-heading);
   font-size: 10px;
   font-weight: 700;
@@ -192,11 +288,7 @@
   height: 5px;
   overflow: hidden;
   border-radius: 99px;
-  background: color-mix(
-    in srgb,
-    var(--color-border) 65%,
-    transparent
-  );
+  background: color-mix(in srgb, var(--color-border) 65%, transparent);
 }
 
 .cost-centre__progress > span {
@@ -218,8 +310,8 @@
 }
 
 .cost-centre__status--within {
- color: #2AA4DD;
-background: color-mix(in srgb, #2AA4DD 8%, transparent);
+  color: #2aa4dd;
+  background: color-mix(in srgb, #2aa4dd 8%, transparent);
 }
 
 .cost-centre__status--watch {
@@ -264,27 +356,121 @@ background: color-mix(in srgb, #2AA4DD 8%, transparent);
     gap: 6px;
   }
 }
-
-
-
-.cost-centre__filters {
+.cost-centre .cost-centre__filters {
   display: flex;
   justify-content: flex-end;
-  align-items: flex-end;
+  align-items: center;
   width: 100%;
+  margin: 0 0 8px;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.cost-centre__location-filters {
+/* Campus and Section dropdown layout */
+.cost-centre .cost-centre__location-filters {
   display: flex;
   justify-content: flex-end;
-  align-items: flex-end;
+  align-items: center;
   gap: 16px;
   margin-left: auto;
   flex-wrap: wrap;
+}
+
+/* Individual dropdowns */
+.cost-centre .cost-centre__location-filters > label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+/* Dropdown appearance */
+.cost-centre .cost-centre__location-filters select {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 32px 9px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-heading);
+  font: inherit;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 560px) {
+  .cost-centre .cost-centre__location-filters {
+    width: 100%;
+    margin-left: 0;
+    gap: 10px;
+  }
+
+  .cost-centre .cost-centre__location-filters > label {
+    flex: 1 1 140px;
+    min-width: 0;
+  }
 }
 
 .cost-centre__location-filters > label {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+/* Small reporting filter buttons: Year and Term */
+.cost-centre .finance-overview__report-filters {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.cost-centre .finance-overview__report-filters label {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.cost-centre .finance-overview__report-filters select {
+  width: auto;
+  min-width: 76px;
+  height: 32px;
+  padding: 5px 26px 5px 10px;
+  border: 1px solid #d8e3f0;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #203468;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.cost-centre .finance-overview__report-filters select:hover {
+  border-color: #2aa4dd;
+}
+
+.cost-centre .finance-overview__report-filters select:focus {
+  border-color: #2aa4dd;
+  box-shadow: 0 0 0 2px rgba(42, 164, 221, 0.12);
+}
+
+@media (max-width: 600px) {
+  .cost-centre .finance-overview__report-filters {
+    gap: 6px;
+  }
+
+  .cost-centre .finance-overview__report-filters select {
+    height: 30px;
+    min-width: 70px;
+    font-size: 11px;
+    padding-left: 8px;
+    padding-right: 22px;
+  }
 }

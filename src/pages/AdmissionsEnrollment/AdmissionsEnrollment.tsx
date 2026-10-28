@@ -1,17 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Building2,
-  Download,
-  MoreHorizontal,
-  RotateCcw,
   Search,
   TrendingUp,
   UserPlus,
   Users,
   X,
 } from "lucide-react";
-
-import { buildCsv, csvFileName, downloadCsv } from "../../lib/csv";
 import { AcademicFilters } from "../../components/filters/AcademicFilters";
 import type { AcademicFilterValues } from "../../components/filters/academicFilters.types";
 import { AdmissionsFunnel } from "./AdmissionsFunnel";
@@ -25,13 +20,11 @@ import {
   aggregate,
   averageAcrossSchools,
   campusForValue,
-  classBreakdown,
   defaultFilters,
   filteredRows,
   formatNumber,
   formatPercent,
   learnerRoster,
-  levelLabels,
   schoolNameFor,
   yearIdForValue,
 } from "./admissionsEnrollment.data";
@@ -48,7 +41,6 @@ import "./AdmissionsEnrollment.css";
 export function AdmissionsEnrollment() {
   const [filters, setFilters] = useState<Filters>(defaultFilters);
   const [openLearner, setOpenLearner] = useState<RosterLearner | null>(null);
-  const [actionsOpen, setActionsOpen] = useState(false);
   // The shared row is controlled, so the page holds its raw backend values.
   const [filterValues, setFilterValues] = useState<AcademicFilterValues>({
     school: "",
@@ -57,34 +49,6 @@ export function AdmissionsEnrollment() {
     term: "",
     year: "",
   });
-  const actionsRef = useRef<HTMLDivElement | null>(null);
-
-  // The quick actions menu closes on an outside click or Escape, like a native menu.
-  useEffect(() => {
-    if (!actionsOpen) {
-      return;
-    }
-
-    const handlePointerDown = (event: MouseEvent) => {
-      if (!actionsRef.current?.contains(event.target as Node)) {
-        setActionsOpen(false);
-      }
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setActionsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [actionsOpen]);
 
   const rows = useMemo(() => filteredRows(filters), [filters]);
   const totals = useMemo(() => aggregate(rows), [rows]);
@@ -165,9 +129,7 @@ export function AdmissionsEnrollment() {
     update({
       campus: campusForValue(next.campus),
       section: next.section,
-      ...(scopeChanged
-        ? { school: "all", classId: "all", stream: "all" }
-        : {}),
+      ...(scopeChanged ? { school: "all", classId: "all", stream: "all" } : {}),
       ...(year ? { year } : {}),
     });
   };
@@ -186,174 +148,23 @@ export function AdmissionsEnrollment() {
     update({ school: "all", classId: "all", stream: "all" });
   };
 
-  const handleReset = () => {
-    setFilters(defaultFilters);
-    setOpenLearner(null);
-    setFilterValues({
-      school: "",
-      campus: "",
-      section: "",
-      term: "",
-      year: "",
-    });
-  };
-
-  const handleExport = () => {
-    if (searchMode) {
-      const csv = buildCsv(
-        [
-          "Admission no.",
-          "Learner",
-          "Gender",
-          "Age",
-          "Attendance mode",
-          "Status",
-          "School",
-          "Class",
-          "Stream",
-        ],
-        matches.map((learner) => [
-          learner.id,
-          learner.name,
-          learner.gender,
-          learner.age,
-          learner.mode,
-          learner.status,
-          learner.schoolName,
-          learner.classLabel,
-          learner.stream,
-        ]),
-      );
-
-      downloadCsv(
-        csvFileName(
-          "learners",
-          `${filters.school}-${filters.classId}-${filters.stream}-${filters.year.replace("/", "-")}`,
-        ),
-        csv,
-      );
-      return;
-    }
-
-    const csv = buildCsv(
-      [
-        "School",
-        "Academic year",
-        "Term",
-        "Class",
-        "Level",
-        "Stream",
-        "Learners",
-        "Boys",
-        "Girls",
-        "Day",
-        "Boarding",
-        "New",
-        "Continuing",
-        "Withdrawals",
-        "Retention %",
-        "Applied",
-        "Accepted",
-        "Enrolled",
-      ],
-      classBreakdown(rows).map((row) => [
-        schoolNameFor(row.schoolId),
-        filters.year,
-        filters.term === "full" ? "Full year" : filters.term.toUpperCase(),
-        row.classLabel,
-        levelLabels[row.level],
-        row.stream,
-        row.learners,
-        row.boys,
-        row.girls,
-        row.day,
-        row.boarding,
-        row.newLearners,
-        row.continuing,
-        row.withdrawn,
-        row.retentionRate.toFixed(1),
-        row.applicants,
-        row.accepted,
-        row.reported,
-      ]),
-    );
-
-    downloadCsv(
-      csvFileName(
-        "enrolment-admissions",
-        `${filters.school}-${filters.year.replace("/", "-")}-${filters.term}`,
-      ),
-      csv,
-    );
-  };
-
   const trail: string[] = ["All campuses"];
 
   if (filters.school !== "all") {
     trail.push(schoolNameFor(filters.school));
   }
-
   return (
     <div className="ae-page">
-      <header className="ae-head">
-        <div className="ae-head__text">
-          <span className="ae-eyebrow">Academics</span>
-        </div>
-
-        <div className="ae-head__actions">
-          <div className="ae-actions" ref={actionsRef}>
-            <button
-              type="button"
-              className="ae-icon-button"
-              aria-label="Quick actions"
-              aria-haspopup="menu"
-              aria-expanded={actionsOpen}
-              onClick={() => setActionsOpen((open) => !open)}
-            >
-              <MoreHorizontal size={18} aria-hidden="true" />
-            </button>
-
-            {actionsOpen ? (
-              <div className="ae-menu" role="menu" aria-label="Quick actions">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="ae-menu__item"
-                  onClick={() => {
-                    setActionsOpen(false);
-                    handleExport();
-                  }}
-                  disabled={rows.length === 0}
-                >
-                  <Download size={14} aria-hidden="true" />
-                  Export CSV
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="ae-menu__item"
-                  onClick={() => {
-                    setActionsOpen(false);
-                    handleReset();
-                  }}
-                >
-                  <RotateCcw size={14} aria-hidden="true" />
-                  Reset filters
-                </button>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </header>
-
       <section className="ae-filters" aria-label="Enrolment filters">
         <AcademicFilters values={filterValues} onChange={handleFilterChange} />
 
         {isAllSchools ? null : (
           <label className="ae-field ae-field--grow">
             <span className="ae-field__label">Find a learner</span>
+
             <span className="ae-search">
               <Search size={15} aria-hidden="true" />
+
               <input
                 type="search"
                 aria-label="Find a learner"
@@ -361,6 +172,7 @@ export function AdmissionsEnrollment() {
                 placeholder="Name or admission number"
                 onChange={(event) => update({ student: event.target.value })}
               />
+
               {filters.student.length > 0 ? (
                 <button
                   type="button"
@@ -391,6 +203,7 @@ export function AdmissionsEnrollment() {
                       {step}
                     </button>
                   )}
+
                   {isLast ? null : (
                     <span className="ae-trail__sep" aria-hidden="true">
                       /
@@ -410,6 +223,7 @@ export function AdmissionsEnrollment() {
             {formatNumber(matches.length)} match
             {matches.length === 1 ? "" : "es"}.
           </p>
+
           <button
             type="button"
             className="ae-button ae-button--ghost"
@@ -441,6 +255,7 @@ export function AdmissionsEnrollment() {
           }
           tone="navy"
         />
+
         <KpiCard
           icon={Building2}
           label="Capacity"
@@ -452,6 +267,7 @@ export function AdmissionsEnrollment() {
           }
           tone="sky"
         />
+
         <KpiCard
           icon={UserPlus}
           label="New students"
@@ -467,6 +283,7 @@ export function AdmissionsEnrollment() {
           }
           tone="sky"
         />
+
         <KpiCard
           icon={TrendingUp}
           label="Join rate"

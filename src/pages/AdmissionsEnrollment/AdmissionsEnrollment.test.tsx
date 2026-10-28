@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import api from "../../api/axios";
@@ -357,14 +363,15 @@ describe("AdmissionsEnrollment", () => {
       ).toHaveTextContent("240");
     });
 
-    const funnel = screen.getByRole("heading", { name: "Admissions funnel" })
+    const funnel = screen
+      .getByRole("heading", { name: "Admissions funnel" })
       .closest("section") as HTMLElement;
-    const labels = Array.from(
-      funnel.querySelectorAll(".ae-funnel__label"),
-    ).map((node) => node.textContent);
-    const counts = Array.from(
-      funnel.querySelectorAll(".ae-funnel__bar"),
-    ).map((node) => node.textContent);
+    const labels = Array.from(funnel.querySelectorAll(".ae-funnel__label")).map(
+      (node) => node.textContent,
+    );
+    const counts = Array.from(funnel.querySelectorAll(".ae-funnel__bar")).map(
+      (node) => node.textContent,
+    );
 
     expect(labels).toEqual([
       "Applied",
@@ -438,14 +445,7 @@ describe("AdmissionsEnrollment", () => {
       within(table)
         .getAllByRole("columnheader")
         .map((header) => header.textContent),
-    ).toEqual([
-      "School",
-      "Girls",
-      "Boys",
-      "Boarding",
-      "Day",
-      "Age",
-    ]);
+    ).toEqual(["School", "Girls", "Boys", "Boarding", "Day", "Age"]);
 
     const secondary = within(table).getByRole("row", {
       name: /Kibuli Secondary/,
@@ -518,12 +518,18 @@ describe("AdmissionsEnrollment", () => {
     ).toBeInTheDocument();
   });
 
-  it("keeps the authorised export available for the filtered scope", () => {
+  it("keeps the enrolment table available for the current scope", () => {
     render(<AdmissionsEnrollment />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Quick actions" }));
+    expect(
+      screen.getByRole("heading", { name: "Enrolment by school" }),
+    ).toBeInTheDocument();
 
-    expect(screen.getByRole("menuitem", { name: /Export/ })).toBeEnabled();
+    expect(
+      screen.getByRole("table", {
+        name: /Total enrolment by school/i,
+      }),
+    ).toBeInTheDocument();
   });
 
   it("keeps the gender chart and funnel on admissions while moving the retention chart", () => {
