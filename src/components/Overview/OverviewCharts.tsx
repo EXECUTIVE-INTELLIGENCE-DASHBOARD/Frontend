@@ -1,67 +1,44 @@
+import type {
+  OverviewAdmissionStage,
+  OverviewBudgetRow,
+} from "../../pages/ExecutiveOverview/executiveOverview.api";
+
 import "./OverviewCharts.css";
 
-const budgetData = [
-  { quarter: "Q1", period: "Sep - Nov", actual: 4.5, budget: 4.8 },
-  { quarter: "Q2", period: "Dec - Feb", actual: 9.2, budget: 9.1 },
-  { quarter: "Q3", period: "Mar - May", actual: 13.7, budget: 13.9 },
-  { quarter: "Q4", period: "Jun - Aug", actual: 18.4, budget: 18.3 },
-];
-
-const admissionsData = [
-  {
-    id: "qualified",
-    label: "Qualified",
-    count: 1247,
-    percentage: "50.9%",
-    color: "#2AA4DD",
-  },
-  {
-    id: "interview",
-    label: "Interview",
-    count: 446,
-    percentage: "18.2%",
-    color: "#F1BA1B",
-  },
-  {
-    id: "accepted",
-    label: "Accepted",
-    count: 304,
-    percentage: "12.4%",
-    color: "#18264b",
-  },
-  {
-    id: "other",
-    label: "Other / Scr",
-    count: 453,
-    percentage: "18.5%",
-    color: "#94a3b8",
-  },
-];
-
-const chartScale = [0, 5, 10, 15, 20, 25];
+interface OverviewChartsProps {
+  budgetRows: OverviewBudgetRow[];
+  admissions: {
+    total: number;
+    stages: OverviewAdmissionStage[];
+  } | null;
+}
 
 const chartGeometry = {
-  left: 32,
+  left: 38,
   right: 392,
   top: 24,
   bottom: 176,
 };
 
 const chartHeight = chartGeometry.bottom - chartGeometry.top;
+const stageColors = ["#2AA4DD", "#F1BA1B", "#18264b", "#94a3b8", "#50a778"];
 
-function getBarY(value: number) {
-  return chartGeometry.bottom - (value / 25) * chartHeight;
+function formatMillions(value: number): string {
+  return `${(value / 1_000_000).toFixed(1)}M`;
 }
 
-function getBarHeight(value: number) {
-  return (value / 25) * chartHeight;
-}
+function BudgetChart({ rows }: { rows: OverviewBudgetRow[] }) {
+  const maximum = Math.max(
+    0,
+    ...rows.map((row) => Math.max(row.spent, row.budget)),
+  );
+  const maxMillions = maximum / 1_000_000;
+  const chartMax = maxMillions === 0 ? 5 : Math.ceil(maxMillions / 5) * 5;
+  const scale = Array.from({ length: 6 }, (_, index) => (chartMax / 5) * index);
+  const getBarY = (value: number) =>
+    chartGeometry.bottom - (value / chartMax) * chartHeight;
+  const getBarHeight = (value: number) => (value / chartMax) * chartHeight;
 
-function formatMillions(value: number) {
-  return `${value.toFixed(1)}M`;
-}
-
-function BudgetChart() {
   return (
     <article className="overview-chart-card overview-budget-card">
       <div className="overview-chart-card__heading">
@@ -80,118 +57,123 @@ function BudgetChart() {
         </div>
       </div>
 
-      <div className="overview-budget-chart">
-        <svg
-          className="overview-budget-chart__svg"
-          viewBox="0 0 410 218"
-          role="img"
-          aria-label="Quarterly actual spending compared with budget targets, in millions"
-        >
-          {chartScale.map((value) => {
-            const y = getBarY(value);
+      {rows.length === 0 ? (
+        <p className="overview-chart-empty" role="status">
+          Budget data is unavailable for this selection.
+        </p>
+      ) : (
+        <div className="overview-budget-chart">
+          <svg
+            className="overview-budget-chart__svg"
+            viewBox="0 0 410 218"
+            role="img"
+            aria-label="Actual spending compared with budget targets by campus, in millions of UGX"
+          >
+            {scale.map((value) => {
+              const y = getBarY(value);
 
-            return (
-              <g key={value}>
-                <line
-                  x1={chartGeometry.left}
-                  y1={y}
-                  x2={chartGeometry.right}
-                  y2={y}
-                  className="overview-budget-chart__gridline"
-                />
+              return (
+                <g key={value}>
+                  <line
+                    x1={chartGeometry.left}
+                    y1={y}
+                    x2={chartGeometry.right}
+                    y2={y}
+                    className="overview-budget-chart__gridline"
+                  />
 
-                <text
-                  x="26"
-                  y={y + 3}
-                  textAnchor="end"
-                  className="overview-budget-chart__axis-label"
-                >
-                  {value.toFixed(1)}M
-                </text>
-              </g>
-            );
-          })}
+                  <text
+                    x="32"
+                    y={y + 3}
+                    textAnchor="end"
+                    className="overview-budget-chart__axis-label"
+                  >
+                    {value.toFixed(1)}M
+                  </text>
+                </g>
+              );
+            })}
 
-          {budgetData.map((item, index) => {
-            const groupCenter = 77 + index * 77;
-            const barWidth = 24;
-            const gap = 5;
+            {rows.map((item, index) => {
+              const groupCenter =
+                chartGeometry.left +
+                ((chartGeometry.right - chartGeometry.left) * (index + 0.5)) /
+                  rows.length;
+              const barWidth = Math.min(24, 50 / rows.length);
+              const gap = 5;
+              const spent = item.spent / 1_000_000;
+              const budget = item.budget / 1_000_000;
+              const spentX = groupCenter - barWidth - gap / 2;
+              const budgetX = groupCenter + gap / 2;
+              const spentY = getBarY(spent);
+              const budgetY = getBarY(budget);
 
-            const actualX = groupCenter - barWidth - gap / 2;
-            const budgetX = groupCenter + gap / 2;
+              return (
+                <g key={item.id}>
+                  <title>{item.label}</title>
+                  <rect
+                    x={spentX}
+                    y={spentY}
+                    width={barWidth}
+                    height={getBarHeight(spent)}
+                    rx="1"
+                    className="overview-budget-chart__bar--actual"
+                  />
 
-            const actualY = getBarY(item.actual);
-            const budgetY = getBarY(item.budget);
+                  <rect
+                    x={budgetX}
+                    y={budgetY}
+                    width={barWidth}
+                    height={getBarHeight(budget)}
+                    rx="1"
+                    className="overview-budget-chart__bar--budget"
+                  />
 
-            return (
-              <g key={item.quarter}>
-                <rect
-                  x={actualX}
-                  y={actualY}
-                  width={barWidth}
-                  height={getBarHeight(item.actual)}
-                  rx="1"
-                  className="overview-budget-chart__bar--actual"
-                />
+                  <text
+                    x={spentX + barWidth / 2}
+                    y={spentY - 5}
+                    textAnchor="middle"
+                    className="overview-budget-chart__value"
+                  >
+                    {formatMillions(item.spent)}
+                  </text>
 
-                <rect
-                  x={budgetX}
-                  y={budgetY}
-                  width={barWidth}
-                  height={getBarHeight(item.budget)}
-                  rx="1"
-                  className="overview-budget-chart__bar--budget"
-                />
+                  <text
+                    x={budgetX + barWidth / 2}
+                    y={budgetY - 5}
+                    textAnchor="middle"
+                    className="overview-budget-chart__value overview-budget-chart__value--budget"
+                  >
+                    {formatMillions(item.budget)}
+                  </text>
 
-                <text
-                  x={actualX + barWidth / 2}
-                  y={actualY - 5}
-                  textAnchor="middle"
-                  className="overview-budget-chart__value"
-                >
-                  {formatMillions(item.actual)}
-                </text>
-
-                <text
-                  x={budgetX + barWidth / 2}
-                  y={budgetY - 5}
-                  textAnchor="middle"
-                  className="overview-budget-chart__value overview-budget-chart__value--budget"
-                >
-                  {formatMillions(item.budget)}
-                </text>
-
-                <text
-                  x={groupCenter}
-                  y="191"
-                  textAnchor="middle"
-                  className="overview-budget-chart__quarter"
-                >
-                  {item.quarter}
-                </text>
-
-                <text
-                  x={groupCenter}
-                  y="204"
-                  textAnchor="middle"
-                  className="overview-budget-chart__period"
-                >
-                  {item.period}
-                </text>
-              </g>
-            );
-          })}
-        </svg>
-      </div>
+                  <text
+                    x={groupCenter}
+                    y="197"
+                    textAnchor="middle"
+                    className="overview-budget-chart__quarter"
+                  >
+                    {item.label}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+      )}
     </article>
   );
 }
 
-function AdmissionsChart() {
+function AdmissionsChart({
+  data,
+}: {
+  data: OverviewChartsProps["admissions"];
+}) {
   const radius = 49;
   const circumference = 2 * Math.PI * radius;
-  const total = admissionsData.reduce((sum, item) => sum + item.count, 0);
-
+  const stages = data?.stages ?? [];
+  const total = data?.total ?? 0;
   let accumulatedLength = 0;
 
   return (
@@ -200,104 +182,126 @@ function AdmissionsChart() {
         <h2>Admissions Pipeline Breakdown</h2>
       </div>
 
-      <div className="overview-admissions-chart">
-        <svg
-          className="overview-admissions-chart__svg"
-          viewBox="0 0 160 160"
-          role="img"
-          aria-label="Admissions pipeline: 2,450 applications, including qualified, interview, accepted, and other applications"
-        >
-          <circle
-            cx="80"
-            cy="80"
-            r={radius}
-            fill="none"
-            stroke="#edf0f7"
-            strokeWidth="15"
-          />
-
-          {admissionsData.map((item) => {
-            const segmentLength = (item.count / total) * circumference;
-            const offset = accumulatedLength;
-
-            accumulatedLength += segmentLength;
-
-            return (
+      {data === null ? (
+        <p className="overview-chart-empty" role="status">
+          Admissions data is unavailable.
+        </p>
+      ) : (
+        <>
+          <div className="overview-admissions-chart">
+            <svg
+              className="overview-admissions-chart__svg"
+              viewBox="0 0 160 160"
+              role="img"
+              aria-label={`Admissions pipeline: ${total.toLocaleString("en-US")} applications`}
+            >
               <circle
-                key={item.id}
                 cx="80"
                 cy="80"
                 r={radius}
                 fill="none"
-                stroke={item.color}
+                stroke="#edf0f7"
                 strokeWidth="15"
-                strokeDasharray={`${segmentLength} ${circumference - segmentLength}`}
-                strokeDashoffset={-offset}
-                transform="rotate(-90 80 80)"
-                className="overview-admissions-chart__segment"
               />
-            );
-          })}
 
-          <text
-            x="80"
-            y="78"
-            textAnchor="middle"
-            className="overview-admissions-chart__total"
-          >
-            2,450
-          </text>
+              {total > 0 &&
+                stages.map((item, index) => {
+                  const segmentLength = (item.count / total) * circumference;
+                  const offset = accumulatedLength;
+                  accumulatedLength += segmentLength;
 
-          <text
-            x="80"
-            y="91"
-            textAnchor="middle"
-            className="overview-admissions-chart__caption"
-          >
-            APPLICATIONS
-          </text>
-        </svg>
-      </div>
+                  return (
+                    <circle
+                      key={item.id}
+                      cx="80"
+                      cy="80"
+                      r={radius}
+                      fill="none"
+                      stroke={stageColors[index % stageColors.length]}
+                      strokeWidth="15"
+                      strokeDasharray={`${segmentLength} ${circumference - segmentLength}`}
+                      strokeDashoffset={-offset}
+                      transform="rotate(-90 80 80)"
+                      className="overview-admissions-chart__segment"
+                    />
+                  );
+                })}
 
-      <div
-        className="overview-admissions-legend"
-        aria-label="Admissions categories"
-      >
-        {admissionsData.map((item) => (
-          <div className="overview-admissions-legend__item" key={item.id}>
-            <span
-              className="overview-admissions-legend__dot"
-              style={{ backgroundColor: item.color }}
-            />
-
-            <span className="overview-admissions-legend__label">
-              {item.label}
-            </span>
-
-            <div className="overview-admissions-legend__values">
-              <span className="overview-admissions-legend__count">
-                {item.count.toLocaleString("en-US")}
-              </span>
-
-              <span
-                className="overview-admissions-legend__percentage"
-                style={{ backgroundColor: item.color }}
+              <text
+                x="80"
+                y="78"
+                textAnchor="middle"
+                className="overview-admissions-chart__total"
               >
-                {item.percentage}
-              </span>
-            </div>
+                {total.toLocaleString("en-US")}
+              </text>
+
+              <text
+                x="80"
+                y="91"
+                textAnchor="middle"
+                className="overview-admissions-chart__caption"
+              >
+                APPLICATIONS
+              </text>
+            </svg>
           </div>
-        ))}
-      </div>
+
+          <div
+            className="overview-admissions-legend"
+            aria-label="Admissions categories"
+          >
+            {stages.length === 0 ? (
+              <p className="overview-chart-empty" role="status">
+                No application pipeline data is available.
+              </p>
+            ) : (
+              stages.map((item, index) => (
+                <div className="overview-admissions-legend__item" key={item.id}>
+                  <span
+                    className="overview-admissions-legend__dot"
+                    style={{
+                      backgroundColor:
+                        stageColors[index % stageColors.length],
+                    }}
+                  />
+
+                  <span className="overview-admissions-legend__label">
+                    {item.label}
+                  </span>
+
+                  <div className="overview-admissions-legend__values">
+                    <span className="overview-admissions-legend__count">
+                      {item.count.toLocaleString("en-US")}
+                    </span>
+
+                    <span
+                      className="overview-admissions-legend__percentage"
+                      style={{
+                        backgroundColor:
+                          stageColors[index % stageColors.length],
+                      }}
+                    >
+                      {total > 0
+                        ? `${((item.count / total) * 100).toFixed(1)}%`
+                        : "—"}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </>
+      )}
     </article>
   );
 }
 
-export function OverviewCharts() {
+export function OverviewCharts(props: OverviewChartsProps) {
   return (
     <section className="overview-charts" aria-label="Budget and admissions">
-      <BudgetChart />
-      <AdmissionsChart />
+      <BudgetChart rows={props.budgetRows} />
+      <AdmissionsChart data={props.admissions} />
     </section>
   );
 }
