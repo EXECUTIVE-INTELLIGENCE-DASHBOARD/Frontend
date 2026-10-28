@@ -76,11 +76,11 @@ The GitHub Actions workflow runs the same checks on pushes to Dev and pull reque
 There are two clients, both driven by environment variables and both defaulting to the relative path `/api`:
 
 - `src/api/axios.ts` reads `VITE_API_URL`.
-- `src/lib/api/client.ts` reads `VITE_API_BASE_URL`.
+- `src/lib/api/client.ts` reads `VITE_API_BASE_URL`, falling back to `VITE_API_URL`.
 
-Neither file contains a backend hostname. In development `vite.config.ts` proxies `/api` to the backend; in production nginx does the same, so the browser stays same-origin and no CORS configuration is required. TanStack Query is configured in src/main.tsx; feature-specific hooks should be added alongside the feature that uses them.
+In development `vite.config.ts` proxies `/api` to the backend, and the Docker production image uses nginx to do the same, so the browser stays same-origin. The Render static-site deployment has no API proxy; its build-time `VITE_API_URL` and `VITE_API_BASE_URL` settings point directly to the backend. The backend must allow the deployed frontend origin for cross-origin requests. TanStack Query is configured in src/main.tsx; feature-specific hooks should be added alongside the feature that uses them.
 
-For local work, start the Backend repository too. The Backend foundation exposes GET /api/health/. CORS is restricted to local development origins there; update the allowed origins deliberately if local ports change.
+For local work, start the Backend repository too. The Backend foundation exposes GET /api/health/. Ensure the backend CORS allowlist includes local development origins and the deployed frontend origin.
 
 ## Branch and review workflow
 
@@ -109,4 +109,3 @@ The frontend runs on DigitalOcean App Platform as a web service built from the r
     src/lib/api/client.ts      Fetch/Axios client with CSRF handling
     src/main.tsx               React and TanStack Query bootstrap
     src/test/                  Vitest setup
-

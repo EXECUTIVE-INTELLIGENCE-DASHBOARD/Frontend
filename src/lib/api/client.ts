@@ -2,11 +2,13 @@ import axios, { type InternalAxiosRequestConfig } from "axios";
 
 import { toApiError } from "./errors";
 
-/** Used when `VITE_API_BASE_URL` is not set (see `.env.example`). */
+/** Used when neither API URL environment variable is set. */
 export const defaultApiBaseUrl = "/api";
 
 const configuredBaseUrl =
-  import.meta.env.VITE_API_BASE_URL || defaultApiBaseUrl;
+  import.meta.env.VITE_API_BASE_URL ||
+  import.meta.env.VITE_API_URL ||
+  defaultApiBaseUrl;
 
 /** Normalised base URL with no trailing slash, e.g. `https://host/api`. */
 export const apiBaseUrl = String(configuredBaseUrl).replace(/\/+$/, "");

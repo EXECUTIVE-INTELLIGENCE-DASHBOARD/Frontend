@@ -20,6 +20,12 @@ services:
         value: "24"
       - key: NPM_CONFIG_PRODUCTION
         value: "false"
+      # Static sites have no nginx/Vite API proxy, so the browser must call the
+      # backend directly. These are inlined into the bundle during the build.
+      - key: VITE_API_BASE_URL
+        value: https://eid-backend-4mrm.onrender.com/api
+      - key: VITE_API_URL
+        value: https://eid-backend-4mrm.onrender.com/api
     headers:
       # Vite emits content-hashed filenames, so these are safe to cache forever.
       - path: /assets/*
