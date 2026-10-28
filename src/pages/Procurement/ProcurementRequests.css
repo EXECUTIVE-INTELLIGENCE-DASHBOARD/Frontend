@@ -83,6 +83,12 @@
   background: #f3f6fa;
 }
 
+.pr-primary-btn:disabled,
+.pr-secondary-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .pr-approve-btn {
   color: #fff;
   background: #16845b;
@@ -435,24 +441,19 @@
   font-weight: 750;
 }
 
-.pr-status.pending-approval {
-  color: #956500;
-  background: #fff4d8;
-}
-
-.pr-status.under-review {
-  color: #6243aa;
-  background: #f0eaff;
-}
-
-.pr-status.approved {
+.pr-status.paid {
   color: #14764e;
   background: #e3f7ed;
 }
 
-.pr-status.rejected {
-  color: #b72b39;
-  background: #ffebed;
+.pr-status.committed {
+  color: #6243aa;
+  background: #f0eaff;
+}
+
+.pr-status.outstanding {
+  color: #956500;
+  background: #fff4d8;
 }
 
 .pr-view-btn {
@@ -585,10 +586,57 @@
 
 .pr-modal-actions {
   display: flex;
+  align-items: flex-end;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 9px;
   margin-top: 23px;
+}
+
+.pr-status-update {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: auto;
+  color: #64718a;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.pr-status-update select {
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid #dce3ed;
+  border-radius: 7px;
+  background: #fff;
+  color: #26344b;
+  font: inherit;
+}
+
+.pr-error {
+  margin: 14px 0 0;
+  color: #b42332;
+  font-size: 12px;
+}
+
+.pr-error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px 15px;
+  border: 1px solid #f0c7cc;
+  border-radius: 8px;
+  background: #fff1f2;
+  color: #9c2632;
+  font-size: 12px;
+}
+
+.pr-state {
+  margin: 0 0 14px;
+  color: #69768c;
+  font-size: 12px;
 }
 
 .pr-modal-disclaimer {
