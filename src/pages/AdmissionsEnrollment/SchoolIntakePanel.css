@@ -1,40 +1,12 @@
 /* ------------------------------------------------------- Intake table block */
 
-.ae-intake__stage {
-  display: inline-flex;
-  align-self: flex-start;
+/* The class and stream pickers belong to the table, not the page filter row:
+   they narrow this table's rows and columns and nothing else. */
+.ae-intake__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 10px;
-  padding: 2px;
-  border: 1px solid var(--ae-border);
-  border-radius: 999px;
-  background: var(--color-surface-subtle);
-}
-
-.ae-intake__stage-option {
-  padding: 5px 14px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--ae-muted);
-  font: inherit;
-  font-size: 11.5px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.ae-intake__stage-option:hover {
-  color: var(--color-text);
-}
-
-.ae-intake__stage-option.is-active {
-  background: var(--color-surface);
-  color: var(--color-heading);
-  box-shadow: 0 1px 2px rgb(16 32 64 / 12%);
-}
-
-.ae-intake__stage-option:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
 }
 
 .ae-table--intake tbody th {
