@@ -58,7 +58,7 @@ export default function AttendanceAnalysis() {
   const [showAll, setShowAll] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
 
-  const { rows: allRows, loading, error, note } = useAttendance();
+  const { rows: allRows, loading, error, note } = useAttendance(filters);
   const classes = useMemo(() => classesFor(filters.campus, filters.section), [filters.campus, filters.section]);
   const classOptions = useMemo(() => [{ value: "", label: "All Classes" }, ...classes.map((c) => ({ value: c, label: c }))], [classes]);
   const rows = useMemo(() => allRows.filter((r) => (!cls || r.cls === cls) && (!stream || r.stream === stream)), [allRows, cls, stream]);
