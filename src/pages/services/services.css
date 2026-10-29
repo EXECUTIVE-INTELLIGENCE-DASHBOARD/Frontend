@@ -1,13 +1,13 @@
 /* Services screens. Scoped under .svc so it won't clash with the rest of the app. */
 .svc{--svc-bg:#f4f6fb;--svc-card:#fff;--svc-ink:#1a2347;--svc-mut:#7a839c;--svc-line:#e8ecf4;--svc-blue:#6f98e6;--svc-chip:#eef1f8;--svc-gok:#e6f0fd;--svc-tok:#2d63c2;--svc-tbad:#d9483f;
-  padding:10px 24px 12px;color:var(--svc-ink);font-family:Inter,system-ui,sans-serif}
+  padding:10px 24px 12px;color:var(--svc-ink)}
 .svc *{box-sizing:border-box}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .svc{--svc-bg:#0f1530;--svc-card:#18204a;--svc-ink:#eef1fb;--svc-mut:#97a1c2;--svc-line:#2a3463;--svc-chip:#232d5c;--svc-gok:#1c3558;--svc-tok:#8cc2ff;--svc-tbad:#ff8f89}}
 .svc-fl{display:flex;justify-content:flex-end;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-.svc select{font:500 13.5px Inter,sans-serif;background:var(--svc-card);color:var(--svc-ink);border:1px solid var(--svc-line);border-radius:12px;padding:10px 14px}
+.svc select{font-size:13.5px;font-weight:500;background:var(--svc-card);color:var(--svc-ink);border:1px solid var(--svc-line);border-radius:12px;padding:10px 14px}
 .svc-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:10px}
 @media(max-width:700px){.svc-kpis{grid-template-columns:1fr}.svc{padding-left:16px;padding-right:16px}}
-.svc-kpi{background:var(--svc-card);border:1px solid var(--svc-line);border-radius:20px;padding:10px 16px;display:flex;align-items:center;gap:14px;min-width:0;font-family:Montserrat,Inter,sans-serif;box-shadow:0 2px 10px rgba(20,27,59,.04)}
+.svc-kpi{background:var(--svc-card);border:1px solid var(--svc-line);border-radius:20px;padding:10px 16px;display:flex;align-items:center;gap:14px;min-width:0;box-shadow:0 2px 10px rgba(20,27,59,.04)}
 .svc-kic{width:48px;height:48px;border-radius:14px;background:var(--svc-blue);display:grid;place-items:center;flex-shrink:0}
 .svc-kic svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .svc-kt{color:var(--svc-mut);font-weight:600;font-size:11px;letter-spacing:.05em;text-transform:uppercase}
@@ -18,9 +18,9 @@
 .svc-ph{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;gap:12px;flex-wrap:wrap}
 .svc-ph h2{margin:0;font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px}
 .svc-ph h2::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--svc-blue)}
-.svc-btn{background:var(--svc-blue);color:#fff;border:0;border-radius:12px;padding:10px 18px;font:600 13.5px Inter,sans-serif;cursor:pointer}
+.svc-btn{background:var(--svc-blue);color:#fff;border:0;border-radius:12px;padding:10px 18px;font-size:13.5px;font-weight:600;cursor:pointer}
 .svc-scroll{overflow-x:auto}
-.svc-va{display:block;border:0;border-top:1px solid var(--svc-line);background:none;color:var(--svc-tok);font:600 13.5px Inter,sans-serif;padding:13px;cursor:pointer;width:100%}
+.svc-va{display:block;border:0;border-top:1px solid var(--svc-line);background:none;color:var(--svc-tok);font-size:13.5px;font-weight:600;padding:13px;cursor:pointer;width:100%}
 .svc table{width:100%;border-collapse:collapse;min-width:860px}
 .svc th{background:var(--svc-bg);position:sticky;top:0;text-align:left;font-size:11px;letter-spacing:.06em;color:var(--svc-mut);text-transform:uppercase;padding:8px 20px;font-weight:700}
 .svc th span{text-transform:none;letter-spacing:0;font-weight:500}
