@@ -188,12 +188,12 @@ describe("AcademicDetails", () => {
 
     expect(
       screen.getByRole("region", {
-        name: "Subject comparison and student completion rate",
+        name: "Subject comparison",
       }),
     ).toBeInTheDocument();
   });
 
-  it("renders the Subject Comparison and Student Completion Rate cards", () => {
+  it("renders the subject comparison visualization without a completion card", () => {
     renderAcademicDetails();
 
     expect(
@@ -203,40 +203,10 @@ describe("AcademicDetails", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole("heading", {
+      screen.queryByRole("heading", {
         name: "Student Completion Rate",
       }),
-    ).toBeInTheDocument();
-  });
-
-  it("renders the expected subject comparison table headings", async () => {
-    renderAcademicDetails();
-
-    const card = getCard("Subject Comparison");
-
-    expect(
-      await within(card).findByRole("columnheader", {
-        name: "Subject / Category",
-      }),
-    ).toBeInTheDocument();
-
-    expect(
-      within(card).getByRole("columnheader", {
-        name: "Level",
-      }),
-    ).toBeInTheDocument();
-
-    expect(
-      within(card).getByRole("columnheader", {
-        name: "Average mark",
-      }),
-    ).toBeInTheDocument();
-
-    expect(
-      within(card).getByRole("columnheader", {
-        name: "Pass rate",
-      }),
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
   });
 
   it("groups Secondary subjects by level and category", async () => {
@@ -252,48 +222,38 @@ describe("AcademicDetails", () => {
     expect(within(card).getAllByText("O Level")).toHaveLength(2);
     expect(within(card).getAllByText("A Level")).toHaveLength(2);
 
-    expect(card.querySelectorAll("tbody tr")).toHaveLength(4);
+    expect(card.querySelectorAll(".acad-details__subject-row")).toHaveLength(4);
   });
 
-  it("calculates average marks and pass rates for grouped subjects", async () => {
+  it("visualizes average marks and pass rates for grouped subjects", async () => {
     renderAcademicDetails({
       section: "Secondary",
     });
 
     const card = getCard("Subject Comparison");
-
-    const table = await within(card).findByRole("table");
-
-    const rows = Array.from(
-      table.querySelectorAll<HTMLTableRowElement>("tbody tr"),
-    );
-
-    function expectRow(
-      category: string,
-      level: string,
-      averageMark: string,
-      passRate: string,
-    ) {
-      const row = rows.find(
-        (candidate) =>
-          candidate.cells[0]?.textContent?.trim() === category &&
-          candidate.cells[1]?.textContent?.trim() === level,
-      );
-
-      expect(row).toBeDefined();
-
-      if (!row) {
-        throw new Error(`Missing ${category} row for ${level}`);
-      }
-
-      expect(row.cells[2]?.textContent?.trim()).toBe(averageMark);
-      expect(row.cells[3]?.textContent?.trim()).toBe(passRate);
-    }
-
-    expectRow("Arts", "O Level", "80.0%", "84.0%");
-    expectRow("Sciences", "O Level", "84.0%", "89.0%");
-    expectRow("Arts", "A Level", "82.0%", "87.0%");
-    expectRow("Sciences", "A Level", "86.0%", "91.0%");
+    expect(
+      await within(card).findByRole("progressbar", {
+        name: "Arts O Level Average mark",
+      }),
+    ).toHaveAttribute("aria-valuetext", "80.0%");
+    expect(
+      within(card).getByRole("progressbar", {
+        name: "Arts O Level Pass rate",
+      }),
+    ).toHaveAttribute("aria-valuetext", "84.0%");
+    expect(
+      within(card).getByRole("progressbar", {
+        name: "Sciences A Level Average mark",
+      }),
+    ).toHaveAttribute("aria-valuetext", "86.0%");
+    expect(
+      within(card).getByRole("progressbar", {
+        name: "Sciences A Level Pass rate",
+      }),
+    ).toHaveAttribute("aria-valuetext", "91.0%");
+    expect(
+      within(card).getByText("Arts · O Level · Average mark: 80.0%"),
+    ).toBeInTheDocument();
   });
 
   it("shows the individual Mathematics subject for Primary", async () => {
@@ -308,7 +268,7 @@ describe("AcademicDetails", () => {
     expect(within(card).queryByText("Sciences")).not.toBeInTheDocument();
     expect(within(card).queryByText("Arts")).not.toBeInTheDocument();
 
-    expect(card.querySelectorAll("tbody tr")).toHaveLength(1);
+    expect(card.querySelectorAll(".acad-details__subject-row")).toHaveLength(1);
   });
 
   it("shows only Secondary rows when Secondary is selected", async () => {
@@ -320,7 +280,7 @@ describe("AcademicDetails", () => {
 
     await within(card).findAllByText("Sciences");
 
-    const rows = card.querySelectorAll("tbody tr");
+    const rows = card.querySelectorAll(".acad-details__subject-row");
 
     expect(rows).toHaveLength(4);
 
@@ -342,94 +302,6 @@ describe("AcademicDetails", () => {
       await screen.findByText(
         "No subject performance data is available for the selected filters.",
       ),
-    ).toBeInTheDocument();
-  });
-
-  it("renders completion rates, completed counts, and campus names", async () => {
-    renderAcademicDetails();
-
-    const card = getCard("Student Completion Rate");
-
-    expect(await within(card).findByText("O Level")).toBeInTheDocument();
-
-    expect(within(card).getByText("A Level")).toBeInTheDocument();
-    expect(within(card).getByText("94.8%")).toBeInTheDocument();
-    expect(within(card).getByText("92.5%")).toBeInTheDocument();
-
-    expect(
-      within(card).getByText("398 completed students"),
-    ).toBeInTheDocument();
-
-    expect(
-      within(card).getByText("214 completed students"),
-    ).toBeInTheDocument();
-
-    expect(within(card).getAllByText("Kibuli Main Campus")).toHaveLength(2);
-  });
-
-  it("supports alternative completion field names from the API", async () => {
-    currentDashboardResponse = {
-      subjects: [],
-      student_completion: [
-        {
-          level: "o_level",
-          completed_students: 350,
-          completion_percentage: 87.5,
-        },
-      ],
-    };
-
-    renderAcademicDetails();
-
-    const card = getCard("Student Completion Rate");
-
-    expect(await within(card).findByText("O Level")).toBeInTheDocument();
-
-    expect(within(card).getByText("87.5%")).toBeInTheDocument();
-
-    expect(
-      within(card).getByText("350 completed students"),
-    ).toBeInTheDocument();
-  });
-
-  it("shows a message when the API returns no completion records", async () => {
-    currentDashboardResponse = {
-      subjects: dashboardResponse.subjects,
-      completion: [],
-      student_completion: [],
-      completion_rates: [],
-    };
-
-    renderAcademicDetails();
-
-    expect(
-      await screen.findByText(
-        "No student-completion records were returned by the dashboard API.",
-      ),
-    ).toBeInTheDocument();
-  });
-
-  it("handles a missing completion rate", async () => {
-    currentDashboardResponse = {
-      subjects: [],
-      completion: [
-        {
-          level: "o_level",
-          completed: 120,
-        },
-      ],
-    };
-
-    renderAcademicDetails();
-
-    const card = getCard("Student Completion Rate");
-
-    expect(await within(card).findByText("O Level")).toBeInTheDocument();
-
-    expect(within(card).getByText("—")).toBeInTheDocument();
-
-    expect(
-      within(card).getByText("120 completed students"),
     ).toBeInTheDocument();
   });
 
@@ -458,15 +330,18 @@ describe("AcademicDetails", () => {
       year: "2026",
     });
 
-    await screen.findAllByText("398 completed students");
+    await screen.findByRole("progressbar", {
+      name: "Arts O Level Average mark",
+    });
 
     expect(api.get).toHaveBeenCalledWith(
       "/academics/performance/dashboard/",
       expect.objectContaining({
         params: {
-          school: "9",
+          school: 9,
           campus: "kibuli",
-          term: "1",
+          level: "secondary",
+          term: 1,
           year: "2026",
         },
         signal: expect.any(AbortSignal),
@@ -487,8 +362,8 @@ describe("AcademicDetails", () => {
       "/academics/performance/dashboard/",
       expect.objectContaining({
         params: {
-          school: "9",
-          term: "1",
+          school: 9,
+          term: 1,
           year: String(currentYear),
           level: "primary",
         },
@@ -506,13 +381,13 @@ describe("AcademicDetails", () => {
       year: "2026",
     });
 
-    await screen.findAllByText("398 completed students");
+    await screen.findByText("Mathematics");
 
     expect(api.get).toHaveBeenCalledWith(
       "/academics/performance/dashboard/",
       expect.objectContaining({
         params: {
-          term: "1",
+          term: 1,
           year: "2026",
         },
         signal: expect.any(AbortSignal),

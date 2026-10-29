@@ -361,6 +361,7 @@ describe("AcademicSummary", () => {
           campus: "kibuli",
           level: "secondary",
           term: 1,
+          year: "2026",
         },
         signal: expect.any(AbortSignal),
       }),
@@ -404,6 +405,7 @@ describe("AcademicSummary", () => {
       expect.objectContaining({
         params: {
           term: 1,
+          year: "2026",
         },
         signal: expect.any(AbortSignal),
       }),
@@ -437,6 +439,7 @@ describe("AcademicSummary", () => {
           school: 9,
           campus: "kibuli",
           level: "secondary",
+          year: "2026",
         },
         signal: expect.any(AbortSignal),
       }),
