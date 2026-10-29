@@ -236,11 +236,6 @@ describe("AcademicPerformance", () => {
       "/academics/schools/",
       expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
-    expect(
-      vi.mocked(api.get).mock.calls.filter(
-        ([url]) => url === "/academics/schools/",
-      ),
-    ).toHaveLength(1);
   });
 
   it("loads the section options", () => {

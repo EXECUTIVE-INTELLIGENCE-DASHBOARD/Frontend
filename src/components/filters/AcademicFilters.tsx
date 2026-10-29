@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 
 import api from "../../api/axios";
@@ -44,8 +43,6 @@ const sections = [
   { value: "secondary", label: "Secondary" },
 ];
 
-const SCHOOL_LIST_REFRESH_INTERVAL = 30_000;
-
 function getResults<T>(data: ApiList<T>): T[] {
   if (Array.isArray(data)) {
     return data;
@@ -72,31 +69,38 @@ export function AcademicFilters({
   showSchoolFilter = false,
   showAcademicYearFilter = true,
 }: AcademicFiltersProps) {
+  const [schools, setSchools] = useState<School[]>([]);
   const [terms, setTerms] = useState<Term[]>([]);
 
+  const [loadingSchools, setLoadingSchools] = useState(true);
   const [loadingTerms, setLoadingTerms] = useState(true);
 
+  const [schoolsError, setSchoolsError] = useState(false);
   const [termsError, setTermsError] = useState(false);
-  const schoolsQuery = useQuery({
-    queryKey: ["academic-national-exam-schools"],
-    queryFn: async ({ signal }) => {
-      const response = await api.get<ApiList<School>>("/academics/schools/", {
-        signal,
-      });
-
-      return getResults(response.data);
-    },
-    refetchInterval: SCHOOL_LIST_REFRESH_INTERVAL,
-    refetchOnWindowFocus: true,
-    staleTime: 10_000,
-    retry: false,
-  });
-  const schools = schoolsQuery.data ?? [];
-  const loadingSchools = schoolsQuery.isPending;
-  const schoolsError = schoolsQuery.isError;
 
   useEffect(() => {
     let active = true;
+
+    async function loadSchools() {
+      try {
+        const response = await api.get<ApiList<School>>("/academics/schools/");
+
+        if (active) {
+          setSchools(getResults(response.data));
+          setSchoolsError(false);
+        }
+      } catch (error) {
+        console.error("Failed to load academic campuses:", error);
+
+        if (active) {
+          setSchoolsError(true);
+        }
+      } finally {
+        if (active) {
+          setLoadingSchools(false);
+        }
+      }
+    }
 
     async function loadTerms() {
       try {
@@ -119,6 +123,7 @@ export function AcademicFilters({
       }
     }
 
+    void loadSchools();
     void loadTerms();
 
     return () => {
