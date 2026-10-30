@@ -1,28 +1,12 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { AcademicFilterValues } from "../filters/academicFilters.types";
+import { useAcademicPerformanceDashboard } from "./useAcademicPerformanceDashboard";
 import api from "../../api/axios";
 import "./AcademicAnalytics.css";
 
 interface AcademicAnalyticsProps {
   filters: AcademicFilterValues;
-}
-
-interface Grade {
-  grade: string;
-  students: number;
-  share: number | null;
-}
-
-interface GradeDistributionData {
-  level: string;
-  level_display: string;
-  students: number;
-  grades: Grade[];
-}
-
-interface PerformanceDashboard {
-  grade_distribution: GradeDistributionData[];
 }
 
 interface School {
@@ -237,31 +221,9 @@ function buildExamSummaries(
 }
 
 export function AcademicAnalytics({ filters }: AcademicAnalyticsProps) {
-  const { school, campus, section, term, year } = filters;
+  const { school, campus, section, year } = filters;
 
-  const dashboardParams: Record<string, string | number> = {};
-
-  if (school) dashboardParams.school = school;
-  if (campus) dashboardParams.campus = campus;
-  if (section) dashboardParams.level = section;
-
-  if (term && /^\d+$/.test(term)) {
-    dashboardParams.term = Number(term);
-  }
-
-  const dashboardQuery = useQuery({
-    queryKey: ["academic-performance-dashboard", school, campus, section, term],
-    queryFn: async ({ signal }) => {
-      const response = await api.get<PerformanceDashboard>(
-        "/academics/performance/dashboard/",
-        { params: dashboardParams, signal },
-      );
-
-      return response.data;
-    },
-    refetchInterval: REFRESH_INTERVAL,
-    refetchOnWindowFocus: true,
-  });
+  const dashboardQuery = useAcademicPerformanceDashboard(filters);
 
   const schoolsQuery = useQuery({
     queryKey: ["academic-national-exam-schools"],
@@ -275,6 +237,8 @@ export function AcademicAnalytics({ filters }: AcademicAnalyticsProps) {
     },
     refetchInterval: REFRESH_INTERVAL,
     refetchOnWindowFocus: true,
+    staleTime: 10_000,
+    retry: false,
   });
 
   const examsQuery = useQuery({
@@ -322,7 +286,7 @@ export function AcademicAnalytics({ filters }: AcademicAnalyticsProps) {
     );
   }
 
-  const { grade_distribution } = dashboardQuery.data;
+  const gradeDistribution = dashboardQuery.data.grade_distribution ?? [];
 
   return (
     <section className="acad-analytics" aria-label="Academic analytics">
@@ -333,65 +297,90 @@ export function AcademicAnalytics({ filters }: AcademicAnalyticsProps) {
           </div>
         </header>
 
-        {grade_distribution.length === 0 ? (
+        {gradeDistribution.length === 0 ? (
           <p>No grade distribution data is available for these filters.</p>
         ) : (
           <div className="acad-analytics__grade-columns">
-            {grade_distribution.map((level) => (
-              <div className="acad-analytics__grade-level" key={level.level}>
-                <div className="acad-analytics__grade-heading">
-                  <h3>{level.level_display}</h3>
-                  <span>{level.students} students</span>
+            {gradeDistribution.map((level) => {
+              const highestGradeCount = Math.max(
+                1,
+                ...level.grades.map((item) => item.students),
+              );
+
+              return (
+                <div
+                  className={`acad-analytics__grade-level acad-analytics__grade-level--${level.level.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                  key={level.level}
+                >
+                  <div className="acad-analytics__grade-heading">
+                    <h3>{level.level_display}</h3>
+                    <span>{level.students} students</span>
+                  </div>
+
+                  <div className="acad-analytics__grade-chart">
+                    <div className="acad-analytics__grade-bars">
+                      {level.grades.map((grade) => {
+                        const height =
+                          level.students > 0
+                            ? (grade.students / highestGradeCount) * 100
+                            : 0;
+                        const share =
+                          grade.share ??
+                          (level.students > 0
+                            ? (grade.students / level.students) * 100
+                            : 0);
+
+                        return (
+                          <div
+                            className="acad-analytics__grade-column"
+                            key={grade.grade}
+                          >
+                            <span className="acad-analytics__grade-count">
+                              {grade.students}
+                            </span>
+                            <div
+                              className="acad-analytics__grade-track"
+                              role="progressbar"
+                              aria-label={`${level.level_display} grade ${grade.grade}`}
+                              aria-valuemin={0}
+                              aria-valuemax={level.students}
+                              aria-valuenow={grade.students}
+                              aria-valuetext={`${formatNumber(grade.students)} students, ${formatPercentage(share)}`}
+                              tabIndex={0}
+                            >
+                              <span
+                                className="acad-analytics__grade-fill"
+                                style={{ height: `${height}%` }}
+                              >
+                                <span className="acad-analytics__grade-tooltip">
+                                  <strong>{grade.grade}</strong>
+                                  <span>
+                                    {formatNumber(grade.students)} students ·{" "}
+                                    {formatPercentage(share)}
+                                  </span>
+                                </span>
+                              </span>
+                            </div>
+                            <span className="acad-analytics__grade-label">
+                              {grade.grade}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
-
-                <div className="acad-analytics__grade-list">
-                  {level.grades.map((grade) => {
-                    const percentage =
-                      level.students > 0
-                        ? (grade.students / level.students) * 100
-                        : 0;
-
-                    return (
-                      <div
-                        className="acad-analytics__grade-row"
-                        key={grade.grade}
-                      >
-                        <span className="acad-analytics__grade-label">
-                          {grade.grade}
-                        </span>
-
-                        <div
-                          className="acad-analytics__grade-track"
-                          role="progressbar"
-                          aria-label={`${level.level_display} grade ${grade.grade}`}
-                          aria-valuemin={0}
-                          aria-valuemax={level.students}
-                          aria-valuenow={grade.students}
-                        >
-                          <span
-                            className="acad-analytics__grade-fill"
-                            style={{ width: `${percentage}%` }}
-                          />
-                        </div>
-
-                        <span className="acad-analytics__grade-count">
-                          {grade.students}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </article>
 
-      {/* National Examination Results — dynamically grouped backend data */}
       <article className="acad-analytics__card">
         <header className="acad-analytics__header">
           <div>
             <h2>National Examination Results</h2>
+            <p>Pass rates for each campus, examination and year</p>
           </div>
         </header>
 
@@ -408,39 +397,67 @@ export function AcademicAnalytics({ filters }: AcademicAnalyticsProps) {
           </p>
         ) : (
           <div className="acad-exams">
-            <div className="acad-exams__table-wrap">
-              <table className="acad-exams__table">
-                <thead>
-                  <tr>
-                    <th scope="col">Campus</th>
-                    <th scope="col">Exam</th>
-                    <th scope="col">Year</th>
-                    <th scope="col">Candidates</th>
-                    <th scope="col">Passed</th>
-                    <th scope="col">Failed</th>
-                    <th scope="col">Pass Rate</th>
-                  </tr>
-                </thead>
+            {examSummaries.map((summary) => (
+              <article className="acad-exams__result" key={summary.key}>
+                <div
+                  className="acad-exams__rate-ring"
+                  role="progressbar"
+                  aria-label={`${summary.schoolName} ${getExamLabel(summary.exam)} ${summary.year} pass rate`}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={summary.passRate}
+                  title={`${formatPercentage(summary.passRate)} pass rate`}
+                  style={{
+                    background: `conic-gradient(var(--brand-sky) 0 ${summary.passRate}%, var(--color-border) ${summary.passRate}% 100%)`,
+                  }}
+                >
+                  <strong>{formatPercentage(summary.passRate)}</strong>
+                </div>
 
-                <tbody>
-                  {examSummaries.map((summary) => (
-                    <tr key={summary.key}>
-                      <td>{summary.schoolName}</td>
-                      <td>{getExamLabel(summary.exam)}</td>
-                      <td>{summary.year}</td>
-                      <td>{formatNumber(summary.candidates)}</td>
-                      <td>{formatNumber(summary.passed)}</td>
-                      <td>{formatNumber(summary.failed)}</td>
-                      <td>
-                        <span className="acad-exams__pass-rate">
-                          {formatPercentage(summary.passRate)}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                <div className="acad-exams__result-content">
+                  <header className="acad-exams__result-heading">
+                    <h3>{summary.schoolName}</h3>
+                    <span>
+                      {getExamLabel(summary.exam)} · {summary.year}
+                    </span>
+                  </header>
+
+                  <div
+                    className="acad-exams__pass-track"
+                    role="img"
+                    aria-label={`${summary.passed} passed and ${summary.failed} failed out of ${summary.candidates} candidates`}
+                    tabIndex={0}
+                  >
+                    <span
+                      className="acad-exams__passed-fill"
+                      style={{
+                        width: `${summary.candidates > 0 ? (summary.passed / summary.candidates) * 100 : 0}%`,
+                      }}
+                    />
+                    <span
+                      className="acad-exams__failed-fill"
+                      style={{
+                        width: `${summary.candidates > 0 ? (summary.failed / summary.candidates) * 100 : 0}%`,
+                      }}
+                    />
+                    <span className="acad-exams__tooltip">
+                      {formatNumber(summary.passed)} passed ·{" "}
+                      {formatNumber(summary.failed)} failed
+                    </span>
+                  </div>
+
+                  <div className="acad-exams__result-stats">
+                    <span>{formatNumber(summary.candidates)} candidates</span>
+                    <span className="acad-exams__passed-label">
+                      {formatNumber(summary.passed)} passed
+                    </span>
+                    <span className="acad-exams__failed-label">
+                      {formatNumber(summary.failed)} failed
+                    </span>
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
         )}
       </article>

@@ -1,7 +1,6 @@
 /* Fleet & Transport.
    Mirrors the HR & Workforce card vocabulary so the two operational screens
-   read as one family. Brand typography is Montserrat. */
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+   read as one family. */
 
 .ft-page {
   --ft-heading: var(--color-heading);
@@ -21,9 +20,6 @@
   flex-direction: column;
   gap: 10px;
 
-  font-family: "Montserrat", Inter, ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", sans-serif;
-  font-weight: 400;
 }
 
 /* --------------------------------------------------------------- Toolbar */

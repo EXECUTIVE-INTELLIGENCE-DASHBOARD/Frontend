@@ -96,11 +96,11 @@ describe("Sidebar", () => {
 
     expect(screen.getByText("Facilities & Maintenance")).toBeInTheDocument();
 
-    expect(screen.getByText("Fleet & Transport")).toBeInTheDocument();
-
-    expect(screen.getByText("Asset Management")).toBeInTheDocument();
-
     expect(screen.getByText("Incidents & Security")).toBeInTheDocument();
+
+     expect(screen.getByText("Asset Management")).toBeInTheDocument();
+
+    expect(screen.getByText("Fleet & Transport")).toBeInTheDocument();
 
     // Folded into their parents by the approved menu.
     expect(screen.queryByText("ICT Systems")).not.toBeInTheDocument();
@@ -116,6 +116,14 @@ describe("Sidebar", () => {
     render(<Sidebar />);
 
     await user.click(screen.getByRole("button", { name: /services/i }));
+
+    const submenu = document.getElementById("service-submenu");
+
+    expect(submenu).not.toBeNull();
+    const submenuItems = within(submenu as HTMLElement).getAllByRole("button");
+
+    expect(submenuItems[0]).toHaveTextContent("Trading Performance");
+    expect(within(submenu as HTMLElement).queryByText("Sales")).not.toBeInTheDocument();
 
     expect(screen.getByText("Open Incidents")).toBeInTheDocument();
 

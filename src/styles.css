@@ -1,6 +1,16 @@
 :root {
   color-scheme: light;
 
+  /* Brand typography: use the same family and weights across every page. */
+  --font-family-sans:
+    "Montserrat", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-style-emphasis: italic;
+
   /* Surfaces — soft blue canvas with white floating cards */
   --color-bg: #eaf2fe;
   --color-surface: #ffffff;
@@ -23,14 +33,14 @@
   --color-text-soft: #8e9cb3;
 
   /* Accent */
-  --color-accent: #2AA4DD;
-  --color-accent-strong: #1F8CC0;
+  --color-accent: #2aa4dd;
+  --color-accent-strong: #1f8cc0;
   --color-accent-soft: #eaf2ff;
 
   /* Feedback */
   --color-positive: #16a34a;
   --color-warning: #b45309;
-  --color-warning-soft: #FEF6DC;
+  --color-warning-soft: #fef6dc;
   --color-critical: #e05b5b;
   --color-danger: #dc4b4b;
   --color-track: #eef4fd;
@@ -41,14 +51,14 @@
   --shadow-elevated: 0 20px 44px rgba(37, 78, 150, 0.12);
 
   /* Charts */
-  --chart-navy: #1F8CC0;
-  --chart-blue: #2AA4DD;
+  --chart-navy: #1f8cc0;
+  --chart-blue: #2aa4dd;
   --chart-sky: #8ec0ff;
-  --chart-gradient-from: #5BBDE8;
-  --chart-gradient-to: #1F8CC0;
+  --chart-gradient-from: #5bbde8;
+  --chart-gradient-to: #1f8cc0;
 
-  font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-regular);
   color: var(--color-text);
   background: var(--color-bg);
   font-synthesis: none;
@@ -65,11 +75,13 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-regular);
   background: var(--color-bg);
   color: var(--color-heading);
 }
 
-button {
+:where(button, input, select, textarea) {
   font: inherit;
 }
 
@@ -85,7 +97,12 @@ h1 {
   margin: 0 0 16px;
   color: var(--color-heading);
   font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: var(--font-weight-bold);
   line-height: 1.1;
+}
+
+:where(h2, h3) {
+  font-weight: var(--font-weight-semibold);
 }
 
 p {
@@ -93,7 +110,16 @@ p {
   color: var(--color-text-muted);
   line-height: 1.65;
 }
-
+/*
+   UNIVERSAL FONT PROTECTION OVERRIDE
+   Prevents external libraries or hard-coded fonts 
+   from breaking the brand typography.
+ */
+*,
+*::before,
+*::after {
+  font-family: var(--font-family-sans) !important;
+}
 /* --------------------------------------------------
    DARK THEME
 -------------------------------------------------- */

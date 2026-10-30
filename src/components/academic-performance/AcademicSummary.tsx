@@ -3,6 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Award, ClipboardList, UsersRound } from "lucide-react";
 
 import type { AcademicFilterValues } from "../filters/academicFilters.types";
+import {
+  buildAcademicDashboardParams,
+  useAcademicPerformanceDashboard,
+} from "./useAcademicPerformanceDashboard";
 import api from "../../api/axios";
 
 import "./AcademicSummary.css";
@@ -11,27 +15,6 @@ interface AcademicSummaryProps {
   filters: AcademicFilterValues;
 }
 
-interface DashboardSummary {
-  syllabus_coverage: number | null;
-  topics_covered: number;
-  topics_planned: number;
-  student_performance: number | null;
-  students_passing: number;
-  students_assessed: number;
-  average_mark: number | null;
-  average_grade: string | null;
-}
-
-interface DashboardTerm {
-  id: number;
-  label: string;
-}
-
-interface PerformanceDashboard {
-  term: DashboardTerm | null;
-  compared_with: DashboardTerm | null;
-  summary: DashboardSummary;
-}
 interface Assessment {
   id: number;
   kind: string;
@@ -39,8 +22,6 @@ interface Assessment {
   school: number;
   class_level: string;
 }
-
-type DashboardParams = Record<string, string | number>;
 
 const REFRESH_INTERVAL = 30_000;
 
@@ -56,38 +37,6 @@ function formatNumber(value: number | null | undefined): string {
         maximumFractionDigits: 1,
       })
     : "—";
-}
-
-function buildDashboardParams(filters: AcademicFilterValues): DashboardParams {
-  const params: DashboardParams = {};
-
-  const school = filters.school.trim();
-  const campus = filters.campus.trim();
-  const section = filters.section.trim().toLowerCase();
-  const term = filters.term.trim();
-
-  // School must be a valid database ID.
-  if (school && /^\d+$/.test(school) && Number(school) > 0) {
-    params.school = Number(school);
-  }
-
-  // Campus must use the backend's actual campus choice value.
-  if (campus) {
-    params.campus = campus;
-  }
-
-  // The backend dashboard accepts the section through "level".
-  // Keep the frontend's existing section values.
-  if (section) {
-    params.level = section;
-  }
-
-  // The backend expects a database term ID, not the academic year.
-  if (term && /^\d+$/.test(term) && Number(term) > 0) {
-    params.term = Number(term);
-  }
-
-  return params;
 }
 
 function getErrorMessage(error: unknown): string {
@@ -115,38 +64,23 @@ function getErrorMessage(error: unknown): string {
 }
 
 export function AcademicSummary({ filters }: AcademicSummaryProps) {
-  const { school, campus, section, term } = filters;
-
   const params = useMemo(
-    () => buildDashboardParams(filters),
-    [school, campus, section, term],
+    () => buildAcademicDashboardParams(filters),
+    [filters.school, filters.campus, filters.section, filters.term, filters.year],
   );
+  const assessmentParams = useMemo(() => {
+    const assessmentFilters = { ...params };
+    delete assessmentFilters.year;
+    return assessmentFilters;
+  }, [params]);
 
-  const dashboardQuery = useQuery({
-    queryKey: ["academic-performance-dashboard", params],
-    queryFn: async ({ signal }): Promise<PerformanceDashboard> => {
-      const response = await api.get<PerformanceDashboard>(
-        "/academics/performance/dashboard/",
-        {
-          params,
-          signal,
-        },
-      );
-
-      return response.data;
-    },
-    refetchInterval: REFRESH_INTERVAL,
-    refetchOnWindowFocus: true,
-    staleTime: 10_000,
-    retry: false,
-  });
-
+  const dashboardQuery = useAcademicPerformanceDashboard(filters);
   const summary = dashboardQuery.data?.summary;
   const assessmentsQuery = useQuery({
-    queryKey: ["academic-assessments", params],
+    queryKey: ["academic-assessments", assessmentParams],
     queryFn: async ({ signal }): Promise<Assessment[]> => {
       const response = await api.get<Assessment[]>("/academics/assessments/", {
-        params,
+        params: assessmentParams,
         signal,
       });
 

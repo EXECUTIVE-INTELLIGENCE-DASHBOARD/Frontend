@@ -50,7 +50,7 @@ export const navigationItems: NavigationItem[] = [
     id: "operations",
     label: "Operational",
     icon: Landmark,
-    children: [
+        children: [
       {
         id: "hr-workforce",
         label: "HR & Workforce",
@@ -62,8 +62,8 @@ export const navigationItems: NavigationItem[] = [
         label: "Facilities & Maintenance",
       },
       {
-        id: "fleet-transport",
-        label: "Fleet & Transport",
+        id: "incidents-security",
+        label: "Incidents & Security",
       },
       // Absorbs the old "ICT Systems" entry: ICT equipment is part of the asset
       // register and its annual stocktake.
@@ -72,8 +72,8 @@ export const navigationItems: NavigationItem[] = [
         label: "Asset Management",
       },
       {
-        id: "incidents-security",
-        label: "Incidents & Security",
+        id: "fleet-transport",
+        label: "Fleet & Transport",
       },
     ],
   },
@@ -144,8 +144,8 @@ export const navigationItems: NavigationItem[] = [
     icon: AlertTriangle,
     children: [
       {
-        id: "sales",
-        label: "Sales",
+        id: "trading-performance",
+        label: "Trading Performance",
       },
       {
         id: "inventory",
@@ -154,10 +154,6 @@ export const navigationItems: NavigationItem[] = [
       {
         id: "budget-utilisation",
         label: "Budget Utilisation",
-      },
-      {
-        id: "trading-performance",
-        label: "Trading Performance",
       },
       {
         id: "open-incidents",

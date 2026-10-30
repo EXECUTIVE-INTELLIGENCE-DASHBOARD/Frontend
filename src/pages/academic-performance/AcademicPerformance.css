@@ -88,7 +88,7 @@
 .academic-performance__content {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 28px;
   width: 100%;
   min-width: 0;
 }
@@ -107,16 +107,21 @@
   background: var(--color-surface-subtle);
   border-color: var(--color-border);
 }
-/* Keep Academic Performance cards visually light and minimal */
+/* Keep the visual hierarchy and spacing consistent across nested panels. */
 .academic-performance__content > * {
   min-width: 0;
-  box-shadow: none;
 }
 
-/* Avoid heavy borders and strong shadows on nested cards */
-.academic-performance__content article {
+.academic-performance .academic-performance__content article {
   border-width: 1px;
-  box-shadow: none;
+  box-shadow: 0 1px 3px rgba(32, 52, 104, 0.07);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.academic-performance .academic-performance__content article:hover {
+  box-shadow: 0 2px 6px rgba(32, 52, 104, 0.09);
 }
 
 @media (max-width: 1000px) {

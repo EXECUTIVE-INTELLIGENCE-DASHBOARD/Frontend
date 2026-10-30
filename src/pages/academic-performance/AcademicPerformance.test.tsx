@@ -152,12 +152,24 @@ describe("AcademicPerformance", () => {
     vi.clearAllMocks();
 
     vi.mocked(api.get).mockImplementation(async (url) => {
+      if (url === "/academics/performance/dashboard/") {
+        return { data: mockDashboard };
+      }
+
+      if (url === "/academics/assessments/") {
+        return { data: [] };
+      }
+
       if (url === "/academics/schools/") {
         return { data: mockSchools };
       }
 
       if (url === "/academics/terms/") {
         return { data: mockTerms };
+      }
+
+      if (url === "/academics/national-exam-results/") {
+        return { data: [] };
       }
 
       throw new Error(`Unexpected API request: ${String(url)}`);
@@ -193,6 +205,18 @@ describe("AcademicPerformance", () => {
     expect(screen.getByLabelText("Academic Year")).toBeInTheDocument();
   });
 
+  it("shares one live dashboard request across summary, grade, and subject charts", async () => {
+    renderAcademicPerformance();
+
+    await waitFor(() => {
+      expect(
+        vi.mocked(api.get).mock.calls.filter(
+          ([url]) => url === "/academics/performance/dashboard/",
+        ),
+      ).toHaveLength(1);
+    });
+  });
+
   it("loads the campus options from the API", async () => {
     renderAcademicPerformance();
 
@@ -208,7 +232,10 @@ describe("AcademicPerformance", () => {
       within(campusSelect).getAllByRole("option"),
     ).toHaveLength(4);
 
-    expect(api.get).toHaveBeenCalledWith("/academics/schools/");
+    expect(api.get).toHaveBeenCalledWith(
+      "/academics/schools/",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
   });
 
   it("loads the section options", () => {

@@ -276,11 +276,16 @@ describe("AcademicAnalytics", () => {
   it("renders accessible grade progress bars", async () => {
     renderAnalytics();
 
-    expect(
-      await screen.findByRole("progressbar", {
-        name: "O Level grade A",
-      }),
-    ).toHaveAttribute("aria-valuenow", "42");
+    const gradeBar = await screen.findByRole("progressbar", {
+      name: "O Level grade A",
+    });
+
+    expect(gradeBar).toHaveAttribute("aria-valuenow", "42");
+    expect(gradeBar).toHaveAttribute(
+      "aria-valuetext",
+      "42 students, 10.5%",
+    );
+    expect(screen.getByText("42 students · 10.5%")).toBeInTheDocument();
 
     expect(
       screen.getByRole("progressbar", {
@@ -289,71 +294,51 @@ describe("AcademicAnalytics", () => {
     ).toHaveAttribute("aria-valuenow", "74");
   });
 
-  it("renders the Campus heading and all national examination table columns", async () => {
+  it("renders national examination summaries as pass-rate cards", async () => {
     renderAnalytics();
 
-    const table = await screen.findByRole("table");
+    const passRate = await screen.findByRole("progressbar", {
+      name: "Buwaate PLE 2025 pass rate",
+    });
 
-    for (const heading of [
-      "Campus",
-      "Exam",
-      "Year",
-      "Candidates",
-      "Passed",
-      "Failed",
-      "Pass Rate",
-    ]) {
-      expect(
-        within(table).getByRole("columnheader", { name: heading }),
-      ).toBeInTheDocument();
-    }
-
-    expect(
-      within(table).queryByRole("columnheader", {
-        name: "Campus / School",
-      }),
-    ).not.toBeInTheDocument();
+    expect(Number(passRate.getAttribute("aria-valuenow"))).toBeCloseTo(66.67);
   });
 
   it("renders national examination results grouped by campus, exam, and year", async () => {
     renderAnalytics();
 
-    const table = await screen.findByRole("table");
-    const rows = within(table).getAllByRole("row");
+    await screen.findByRole("heading", {
+      name: "National Examination Results",
+    });
 
-    // One header row and three result rows:
-    // Buwaate PLE, Kibuli Main UACE, Kibuli Main UCE.
-    expect(rows).toHaveLength(4);
-
-    expect(within(table).getByText("Buwaate")).toBeInTheDocument();
-    expect(within(table).getAllByText("Kibuli Main")).toHaveLength(2);
-
-    expect(within(table).getByText("PLE")).toBeInTheDocument();
-    expect(within(table).getByText("UCE")).toBeInTheDocument();
-    expect(within(table).getByText("UACE")).toBeInTheDocument();
+    expect(screen.getByText("Buwaate")).toBeInTheDocument();
+    expect(screen.getAllByText("Kibuli Main")).toHaveLength(2);
+    expect(screen.getByText("PLE · 2025")).toBeInTheDocument();
+    expect(screen.getByText("UCE · 2025")).toBeInTheDocument();
+    expect(screen.getByText("UACE · 2025")).toBeInTheDocument();
   });
 
   it("calculates candidates, passed, failed, and pass rate for each group", async () => {
     renderAnalytics();
 
-    const table = await screen.findByRole("table");
-    const rows = within(table).getAllByRole("row");
+    const result = await screen.findByRole("img", {
+      name: "2 passed and 1 failed out of 3 candidates",
+    });
+    const resultCard = result.closest(".acad-exams__result");
 
-    const buwaateRow = rows.find((row) => within(row).queryByText("Buwaate"));
-
-    expect(buwaateRow).toBeDefined();
-
-    const cells = within(buwaateRow as HTMLElement).getAllByRole("cell");
-
-    expect(cells.map((cell) => cell.textContent?.trim())).toEqual([
-      "Buwaate",
-      "PLE",
-      "2025",
-      "3",
-      "2",
-      "1",
-      "66.7%",
-    ]);
+    expect(resultCard).not.toBeNull();
+    expect(
+      within(resultCard as HTMLElement).getByText("3 candidates"),
+    ).toBeInTheDocument();
+    expect(
+      within(resultCard as HTMLElement).getByText("2 passed"),
+    ).toBeInTheDocument();
+    expect(
+      within(resultCard as HTMLElement).getByText("1 failed"),
+    ).toBeInTheDocument();
+    expect(
+      within(resultCard as HTMLElement).getByText("66.7%"),
+    ).toBeInTheDocument();
   });
 
   it("requests the dashboard using the selected campus, section, school, and term", async () => {
@@ -374,7 +359,7 @@ describe("AcademicAnalytics", () => {
         "/academics/performance/dashboard/",
         expect.objectContaining({
           params: {
-            school: "12",
+            school: 12,
             campus: "kibuli",
             level: "secondary",
             term: 7,

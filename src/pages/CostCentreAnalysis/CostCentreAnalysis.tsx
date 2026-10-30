@@ -1,10 +1,5 @@
-
 import { useMemo, useState } from "react";
-import {
-  Building2,
-  CircleDollarSign,
-  Percent,
-} from "lucide-react";
+import { Building2, CircleDollarSign, Percent } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -39,17 +34,8 @@ const sectionsByCampus: Record<string, string[]> = {
     "Secondary",
     "Preschool",
   ],
-  "Kibuli Campus": [
-    "All Sections",
-    "Nursery",
-    "Primary",
-    "Secondary",
-  ],
-  "Buwaate Campus": [
-    "All Sections",
-    "Nursery",
-    "Primary",
-  ],
+  "Kibuli Campus": ["All Sections", "Nursery", "Primary", "Secondary"],
+  "Buwaate Campus": ["All Sections", "Nursery", "Primary"],
   "Annex/Preschool Branch": [
     "All Sections",
     "Preschool",
@@ -118,18 +104,16 @@ const formatCompact = (value: number) => `${value}M`;
 
 const formatPercent = (value: number) => `${value.toFixed(1)}%`;
 
-
 const chartColours = [
-  "#203468", 
-  "#F1BA1B", 
-  "#2AA4DD", 
+  "#203468",
+  "#F1BA1B",
+  "#2AA4DD",
   "#7C83DB",
   "#4e8de6",
   "#C38B65",
   "#8A9BAE",
   "#A68AC7",
 ];
-
 
 type FilterProps = {
   year: number;
@@ -147,12 +131,9 @@ function ReportingFilters({
   return (
     <div className="finance-overview__report-filters">
       <label>
-       
         <select
           value={year}
-          onChange={(event) =>
-            onYearChange(Number(event.target.value))
-          }
+          onChange={(event) => onYearChange(Number(event.target.value))}
           aria-label="Reporting year"
         >
           {years.map((value) => (
@@ -164,7 +145,6 @@ function ReportingFilters({
       </label>
 
       <label>
-        
         <select
           value={term}
           onChange={(event) => onTermChange(event.target.value)}
@@ -183,18 +163,17 @@ function ReportingFilters({
 
 export function CostCentreAnalysis() {
   const [campus, setCampus] = useState("All Campuses");
-const [section, setSection] = useState("All Sections");
-const [year, setYear] = useState(2026);
-const [term, setTerm] = useState("Term 1");
+  const [section, setSection] = useState("All Sections");
+  const [year, setYear] = useState(2026);
+  const [term, setTerm] = useState("Term 1");
 
-const availableSections = sectionsByCampus[campus];
+  const availableSections = sectionsByCampus[campus];
 
   const filteredDepartments = useMemo(
     () =>
       departments.filter(
         (department) =>
-          campus === "All Campuses" ||
-          department.campus === campus,
+          campus === "All Campuses" || department.campus === campus,
       ),
     [campus],
   );
@@ -229,62 +208,52 @@ const availableSections = sectionsByCampus[campus];
     utilisation: (item.actual / item.budget) * 100,
   }));
 
-  const distributionData = filteredDepartments.map(
-    (item, index) => ({
-      name: item.name,
-      value: item.actual,
-      fill: chartColours[index % chartColours.length],
-    }),
-  );
+  const distributionData = filteredDepartments.map((item, index) => ({
+    name: item.name,
+    value: item.actual,
+    fill: chartColours[index % chartColours.length],
+  }));
 
   return (
     <div className="finance-overview cost-centre">
-      
-
-      
-
-      
-<section
-  className="finance-overview__scope cost-centre__filters"
-  aria-label="Cost centre filters"
->
-  {/* Campus and Section */}
-  <div className="cost-centre__location-filters">
-    <label>
-      <select
-        value={campus}
-        onChange={(event) => {
-          setCampus(event.target.value);
-          setSection("All Sections");
-        }}
-        aria-label="Campus"
+      <section
+        className="finance-overview__scope cost-centre__filters"
+        aria-label="Cost centre filters"
       >
-        {campuses.map((value) => (
-          <option key={value} value={value}>
-            {value}
-          </option>
-        ))}
-      </select>
-    </label>
+        {/* Campus and Section */}
+        <div className="cost-centre__location-filters">
+          <label>
+            <select
+              value={campus}
+              onChange={(event) => {
+                setCampus(event.target.value);
+                setSection("All Sections");
+              }}
+              aria-label="Campus"
+            >
+              {campuses.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          </label>
 
-    <label>
-      <select
-        value={section}
-        onChange={(event) => setSection(event.target.value)}
-        aria-label="Section"
-      >
-        {availableSections.map((value) => (
-          <option key={value} value={value}>
-            {value}
-          </option>
-        ))}
-      </select>
-    </label>
-  </div>
-
- 
-</section>
-
+          <label>
+            <select
+              value={section}
+              onChange={(event) => setSection(event.target.value)}
+              aria-label="Section"
+            >
+              {availableSections.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      </section>
 
       <section
         className="finance-overview__metrics"
@@ -301,7 +270,6 @@ const availableSections = sectionsByCampus[campus];
             <strong className="finance-overview__metric-value">
               {formatAmount(totals.actual)}
             </strong>
-            
           </div>
         </article>
 
@@ -310,13 +278,10 @@ const availableSections = sectionsByCampus[campus];
             <Building2 size={21} aria-hidden="true" />
           </span>
           <div className="finance-overview__metric-content">
-            <span className="finance-overview__metric-label">
-              Cost Centres
-            </span>
+            <span className="finance-overview__metric-label">Cost Centres</span>
             <strong className="finance-overview__metric-value">
               {filteredDepartments.length}
             </strong>
-            
           </div>
         </article>
 
@@ -331,11 +296,8 @@ const availableSections = sectionsByCampus[campus];
             <strong className="finance-overview__metric-value">
               {formatPercent(totals.utilisation)}
             </strong>
-            
           </div>
         </article>
-
-
       </section>
 
       <section className="finance-overview__grid cost-centre__chart-grid">
@@ -345,12 +307,12 @@ const availableSections = sectionsByCampus[campus];
               <h2>Departmental Expenditure</h2>
               <p>Actual expenditure · UGX millions</p>
             </div>
-             <ReportingFilters
-    year={year}
-    term={term}
-    onYearChange={setYear}
-    onTermChange={setTerm}
-  />
+            <ReportingFilters
+              year={year}
+              term={term}
+              onYearChange={setYear}
+              onTermChange={setTerm}
+            />
           </div>
 
           <div className="cost-centre__chart">
@@ -406,14 +368,13 @@ const availableSections = sectionsByCampus[campus];
           <div className="finance-overview__panel-heading">
             <div>
               <h2>Spending Distribution</h2>
-              <p>Share of total actual expenditure</p>
             </div>
-             <ReportingFilters
-    year={year}
-    term={term}
-    onYearChange={setYear}
-    onTermChange={setTerm}
-  />
+            <ReportingFilters
+              year={year}
+              term={term}
+              onYearChange={setYear}
+              onTermChange={setTerm}
+            />
           </div>
 
           <div className="cost-centre__donut-layout">
@@ -431,10 +392,7 @@ const availableSections = sectionsByCampus[campus];
                     strokeWidth={2}
                   >
                     {distributionData.map((item) => (
-                      <Cell
-                        key={item.name}
-                        fill={item.fill}
-                      />
+                      <Cell key={item.name} fill={item.fill} />
                     ))}
                   </Pie>
                   <Tooltip
@@ -449,10 +407,7 @@ const availableSections = sectionsByCampus[campus];
 
             <div className="cost-centre__legend">
               {distributionData.map((item) => (
-                <div
-                  className="cost-centre__legend-item"
-                  key={item.name}
-                >
+                <div className="cost-centre__legend-item" key={item.name}>
                   <span
                     className="cost-centre__legend-swatch"
                     style={{ background: item.fill }}
@@ -470,17 +425,13 @@ const availableSections = sectionsByCampus[campus];
         <div className="finance-overview__panel-heading">
           <div>
             <h2>Budget vs Actual by Cost Centre</h2>
-            <p>
-              Compare allocated budgets with actual expenditure ·
-              UGX millions
-            </p>
           </div>
-           <ReportingFilters
-    year={year}
-    term={term}
-    onYearChange={setYear}
-    onTermChange={setTerm}
-  />
+          <ReportingFilters
+            year={year}
+            term={term}
+            onYearChange={setYear}
+            onTermChange={setTerm}
+          />
         </div>
 
         <div className="cost-centre__chart cost-centre__chart--comparison">
@@ -518,16 +469,16 @@ const availableSections = sectionsByCampus[campus];
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />
               <Bar
-        dataKey="Budget"
-        fill="#203468"
-        radius={[4, 4, 0, 0]}
-        maxBarSize={30}
+                dataKey="Budget"
+                fill="#203468"
+                radius={[4, 4, 0, 0]}
+                maxBarSize={30}
               />
               <Bar
-        dataKey="Actual"
-        fill="#2AA4DD"
-        radius={[4, 4, 0, 0]}
-        maxBarSize={30}
+                dataKey="Actual"
+                fill="#2AA4DD"
+                radius={[4, 4, 0, 0]}
+                maxBarSize={30}
               />
             </BarChart>
           </ResponsiveContainer>
@@ -538,16 +489,14 @@ const availableSections = sectionsByCampus[campus];
         <div className="finance-overview__panel-heading">
           <div>
             <h2>Cost Centre Details</h2>
-            <p>
-              Allocation, expenditure, variance and utilisation
-            </p>
+            <p>Allocation, expenditure, variance and utilisation</p>
           </div>
-           <ReportingFilters
-    year={year}
-    term={term}
-    onYearChange={setYear}
-    onTermChange={setTerm}
-  />
+          <ReportingFilters
+            year={year}
+            term={term}
+            onYearChange={setYear}
+            onTermChange={setTerm}
+          />
         </div>
 
         <div className="cost-centre__table-wrap">
@@ -566,15 +515,12 @@ const availableSections = sectionsByCampus[campus];
             <tbody>
               {filteredDepartments.map((item) => {
                 const variance = item.budget - item.actual;
-                const utilisation =
-                  (item.actual / item.budget) * 100;
+                const utilisation = (item.actual / item.budget) * 100;
                 const overBudget = variance < 0;
 
                 return (
                   <tr key={item.name}>
-                    <td className="cost-centre__department">
-                      {item.name}
-                    </td>
+                    <td className="cost-centre__department">{item.name}</td>
                     <td>{item.campus}</td>
                     <td>{formatAmount(item.budget)}</td>
                     <td>{formatAmount(item.actual)}</td>
@@ -642,13 +588,6 @@ const availableSections = sectionsByCampus[campus];
             </tfoot>
           </table>
         </div>
-
-        <p className="finance-overview__footnote">
-          A positive variance means expenditure is below budget;
-          a negative variance means the allocation has been exceeded.
-          Underspend should be assessed alongside commitments,
-          invoices and delivery progress.
-        </p>
       </section>
     </div>
   );

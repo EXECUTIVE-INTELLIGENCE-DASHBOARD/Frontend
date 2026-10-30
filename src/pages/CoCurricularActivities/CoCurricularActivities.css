@@ -1,8 +1,4 @@
 
-/* Brand typography (Greenhill brand guidelines 2026): Montserrat.
-   Loaded here so it only affects this page. */
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
-
 .cc-page {
   --cc-heading: var(--color-heading);
   --cc-border: var(--color-border);
@@ -14,16 +10,6 @@
   flex-direction: column;
   gap: 20px;
 
-  /* Headline: Bold. Subhead: Semibold. Body copy: Regular. */
-  font-family:
-    "Montserrat",
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    "Segoe UI",
-    sans-serif;
-  font-weight: 400;
 }
 
 .cc-metrics {

@@ -2,24 +2,13 @@
 
 .ae-trends {
   display: flex;
+  min-width: 0;
+  min-height: 0;
   flex-direction: column;
-  gap: 10px;
 }
 
-.ae-trends__head {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: flex-end;
-  justify-content: space-between;
-}
-
-.ae-trends__title {
-  margin: 0;
-  color: var(--color-heading);
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+.ae-analysis-row .ae-trends {
+  min-height: 100%;
 }
 
 .ae-trends__sub {
@@ -35,8 +24,14 @@
 
 .ae-trends__grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
+  min-height: 0;
+}
+
+.ae-analysis-row .ae-trends__grid {
+  height: 100%;
 }
 
 .ae-trends__note {
@@ -59,7 +54,17 @@
 /* --------------------------------------------------------------------- Card */
 
 .ae-trend-card {
+  --ae-heading: var(--color-heading);
+  --ae-muted: var(--color-text-muted);
+  --ae-soft: var(--color-text-soft);
+  --ae-border: var(--color-border);
+  --ae-f0: #203468;
+  --ae-f2: #2aa4dd;
+  --ae-f4: #f1ba1b;
+
   display: flex;
+  height: 100%;
+  box-sizing: border-box;
   flex-direction: column;
   gap: 10px;
   min-width: 0;
@@ -68,6 +73,11 @@
   border-radius: 14px;
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
+}
+
+.ae-analysis-row .ae-trend-card,
+.ae-analysis-card {
+  min-height: 100%;
 }
 
 .ae-trend-card__head {
@@ -159,6 +169,26 @@
   width: 100%;
   height: auto;
   overflow: visible;
+}
+
+.sr-retention-trend .ae-trend__svg {
+  width: calc(100% + 16px);
+  height: auto;
+  max-width: none;
+  margin-inline: -8px;
+}
+
+.sr-retention-trend .ae-trend__tick {
+  font-size: 11px;
+}
+
+.sr-retention-trend .ae-trend__label {
+  font-size: 12px;
+}
+
+.sr-retention-trend .ae-trend__sublabel,
+.sr-retention-trend .ae-trend__total {
+  font-size: 11px;
 }
 
 .ae-trend__gridline {
@@ -258,9 +288,3 @@
 }
 
 /* --------------------------------------------------------------- Responsive */
-
-@media (max-width: 1040px) {
-  .ae-trends__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}

@@ -35,7 +35,7 @@ const opts = (xs: string[]) => xs.map((x) => ({ value: x, label: x }));
 
 function Status({ row }: { row: AttendanceRow }) {
   const low = row.rate < row.target;
-  return <span className={low ? "at-chip" : "at-chip at-chip--ok"}>{low ? "▼ Below target" : "✔ On target"}</span>;
+  return <span className={low ? "at-chip" : "at-chip at-chip--ok"}>{low ? "Below target" : "On target"}</span>;
 }
 
 function Kpi({ icon, label, value, detail }: { icon: string; label: string; value: string; detail: string }) {
@@ -58,7 +58,7 @@ export default function AttendanceAnalysis() {
   const [showAll, setShowAll] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
 
-  const { rows: allRows, loading, error, note } = useAttendance();
+  const { rows: allRows, loading, error, note } = useAttendance(filters);
   const classes = useMemo(() => classesFor(filters.campus, filters.section), [filters.campus, filters.section]);
   const classOptions = useMemo(() => [{ value: "", label: "All Classes" }, ...classes.map((c) => ({ value: c, label: c }))], [classes]);
   const rows = useMemo(() => allRows.filter((r) => (!cls || r.cls === cls) && (!stream || r.stream === stream)), [allRows, cls, stream]);

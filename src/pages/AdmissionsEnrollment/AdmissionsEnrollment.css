@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
-
 /* ------------------------------------------------------------------ Page shell */
 
 .ae-page {
@@ -26,15 +24,6 @@
   flex-direction: column;
   gap: 12px;
 
-  font-family:
-    "Montserrat",
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    "Segoe UI",
-    sans-serif;
-  font-weight: 400;
 }
 
 .ae-sr-only {
@@ -622,15 +611,19 @@
   text-align: center;
 }
 
-/* The intake table takes most of the width because it carries nine columns of
-   figures; the funnel closes the page beside it. Both stretch to the same
-   height so the page ends on one line. */
-.ae-lower {
+/* The gender chart and funnel form a balanced executive overview row. */
+.ae-analysis-row {
   display: grid;
-  grid-template-columns: minmax(0, 2.1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  grid-auto-rows: minmax(0, 1fr);
   gap: 12px;
   align-items: stretch;
   min-width: 0;
+}
+
+.ae-analysis-card {
+  height: 100%;
+  box-sizing: border-box;
 }
 
 /* ------------------------------------------------------------- Drill groups */
@@ -806,20 +799,130 @@
 
 /* ------------------------------------------------------------------- Tables */
 
+
 .ae-table-wrap {
-  overflow: auto;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
   margin: 0 -16px;
   padding: 0 16px;
+  box-sizing: border-box;
 }
 
 .ae-table-wrap--roster {
   max-height: 344px;
 }
 
+/* Keep every body cell aligned with its corresponding heading. */
 .ae-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 12px;
+}
+
+/* Define consistent widths for the six enrolment columns. */
+.ae-table th:nth-child(1),
+.ae-table td:nth-child(1) {
+  width: 32%;
+}
+
+.ae-table th:nth-child(2),
+.ae-table td:nth-child(2) {
+  width: 13%;
+}
+
+.ae-table th:nth-child(3),
+.ae-table td:nth-child(3) {
+  width: 13%;
+}
+
+.ae-table th:nth-child(4),
+.ae-table td:nth-child(4) {
+  width: 16%;
+}
+
+.ae-table th:nth-child(5),
+.ae-table td:nth-child(5) {
+  width: 10%;
+}
+
+.ae-table th:nth-child(6),
+.ae-table td:nth-child(6) {
+  width: 16%;
+}
+
+
+
+/* Numeric columns: headings and values share the same alignment. */
+.ae-table thead th:nth-child(2),
+.ae-table thead th:nth-child(3),
+.ae-table thead th:nth-child(4),
+.ae-table thead th:nth-child(5),
+.ae-table tbody td:nth-child(2),
+.ae-table tbody td:nth-child(3),
+.ae-table tbody td:nth-child(4),
+.ae-table tbody td:nth-child(5) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Give DAY and AGE a visible gap. */
+.ae-table th:nth-child(5),
+.ae-table td:nth-child(5) {
+  padding-right: 18px;
+}
+
+.ae-table th:nth-child(6),
+.ae-table td:nth-child(6) {
+  padding-left: 18px;
+}
+
+/* Sticky table headings. */
+.ae-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-surface);
+  color: var(--ae-soft);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--ae-border);
+}
+
+.ae-table tbody th {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.ae-table tbody tr:last-child th,
+.ae-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.ae-table__row--action {
+  cursor: pointer;
+}
+
+.ae-table__row--action:hover {
+  background: var(--color-surface-hover);
+}
+
+.ae-table__row--action:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.ae-num {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.ae-muted {
+  color: var(--ae-muted);
 }
 
 .ae-table th,
@@ -932,7 +1035,7 @@
 .ae-funnel__track {
   position: relative;
   display: block;
-  height: 24px;
+  height: 21px;
   border-radius: 6px;
   background: var(--color-track);
   box-shadow: inset 0 0 0 1px var(--color-border-soft);
@@ -1137,11 +1240,7 @@
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    var(--ae-heading),
-    var(--color-accent)
-  );
+  background: linear-gradient(90deg, var(--ae-heading), var(--color-accent));
 }
 
 /* -------------------------------------------------------------- Learner drawer */
@@ -1303,10 +1402,9 @@
   }
 }
 
-/* Below this width the intake table needs every pixel it can get, so the
-   funnel drops underneath it rather than squeezing both. */
+/* Keep the overview cards readable before stacking them on narrower screens. */
 @media (max-width: 940px) {
-  .ae-lower {
+  .ae-analysis-row {
     grid-template-columns: minmax(0, 1fr);
   }
 }
