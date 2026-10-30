@@ -4,6 +4,7 @@ import { Search, Mic, Bell, Sun, Moon, ChevronRight } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { userProfile } from "../lib/userProfile";
 import { searchNavigation } from "../navigation/navigation.search";
+import { signOut } from "../lib/api/core";
 
 interface HeroProps {
   /** Lets the header jump to another screen from the search results. */
@@ -33,6 +34,17 @@ export function Hero({ onSelectPage }: HeroProps) {
   const profileRef = useRef<HTMLDivElement>(null);
 
   const isDark = theme === "dark";
+
+  function handleSignOut() {
+    setProfileOpen(false);
+
+    // The session ending here is not this app's: it belongs to the identity
+    // provider and is the same one PMS and ISMP are using, so only that
+    // service can end it. It navigates the whole browser, which is why the
+    // promise is deliberately not awaited.
+    void signOut();
+  }
+
   const results = searchNavigation(query);
   const showResults = searchOpen && query.trim().length > 0;
 
@@ -308,6 +320,7 @@ export function Hero({ onSelectPage }: HeroProps) {
               <button
                 className="hero__logout"
                 type="button"
+                onClick={handleSignOut}
               >
                 Log out
               </button>

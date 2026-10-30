@@ -50,9 +50,50 @@ export function signIn(): void {
   window.location.assign(signInUrl());
 }
 
-/** `POST /api/auth/logout/` — clears the Django session. */
+/**
+ * Base URL of the GreenHill identity provider.
+ *
+ * Signing out is not something this app can finish on its own: the account's
+ * session lives on the identity provider, which is shared with PMS and ISMP.
+ * Only that service can end it, and it has to be reached in the top-level
+ * browser so its cookie travels with the request.
+ */
+const DEFAULT_SSO_BASE_URL = "https://greenhill-auth-backend2.onrender.com";
+
+export function ssoBaseUrl(): string {
+  const configured = import.meta.env.VITE_SSO_BASE_URL || DEFAULT_SSO_BASE_URL;
+
+  return configured.replace(/\/+$/, "");
+}
+
+/**
+ * Absolute URL of the identity provider's sign-out.
+ *
+ * `auth/logout-redirect/` answers a GET, so a plain navigation will do. It
+ * ends the session, deletes the OAuth tokens that every system is holding --
+ * not just this one's -- and lands the person back on the sign-in page.
+ */
+export function signOutUrl(): string {
+  return `${ssoBaseUrl()}/auth/logout-redirect/`;
+}
+
+/**
+ * Sign out of every system.
+ *
+ * This app's own session is cleared first, then the browser is handed to the
+ * identity provider, which is the authority on whether the person is signed
+ * in. Doing it in that order means that even if the hand-over never completes,
+ * this app is already signed out locally.
+ */
 export async function signOut(): Promise<void> {
-  await apiClient.post("auth/logout/");
+  try {
+    await apiClient.post("auth/logout/");
+  } catch {
+    // The central sign-out below is what actually ends the account session, so
+    // failing to clear this app's copy of it must not prevent it.
+  }
+
+  window.location.assign(signOutUrl());
 }
 
 export const coreApi = {
@@ -61,4 +102,5 @@ export const coreApi = {
   signIn,
   signInUrl,
   signOut,
+  signOutUrl,
 } as const;

@@ -3,6 +3,11 @@ import { describe, expect, it, vi } from "vitest";
 
 import { Hero } from "./Hero";
 import { ThemeProvider } from "../context/ThemeContext";
+import { signOut } from "../lib/api/core";
+
+// Signing out leaves the page, so the navigation is stubbed and only the
+// hand-off itself is asserted here.
+vi.mock("../lib/api/core", () => ({ signOut: vi.fn() }));
 
 describe("Hero", () => {
   const renderHero = (onSelectPage?: (pageId: string) => void) =>
@@ -113,5 +118,16 @@ describe("Hero", () => {
     expect(screen.queryByText("Green Hill Academy Secondary School Kibuli")).not.toBeInTheDocument();
     expect(screen.queryByText("Digital & Innovation")).not.toBeInTheDocument();
     expect(screen.queryByText("GH-STAFF-0284")).not.toBeInTheDocument();
+  });
+
+  it("signs out of the shared session when Log out is clicked", () => {
+    renderHero();
+
+    fireEvent.click(screen.getByRole("button", { name: "Open user profile" }));
+    fireEvent.click(screen.getByRole("button", { name: "Log out" }));
+
+    // Not a local-only sign-out: the session belongs to the identity provider
+    // and is shared with PMS and ISMP.
+    expect(signOut).toHaveBeenCalledTimes(1);
   });
 });
