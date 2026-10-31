@@ -1,0 +1,72 @@
+/* Stand-in for the application while a session is unconfirmed.
+   Colours come from the theme tokens so the light and dark themes both work and
+   nothing here guesses at a brand colour. */
+
+.session-gate {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: var(--color-bg, Canvas);
+  color: var(--color-text, CanvasText);
+  font-family: var(--font-family-sans, system-ui, sans-serif);
+}
+
+.session-gate__card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(420px, 100%);
+  padding: 32px 28px;
+  text-align: center;
+  background: var(--color-surface, Canvas);
+  border: 1px solid var(--color-border, ButtonBorder);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card, 0 12px 32px rgb(0 0 0 / 12%));
+}
+
+.session-gate__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-heading, inherit);
+}
+
+.session-gate__text {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-text-muted, gray);
+}
+
+.session-gate__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+  padding: 10px 18px;
+  font: inherit;
+  font-weight: var(--font-weight-medium, 500);
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--color-accent, Highlight);
+  border: 0;
+  border-radius: 10px;
+}
+
+.session-gate__button:hover,
+.session-gate__button:focus-visible {
+  background: var(--color-accent-strong, Highlight);
+}
+
+.session-gate__link {
+  font-size: 0.875rem;
+  color: var(--color-text-muted, gray);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .session-gate__button {
+    transition: none;
+  }
+}
