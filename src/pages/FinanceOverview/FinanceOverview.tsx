@@ -1,3 +1,4 @@
+import { Banknote, ChartPie, Receipt, ShoppingCart, type LucideIcon } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   Bar,
@@ -268,15 +269,18 @@ export function FinanceOverview() {
       {!loading && data && source === "api" && (
         <>
           <section className="finance-overview__metrics" aria-label="Headline figures">
-            {[
-              ["Revenue", formatUgx(sum(rows, (r) => r.revenue))],
-              ["Total owed", formatUgx(owed)],
-              ["Budget used", budget ? `${Math.round((spent / budget) * 1000) / 10}%` : "–"],
-              ["Procurement", formatUgx(bought)],
-            ].map(([label, value]) => (
+            {([
+              ["Revenue", formatUgx(sum(rows, (r) => r.revenue)), Banknote],
+              ["Total owed", formatUgx(owed), Receipt],
+              ["Budget used", budget ? `${Math.round((spent / budget) * 1000) / 10}%` : "–", ChartPie],
+              ["Procurement", formatUgx(bought), ShoppingCart],
+            ] as [string, string, LucideIcon][]).map(([label, value, Icon]) => (
               <article className="finance-overview__metric" key={label}>
-                <span className="finance-overview__metric-label">{label}</span>
-                <strong className="finance-overview__metric-value">{value}</strong>
+                <span className="finance-overview__metric-icon" aria-hidden="true"><Icon size={18} /></span>
+                <div className="finance-overview__metric-text">
+                  <span className="finance-overview__metric-label">{label}</span>
+                  <strong className="finance-overview__metric-value">{value}</strong>
+                </div>
               </article>
             ))}
           </section>

@@ -1,11 +1,14 @@
 /* ========================================
    FINANCE DASHBOARD
-   A date range, four headline figures (no notes under them) and five cards, two per row, each about as tall as
-   the Incidents "Campus Overview" card. Card border, radius and shadow come from
-   ui-standard.css.
+   A date range, four compact headline figures with icons and five cards, two per row, each
+   about as tall as the Incidents "Campus Overview" card. Card border and shadow come from
+   ui-standard.css; corners are square here.
 ======================================== */
 
 .finance-overview {
+  /* Square corners and compact headline tiles, on this screen only (ui-standard.css reads these). */
+  --ui-card-radius: 0;
+  --ui-metric-min-h: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -62,10 +65,28 @@
   gap: 16px;
 }
 
-.finance-overview__metric {
+/* Compact tiles: an icon chip beside the label and figure. */
+:root .finance-overview .finance-overview__metric {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+}
+
+.finance-overview__metric-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background: var(--ui-chip-bg);
+  color: var(--ui-chip-fg);
+}
+
+.finance-overview__metric-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  min-width: 0;
 }
 
 .finance-overview__metric-label {
@@ -78,6 +99,9 @@
 
 .finance-overview__metric-value {
   color: var(--color-heading);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 /* Cards */
