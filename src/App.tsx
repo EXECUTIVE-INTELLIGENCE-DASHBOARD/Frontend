@@ -93,7 +93,7 @@ export function App() {
       <Sidebar activeItem={activePage} onSelectItem={setActivePage} />
 
       <div className="layout-main">
-        <Hero onSelectPage={setActivePage} />
+        <Hero activePage={activePage} onSelectPage={setActivePage} />
 
         <main className="app-shell layout-content">
           {currentPage ?? <PlaceholderPage title={pageLabel} />}

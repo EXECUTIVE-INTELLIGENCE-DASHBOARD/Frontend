@@ -52,16 +52,23 @@ const showDate = (value: string) =>
 const pageLabel = (pageId: string) =>
   (findNavigationLabel(pageId) ?? "Finance").replace(" Management", "");
 
+/** Whether an alert belongs on a screen; with no screen given, every alert does. */
+const belongsOn = (alert: FinanceAlert, pageId?: string) =>
+  !pageId || (alert.pages ?? [alert.page]).includes(pageId);
+
 interface NotificationBellProps {
+  /** The screen being shown: only its alerts are counted, listed and popped up. */
+  pageId?: string;
   /** Opens the screen an alert came from. */
   onSelectPage?: (pageId: string) => void;
 }
 
 /**
  * The bell in the top bar: an unread count, a panel listing the alerts, and a one-off
- * pop-up for urgent ones. Alerts live here rather than on the screens.
+ * pop-up for urgent ones, all for the screen being shown. Alerts live here rather than on
+ * the screens.
  */
-export function NotificationBell({ onSelectPage }: NotificationBellProps) {
+export function NotificationBell({ pageId, onSelectPage }: NotificationBellProps) {
   const [alerts, setAlerts] = useState<FinanceAlert[]>([]);
   const [read, setRead] = useState(() => loadIds(local, READ_KEY));
   const [open, setOpen] = useState(false);
@@ -74,18 +81,7 @@ export function NotificationBell({ onSelectPage }: NotificationBellProps) {
 
     function load() {
       getFinanceAlerts().then((next) => {
-        if (!live) return;
-        setAlerts(next);
-
-        // Pop up the urgent alerts not yet shown this session, once.
-        const shown = loadIds(session, SHOWN_KEY);
-        const alreadyRead = loadIds(local, READ_KEY);
-        const fresh = next.filter((a) => a.severity === "critical" && !shown.has(a.id) && !alreadyRead.has(a.id));
-        if (fresh.length > 0) {
-          setToast({ alert: fresh[0], more: fresh.length - 1 });
-          fresh.forEach((a) => shown.add(a.id));
-          saveIds(session, SHOWN_KEY, shown);
-        }
+        if (live) setAlerts(next);
       });
     }
 
@@ -96,6 +92,25 @@ export function NotificationBell({ onSelectPage }: NotificationBellProps) {
       window.clearInterval(timer);
     };
   }, []);
+
+  // Pop up this screen's urgent alerts not yet shown this session, once each.
+  useEffect(() => {
+    const shown = loadIds(session, SHOWN_KEY);
+    const alreadyRead = loadIds(local, READ_KEY);
+    const fresh = alerts.filter((a) => a.severity === "critical" && belongsOn(a, pageId)
+      && !shown.has(a.id) && !alreadyRead.has(a.id));
+    setToast(fresh.length > 0 ? { alert: fresh[0], more: fresh.length - 1 } : null);
+    if (fresh.length > 0) {
+      fresh.forEach((a) => shown.add(a.id));
+      saveIds(session, SHOWN_KEY, shown);
+    }
+  }, [alerts, pageId]);
+
+  // The panel and its "view all" start fresh on each screen.
+  useEffect(() => {
+    setOpen(false);
+    setShowAll(false);
+  }, [pageId]);
 
   // The pop-up fades on its own; the alert stays in the bell until it is read.
   useEffect(() => {
@@ -138,8 +153,9 @@ export function NotificationBell({ onSelectPage }: NotificationBellProps) {
     onSelectPage?.(alert.page);
   }
 
-  const unread = alerts.filter((a) => !read.has(a.id)).length;
-  const listed = showAll ? alerts : alerts.slice(0, PANEL_LIMIT);
+  const here = alerts.filter((a) => belongsOn(a, pageId));
+  const unread = here.filter((a) => !read.has(a.id)).length;
+  const listed = showAll ? here : here.slice(0, PANEL_LIMIT);
 
   return (
     <div className="notify" ref={menuRef}>
@@ -164,14 +180,14 @@ export function NotificationBell({ onSelectPage }: NotificationBellProps) {
               Notifications {unread > 0 && <span>{unread} unread</span>}
             </strong>
             {unread > 0 && (
-              <button type="button" onClick={() => markRead(alerts.map((a) => a.id))}>
+              <button type="button" onClick={() => markRead(here.map((a) => a.id))}>
                 Mark all as read
               </button>
             )}
           </header>
 
-          {alerts.length === 0 ? (
-            <p className="notify__empty">You&rsquo;re all caught up.</p>
+          {here.length === 0 ? (
+            <p className="notify__empty">No alerts for this screen.</p>
           ) : (
             <ul className={`notify__list${showAll ? " notify__list--all" : ""}`}>
               {listed.map((alert) => {
@@ -195,9 +211,9 @@ export function NotificationBell({ onSelectPage }: NotificationBellProps) {
             </ul>
           )}
 
-          {alerts.length > PANEL_LIMIT && (
+          {here.length > PANEL_LIMIT && (
             <button type="button" className="notify__foot" onClick={() => setShowAll((all) => !all)}>
-              {showAll ? "Show fewer" : `View all notifications (${alerts.length})`}
+              {showAll ? "Show fewer" : `View all notifications (${here.length})`}
             </button>
           )}
         </section>

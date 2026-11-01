@@ -8,11 +8,13 @@ import { signOut } from "../lib/api/core";
 import { NotificationBell } from "./notifications/NotificationBell";
 
 interface HeroProps {
+  /** The screen being shown, so the bell lists only its alerts. */
+  activePage?: string;
   /** Lets the header jump to another screen from the search results. */
   onSelectPage?: (pageId: string) => void;
 }
 
-export function Hero({ onSelectPage }: HeroProps) {
+export function Hero({ activePage, onSelectPage }: HeroProps) {
   const { theme, setTheme } = useTheme();
 
   // The header date is live, so a tab left open overnight does not go stale.
@@ -247,7 +249,7 @@ export function Hero({ onSelectPage }: HeroProps) {
       {/* Actions */}
       <div className="hero__actions">
         {/* Notifications: alerts live here, not on the screens */}
-        <NotificationBell onSelectPage={onSelectPage} />
+        <NotificationBell pageId={activePage} onSelectPage={onSelectPage} />
 
         {/* Theme toggle */}
         <div className="hero__theme-toggle">

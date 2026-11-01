@@ -16,6 +16,8 @@ export interface FinanceAlert {
   school: { id: number; name: string; campus: string };
   /** the screen to open, e.g. "liabilities-management" */
   page: string;
+  /** the screens whose bell shows this alert */
+  pages?: string[];
   /** YYYY-MM-DD: when it fell due or was noticed */
   date: string;
 }

@@ -99,11 +99,34 @@ describe("NotificationBell", () => {
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 
+  it("shows only the alerts that belong on the screen", async () => {
+    const onScreens: FinanceAlert[] = [
+      { ...alerts[0], pages: ["liabilities-management", "assets-liabilities", "finance-overview"] },
+      { ...alerts[1], id: "collection-9", title: "Fee collection behind", page: "revenue-fee-collection",
+        pages: ["revenue-fee-collection"] },
+    ];
+    load.mockResolvedValue(onScreens);
+    const { rerender } = render(<NotificationBell pageId="revenue-fee-collection" />);
+
+    fireEvent.click(await screen.findByRole("button", { name: "Notifications, 1 unread" }));
+    expect(screen.getByText("Fee collection behind: Buwaate Primary")).toBeInTheDocument();
+    expect(screen.queryByText("NSSF overdue: GIS")).not.toBeInTheDocument();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument(); // nothing urgent here
+
+    rerender(<NotificationBell pageId="assets-liabilities" />);
+    expect(await screen.findByRole("status")).toHaveTextContent("NSSF overdue: GIS");
+    expect(screen.getByRole("button", { name: "Notifications, 1 unread" })).toBeInTheDocument();
+
+    rerender(<NotificationBell pageId="academic-performance" />);
+    fireEvent.click(screen.getByRole("button", { name: "Notifications" }));
+    expect(screen.getByText("No alerts for this screen.")).toBeInTheDocument();
+  });
+
   it("is quiet when there is nothing to report", async () => {
     load.mockResolvedValue([]);
     render(<NotificationBell />);
 
     fireEvent.click(await screen.findByRole("button", { name: "Notifications" }));
-    expect(screen.getByText("You’re all caught up.")).toBeInTheDocument();
+    expect(screen.getByText("No alerts for this screen.")).toBeInTheDocument();
   });
 });
