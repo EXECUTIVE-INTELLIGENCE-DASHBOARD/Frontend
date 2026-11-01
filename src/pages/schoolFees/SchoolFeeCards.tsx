@@ -10,53 +10,40 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Banknote, Bed, Percent, Sun } from "lucide-react";
+import { Banknote, Bed, Sun, UserCheck } from "lucide-react";
 
 import { formatUgx, sectionColours } from "../../lib/finance.format";
 import type { SchoolFeeRow, SchoolFeesDashboard } from "./schoolFees.api";
 
-/** Paid share: red below 90%, amber below 95%, green from 95%. */
-const paidTone = (rate: number | null) =>
-  rate === null ? "" : rate < 90 ? "is-red" : rate < 95 ? "is-amber" : "is-green";
-
 /* ---------- Summary tiles ---------- */
 
-export function FeeSummary({ data, schoolLabel }: { data: SchoolFeesDashboard; schoolLabel?: string }) {
+/** Small headline tiles, as on the finance Dashboard: an icon, the label and the figure. */
+export function FeeSummary({ data }: { data: SchoolFeesDashboard }) {
   const { summary, has_boarding: hasBoarding } = data;
-  const share = (part: number | null) =>
-    summary.revenue ? `${Math.round(((part ?? 0) / summary.revenue) * 100)}% of fees` : "";
 
   // Day-only schools show just fee revenue and students paid.
   const tiles = [
-    { icon: Banknote, label: "School fee revenue", value: formatUgx(summary.revenue),
-      note: schoolLabel ? `this term, ${schoolLabel}` : "this term, all schools" },
+    { icon: Banknote, label: "School fee revenue", value: formatUgx(summary.revenue) },
     ...(hasBoarding
       ? [
-          { icon: Sun, label: "Day", value: formatUgx(summary.day_revenue),
-            note: share(summary.day_revenue) },
-          { icon: Bed, label: "Boarding", value: formatUgx(summary.boarding_revenue ?? 0),
-            note: share(summary.boarding_revenue) },
+          { icon: Sun, label: "Day", value: formatUgx(summary.day_revenue) },
+          { icon: Bed, label: "Boarding", value: formatUgx(summary.boarding_revenue ?? 0) },
         ]
       : []),
-    { icon: Percent, label: "Students paid",
-      value: summary.paid_rate === null ? "–" : `${summary.paid_rate}%`,
-      note: `${summary.paid.toLocaleString("en-US")} of ${summary.enrolled.toLocaleString("en-US")} enrolled` },
+    { icon: UserCheck, label: "Students paid",
+      value: summary.paid_rate === null ? "–" : `${summary.paid_rate}%` },
   ];
 
   return (
-    <section
-      className={`revenue-summary${hasBoarding ? "" : " revenue-summary--two"}`}
-      aria-label="School fees summary"
-    >
-      {tiles.map(({ icon: Icon, label, value, note }) => (
+    <section className="revenue-summary" aria-label="School fees summary">
+      {tiles.map(({ icon: Icon, label, value }) => (
         <article className="revenue-summary__card" key={label}>
           <span className="revenue-summary__icon">
-            <Icon size={20} aria-hidden="true" />
+            <Icon size={17} aria-hidden="true" />
           </span>
           <div>
             <p className="revenue-summary__label">{label}</p>
             <p className="revenue-summary__value">{value}</p>
-            <p className="revenue-summary__note">{note}</p>
           </div>
         </article>
       ))}
@@ -118,7 +105,7 @@ export function RevenueBreakdown({
               tickFormatter={formatUgx}
               tick={{ fill: "var(--color-text-muted)", fontSize: 11 }}
             />
-            <Bar dataKey="day" stackId="fees" fill={sectionColours.day} maxBarSize={64}
+            <Bar dataKey="day" stackId="fees" fill={sectionColours.day} maxBarSize={56}
               isAnimationActive={false} radius={data.has_boarding ? 0 : [5, 5, 0, 0]}>
               {!data.has_boarding && (
                 <LabelList dataKey="total" position="top" formatter={(v) => formatUgx(Number(v))}
@@ -126,7 +113,7 @@ export function RevenueBreakdown({
               )}
             </Bar>
             {data.has_boarding && (
-              <Bar dataKey="boarding" stackId="fees" fill={sectionColours.boarding} maxBarSize={64}
+              <Bar dataKey="boarding" stackId="fees" fill={sectionColours.boarding} maxBarSize={56}
                 isAnimationActive={false} radius={[5, 5, 0, 0]}>
                 <LabelList dataKey="total" position="top" formatter={(v) => formatUgx(Number(v))}
                   className="revenue-panel__bar-label" />
@@ -237,8 +224,8 @@ export function PayingVsEnrolled({
                 <td>{label(row)}</td>
                 <td>{row.enrolled.toLocaleString("en-US")}</td>
                 <td>{row.paid.toLocaleString("en-US")}</td>
-                <td className={paidTone(row.paid_rate)}>{row.not_paid.toLocaleString("en-US")}</td>
-                <td className={paidTone(row.paid_rate)}>
+                <td>{row.not_paid.toLocaleString("en-US")}</td>
+                <td>
                   {row.paid_rate === null ? "–" : `${row.paid_rate}%`}
                   <span className="revenue-panel__minibar">
                     <i style={{ width: `${row.paid_rate ?? 0}%` }} />

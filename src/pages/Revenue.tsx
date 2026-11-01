@@ -4,11 +4,9 @@ import { shortSchoolName } from "../lib/finance.format";
 import {
   getSchoolFees,
   getSchools,
-  getStartedTerms,
   type SchoolFeeRow,
   type SchoolFeesDashboard,
   type SchoolOption,
-  type TermOption,
 } from "./schoolFees/schoolFees.api";
 import {
   DayVsBoarding,
@@ -19,22 +17,26 @@ import {
 
 import "./Revenue.css";
 
+const iso = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
 /**
- * Revenue: school fees per school, or per class when one school is chosen.
+ * Revenue: school fees per school, or per class when one school is chosen, for the terms
+ * that start between From and To (1 January to today unless changed).
  * Day-only schools (the nurseries and GIS) show no boarding figures at all.
  */
 export function Revenue() {
+  const today = iso(new Date());
   const [schools, setSchools] = useState<SchoolOption[]>([]);
-  const [terms, setTerms] = useState<TermOption[]>([]);
   const [school, setSchool] = useState("");
-  const [term, setTerm] = useState("");
+  const [start, setStart] = useState(`${today.slice(0, 4)}-01-01`);
+  const [end, setEnd] = useState(today);
   const [data, setData] = useState<SchoolFeesDashboard | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     getSchools().then(setSchools).catch(() => setSchools([]));
-    getStartedTerms().then(setTerms).catch(() => setTerms([]));
   }, []);
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export function Revenue() {
     setLoading(true);
     setError(false);
 
-    getSchoolFees({ school: Number(school) || undefined, term: Number(term) || undefined })
+    getSchoolFees({ school: Number(school) || undefined, start, end })
       .then((result) => live && setData(result))
       .catch(() => live && setError(true))
       .finally(() => live && setLoading(false));
@@ -50,7 +52,7 @@ export function Revenue() {
     return () => {
       live = false;
     };
-  }, [school, term]);
+  }, [school, start, end]);
 
   const campusOf = useMemo(
     () => Object.fromEntries(schools.map((option) => [option.id, option.campus])),
@@ -87,15 +89,14 @@ export function Revenue() {
             </select>
           </label>
           <label>
-            <span>Term</span>
-            <select aria-label="Term" value={term} onChange={(e) => setTerm(e.target.value)}>
-              <option value="">Current term</option>
-              {terms.map((option) => (
-                <option key={option.id} value={option.id}>
-                  Term {option.number} · {option.academic_year}
-                </option>
-              ))}
-            </select>
+            <span>From</span>
+            <input type="date" aria-label="From" value={start} max={end}
+              onChange={(e) => e.target.value && setStart(e.target.value)} />
+          </label>
+          <label>
+            <span>To</span>
+            <input type="date" aria-label="To" value={end} min={start} max={today}
+              onChange={(e) => e.target.value && setEnd(e.target.value)} />
           </label>
         </section>
       </header>
@@ -105,15 +106,12 @@ export function Revenue() {
         <p className="revenue-page__state">The finance server could not be reached.</p>
       )}
       {!loading && !error && empty && (
-        <p className="revenue-page__state">No learners are enrolled for this selection.</p>
+        <p className="revenue-page__state">No term starts in these dates for this selection.</p>
       )}
 
       {!loading && !error && shown && !empty && (
         <>
-          <FeeSummary
-            data={shown}
-            schoolLabel={shown.school ? rowLabel({ ...shown.summary, ...shown.school }) : undefined}
-          />
+          <FeeSummary data={shown} />
           <div className={`revenue-page__row${shown.has_boarding ? "" : " revenue-page__row--single"}`}>
             <RevenueBreakdown data={shown} label={rowLabel} />
             {shown.has_boarding && <DayVsBoarding data={shown} />}

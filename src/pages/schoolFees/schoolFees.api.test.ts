@@ -19,6 +19,11 @@ describe("schoolFees api", () => {
     expect(get).toHaveBeenLastCalledWith("/finance/school-fees/dashboard/", {
       params: { school: 4, term: 6 },
     });
+
+    await getSchoolFees({ start: "2026-01-01", end: "2026-11-01" });
+    expect(get).toHaveBeenLastCalledWith("/finance/school-fees/dashboard/", {
+      params: { start: "2026-01-01", end: "2026-11-01" },
+    });
   });
 
   it("orders schools by campus, then nursery to secondary", async () => {

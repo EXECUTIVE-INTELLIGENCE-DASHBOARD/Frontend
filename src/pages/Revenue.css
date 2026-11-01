@@ -1,10 +1,14 @@
 /* ========================================
    REVENUE PAGE — school fees
-   Card border, radius and shadow come from ui-standard.css
-   (.revenue-panel and .revenue-summary__card).
+   Card border and shadow come from ui-standard.css (.revenue-panel and
+   .revenue-summary__card). Like the finance Dashboard: square corners, small headline
+   tiles, and the logo colours only.
 ======================================== */
 
 .revenue-page {
+  /* Square corners and compact headline tiles, on this screen only (ui-standard.css reads these). */
+  --ui-card-radius: 0;
+  --ui-metric-min-h: 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -42,19 +46,27 @@
   font-weight: 600;
 }
 
-.revenue-page__filters select {
+.revenue-page__filters select,
+.revenue-page__filters input {
   min-height: 36px;
-  padding: 7px 10px;
+  padding: 6px 10px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
   background: var(--color-surface);
   color: var(--color-heading);
   font: inherit;
   font-size: 13px;
+}
+
+.revenue-page__filters select {
   cursor: pointer;
 }
 
-.revenue-page__filters select:focus {
+.revenue-page__filters label:not(:first-child) {
+  min-width: 0;
+}
+
+.revenue-page__filters select:focus,
+.revenue-page__filters input:focus {
   outline: 2px solid var(--brand-sky);
   outline-offset: 2px;
 }
@@ -63,34 +75,32 @@
   margin: 0;
   padding: 16px;
   border: 1px dashed var(--color-border-strong);
-  border-radius: 14px;
   color: var(--color-text-muted);
   font-size: 13px;
 }
 
-/* Summary tiles */
+/* Summary tiles: as wide as their contents, spread across the row (as on the Dashboard) */
 .revenue-summary {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.revenue-summary--two {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.revenue-summary__card {
+:root .revenue-page .revenue-summary__card {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  padding: 10px 18px 10px 12px;
 }
 
 .revenue-summary__icon {
   display: grid;
-  flex: 0 0 var(--ui-chip-size, 40px);
-  height: var(--ui-chip-size, 40px);
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
   place-items: center;
-  border-radius: var(--ui-chip-radius, 12px);
+  border-radius: 10px;
   background: var(--ui-chip-bg, var(--brand-sky));
   color: var(--ui-chip-fg, #fff);
 }
@@ -100,23 +110,16 @@
 }
 
 .revenue-summary__label {
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-weight: 500;
 }
 
 .revenue-summary__value {
   color: var(--color-heading);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.2;
-}
-
-.revenue-summary__note {
-  color: var(--color-text-muted);
-  font-size: 12px;
 }
 
 /* Cards */
@@ -152,7 +155,7 @@
 }
 
 .revenue-panel__chart {
-  height: 260px;
+  height: 320px;
 }
 
 .revenue-panel__bar-label {
@@ -244,21 +247,6 @@
   font-weight: 700;
 }
 
-.revenue-panel__table .is-red {
-  color: var(--color-danger);
-  font-weight: 700;
-}
-
-.revenue-panel__table .is-amber {
-  color: var(--color-warning);
-  font-weight: 700;
-}
-
-.revenue-panel__table .is-green {
-  color: var(--color-positive);
-  font-weight: 600;
-}
-
 .revenue-panel__minibar {
   display: inline-block;
   width: 60px;
@@ -274,23 +262,18 @@
   display: block;
   height: 7px;
   border-radius: 4px;
-  background: currentColor;
+  background: var(--brand-navy);
 }
 
 @media (max-width: 900px) {
-  .revenue-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .revenue-page__row {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (max-width: 480px) {
-  .revenue-summary,
-  .revenue-summary--two {
-    grid-template-columns: minmax(0, 1fr);
+  :root .revenue-page .revenue-summary__card {
+    flex: 1 1 100%;
   }
 
   .revenue-page__filters label {

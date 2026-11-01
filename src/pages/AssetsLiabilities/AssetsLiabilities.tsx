@@ -381,11 +381,11 @@ export function AssetsLiabilities({ onSelectPage }: AssetsLiabilitiesProps) {
           </select>
         </label>
         <label>
-          <span>Compare from</span>
+          <span>From</span>
           <input type="date" value={start} max={end} onChange={(e) => e.target.value && setStart(e.target.value)} />
         </label>
         <label>
-          <span>As at</span>
+          <span>To</span>
           <input type="date" value={end} min={start} max={today} onChange={(e) => e.target.value && setEnd(e.target.value)} />
         </label>
       </div>

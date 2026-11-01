@@ -1,8 +1,9 @@
 import api from "../../api/axios";
 
 /**
- * `GET /finance/school-fees/dashboard/` — school fees for one term: revenue per school
- * (or per class for one school), day vs boarding, and learners paid vs enrolled.
+ * `GET /finance/school-fees/dashboard/` — school fees for one term, or for the terms that
+ * start in a date range: revenue per school (or per class for one school), day vs
+ * boarding, and learners paid vs enrolled.
  */
 
 export interface SchoolFeeFigures {
@@ -34,6 +35,8 @@ export interface SchoolFeeSection {
 
 export interface SchoolFeesDashboard {
   term: { id: number; label: string } | null;
+  /** the date range shown, when one was asked for */
+  period?: { start: string; end: string } | null;
   school: { id: number; name: string; has_boarding: boolean } | null;
   has_boarding: boolean;
   summary: SchoolFeeFigures;
@@ -45,12 +48,18 @@ export interface SchoolFeesDashboard {
 export interface SchoolFeesFilters {
   school?: number;
   term?: number;
+  /** YYYY-MM-DD: the terms that start from this date */
+  start?: string;
+  /** YYYY-MM-DD: the terms that start by this date; paid as at this date */
+  end?: string;
 }
 
 export async function getSchoolFees(filters: SchoolFeesFilters = {}): Promise<SchoolFeesDashboard> {
   const params = {
     ...(filters.school ? { school: filters.school } : {}),
     ...(filters.term ? { term: filters.term } : {}),
+    ...(filters.start ? { start: filters.start } : {}),
+    ...(filters.end ? { end: filters.end } : {}),
   };
   const { data } = await api.get<SchoolFeesDashboard>("/finance/school-fees/dashboard/", {
     params,

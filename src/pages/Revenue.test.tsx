@@ -5,14 +5,12 @@ import { Revenue } from "./Revenue";
 import {
   getSchoolFees,
   getSchools,
-  getStartedTerms,
   type SchoolFeesDashboard,
 } from "./schoolFees/schoolFees.api";
 
 vi.mock("./schoolFees/schoolFees.api", () => ({
   getSchoolFees: vi.fn(),
   getSchools: vi.fn(),
-  getStartedTerms: vi.fn(),
 }));
 
 const row = (id: number | null, name: string, day: number, boarding: number | null,
@@ -23,7 +21,8 @@ const row = (id: number | null, name: string, day: number, boarding: number | nu
 });
 
 const allSchools: SchoolFeesDashboard = {
-  term: { id: 6, label: "Term 3, 2026" },
+  term: null,
+  period: { start: "2026-01-01", end: "2026-11-01" },
   school: null,
   has_boarding: true,
   summary: row(null, "", 280_000_000, 70_000_000, 1000, 900),
@@ -54,9 +53,6 @@ describe("Revenue", () => {
       { id: 1, name: "GreenHill Academy Primary Kibuli", campus: "kibuli", level: "primary" },
       { id: 2, name: "Greenhill International School", campus: "gis", level: "primary" },
     ]);
-    vi.mocked(getStartedTerms).mockResolvedValue([
-      { id: 6, academic_year: "2026", number: 3, start_date: "2026-09-01" },
-    ]);
     vi.mocked(getSchoolFees).mockReset();
   });
 
@@ -69,9 +65,28 @@ describe("Revenue", () => {
     for (const label of ["School fee revenue", "Day", "Boarding", "Students paid"]) {
       expect(screen.getAllByText(label).length).toBeGreaterThan(0);
     }
+    // Headline tiles carry no explanation lines.
+    const summary = screen.getByRole("region", { name: "School fees summary" });
+    expect(within(summary).queryByText(/this term|of fees|enrolled/)).not.toBeInTheDocument();
+    // One text colour across the table: no red, amber or green.
     const payments = screen.getByRole("article", { name: "Students paying vs students enrolled" });
     expect(within(payments).getByText("Kibuli Primary")).toBeInTheDocument();
-    expect(within(payments).getByText("84%").closest("td")).toHaveClass("is-red");
+    expect(within(payments).getByText("84%").closest("td")?.className).toBe("");
+  });
+
+  it("asks for 1 January to today, then follows the School, From and To filters", async () => {
+    vi.mocked(getSchoolFees).mockResolvedValue(allSchools);
+    render(<Revenue />);
+    await screen.findByRole("article", { name: "Revenue per school" });
+
+    const year = new Date().getFullYear();
+    expect(getSchoolFees).toHaveBeenCalledWith(expect.objectContaining({ start: `${year}-01-01` }));
+    fireEvent.change(screen.getByLabelText("From"), { target: { value: "2026-05-01" } });
+    fireEvent.change(screen.getByLabelText("To"), { target: { value: "2026-08-31" } });
+    await screen.findByRole("article", { name: "Revenue per school" });
+
+    expect(getSchoolFees).toHaveBeenLastCalledWith({ school: undefined, start: "2026-05-01", end: "2026-08-31" });
+    expect(screen.queryByLabelText("Term")).not.toBeInTheDocument();
   });
 
   it("shows one day-only school by class, with no boarding figures", async () => {
@@ -82,11 +97,10 @@ describe("Revenue", () => {
     fireEvent.change(await screen.findByLabelText("School"), { target: { value: "2" } });
 
     expect(await screen.findByRole("article", { name: "Revenue per class" })).toBeInTheDocument();
-    expect(getSchoolFees).toHaveBeenLastCalledWith({ school: 2, term: undefined });
+    expect(getSchoolFees).toHaveBeenLastCalledWith(expect.objectContaining({ school: 2 }));
     expect(screen.queryByRole("article", { name: "Day vs boarding" })).not.toBeInTheDocument();
     expect(screen.queryByText("Boarding")).not.toBeInTheDocument();
     expect(screen.queryByText("Day")).not.toBeInTheDocument();
-    expect(screen.getByText("this term, GIS")).toBeInTheDocument();
     expect(screen.getByText("Class")).toBeInTheDocument();
   });
 
