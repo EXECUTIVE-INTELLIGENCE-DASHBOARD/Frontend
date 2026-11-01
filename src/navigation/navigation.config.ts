@@ -83,36 +83,28 @@ export const navigationItems: NavigationItem[] = [
     label: "Finance & Procurement",
     icon: WalletCards,
     children: [
+      // The four the executives use most come first. Cost Centre Analysis and Financial
+      // Forecasts are off the menu; their pages and routes stay, so they can come back.
       {
         id: "finance-overview",
         label: "Dashboard",
       },
-
-      {
-        id: "cost-centre-analysis",
-        label: "Cost Centre Analysis",
-      },
-      {
-        id: "financial-forecasts",
-        label: "Financial Forecasts",
-      },
-
       {
         id: "assets-liabilities",
         label: "Assets & Liabilities",
       },
       {
-        id: "liabilities-management",
-        label: "Liabilities Management",
-      },
-      {
         id: "revenue-fee-collection",
         label: "Revenue",
       },
-
       {
         id: "expense-management",
         label: "Expense Management",
+      },
+
+      {
+        id: "liabilities-management",
+        label: "Liabilities Management",
       },
       {
         id: "budget-management",
