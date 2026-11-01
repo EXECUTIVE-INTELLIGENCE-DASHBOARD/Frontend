@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Award, ClipboardList, UsersRound } from "lucide-react";
+import { Award, ClipboardList, GraduationCap } from "lucide-react";
 
 import type { AcademicFilterValues } from "../filters/academicFilters.types";
 import {
@@ -105,7 +105,7 @@ export function AcademicSummary({ filters }: AcademicSummaryProps) {
     {
       id: "performance",
       title: "Student Performance",
-      icon: UsersRound,
+      icon: GraduationCap,
       value: formatPercentage(summary?.student_performance),
       detail: summary
         ? `${formatNumber(summary.students_passing)} of ${formatNumber(summary.students_assessed)} students passing`

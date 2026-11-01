@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AlertTriangle, Check, Users } from "lucide-react";
+import { AlertTriangle, RefreshCcw, UserCheck } from "lucide-react";
 
 import { AcademicFilters } from "../../components/filters/AcademicFilters";
 import type { AcademicFilterValues } from "../../components/filters/academicFilters.types";
@@ -192,14 +192,14 @@ export function StudentRetention() {
             <RetentionMetricCard
               label="Total Re-enrolled Students"
               value={formatMetric(summary.reEnrolled)}
-              icon={Users}
+              icon={UserCheck}
               tone="navy"
             />
 
             <RetentionMetricCard
               label="Re-enrollment Rate"
               value={formatRate(summary.rate)}
-              icon={Check}
+              icon={RefreshCcw}
               tone="sky"
             />
 

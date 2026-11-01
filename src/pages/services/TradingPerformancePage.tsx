@@ -1,3 +1,4 @@
+import { Receipt, ShoppingBag, TrendingUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { apiClient } from "../../lib/api";
 import "./TradingPerformancePage.css";
@@ -387,7 +388,7 @@ export default function TradingPerformancePage() {
         <article className="tp-kpi">
           <div className="tp-kpi-heading">
             <span className="tp-kpi-icon" aria-hidden="true">
-              ▣
+              <ShoppingBag size={18} />
             </span>
             <span>Total Sales</span>
           </div>
@@ -404,7 +405,7 @@ export default function TradingPerformancePage() {
         <article className="tp-kpi">
           <div className="tp-kpi-heading">
             <span className="tp-kpi-icon" aria-hidden="true">
-              ▦
+              <TrendingUp size={18} />
             </span>
             <span>Gross Profit</span>
           </div>
@@ -419,7 +420,7 @@ export default function TradingPerformancePage() {
         <article className="tp-kpi">
           <div className="tp-kpi-heading">
             <span className="tp-kpi-icon" aria-hidden="true">
-              ◷
+              <Receipt size={18} />
             </span>
             <span>Transactions</span>
           </div>

@@ -7,8 +7,9 @@ import "./AssetsEquipment.css";
 const fmt = (n: number) => n.toLocaleString("en-US");
 
 const icons = {
-  monitor: <><rect x="3" y="4" width="14" height="11" rx="2" /><path d="M7 19h6M10 15v4M17 9h4v10h-4z" /></>,
-  shield: <><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" /><path d="M8.5 12l2.5 2.5 4.5-5" /></>,
+  // a package (the register) and a ticked circle (in working order)
+  monitor: <><path d="M21 8 12 3 3 8v8l9 5 9-5z" /><path d="M3 8l9 5 9-5M12 13v8" /></>,
+  shield: <><circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.5 2.5 5-5.5" /></>,
   alert: <><path d="M12 3l10 18H2z" /><path d="M12 10v5M12 18v.01" /></>,
 };
 

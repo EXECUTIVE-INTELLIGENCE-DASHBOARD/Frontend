@@ -1,3 +1,4 @@
+import { CalendarCheck, TriangleAlert, UserCheck, UserX, type LucideIcon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ClassBarChart, ResultsChart, WeeklyChart } from "./AttendanceCharts";
 import {
@@ -38,10 +39,10 @@ function Status({ row }: { row: AttendanceRow }) {
   return <span className={low ? "at-chip" : "at-chip at-chip--ok"}>{low ? "Below target" : "On target"}</span>;
 }
 
-function Kpi({ icon, label, value, detail }: { icon: string; label: string; value: string; detail: string }) {
+function Kpi({ icon: Icon, label, value, detail }: { icon: LucideIcon; label: string; value: string; detail: string }) {
   return (
     <div className="at-kpi">
-      <span className="at-kpi__icon" aria-hidden="true">{icon}</span>
+      <span className="at-kpi__icon" aria-hidden="true"><Icon size={18} /></span>
       <p className="at-kpi__label">{label}</p>
       <p className="at-kpi__value">{value}</p>
       <p className="at-kpi__detail">{detail}</p>
@@ -107,10 +108,10 @@ export default function AttendanceAnalysis() {
       {!loading && !error && allRows.length > 0 && (
         <>
           <div className="at-kpis">
-            <Kpi icon="%" label="Attendance Rate" value={`${f1(totals.rate)}%`} detail={`Across ${fn(totals.learners)} learners`} />
-            <Kpi icon="✔" label="Learner-Days Present" value={fn(totals.present)} detail={`Over ${rows[0]?.days ?? 0} school days`} />
-            <Kpi icon="✕" label="Learner-Days Absent" value={fn(totals.absent)} detail={`${f1(100 - totals.rate)}% of learner-days`} />
-            <Kpi icon="!" label="Below Target" value={`${totals.below} of ${rows.length}`} detail="Classes and streams" />
+            <Kpi icon={CalendarCheck} label="Attendance Rate" value={`${f1(totals.rate)}%`} detail={`Across ${fn(totals.learners)} learners`} />
+            <Kpi icon={UserCheck} label="Learner-Days Present" value={fn(totals.present)} detail={`Over ${rows[0]?.days ?? 0} school days`} />
+            <Kpi icon={UserX} label="Learner-Days Absent" value={fn(totals.absent)} detail={`${f1(100 - totals.rate)}% of learner-days`} />
+            <Kpi icon={TriangleAlert} label="Below Target" value={`${totals.below} of ${rows.length}`} detail="Classes and streams" />
           </div>
 
           <div className="at-grid">

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   CalendarDays,
-  Globe,
+  UserCheck,
   ListChecks,
   UsersRound,
 } from "lucide-react";
@@ -131,7 +131,7 @@ export function CoCurricularActivities() {
                   ? "N/A"
                   : `${dashboard.summary.participation_rate.toFixed(1)}%`
               }
-              icon={Globe}
+              icon={UserCheck}
               tone="warning"
             />
           </section>

@@ -334,3 +334,90 @@
   line-height: 1.15;
   letter-spacing: -0.02em;
 }
+
+/* ------------------------------------------------------------------
+   9. ICON CARDS OFF THE FINANCE SCREENS — one size, square corners
+   Overview, Academics, Operations and Services: every row of icon cards
+   has equal-width cards with the same gap, and every card the same
+   padding, height, square corners and sky-blue icon chip. What the cards
+   say is untouched; the finance screens size their own cards.
+------------------------------------------------------------------ */
+
+:root {
+  --ui-icon-card-gap: 16px;
+  --ui-icon-card-min-w: 220px;
+  /* the tallest card's content (a figure and two lines), so every card matches it */
+  --ui-icon-card-min-h: 108px;
+  --ui-icon-card-pad: 14px 16px;
+  --ui-icon-chip: 36px;
+}
+
+:root body :is(
+  .overview-cards, .ae-kpis, .sr-metrics, .cc-metrics, .acad-summary, .fm-kpis,
+  .at-kpis, .hw-metrics, .ae-cards, .svc-kpis, .tp-kpis
+) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--ui-icon-card-min-w), 1fr));
+  gap: var(--ui-icon-card-gap);
+}
+
+:root body :is(
+  .overview-cards .overview-metric-card, .ae-kpis .ae-kpi, .sr-metrics .sr-metric,
+  .cc-metrics .acad-metric, .acad-summary .acad-metric, .fm-kpis .acad-metric,
+  .at-kpis .at-kpi, .hw-metrics .hw-metric, .ae-cards .ae-card, .svc-kpis .svc-kpi,
+  .tp-kpis .tp-kpi
+) {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: var(--ui-icon-card-min-h);
+  padding: var(--ui-icon-card-pad);
+  border-radius: 0;
+}
+
+:root body :is(
+  .overview-cards .overview-metric-card__icon, .ae-kpis .ae-kpi__icon,
+  .sr-metrics .sr-metric__icon, .cc-metrics .acad-metric__icon,
+  .acad-summary .acad-metric__icon, .fm-kpis .acad-metric__icon, .at-kpis .at-kpi__icon,
+  .hw-metrics .hw-metric__icon, .ae-cards .ae-ic, .svc-kpis .svc-kic, .tp-kpis .tp-kpi-icon
+) {
+  display: grid;
+  flex: 0 0 var(--ui-icon-chip);
+  width: var(--ui-icon-chip);
+  height: var(--ui-icon-chip);
+  place-items: center;
+  border-radius: 10px;
+  background: var(--brand-sky);
+  color: #ffffff;
+}
+
+:root body :is(
+  .overview-cards .overview-metric-card__icon, .ae-kpis .ae-kpi__icon,
+  .sr-metrics .sr-metric__icon, .cc-metrics .acad-metric__icon,
+  .acad-summary .acad-metric__icon, .fm-kpis .acad-metric__icon, .at-kpis .at-kpi__icon,
+  .hw-metrics .hw-metric__icon, .ae-cards .ae-ic, .svc-kpis .svc-kic, .tp-kpis .tp-kpi-icon
+) svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+}
+
+/* Admissions and Attendance stack the icon above the text; put it on the left like the
+   others, the text beside it unchanged. */
+:root body :is(.ae-kpis .ae-kpi, .at-kpis .at-kpi) {
+  display: grid;
+  grid-template-columns: var(--ui-icon-chip) minmax(0, 1fr);
+  column-gap: 12px;
+  row-gap: 2px;
+  align-content: center;
+  align-items: center;
+}
+
+:root body :is(.ae-kpis .ae-kpi__icon, .at-kpis .at-kpi__icon) {
+  grid-row: 1 / span 3;
+  grid-column: 1;
+}
+
+:root body .at-kpis .at-kpi > :not(.at-kpi__icon) {
+  grid-column: 2;
+  margin: 0;
+}
