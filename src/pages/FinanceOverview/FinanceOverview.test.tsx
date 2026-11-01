@@ -32,6 +32,13 @@ const dashboard: FinanceDashboard = {
     { month: "2026-09", label: "Sep 2026", total: 60_000_000, departments: [{ name: "Academics", amount: 60_000_000 }] },
     { month: "2026-10", label: "Oct 2026", total: 75_000_000, departments: [{ name: "Academics", amount: 75_000_000 }] },
   ],
+  procurement_by_month: [
+    { month: "2026-09", label: "Sep 2026", purchased: 40_000_000, not_yet_paid: 0,
+      schools: [{ id: 1, purchased: 15_000_000, not_yet_paid: 0 }, { id: 2, purchased: 25_000_000, not_yet_paid: 0 }] },
+    { month: "2026-10", label: "Oct 2026", purchased: 60_000_000, not_yet_paid: 12_000_000,
+      schools: [{ id: 1, purchased: 20_000_000, not_yet_paid: 2_000_000 },
+        { id: 2, purchased: 40_000_000, not_yet_paid: 10_000_000 }] },
+  ],
 };
 
 const cards = ["Revenue", "Liabilities Management", "Budget Management", "Expense Management",
@@ -70,6 +77,15 @@ describe("FinanceOverview", () => {
 
     const card = await screen.findByRole("article", { name: "Expense Management" });
     expect(within(card).getByText("135M")).toBeInTheDocument();
+  });
+
+  it("totals purchases month by month", async () => {
+    load.mockResolvedValue({ data: dashboard, source: "api" });
+    render(<FinanceOverview />);
+
+    const card = await screen.findByRole("article", { name: "Procurement Financials" });
+    expect(within(card).getByText("100M")).toBeInTheDocument();
+    expect(within(card).getByText("purchased · 12.0M not yet paid")).toBeInTheDocument();
   });
 
   it("asks for a longer range when there is under two months of spending", async () => {

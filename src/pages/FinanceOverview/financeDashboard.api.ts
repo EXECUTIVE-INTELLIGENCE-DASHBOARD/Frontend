@@ -31,6 +31,15 @@ export interface DashboardMonth {
   departments: { name: string; amount: number }[];
 }
 
+export interface DashboardPurchaseMonth {
+  month: string;
+  label: string;
+  purchased: number;
+  not_yet_paid: number;
+  /** every school, 0 where it bought nothing; `id` matches `schools` */
+  schools: { id: number; purchased: number; not_yet_paid: number }[];
+}
+
 export interface FinanceDashboard {
   period: { start: string; end: string };
   schools: DashboardSchool[];
@@ -39,6 +48,8 @@ export interface FinanceDashboard {
   totals: DashboardFigures;
   /** all spending per month, school or shared (newer backends) */
   expenses_by_month?: DashboardMonth[];
+  /** school purchases per month, January to the end date (newer backends) */
+  procurement_by_month?: DashboardPurchaseMonth[];
 }
 
 /**

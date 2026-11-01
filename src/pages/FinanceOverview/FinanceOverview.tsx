@@ -16,6 +16,7 @@ import {
 import { chartColour, chartGold, formatUgx, shortSchoolName } from "../../lib/finance.format";
 import {
   getFinanceDashboard,
+  type DashboardPurchaseMonth,
   type DashboardSchool,
   type DashboardSource,
   type FinanceDashboard,
@@ -188,26 +189,47 @@ function ExpenseCard({ data }: { data: FinanceDashboard }) {
   );
 }
 
-function ProcurementCard({ rows }: { rows: Row[] }) {
-  const spend = sum(rows, (r) => r.procurement.spend), unpaid = sum(rows, (r) => r.procurement.not_yet_paid);
+type PurchaseKey = "purchased" | "not_yet_paid";
+
+/** Purchasing is not tied to the terms, so this card runs month by month from January. */
+function ProcurementCard({ data, rows }: { data: FinanceDashboard; rows: Row[] }) {
+  const months = data.procurement_by_month ?? [];
+  const spend = sum(months, (m) => m.purchased), unpaid = sum(months, (m) => m.not_yet_paid);
+  const labels = new Map(rows.map((r) => [r.id, r.label]));
+
+  // Hovering one bar lists every school's figure for that bar only.
+  function SchoolsHover({ active, payload }: { active?: boolean;
+    payload?: ReadonlyArray<{ dataKey?: unknown; payload?: DashboardPurchaseMonth }> }) {
+    const bar = payload?.[0], month = bar?.payload;
+    if (!active || !month) return null;
+    const key: PurchaseKey = bar.dataKey === "not_yet_paid" ? "not_yet_paid" : "purchased";
+    return (
+      <div className="finance-overview__tip">
+        <strong>{month.label} · {key === "purchased" ? "Purchased" : "Not yet paid"} {formatUgx(month[key])}</strong>
+        {month.schools.map((s) => (
+          <span key={s.id} className="finance-overview__tip-row">
+            <span>{labels.get(s.id) ?? s.id}</span>
+            <span>{formatUgx(s[key])}</span>
+          </span>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <Panel title="Procurement Financials" total={formatUgx(spend)} note={`purchased · ${formatUgx(unpaid)} not yet paid`}
       keys={["Purchased", "Not yet paid"]}>
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={rows} margin={{ top: 20, right: 4, left: 0, bottom: 0 }} barGap={3}>
+        <BarChart data={months} margin={{ top: 8, right: 4, left: 0, bottom: 0 }} barGap={2}>
           {grid}
-          <XAxis dataKey="label" tickLine={false} axisLine={false} interval={0} height={36} tick={<TwoLineTick />} />
+          <XAxis dataKey="label" tickLine={false} axisLine={false} tick={axisTick}
+            tickFormatter={(label: string) => label.split(" ")[0]} />
           <YAxis tickLine={false} axisLine={false} width={52} tickFormatter={formatUgx} tick={axisTick} />
-          <Bar dataKey={(r: Row) => r.procurement.spend} name="Purchased" fill={chartColour} radius={[5, 5, 0, 0]}
-            maxBarSize={26} isAnimationActive={false}>
-            <LabelList dataKey={(r: Row) => r.procurement.spend} position="top" formatter={valueLabel}
-              className="finance-overview__bar-label finance-overview__bar-label--small" />
-          </Bar>
-          <Bar dataKey={(r: Row) => r.procurement.not_yet_paid} name="Not yet paid" fill={chartGold} radius={[5, 5, 0, 0]}
-            maxBarSize={26} isAnimationActive={false}>
-            <LabelList dataKey={(r: Row) => r.procurement.not_yet_paid} position="top" formatter={valueLabel}
-              className="finance-overview__bar-label finance-overview__bar-label--small" />
-          </Bar>
+          <Tooltip shared={false} cursor={{ fill: "var(--color-surface-hover)" }} content={<SchoolsHover />} />
+          <Bar dataKey="purchased" name="Purchased" fill={chartColour} radius={[4, 4, 0, 0]} maxBarSize={18}
+            isAnimationActive={false} />
+          <Bar dataKey="not_yet_paid" name="Not yet paid" fill={chartGold} radius={[4, 4, 0, 0]} maxBarSize={18}
+            isAnimationActive={false} />
         </BarChart>
       </ResponsiveContainer>
     </Panel>
@@ -290,7 +312,7 @@ export function FinanceOverview() {
             <LiabilitiesCard rows={rows} />
             <BudgetCard rows={rows} />
             <ExpenseCard data={data} />
-            <ProcurementCard rows={rows} />
+            <ProcurementCard data={data} rows={rows} />
           </section>
         </>
       )}

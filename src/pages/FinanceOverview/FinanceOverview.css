@@ -187,7 +187,7 @@
   font-size: 9.5px;
 }
 
-/* Hover box (Revenue and Liabilities only) */
+/* Hover box (Revenue, Liabilities and Procurement) */
 .finance-overview__tip {
   display: flex;
   flex-direction: column;
@@ -203,6 +203,13 @@
 
 .finance-overview__tip strong {
   font-size: 12.5px;
+}
+
+/* A school and its figure on one line, figures lined up on the right. */
+.finance-overview__tip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 @media (max-width: 900px) {
