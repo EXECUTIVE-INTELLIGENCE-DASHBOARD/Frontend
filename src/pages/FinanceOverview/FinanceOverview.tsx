@@ -298,11 +298,11 @@ export function FinanceOverview() {
               ["Procurement", formatUgx(bought), ShoppingCart],
             ] as [string, string, LucideIcon][]).map(([label, value, Icon]) => (
               <article className="finance-overview__metric" key={label}>
-                <strong className="finance-overview__metric-value">{value}</strong>
-                <span className="finance-overview__metric-label">
-                  <Icon size={15} aria-hidden="true" />
-                  {label}
-                </span>
+                <span className="finance-overview__metric-icon" aria-hidden="true"><Icon size={17} /></span>
+                <div className="finance-overview__metric-body">
+                  <span className="finance-overview__metric-label">{label}</span>
+                  <strong className="finance-overview__metric-value">{value}</strong>
+                </div>
               </article>
             ))}
           </section>
