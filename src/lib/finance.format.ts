@@ -43,6 +43,9 @@ export function shortSchoolName(name: string, campus: string): string {
  */
 export const chartColour = "var(--chart-navy)";
 
+/** The second colour, brand gold, where a card compares two things (e.g. budget vs spent). */
+export const chartGold = "var(--brand-gold)";
+
 /** Section colours for the Revenue screen: day and boarding. */
 export const sectionColours = {
   day: "var(--chart-navy)",

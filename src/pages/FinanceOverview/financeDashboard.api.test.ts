@@ -16,7 +16,13 @@ describe("getFinanceDashboard", () => {
     get.mockResolvedValueOnce({ data });
 
     expect(await getFinanceDashboard()).toEqual({ data, source: "api" });
-    expect(get).toHaveBeenCalledWith("/finance/dashboard/");
+    expect(get).toHaveBeenCalledWith("/finance/dashboard/", { params: {} });
+  });
+
+  it("sends the chosen dates", async () => {
+    get.mockResolvedValueOnce({ data: empty });
+    await getFinanceDashboard({ start: "2026-03-01", end: "2026-04-30" });
+    expect(get).toHaveBeenCalledWith("/finance/dashboard/", { params: { start: "2026-03-01", end: "2026-04-30" } });
   });
 
   it("is empty when the server has no schools", async () => {

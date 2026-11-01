@@ -4,12 +4,15 @@ import {
   BarChart,
   CartesianGrid,
   LabelList,
+  Line,
+  LineChart,
   ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 
-import { chartColour, formatUgx, shortSchoolName } from "../../lib/finance.format";
+import { chartColour, chartGold, formatUgx, shortSchoolName } from "../../lib/finance.format";
 import {
   getFinanceDashboard,
   type DashboardSchool,
@@ -25,31 +28,53 @@ const notes: Record<DashboardSource, string | null> = {
   offline: "The finance server could not be reached.",
 };
 
-const formatDate = (iso: string) =>
-  new Date(`${iso}T00:00:00`).toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+const iso = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
-/** Budget used: red over 100%, amber from 85%, green below. */
-const usedTone = (percent: number | null) =>
-  percent === null ? "" : percent > 100 ? "is-red" : percent >= 85 ? "is-amber" : "is-green";
+const showDate = (value: string) =>
+  new Date(`${value}T00:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 
-type PanelProps = {
-  title: string;
-  total: string;
-  note: string;
-  wide?: boolean;
-  children: ReactNode;
-};
+const sum = <T,>(rows: T[], value: (row: T) => number) => rows.reduce((total, row) => total + value(row), 0);
 
-function Panel({ title, total, note, wide, children }: PanelProps) {
+/* ---------- chart pieces ---------- */
+
+/** An axis label on two lines ("Kibuli" over "Nursery") so school names don't overlap. */
+function TwoLineTick({ x, y, payload }: { x?: number; y?: number; payload?: { value: string } }) {
+  const [first, ...rest] = String(payload?.value ?? "").split(" ");
   return (
-    <article
-      className={`finance-overview__panel${wide ? " finance-overview__panel--wide" : ""}`}
-      aria-label={title}
-    >
+    <text x={x} y={y} textAnchor="middle" fill="var(--color-text-muted)" fontSize={11}>
+      <tspan x={x} dy={12}>{first}</tspan>
+      {rest.length > 0 && <tspan x={x} dy={13}>{rest.join(" ")}</tspan>}
+    </text>
+  );
+}
+
+type TipProps<Row> = { active?: boolean; payload?: ReadonlyArray<{ payload?: Row }> };
+
+/** A hover box (Revenue and Liabilities only): a bold title and a few lines. */
+function hoverBox<Row>(content: (row: Row) => { title: string; lines: ReactNode[] }) {
+  return function HoverBox({ active, payload }: TipProps<Row>) {
+    const row = payload?.[0]?.payload;
+    if (!active || !row) return null;
+    const { title, lines } = content(row);
+    return (
+      <div className="finance-overview__tip">
+        <strong>{title}</strong>
+        {lines.map((line, index) => <span key={index}>{line}</span>)}
+      </div>
+    );
+  };
+}
+
+const axisTick = { fill: "var(--color-text-muted)", fontSize: 11 };
+const grid = <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />;
+const valueLabel = (value: unknown) => formatUgx(Number(value));
+
+type PanelProps = { title: string; total: string; note: string; keys?: [string, string]; children: ReactNode };
+
+function Panel({ title, total, note, keys, children }: PanelProps) {
+  return (
+    <article className="finance-overview__panel" aria-label={title}>
       <div className="finance-overview__panel-heading">
         <h2>{title}</h2>
         <div className="finance-overview__total">
@@ -57,196 +82,155 @@ function Panel({ title, total, note, wide, children }: PanelProps) {
           <span>{note}</span>
         </div>
       </div>
-      {children}
+      {keys && (
+        <div className="finance-overview__key">
+          <span><i style={{ background: chartColour }} />{keys[0]}</span>
+          <span><i style={{ background: chartGold }} />{keys[1]}</span>
+        </div>
+      )}
+      <div className="finance-overview__chart">{children}</div>
     </article>
   );
 }
 
-function SchoolBars({
-  schools,
-  value,
-}: {
-  schools: DashboardSchool[];
-  value: (school: DashboardSchool) => number;
-}) {
-  const max = Math.max(...schools.map(value), 1);
+/* ---------- the five cards ---------- */
 
+type Row = DashboardSchool & { label: string };
+
+function RevenueCard({ rows }: { rows: Row[] }) {
   return (
-    <div className="finance-overview__bars">
-      {schools.map((school) => (
-        <div className="finance-overview__bar-row" key={school.id}>
-          <span>{shortSchoolName(school.name, school.campus)}</span>
-          <div className="finance-overview__bar-track">
-            <div
-              className="finance-overview__bar-fill"
-              style={{ width: `${(value(school) / max) * 100}%`, background: chartColour }}
-            />
-          </div>
-          <strong>{formatUgx(value(school))}</strong>
-        </div>
-      ))}
-    </div>
+    <Panel title="Revenue" total={formatUgx(sum(rows, (r) => r.revenue))} note="school fees, all schools">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={rows} margin={{ top: 20, right: 4, left: 0, bottom: 0 }}>
+          {grid}
+          <XAxis dataKey="label" tickLine={false} axisLine={false} interval={0} height={36} tick={<TwoLineTick />} />
+          <YAxis tickLine={false} axisLine={false} width={52} tickFormatter={formatUgx} tick={axisTick} />
+          <Tooltip cursor={{ fill: "var(--color-surface-hover)" }} content={hoverBox<Row>((r) => ({
+            title: r.label,
+            lines: [`Revenue ${formatUgx(r.revenue)}`,
+              r.collected_percent == null ? "Nothing billed yet" : `${r.collected_percent}% collected so far`],
+          }))} />
+          <Bar dataKey="revenue" fill={chartColour} radius={[5, 5, 0, 0]} maxBarSize={56} isAnimationActive={false}>
+            <LabelList dataKey="revenue" position="top" formatter={valueLabel} className="finance-overview__bar-label" />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </Panel>
   );
 }
 
-function RevenueCard({ data }: { data: FinanceDashboard }) {
-  const rows = data.schools.map((school) => ({
-    label: shortSchoolName(school.name, school.campus),
-    revenue: school.revenue,
-  }));
-
+function LiabilitiesCard({ rows }: { rows: Row[] }) {
+  const owed = (r: Row) => r.liabilities.owed;
   return (
-    <Panel title="Revenue" total={formatUgx(data.totals.revenue)} note="school fees, all schools" wide>
-      <div className="finance-overview__revenue-chart">
+    <Panel title="Liabilities Management" total={formatUgx(sum(rows, owed))} note="total owed, all schools">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 56, left: 0, bottom: 4 }}>
+          <XAxis type="number" hide />
+          <YAxis type="category" dataKey="label" tickLine={false} axisLine={false} width={118} tick={axisTick} />
+          <Tooltip cursor={{ fill: "var(--color-surface-hover)" }} content={hoverBox<Row>((r) => ({
+            title: r.label,
+            lines: [`Total owed ${formatUgx(r.liabilities.owed)}`, `Overdue ${formatUgx(r.liabilities.overdue)}`,
+              `Not yet due ${formatUgx(r.liabilities.owed - r.liabilities.overdue)}`],
+          }))} />
+          <Bar dataKey={owed} fill={chartColour} radius={[0, 5, 5, 0]} barSize={20} background={{ fill: "var(--color-track)", radius: 5 }}
+            isAnimationActive={false}>
+            <LabelList dataKey={owed} position="right" formatter={valueLabel} className="finance-overview__bar-label" />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </Panel>
+  );
+}
+
+function BudgetCard({ rows }: { rows: Row[] }) {
+  const budget = sum(rows, (r) => r.budget.budget), spent = sum(rows, (r) => r.budget.spent);
+  const used = budget ? Math.round((spent / budget) * 1000) / 10 : null;
+  return (
+    <Panel title="Budget Management" total={used === null ? "–" : `${used}%`} note={`of ${formatUgx(budget)} budget used`}
+      keys={["Budget", "Spent"]}>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={rows} margin={{ top: 8, right: 4, left: 0, bottom: 0 }} barGap={3}>
+          {grid}
+          <XAxis dataKey="label" tickLine={false} axisLine={false} interval={0} height={36} tick={<TwoLineTick />} />
+          <YAxis tickLine={false} axisLine={false} width={52} tickFormatter={formatUgx} tick={axisTick} />
+          <Bar dataKey={(r: Row) => r.budget.budget} name="Budget" fill={chartColour} radius={[5, 5, 0, 0]} maxBarSize={26}
+            isAnimationActive={false} />
+          <Bar dataKey={(r: Row) => r.budget.spent} name="Spent" fill={chartGold} radius={[5, 5, 0, 0]} maxBarSize={26}
+            isAnimationActive={false} />
+        </BarChart>
+      </ResponsiveContainer>
+    </Panel>
+  );
+}
+
+function ExpenseCard({ data }: { data: FinanceDashboard }) {
+  const months = data.expenses_by_month ?? [];
+  const total = sum(months, (m) => m.total);
+  return (
+    <Panel title="Expense Management" total={formatUgx(total)} note="all spending, including shared costs">
+      {months.length < 2 ? (
+        <p className="finance-overview__chart-note">
+          Choose dates that cover two months or more to see the monthly line.
+        </p>
+      ) : (
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={rows} margin={{ top: 22, right: 8, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
-            <XAxis
-              dataKey="label"
-              tickLine={false}
-              axisLine={false}
-              interval={0}
-              tick={{ fill: "var(--color-text-muted)", fontSize: 11 }}
-            />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              width={52}
-              tickFormatter={formatUgx}
-              tick={{ fill: "var(--color-text-muted)", fontSize: 11 }}
-            />
-            <Bar dataKey="revenue" fill={chartColour} radius={[5, 5, 0, 0]} maxBarSize={64}
-              isAnimationActive={false}>
-              <LabelList
-                dataKey="revenue"
-                position="top"
-                formatter={(value) => formatUgx(Number(value))}
-                className="finance-overview__bar-label"
-              />
-            </Bar>
-          </BarChart>
+          <LineChart data={months} margin={{ top: 24, right: 24, left: 0, bottom: 0 }}>
+            {grid}
+            <XAxis dataKey="label" tickLine={false} axisLine={false} tick={axisTick}
+              tickFormatter={(label: string) => label.split(" ")[0]} />
+            <YAxis tickLine={false} axisLine={false} width={52} tickFormatter={formatUgx} tick={axisTick} />
+            <Line type="monotone" dataKey="total" stroke={chartColour} strokeWidth={2.5} isAnimationActive={false}
+              dot={{ r: 4, fill: "var(--color-surface)", stroke: chartColour, strokeWidth: 2 }} activeDot={{ r: 6 }}>
+              <LabelList dataKey="total" position="top" formatter={valueLabel} className="finance-overview__bar-label" />
+            </Line>
+          </LineChart>
         </ResponsiveContainer>
-      </div>
+      )}
     </Panel>
   );
 }
 
-function LiabilitiesCard({ data }: { data: FinanceDashboard }) {
-  const rows = [
-    ...data.schools.map((school) => ({
-      key: String(school.id),
-      label: shortSchoolName(school.name, school.campus),
-      ...school.liabilities,
-    })),
-    { key: "group", label: "Group (GHL)", ...data.group.liabilities },
-  ];
-
+function ProcurementCard({ rows }: { rows: Row[] }) {
+  const spend = sum(rows, (r) => r.procurement.spend), unpaid = sum(rows, (r) => r.procurement.not_yet_paid);
   return (
-    <Panel
-      title="Liabilities Management"
-      total={formatUgx(data.totals.liabilities.owed)}
-      note="total owed, incl. group"
-    >
-      <div className="finance-overview__table-wrap">
-        <table className="finance-overview__table">
-          <thead>
-            <tr>
-              <th>School</th>
-              <th>Owed</th>
-              <th>Due in 30 days</th>
-              <th>Overdue</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.key}>
-                <td>{row.label}</td>
-                <td>{formatUgx(row.owed)}</td>
-                <td>{formatUgx(row.due_30_days)}</td>
-                <td className={row.overdue > 0 ? "is-red" : "is-green"}>
-                  {formatUgx(row.overdue)}
-                </td>
-              </tr>
-            ))}
-            <tr className="finance-overview__total-row">
-              <td>Total</td>
-              <td>{formatUgx(data.totals.liabilities.owed)}</td>
-              <td>{formatUgx(data.totals.liabilities.due_30_days)}</td>
-              <td>{formatUgx(data.totals.liabilities.overdue)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <Panel title="Procurement Financials" total={formatUgx(spend)} note={`purchased · ${formatUgx(unpaid)} not yet paid`}
+      keys={["Purchased", "Not yet paid"]}>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={rows} margin={{ top: 20, right: 4, left: 0, bottom: 0 }} barGap={3}>
+          {grid}
+          <XAxis dataKey="label" tickLine={false} axisLine={false} interval={0} height={36} tick={<TwoLineTick />} />
+          <YAxis tickLine={false} axisLine={false} width={52} tickFormatter={formatUgx} tick={axisTick} />
+          <Bar dataKey={(r: Row) => r.procurement.spend} name="Purchased" fill={chartColour} radius={[5, 5, 0, 0]}
+            maxBarSize={26} isAnimationActive={false}>
+            <LabelList dataKey={(r: Row) => r.procurement.spend} position="top" formatter={valueLabel}
+              className="finance-overview__bar-label finance-overview__bar-label--small" />
+          </Bar>
+          <Bar dataKey={(r: Row) => r.procurement.not_yet_paid} name="Not yet paid" fill={chartGold} radius={[5, 5, 0, 0]}
+            maxBarSize={26} isAnimationActive={false}>
+            <LabelList dataKey={(r: Row) => r.procurement.not_yet_paid} position="top" formatter={valueLabel}
+              className="finance-overview__bar-label finance-overview__bar-label--small" />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </Panel>
   );
 }
 
-function BudgetCard({ data }: { data: FinanceDashboard }) {
-  const { budget } = data.totals;
-  // group-wide budgets show as their own row so the rows add up to the total
-  const rows = [
-    ...data.schools.map((school) => ({
-      key: String(school.id),
-      label: shortSchoolName(school.name, school.campus),
-      ...school.budget,
-    })),
-    ...(data.group.budget.budget || data.group.budget.spent
-      ? [{ key: "group", label: "Group (GHL)", ...data.group.budget }]
-      : []),
-  ];
-
-  return (
-    <Panel
-      title="Budget Management"
-      total={budget.used_percent === null ? "–" : `${budget.used_percent}%`}
-      note="of this year's budget used"
-    >
-      <div className="finance-overview__table-wrap">
-        <table className="finance-overview__table">
-          <thead>
-            <tr>
-              <th>School</th>
-              <th>Budget</th>
-              <th>Spent</th>
-              <th>Used</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.key}>
-                <td>{row.label}</td>
-                <td>{formatUgx(row.budget)}</td>
-                <td>{formatUgx(row.spent)}</td>
-                <td className={usedTone(row.used_percent)}>
-                  {row.used_percent === null ? "–" : `${row.used_percent}%`}
-                  <span className="finance-overview__minibar">
-                    <i style={{ width: `${Math.min(row.used_percent ?? 0, 100)}%` }} />
-                  </span>
-                </td>
-              </tr>
-            ))}
-            <tr className="finance-overview__total-row">
-              <td>Total</td>
-              <td>{formatUgx(budget.budget)}</td>
-              <td>{formatUgx(budget.spent)}</td>
-              <td>{budget.used_percent === null ? "–" : `${budget.used_percent}%`}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </Panel>
-  );
-}
+/* ---------- the page ---------- */
 
 export function FinanceOverview() {
+  const today = iso(new Date());
+  const [start, setStart] = useState(`${today.slice(0, 4)}-01-01`);
+  const [end, setEnd] = useState(today);
   const [data, setData] = useState<FinanceDashboard | null>(null);
   const [source, setSource] = useState<DashboardSource>("api");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let live = true;
+    setLoading(true);
 
-    getFinanceDashboard().then((result) => {
+    getFinanceDashboard({ start, end }).then((result) => {
       if (!live) return;
       setData(result.data);
       setSource(result.source);
@@ -256,43 +240,59 @@ export function FinanceOverview() {
     return () => {
       live = false;
     };
-  }, []);
+  }, [start, end]);
 
   const note = notes[source];
+  // The six schools only: GHL is the parent company and has no activity of its own.
+  const rows: Row[] = (data?.schools ?? []).map((school) => ({
+    ...school,
+    label: shortSchoolName(school.name, school.campus),
+  }));
+  const owed = sum(rows, (r) => r.liabilities.owed), overdue = sum(rows, (r) => r.liabilities.overdue);
+  const budget = sum(rows, (r) => r.budget.budget), spent = sum(rows, (r) => r.budget.spent);
+  const bought = sum(rows, (r) => r.procurement.spend), unpaid = sum(rows, (r) => r.procurement.not_yet_paid);
 
   return (
     <div className="finance-overview">
-      <div className="finance-overview__scope">
-        <span className="finance-overview__period">
-          {data
-            ? `This financial year · ${formatDate(data.period.start)} – ${formatDate(data.period.end)}`
-            : "This financial year"}
-        </span>
+      <div className="finance-overview__scope" aria-label="Date range">
+        <label>
+          <span>From</span>
+          <input type="date" value={start} max={end} onChange={(e) => e.target.value && setStart(e.target.value)} />
+        </label>
+        <label>
+          <span>To</span>
+          <input type="date" value={end} min={start} onChange={(e) => e.target.value && setEnd(e.target.value)} />
+        </label>
       </div>
 
       {loading && <p className="finance-overview__state">Loading finance figures…</p>}
       {!loading && note && <p className="finance-overview__state">{note}</p>}
 
       {!loading && data && source === "api" && (
-        <section className="finance-overview__grid" aria-label="Finance by school">
-          <RevenueCard data={data} />
-          <LiabilitiesCard data={data} />
-          <BudgetCard data={data} />
-          <Panel
-            title="Expense Management"
-            total={formatUgx(data.totals.expenses)}
-            note="spent this year, all schools"
-          >
-            <SchoolBars schools={data.schools} value={(school) => school.expenses} />
-          </Panel>
-          <Panel
-            title="Procurement Financials"
-            total={formatUgx(data.totals.procurement.spend)}
-            note={`purchases this year · ${formatUgx(data.totals.procurement.not_yet_paid)} not yet paid`}
-          >
-            <SchoolBars schools={data.schools} value={(school) => school.procurement.spend} />
-          </Panel>
-        </section>
+        <>
+          <section className="finance-overview__metrics" aria-label="Headline figures">
+            {[
+              ["Revenue", formatUgx(sum(rows, (r) => r.revenue)), `school fees, ${showDate(start)} – ${showDate(end)}`],
+              ["Total owed", formatUgx(owed), `${formatUgx(overdue)} overdue, as of ${showDate(end)}`],
+              ["Budget used", budget ? `${Math.round((spent / budget) * 1000) / 10}%` : "–", `of ${formatUgx(budget)} budget`],
+              ["Procurement", formatUgx(bought), `${formatUgx(unpaid)} not yet paid`],
+            ].map(([label, value, detail]) => (
+              <article className="finance-overview__metric" key={label}>
+                <span className="finance-overview__metric-label">{label}</span>
+                <strong className="finance-overview__metric-value">{value}</strong>
+                <span className="finance-overview__metric-note">{detail}</span>
+              </article>
+            ))}
+          </section>
+
+          <section className="finance-overview__grid" aria-label="Finance by school">
+            <RevenueCard rows={rows} />
+            <LiabilitiesCard rows={rows} />
+            <BudgetCard rows={rows} />
+            <ExpenseCard data={data} />
+            <ProcurementCard rows={rows} />
+          </section>
+        </>
       )}
     </div>
   );

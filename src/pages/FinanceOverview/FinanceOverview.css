@@ -1,29 +1,49 @@
 /* ========================================
    FINANCE DASHBOARD
-   One card per finance feature, one figure per school.
-   Card border, radius and shadow come from ui-standard.css.
+   A date range, four headline figures and five cards, two per row, each about as tall as
+   the Incidents "Campus Overview" card. Card border, radius and shadow come from
+   ui-standard.css.
 ======================================== */
 
 .finance-overview {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   color: var(--color-heading);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
+/* Date range */
 .finance-overview__scope {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
+  gap: 10px;
 }
 
-.finance-overview__period {
-  padding: 6px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 20px;
-  background: var(--color-surface);
+.finance-overview__scope label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   color: var(--color-text-muted);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
+}
+
+.finance-overview__scope input {
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-heading);
+  font: inherit;
+  font-size: 13px;
+}
+
+.finance-overview__scope input:focus {
+  outline: 2px solid var(--brand-sky);
+  outline-offset: 2px;
 }
 
 .finance-overview__state {
@@ -35,22 +55,49 @@
   font-size: 13px;
 }
 
+/* Headline figures */
+.finance-overview__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.finance-overview__metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.finance-overview__metric-label {
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.finance-overview__metric-value {
+  color: var(--color-heading);
+}
+
+.finance-overview__metric-note {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+/* Cards */
 .finance-overview__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 16px;
 }
 
 .finance-overview__panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
   min-width: 0;
-  padding: 16px;
-}
-
-.finance-overview__panel--wide {
-  grid-column: 1 / -1;
+  height: 400px;
+  padding: 18px;
 }
 
 .finance-overview__panel-heading {
@@ -58,13 +105,14 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+  margin-bottom: 8px;
 }
 
 .finance-overview__panel-heading h2 {
   margin: 0;
   color: var(--color-heading);
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 17px;
+  font-weight: 600;
 }
 
 .finance-overview__total {
@@ -76,19 +124,46 @@
 
 .finance-overview__total strong {
   color: var(--color-heading);
-  font-size: 22px;
+  font-size: 19px;
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
 .finance-overview__total span {
   color: var(--color-text-muted);
-  font-size: 11px;
+  font-size: 11.5px;
 }
 
-/* Revenue bar chart */
-.finance-overview__revenue-chart {
-  height: 260px;
+.finance-overview__key {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 4px;
+  color: var(--color-text-muted);
+  font-size: 11.5px;
+}
+
+.finance-overview__key i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+  border-radius: 3px;
+  vertical-align: -1px;
+}
+
+.finance-overview__chart {
+  flex: 1;
+  min-height: 0;
+}
+
+.finance-overview__chart-note {
+  display: grid;
+  height: 100%;
+  margin: 0;
+  place-items: center;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  text-align: center;
 }
 
 .finance-overview__bar-label {
@@ -97,123 +172,49 @@
   font-weight: 700;
 }
 
-/* Small tables (liabilities, budget) */
-.finance-overview__table-wrap {
-  overflow-x: auto;
+/* two bars per school leave less room, so their figures are smaller */
+.finance-overview__bar-label--small {
+  font-size: 9.5px;
 }
 
-.finance-overview__table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
-.finance-overview__table th,
-.finance-overview__table td {
-  padding: 8px 6px;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text);
-  text-align: right;
-  white-space: nowrap;
-}
-
-.finance-overview__table th {
-  color: var(--color-text-muted);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.finance-overview__table th:first-child,
-.finance-overview__table td:first-child {
-  text-align: left;
-}
-
-.finance-overview__total-row td {
-  border-top: 2px solid var(--color-border-strong);
-  border-bottom: 0;
-  color: var(--color-heading);
-  font-weight: 700;
-}
-
-.finance-overview__table .is-red {
-  color: var(--color-danger);
-  font-weight: 700;
-}
-
-.finance-overview__table .is-amber {
-  color: var(--color-warning);
-  font-weight: 700;
-}
-
-.finance-overview__table .is-green {
-  color: var(--color-positive);
-  font-weight: 600;
-}
-
-.finance-overview__minibar {
-  display: inline-block;
-  width: 60px;
-  height: 7px;
-  margin-left: 8px;
-  overflow: hidden;
-  border-radius: 4px;
-  background: var(--color-track);
-  vertical-align: middle;
-}
-
-.finance-overview__minibar i {
-  display: block;
-  height: 7px;
-  border-radius: 4px;
-  background: var(--chart-navy);
-}
-
-/* Horizontal bars (expenses, procurement) */
-.finance-overview__bars {
+/* Hover box (Revenue and Liabilities only) */
+.finance-overview__tip {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 1px;
+  padding: 8px 11px;
+  border-radius: 8px;
+  background: var(--color-heading);
+  box-shadow: var(--shadow-pop);
+  color: var(--color-surface);
+  font-size: 12px;
+  line-height: 1.45;
 }
 
-.finance-overview__bar-row {
-  display: grid;
-  grid-template-columns: 120px minmax(0, 1fr) 62px;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-}
-
-.finance-overview__bar-row span {
-  color: var(--color-text-muted);
-}
-
-.finance-overview__bar-row strong {
-  color: var(--color-heading);
-  text-align: right;
-}
-
-.finance-overview__bar-track {
-  height: 14px;
-  overflow: hidden;
-  border-radius: 4px;
-  background: var(--color-track);
-}
-
-.finance-overview__bar-fill {
-  height: 100%;
-  border-radius: 4px;
+.finance-overview__tip strong {
+  font-size: 12.5px;
 }
 
 @media (max-width: 900px) {
   .finance-overview__grid {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  .finance-overview__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 480px) {
-  .finance-overview__bar-row {
-    grid-template-columns: 96px minmax(0, 1fr) 52px;
+  .finance-overview__metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .finance-overview__panel {
+    height: 380px;
+  }
+
+  .finance-overview__scope label {
+    flex: 1;
   }
 }
