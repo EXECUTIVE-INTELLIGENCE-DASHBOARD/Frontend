@@ -59,12 +59,6 @@ export interface LoanSummary {
   currency: string;
 }
 
-export interface LiabilityAlert {
-  tone: "critical" | "warning";
-  message: string;
-  schoolName?: string;
-}
-
 export interface LiabilitiesDashboardModel {
   metrics: LiabilityMetric[];
   schoolBalances: SchoolBalance[];
@@ -79,7 +73,6 @@ export interface LiabilitiesDashboardModel {
   statutoryPayments: StatutoryPayment[];
   loans: LoanSummary[];
   upcomingTotal: number;
-  alerts: LiabilityAlert[];
 }
 
 const categoryDetails: Record<
@@ -142,13 +135,6 @@ function isStatutoryCreditor(
   type: LiabilityCreditor["creditor_type"] | undefined,
 ): boolean {
   return type === "statutory_tax" || type === "statutory_remittance";
-}
-
-function isLateRepayment(repayment: LoanRepayment): boolean {
-  return (
-    repayment.status === "overdue" ||
-    (repayment.paid_date !== null && repayment.paid_date > repayment.due_date)
-  );
 }
 
 function buildCreditorBalances(
@@ -313,10 +299,6 @@ export function buildLiabilitiesDashboard(
     (total, forecast) => total + numeric(forecast.forecast_balance),
     0,
   );
-  const forecastActual = forecastRows.reduce(
-    (total, forecast) => total + numeric(forecast.actual_balance),
-    0,
-  );
 
   const categoryTotals = new Map<LiabilityRecord["category"], number>();
   for (const liability of openLiabilities) {
@@ -444,51 +426,6 @@ export function buildLiabilitiesDashboard(
     .filter((payment) => payment.status !== "Paid" && payment.status !== "Paid late")
     .reduce((total, payment) => total + payment.amount, 0);
 
-  const alerts: LiabilityAlert[] = [];
-  const overdueStatutory = openLiabilities.find(
-    (liability) =>
-      liability.status === "overdue" &&
-      isStatutoryCreditor(
-        creditorById.get(liability.creditor)?.creditor_type,
-      ),
-  );
-  if (overdueStatutory) {
-    const schoolName =
-      overdueStatutory.school === null
-        ? "Group"
-        : schoolById.get(overdueStatutory.school)?.name ??
-          `School #${overdueStatutory.school}`;
-    alerts.push({
-      tone: "critical",
-      schoolName,
-      message: "a tax or statutory payment is overdue (compliance risk).",
-    });
-  }
-
-  if (forecastBalance > 0 && forecastActual < forecastBalance * 0.9) {
-    const difference =
-      ((forecastBalance - forecastActual) / forecastBalance) * 100;
-    alerts.push({
-      tone: "warning",
-      message: `Bank balance is ${difference.toFixed(0)}% below the ${formatMonth(
-        forecastRows[0]?.forecast_date ?? asOfDate,
-      )} forecast.`,
-    });
-  }
-
-  const lateRepayment = selectedRepayments.find(
-    isLateRepayment,
-  );
-  if (lateRepayment) {
-    const lateCount = selectedRepayments.filter(isLateRepayment).length;
-    alerts.push({
-      tone: "warning",
-      message: `Consolidated loan: ${lateCount} repayment${
-        lateCount === 1 ? "" : "s"
-      } were paid late or remain overdue.`,
-    });
-  }
-
   const metrics: LiabilityMetric[] = [
     {
       label: "Total owed",
@@ -526,15 +463,6 @@ export function buildLiabilitiesDashboard(
     statutoryPayments,
     loans,
     upcomingTotal,
-    alerts:
-      alerts.length > 0
-        ? alerts
-        : [
-            {
-              tone: "warning",
-              message: "No liability alerts require attention.",
-            },
-          ],
   };
 }
 

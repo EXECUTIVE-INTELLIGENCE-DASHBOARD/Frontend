@@ -249,19 +249,6 @@
   color: #65738b;
 }
 
-.hero__notify-badge {
-  position: absolute;
-  top: 6px;
-  right: 7px;
-
-  width: 8px;
-  height: 8px;
-
-  border-radius: 50%;
-  background: #f36b6b;
-  border: 1.5px solid #ffffff;
-}
-
 /* =========================================
    THEME TOGGLE
    Wider pill, original icon sizes
@@ -454,10 +441,6 @@
 [data-theme="dark"] .hero__profile {
   background: #263278;
   border-color: #3f4b92;
-}
-
-[data-theme="dark"] .hero__notify-badge {
-  border-color: #263278;
 }
 
 [data-theme="dark"] .hero__search-input {

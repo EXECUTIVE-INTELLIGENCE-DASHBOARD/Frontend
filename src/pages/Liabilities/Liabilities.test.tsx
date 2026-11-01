@@ -120,7 +120,8 @@ describe("Liabilities page", () => {
       ),
     ).not.toBeInTheDocument();
     expect(screen.queryByText("Any overdue statutory payment")).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Needs attention" })).toBeInTheDocument();
+    // Alerts moved to the notification bell in the top bar.
+    expect(screen.queryByRole("heading", { name: "Needs attention" })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Debtors and creditors" })).toBeInTheDocument();
     expect(mockGetData).toHaveBeenCalledWith(expect.any(AbortSignal));
   }, 15000);

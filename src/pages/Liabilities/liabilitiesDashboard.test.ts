@@ -185,11 +185,6 @@ describe("liabilities dashboard aggregation", () => {
       balance: 800,
       nextInstallment: 100,
     });
-    expect(model.alerts[0].tone).toBe("critical");
-    expect(model.alerts[0]).toMatchObject({
-      schoolName: "Kibuli Nursery",
-      message: "a tax or statutory payment is overdue (compliance risk).",
-    });
   });
 
   it("filters all campus-derived totals to the selected campus", () => {

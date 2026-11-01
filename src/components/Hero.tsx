@@ -1,10 +1,11 @@
 import "./Hero.css";
 import { useEffect, useRef, useState } from "react";
-import { Search, Mic, Bell, Sun, Moon, ChevronRight } from "lucide-react";
+import { Search, Mic, Sun, Moon, ChevronRight } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { userProfile } from "../lib/userProfile";
 import { searchNavigation } from "../navigation/navigation.search";
 import { signOut } from "../lib/api/core";
+import { NotificationBell } from "./notifications/NotificationBell";
 
 interface HeroProps {
   /** Lets the header jump to another screen from the search results. */
@@ -245,16 +246,8 @@ export function Hero({ onSelectPage }: HeroProps) {
 
       {/* Actions */}
       <div className="hero__actions">
-        {/* Notifications */}
-        <button
-          className="hero__notify"
-          type="button"
-          aria-label="Notifications"
-        >
-          <Bell size={15} aria-hidden="true" />
-
-          <span className="hero__notify-badge" aria-hidden="true" />
-        </button>
+        {/* Notifications: alerts live here, not on the screens */}
+        <NotificationBell onSelectPage={onSelectPage} />
 
         {/* Theme toggle */}
         <div className="hero__theme-toggle">

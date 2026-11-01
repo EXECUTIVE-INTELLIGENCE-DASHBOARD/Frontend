@@ -15,30 +15,6 @@ export function LiabilityManagementDetails({
   return (
     <div className="liability-management">
       <section
-        className="liability-alerts"
-        aria-labelledby="liability-alerts-title"
-      >
-        <h2 id="liability-alerts-title">Needs attention</h2>
-        <div className="liability-alerts__list">
-          {model.alerts.map((alert, index) => (
-            <article
-              className={`liability-alert liability-alert--${alert.tone}`}
-              key={`${alert.schoolName ?? alert.message}-${index}`}
-            >
-              <span className="liability-alert__message">
-                {alert.schoolName && (
-                  <strong className="liability-alert__school">
-                    {alert.schoolName}:
-                  </strong>
-                )}{" "}
-                {alert.message}
-              </span>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section
         className="liability-school-balances"
         aria-labelledby="liability-school-balances-title"
       >

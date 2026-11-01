@@ -8,6 +8,9 @@ import { signOut } from "../lib/api/core";
 // Signing out leaves the page, so the navigation is stubbed and only the
 // hand-off itself is asserted here.
 vi.mock("../lib/api/core", () => ({ signOut: vi.fn() }));
+vi.mock("./notifications/notifications.api", () => ({
+  getFinanceAlerts: vi.fn().mockResolvedValue([]),
+}));
 
 describe("Hero", () => {
   const renderHero = (onSelectPage?: (pageId: string) => void) =>
