@@ -31,9 +31,6 @@ const notes: Record<DashboardSource, string | null> = {
 const iso = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
-const showDate = (value: string) =>
-  new Date(`${value}T00:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
-
 const sum = <T,>(rows: T[], value: (row: T) => number) => rows.reduce((total, row) => total + value(row), 0);
 
 /* ---------- chart pieces ---------- */
@@ -248,9 +245,9 @@ export function FinanceOverview() {
     ...school,
     label: shortSchoolName(school.name, school.campus),
   }));
-  const owed = sum(rows, (r) => r.liabilities.owed), overdue = sum(rows, (r) => r.liabilities.overdue);
+  const owed = sum(rows, (r) => r.liabilities.owed);
   const budget = sum(rows, (r) => r.budget.budget), spent = sum(rows, (r) => r.budget.spent);
-  const bought = sum(rows, (r) => r.procurement.spend), unpaid = sum(rows, (r) => r.procurement.not_yet_paid);
+  const bought = sum(rows, (r) => r.procurement.spend);
 
   return (
     <div className="finance-overview">
@@ -272,15 +269,14 @@ export function FinanceOverview() {
         <>
           <section className="finance-overview__metrics" aria-label="Headline figures">
             {[
-              ["Revenue", formatUgx(sum(rows, (r) => r.revenue)), `school fees, ${showDate(start)} – ${showDate(end)}`],
-              ["Total owed", formatUgx(owed), `${formatUgx(overdue)} overdue, as of ${showDate(end)}`],
-              ["Budget used", budget ? `${Math.round((spent / budget) * 1000) / 10}%` : "–", `of ${formatUgx(budget)} budget`],
-              ["Procurement", formatUgx(bought), `${formatUgx(unpaid)} not yet paid`],
-            ].map(([label, value, detail]) => (
+              ["Revenue", formatUgx(sum(rows, (r) => r.revenue))],
+              ["Total owed", formatUgx(owed)],
+              ["Budget used", budget ? `${Math.round((spent / budget) * 1000) / 10}%` : "–"],
+              ["Procurement", formatUgx(bought)],
+            ].map(([label, value]) => (
               <article className="finance-overview__metric" key={label}>
                 <span className="finance-overview__metric-label">{label}</span>
                 <strong className="finance-overview__metric-value">{value}</strong>
-                <span className="finance-overview__metric-note">{detail}</span>
               </article>
             ))}
           </section>

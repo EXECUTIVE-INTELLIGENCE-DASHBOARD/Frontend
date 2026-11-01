@@ -1,6 +1,6 @@
 /* ========================================
    FINANCE DASHBOARD
-   A date range, four headline figures and five cards, two per row, each about as tall as
+   A date range, four headline figures (no notes under them) and five cards, two per row, each about as tall as
    the Incidents "Campus Overview" card. Card border, radius and shadow come from
    ui-standard.css.
 ======================================== */
@@ -78,11 +78,6 @@
 
 .finance-overview__metric-value {
   color: var(--color-heading);
-}
-
-.finance-overview__metric-note {
-  color: var(--color-text-muted);
-  font-size: 12px;
 }
 
 /* Cards */
