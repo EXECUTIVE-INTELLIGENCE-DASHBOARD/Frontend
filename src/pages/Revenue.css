@@ -61,10 +61,6 @@
   cursor: pointer;
 }
 
-.revenue-page__filters label:not(:first-child) {
-  min-width: 0;
-}
-
 .revenue-page__filters select:focus,
 .revenue-page__filters input:focus {
   outline: 2px solid var(--brand-sky);
