@@ -1,15 +1,15 @@
 
 import { useMemo, useState } from "react";
 import {
-  Search,
-  Download,
-  Package,
   AlertTriangle,
-  Archive,
   ArrowUpRight,
-  ArrowDownRight,
-  Eye,
   ChevronDown,
+  Coins,
+  Download,
+  Eye,
+  Package,
+  PackageX,
+  Search,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -325,7 +325,7 @@ export default function InventoryStock() {
         <article className="is-metric">
           <div className="is-metric__top">
             <span className="is-metric__icon is-icon--green">
-              <Archive size={20} />
+              <Coins size={20} />
             </span>
           </div>
           <p>Estimated Stock Value</p>
@@ -352,7 +352,7 @@ export default function InventoryStock() {
         <article className="is-metric">
           <div className="is-metric__top">
             <span className="is-metric__icon is-icon--red">
-              <ArrowDownRight size={20} />
+              <PackageX size={20} />
             </span>
           </div>
           <p>Out of Stock</p>

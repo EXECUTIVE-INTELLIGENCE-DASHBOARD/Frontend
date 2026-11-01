@@ -336,88 +336,223 @@
 }
 
 /* ------------------------------------------------------------------
-   9. ICON CARDS OFF THE FINANCE SCREENS — one size, square corners
-   Overview, Academics, Operations and Services: every row of icon cards
-   has equal-width cards with the same gap, and every card the same
-   padding, height, square corners and sky-blue icon chip. What the cards
-   say is untouched; the finance screens size their own cards.
+   9. ICON CARDS IN EVERY DOMAIN — the Assets & Liabilities size
+   The icon cards under the filters on every screen look like the Assets &
+   Liabilities headline cards: a 34px sky-blue chip on the left, the label over
+   the figure, as wide as their contents, square corners, spread across the row
+   with at least 16px between them. Lines under the figure (notes, trends) are
+   hidden; they stay in the code. Each card's markup is untouched: wrappers are
+   flattened with `display: contents` so every card lines up the same way.
+   Nothing else on the screens is affected.
 ------------------------------------------------------------------ */
 
-:root {
-  --ui-icon-card-gap: 16px;
-  --ui-icon-card-min-w: 220px;
-  /* the tallest card's content (a figure and two lines), so every card matches it */
-  --ui-icon-card-min-h: 108px;
-  --ui-icon-card-pad: 14px 16px;
-  --ui-icon-chip: 36px;
+:root body .overview-cards,
+:root body .ae-kpis,
+:root body .sr-metrics,
+:root body .cc-metrics,
+:root body .acad-summary,
+:root body .fm-kpis,
+:root body .at-kpis,
+:root body .hw-metrics,
+:root body .ae-cards,
+:root body .svc-kpis,
+:root body .tp-kpis,
+:root body .exp-metrics,
+:root body .budget-kpis,
+:root body .pf-metrics,
+:root body .po-metrics,
+:root body .sp-metrics,
+:root body .is-metrics,
+:root body .pr-kpi-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-:root body :is(
-  .overview-cards, .ae-kpis, .sr-metrics, .cc-metrics, .acad-summary, .fm-kpis,
-  .at-kpis, .hw-metrics, .ae-cards, .svc-kpis, .tp-kpis
-) {
+:root body .overview-cards .overview-metric-card,
+:root body .ae-kpis .ae-kpi,
+:root body .sr-metrics .sr-metric,
+:root body .cc-metrics .acad-metric,
+:root body .acad-summary .acad-metric,
+:root body .fm-kpis .acad-metric,
+:root body .at-kpis .at-kpi,
+:root body .hw-metrics .hw-metric,
+:root body .ae-cards .ae-card,
+:root body .svc-kpis .svc-kpi,
+:root body .tp-kpis .tp-kpi,
+:root body .exp-metrics .exp-metric,
+:root body .budget-kpis .budget-kpi,
+:root body .pf-metrics .pf-metric,
+:root body .po-metrics .po-metric-card,
+:root body .sp-metrics .sp-metric,
+:root body .is-metrics .is-metric,
+:root body .pr-kpi-grid .pr-kpi-card {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--ui-icon-card-min-w), 1fr));
-  gap: var(--ui-icon-card-gap);
-}
-
-:root body :is(
-  .overview-cards .overview-metric-card, .ae-kpis .ae-kpi, .sr-metrics .sr-metric,
-  .cc-metrics .acad-metric, .acad-summary .acad-metric, .fm-kpis .acad-metric,
-  .at-kpis .at-kpi, .hw-metrics .hw-metric, .ae-cards .ae-card, .svc-kpis .svc-kpi,
-  .tp-kpis .tp-kpi
-) {
+  grid-template-columns: 34px auto;
+  column-gap: 10px;
+  row-gap: 0;
+  align-content: center;
+  align-items: center;
   box-sizing: border-box;
+  width: auto;
   min-width: 0;
-  min-height: var(--ui-icon-card-min-h);
-  padding: var(--ui-icon-card-pad);
+  min-height: 0;
+  padding: 10px 18px 10px 12px;
   border-radius: 0;
 }
 
-:root body :is(
-  .overview-cards .overview-metric-card__icon, .ae-kpis .ae-kpi__icon,
-  .sr-metrics .sr-metric__icon, .cc-metrics .acad-metric__icon,
-  .acad-summary .acad-metric__icon, .fm-kpis .acad-metric__icon, .at-kpis .at-kpi__icon,
-  .hw-metrics .hw-metric__icon, .ae-cards .ae-ic, .svc-kpis .svc-kic, .tp-kpis .tp-kpi-icon
-) {
+/* Wrappers inside the cards take no space of their own. */
+:root body .overview-cards .overview-metric-card .overview-metric-card__content,
+:root body .ae-kpis .ae-kpi .ae-kpi__body,
+:root body .sr-metrics .sr-metric .sr-metric__content,
+:root body .cc-metrics .acad-metric .acad-metric__content,
+:root body .acad-summary .acad-metric .acad-metric__content,
+:root body .fm-kpis .acad-metric .acad-metric__content,
+:root body .hw-metrics .hw-metric .hw-metric__top,
+:root body .ae-cards .ae-card .ae-ch,
+:root body .svc-kpis .svc-kpi > div,
+:root body .tp-kpis .tp-kpi .tp-kpi-heading,
+:root body .exp-metrics .exp-metric .exp-metric__body,
+:root body .budget-kpis .budget-kpi .budget-kpi__top,
+:root body .pf-metrics .pf-metric .pf-metric__body,
+:root body .po-metrics .po-metric-card .po-metric-card__top,
+:root body .sp-metrics .sp-metric .sp-metric__top,
+:root body .is-metrics .is-metric .is-metric__top {
+  display: contents;
+}
+
+:root body .overview-cards .overview-metric-card .overview-metric-card__icon,
+:root body .ae-kpis .ae-kpi .ae-kpi__icon,
+:root body .sr-metrics .sr-metric .sr-metric__icon,
+:root body .cc-metrics .acad-metric .acad-metric__icon,
+:root body .acad-summary .acad-metric .acad-metric__icon,
+:root body .fm-kpis .acad-metric .acad-metric__icon,
+:root body .at-kpis .at-kpi .at-kpi__icon,
+:root body .hw-metrics .hw-metric .hw-metric__icon,
+:root body .ae-cards .ae-card .ae-ic,
+:root body .svc-kpis .svc-kpi .svc-kic,
+:root body .tp-kpis .tp-kpi .tp-kpi-icon,
+:root body .exp-metrics .exp-metric .exp-metric__icon,
+:root body .budget-kpis .budget-kpi .budget-kpi__icon,
+:root body .pf-metrics .pf-metric .pf-metric__icon,
+:root body .po-metrics .po-metric-card .po-metric-card__icon,
+:root body .sp-metrics .sp-metric .sp-metric__icon,
+:root body .is-metrics .is-metric .is-metric__icon,
+:root body .pr-kpi-grid .pr-kpi-card .pr-kpi-icon {
   display: grid;
-  flex: 0 0 var(--ui-icon-chip);
-  width: var(--ui-icon-chip);
-  height: var(--ui-icon-chip);
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: 34px;
+  height: 34px;
+  margin: 0;
   place-items: center;
   border-radius: 10px;
   background: var(--brand-sky);
   color: #ffffff;
 }
 
-:root body :is(
-  .overview-cards .overview-metric-card__icon, .ae-kpis .ae-kpi__icon,
-  .sr-metrics .sr-metric__icon, .cc-metrics .acad-metric__icon,
-  .acad-summary .acad-metric__icon, .fm-kpis .acad-metric__icon, .at-kpis .at-kpi__icon,
-  .hw-metrics .hw-metric__icon, .ae-cards .ae-ic, .svc-kpis .svc-kic, .tp-kpis .tp-kpi-icon
-) svg {
-  width: 18px;
-  height: 18px;
+:root body .overview-cards .overview-metric-card .overview-metric-card__icon svg,
+:root body .ae-kpis .ae-kpi .ae-kpi__icon svg,
+:root body .sr-metrics .sr-metric .sr-metric__icon svg,
+:root body .cc-metrics .acad-metric .acad-metric__icon svg,
+:root body .acad-summary .acad-metric .acad-metric__icon svg,
+:root body .fm-kpis .acad-metric .acad-metric__icon svg,
+:root body .at-kpis .at-kpi .at-kpi__icon svg,
+:root body .hw-metrics .hw-metric .hw-metric__icon svg,
+:root body .ae-cards .ae-card .ae-ic svg,
+:root body .svc-kpis .svc-kpi .svc-kic svg,
+:root body .tp-kpis .tp-kpi .tp-kpi-icon svg,
+:root body .exp-metrics .exp-metric .exp-metric__icon svg,
+:root body .budget-kpis .budget-kpi .budget-kpi__icon svg,
+:root body .pf-metrics .pf-metric .pf-metric__icon svg,
+:root body .po-metrics .po-metric-card .po-metric-card__icon svg,
+:root body .sp-metrics .sp-metric .sp-metric__icon svg,
+:root body .is-metrics .is-metric .is-metric__icon svg,
+:root body .pr-kpi-grid .pr-kpi-card .pr-kpi-icon svg {
+  width: 17px;
+  height: 17px;
   stroke: currentColor;
 }
 
-/* Admissions and Attendance stack the icon above the text; put it on the left like the
-   others, the text beside it unchanged. */
-:root body :is(.ae-kpis .ae-kpi, .at-kpis .at-kpi) {
-  display: grid;
-  grid-template-columns: var(--ui-icon-chip) minmax(0, 1fr);
-  column-gap: 12px;
-  row-gap: 2px;
-  align-content: center;
-  align-items: center;
-}
-
-:root body :is(.ae-kpis .ae-kpi__icon, .at-kpis .at-kpi__icon) {
-  grid-row: 1 / span 3;
-  grid-column: 1;
-}
-
-:root body .at-kpis .at-kpi > :not(.at-kpi__icon) {
+:root body .overview-cards .overview-metric-card .overview-metric-card__label,
+:root body .ae-kpis .ae-kpi .ae-kpi__label,
+:root body .sr-metrics .sr-metric .sr-metric__label,
+:root body .cc-metrics .acad-metric .acad-metric__label,
+:root body .acad-summary .acad-metric .acad-metric__label,
+:root body .fm-kpis .acad-metric .acad-metric__label,
+:root body .at-kpis .at-kpi .at-kpi__label,
+:root body .hw-metrics .hw-metric .hw-metric__label,
+:root body .ae-cards .ae-card .ae-lb,
+:root body .svc-kpis .svc-kpi .svc-kt,
+:root body .tp-kpis .tp-kpi .tp-kpi-heading > span:not(.tp-kpi-icon),
+:root body .exp-metrics .exp-metric .exp-metric__label,
+:root body .budget-kpis .budget-kpi .budget-kpi__label,
+:root body .pf-metrics .pf-metric .pf-metric__label,
+:root body .po-metrics .po-metric-card .po-metric-card__label,
+:root body .sp-metrics .sp-metric > p,
+:root body .is-metrics .is-metric > p,
+:root body .pr-kpi-grid .pr-kpi-card .pr-kpi-label {
   grid-column: 2;
+  grid-row: 1;
   margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.35;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+:root body .overview-cards .overview-metric-card .overview-metric-card__value,
+:root body .ae-kpis .ae-kpi .ae-kpi__value,
+:root body .sr-metrics .sr-metric .sr-metric__value,
+:root body .cc-metrics .acad-metric .acad-metric__value,
+:root body .acad-summary .acad-metric .acad-metric__value,
+:root body .fm-kpis .acad-metric .acad-metric__value,
+:root body .at-kpis .at-kpi .at-kpi__value,
+:root body .hw-metrics .hw-metric .hw-metric__value,
+:root body .ae-cards .ae-card .ae-val,
+:root body .svc-kpis .svc-kpi .svc-kv,
+:root body .tp-kpis .tp-kpi .tp-kpi-value,
+:root body .exp-metrics .exp-metric .exp-metric__value,
+:root body .budget-kpis .budget-kpi .budget-kpi__value,
+:root body .pf-metrics .pf-metric .pf-metric__value,
+:root body .po-metrics .po-metric-card > h2,
+:root body .sp-metrics .sp-metric > h2,
+:root body .is-metrics .is-metric > h2,
+:root body .pr-kpi-grid .pr-kpi-card .pr-kpi-value {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  color: var(--color-heading);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* The lines under the figure: hidden, as on the finance Dashboard. */
+:root body .ae-kpis .ae-kpi .ae-kpi__detail,
+:root body .cc-metrics .acad-metric .acad-metric__detail,
+:root body .cc-metrics .acad-metric .acad-metric__description,
+:root body .acad-summary .acad-metric .acad-metric__detail,
+:root body .acad-summary .acad-metric .acad-metric__description,
+:root body .fm-kpis .acad-metric .acad-metric__detail,
+:root body .fm-kpis .acad-metric .acad-metric__description,
+:root body .at-kpis .at-kpi .at-kpi__detail,
+:root body .tp-kpis .tp-kpi .tp-kpi-note,
+:root body .budget-kpis .budget-kpi .budget-kpi__hint,
+:root body .budget-kpis .budget-kpi .budget-kpi__progress,
+:root body .pf-metrics .pf-metric .pf-metric__caption,
+:root body .po-metrics .po-metric-card .po-metric-card__trend,
+:root body .po-metrics .po-metric-card .po-metric-card__tag,
+:root body .po-metrics .po-metric-card .po-metric-card__foot,
+:root body .sp-metrics .sp-metric .sp-metric__trend,
+:root body .sp-metrics .sp-metric .sp-metric__foot,
+:root body .is-metrics .is-metric .is-trend,
+:root body .is-metrics .is-metric .is-metric__foot,
+:root body .pr-kpi-grid .pr-kpi-card .pr-kpi-foot {
+  display: none;
 }

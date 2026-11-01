@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
+  Banknote,
   CheckCircle2,
   ClipboardList,
   Clock3,
   Download,
   Eye,
+  FileCheck,
   FilePlus2,
   Filter,
   Search,
@@ -718,7 +720,7 @@ export default function ProcurementRequests() {
           <div className="pr-kpi-foot">Unpaid transactions</div>
         </article>
         <article className="pr-kpi-card">
-          <div className="pr-kpi-icon purple"><Eye size={21} /></div>
+          <div className="pr-kpi-icon purple"><FileCheck size={21} /></div>
           <div className="pr-kpi-label">Committed</div>
           <div className="pr-kpi-value">{committedCount}</div>
           <div className="pr-kpi-foot">Committed budget</div>
@@ -730,6 +732,7 @@ export default function ProcurementRequests() {
           <div className="pr-kpi-foot">Disbursed transactions</div>
         </article>
         <article className="pr-kpi-card pr-value-card">
+          <div className="pr-kpi-icon green"><Banknote size={21} /></div>
           <div className="pr-kpi-label">Total Transaction Value</div>
           <div className="pr-kpi-value pr-money">{formatUGX(totalValue)}</div>
           <div className="pr-kpi-foot">All recorded transactions</div>

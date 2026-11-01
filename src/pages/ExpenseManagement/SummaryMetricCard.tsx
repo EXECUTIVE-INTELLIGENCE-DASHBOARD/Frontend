@@ -9,7 +9,7 @@
  * The card is presentation-only — it receives one `SummaryMetric` and never
  * computes a figure of its own.
  */
-import { Clock3, MapPin, Wallet, type LucideIcon } from "lucide-react";
+import { Clock3, Receipt, School, type LucideIcon, Wallet } from "lucide-react";
 
 import { formatUgx } from "./expenseManagement.data";
 import type { SummaryMetric } from "./expenseManagement.types";
@@ -19,8 +19,8 @@ import type { SummaryMetric } from "./expenseManagement.types";
  * `?? Wallet` fallback below keeps the card intact if one is missed.
  */
 const METRIC_ICONS: Record<string, LucideIcon> = {
-  "total-ytd": Wallet,
-  "campus-opex": MapPin,
+  "total-ytd": Receipt,
+  "campus-opex": School,
   "pending-approvals": Clock3,
 };
 

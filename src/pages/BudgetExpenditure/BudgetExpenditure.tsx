@@ -2,9 +2,9 @@
 import { useMemo, useState } from "react";
 import {
   AlertTriangle,
-  ArrowDownRight,
-  ArrowUpRight,
-  CheckCircle2,
+  ChartPie,
+  PiggyBank,
+  Receipt,
   Wallet,
 } from "lucide-react";
 
@@ -134,7 +134,7 @@ export function BudgetExpenditure() {
         <article className="budget-kpi budget-kpi--cyan">
           <div className="budget-kpi__top">
             <span className="budget-kpi__label">Actual Expenditure</span>
-            <span className="budget-kpi__icon"><ArrowUpRight size={19} /></span>
+            <span className="budget-kpi__icon"><Receipt size={19} /></span>
           </div>
           <strong className="budget-kpi__value">
             {formatMoney(displayedActual)}
@@ -145,7 +145,7 @@ export function BudgetExpenditure() {
         <article className="budget-kpi budget-kpi--gold">
           <div className="budget-kpi__top">
             <span className="budget-kpi__label">Remaining Budget</span>
-            <span className="budget-kpi__icon"><ArrowDownRight size={19} /></span>
+            <span className="budget-kpi__icon"><PiggyBank size={19} /></span>
           </div>
           <strong className="budget-kpi__value">
             {formatMoney(displayedRemaining)}
@@ -156,7 +156,7 @@ export function BudgetExpenditure() {
         <article className="budget-kpi budget-kpi--purple">
           <div className="budget-kpi__top">
             <span className="budget-kpi__label">Budget Utilisation</span>
-            <span className="budget-kpi__icon"><CheckCircle2 size={19} /></span>
+            <span className="budget-kpi__icon"><ChartPie size={19} /></span>
           </div>
           <strong className="budget-kpi__value">
             {formatPercent(displayedUtilisation)}
