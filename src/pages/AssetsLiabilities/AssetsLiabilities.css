@@ -1,0 +1,454 @@
+/* ========================================
+   ASSETS & LIABILITIES
+   Filters, four small headline figures spread across the row, owned against owed with
+   the trend, the two sides of the balance sheet, debtors and asset condition, then each
+   school. Square corners and the logo colours (navy, sky blue, gold) throughout.
+======================================== */
+
+.al {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--color-heading);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Filters */
+.al-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.al-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.al-filters input,
+.al-filters select {
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-heading);
+  font: inherit;
+  font-size: 13px;
+}
+
+.al-filters select {
+  min-width: 170px;
+  cursor: pointer;
+}
+
+.al-filters input:focus,
+.al-filters select:focus {
+  outline: 2px solid var(--brand-sky);
+  outline-offset: 2px;
+}
+
+.al-state {
+  margin: 0;
+  padding: 16px;
+  border: 1px dashed var(--color-border-strong);
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+/* Headline figures: as wide as their contents, spread across the row */
+.al-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.al-metric {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px 10px 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.al-metric__icon {
+  display: grid;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--brand-sky);
+  color: #ffffff;
+}
+
+.al-metric__label {
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.al-metric__value {
+  display: block;
+  color: var(--color-heading);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Cards */
+.al-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.al-grid--top {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+}
+
+.al-card {
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.al-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.al-card__head h2 {
+  margin: 0;
+  color: var(--color-heading);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.al-sub {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.al-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand-sky);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.al-link:hover {
+  text-decoration: underline;
+}
+
+/* Owned against owed */
+.al-compare {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 64px;
+  gap: 12px 10px;
+  align-items: center;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.al-compare b {
+  color: var(--color-heading);
+  text-align: right;
+}
+
+.al-stack,
+.al-split {
+  display: flex;
+  overflow: hidden;
+  background: var(--color-track);
+}
+
+.al-stack {
+  height: 24px;
+}
+
+.al-split {
+  height: 14px;
+  margin: 6px 0 4px;
+}
+
+.al-stack i,
+.al-split i {
+  display: block;
+  height: 100%;
+}
+
+.al-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 12px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.al-key span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.al-key i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+}
+
+.al-key .al-key__line {
+  width: 14px;
+  height: 3px;
+}
+
+/* Trend */
+.al-chart {
+  height: 220px;
+}
+
+.al-tip {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 8px 11px;
+  background: var(--brand-navy);
+  box-shadow: var(--shadow-pop);
+  color: #ffffff;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* Balance sheet lines */
+.al-group {
+  margin-bottom: 14px;
+}
+
+.al-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 84px 84px;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 13px;
+}
+
+.al-line b,
+.al-line > :nth-child(n + 2) {
+  text-align: right;
+}
+
+.al-line b {
+  color: var(--color-heading);
+}
+
+.al-line--head {
+  padding-top: 0;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.al-line--sub span:first-child {
+  padding-left: 14px;
+  color: var(--color-text-muted);
+}
+
+.al-line--sub b {
+  font-weight: 600;
+}
+
+.al-line--total {
+  margin-top: 4px;
+  border-top: 2px solid var(--color-border-strong);
+  border-bottom: 0;
+  color: var(--color-heading);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.al-toggle {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand-sky);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+}
+
+.al-change {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.al-change.is-good {
+  color: var(--brand-navy);
+}
+
+.al-change.is-bad {
+  color: color-mix(in srgb, var(--brand-gold) 70%, black);
+}
+
+/* Debtors and asset condition */
+.al-mini {
+  margin-top: 14px;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.al-mini:first-of-type {
+  margin-top: 0;
+}
+
+.al-kv {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto 40px;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 0;
+  color: var(--color-text);
+  font-size: 13px;
+}
+
+.al-kv i {
+  display: block;
+  width: 10px;
+  height: 10px;
+}
+
+.al-kv b {
+  color: var(--color-heading);
+  text-align: right;
+}
+
+.al-kv small {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  text-align: right;
+}
+
+.al-risk {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.al-risk b {
+  color: var(--color-heading);
+  font-size: 18px;
+  text-align: right;
+}
+
+.al-risk small {
+  grid-column: 2;
+  text-align: right;
+}
+
+/* By school */
+.al-table-wrap {
+  overflow-x: auto;
+}
+
+.al-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.al-table th,
+.al-table td {
+  padding: 9px 8px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.al-table th {
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.al-table th:first-child,
+.al-table td:first-child {
+  text-align: left;
+}
+
+.al-table td {
+  color: var(--color-text);
+}
+
+.al-table__total td {
+  border-top: 2px solid var(--color-border-strong);
+  border-bottom: 0;
+  color: var(--color-heading);
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .al-grid,
+  .al-grid--top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .al-filters label,
+  .al-filters input,
+  .al-filters select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .al-metric {
+    flex: 1 1 100%;
+  }
+
+  .al-line {
+    grid-template-columns: minmax(0, 1fr) 72px 72px;
+  }
+}

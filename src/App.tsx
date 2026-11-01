@@ -12,6 +12,7 @@ import { Revenue } from "./pages/Revenue";
 import { AcademicOverview } from "./pages/AcademicOverview/AcademicOverview";
 import AcademicPerformance from "./pages/academic-performance/AcademicPerformance";
 import { Liabilities } from "./pages/Liabilities/Liabilities";
+import { AssetsLiabilities } from "./pages/AssetsLiabilities/AssetsLiabilities";
 import { ProcurementFinancials } from "./pages/ProcurementFinancials/ProcurementFinancials";
 import { ExpenseManagement } from "./pages/ExpenseManagement/ExpenseManagement";
 import { CoCurricularActivities } from "./pages/CoCurricularActivities/CoCurricularActivities";
@@ -74,12 +75,17 @@ const pages: Record<string, ReactElement> = {
   "trading-performance": <TradingPerformance />,
 };
 
+// Screens that link to other screens are given the way to open them.
+const linkedPages: Record<string, (open: (pageId: string) => void) => ReactElement> = {
+  "assets-liabilities": (open) => <AssetsLiabilities onSelectPage={open} />,
+};
+
 const defaultPageId = "academic-performance";
 
 export function App() {
   const [activePage, setActivePage] = useState(defaultPageId);
 
-  const currentPage = pages[activePage];
+  const currentPage = linkedPages[activePage]?.(setActivePage) ?? pages[activePage];
   const pageLabel = findNavigationLabel(activePage) ?? "Dashboard";
 
   return (

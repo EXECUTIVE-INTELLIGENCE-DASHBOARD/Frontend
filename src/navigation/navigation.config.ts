@@ -98,6 +98,10 @@ export const navigationItems: NavigationItem[] = [
       },
 
       {
+        id: "assets-liabilities",
+        label: "Assets & Liabilities",
+      },
+      {
         id: "liabilities-management",
         label: "Liabilities Management",
       },
