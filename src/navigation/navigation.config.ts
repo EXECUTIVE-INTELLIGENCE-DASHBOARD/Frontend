@@ -83,8 +83,9 @@ export const navigationItems: NavigationItem[] = [
     label: "Finance & Procurement",
     icon: WalletCards,
     children: [
-      // The four the executives use most come first. Cost Centre Analysis and Financial
-      // Forecasts are off the menu; their pages and routes stay, so they can come back.
+      // The ones the executives use most come first. Cost Centre Analysis, Financial
+      // Forecasts and Liabilities Management are off the menu (Assets & Liabilities covers
+      // what is owed); their pages and routes stay, so they can come back.
       {
         id: "finance-overview",
         label: "Dashboard",
@@ -98,23 +99,18 @@ export const navigationItems: NavigationItem[] = [
         label: "Revenue",
       },
       {
+        id: "procurement-financials",
+        label: "Procurement Financials",
+      },
+      {
         id: "expense-management",
         label: "Expense Management",
-      },
-
-      {
-        id: "liabilities-management",
-        label: "Liabilities Management",
       },
       {
         id: "budget-management",
         label: "Budget Management",
       },
 
-      {
-        id: "procurement-financials",
-        label: "Procurement Financials",
-      },
       {
         id: "purchase-orders-approvals",
         label: "Purchase Orders & Approvals",

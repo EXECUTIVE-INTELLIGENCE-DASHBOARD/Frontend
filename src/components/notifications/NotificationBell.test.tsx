@@ -11,16 +11,16 @@ const school = (name: string, campus: string) => ({ id: name.length, name, campu
 const alerts: FinanceAlert[] = [
   { id: "statutory-1", severity: "critical", title: "NSSF overdue",
     message: "UGX 5.0M is overdue; the oldest was due 15 Feb 2026. Compliance risk.",
-    school: school("Greenhill International School", "gis"), page: "liabilities-management",
+    school: school("Greenhill International School", "gis"), page: "assets-liabilities",
     date: "2026-02-15" },
   { id: "cash-cover-2", severity: "warning", title: "Cash cover below 1.5×",
     message: "Cash covers 1.3× of the UGX 55.5M due in the next 30 days.",
     school: school("GreenHill Academy Primary Buwaate", "buwaate"),
-    page: "liabilities-management", date: "2026-11-01" },
+    page: "assets-liabilities", date: "2026-11-01" },
   { id: "loan-due-3", severity: "info", title: "Loan instalment due 01 Dec",
     message: "UGX 5.5M to School Lender (LOAN-001).",
     school: school("Green Hill Academy Secondary School Kibuli", "kibuli"),
-    page: "liabilities-management", date: "2026-12-01" },
+    page: "assets-liabilities", date: "2026-12-01" },
 ];
 
 describe("NotificationBell", () => {
@@ -43,7 +43,7 @@ describe("NotificationBell", () => {
     expect(within(panel).getByText("NSSF overdue: GIS")).toBeInTheDocument();
     expect(within(panel).getByText("Cash cover below 1.5×: Buwaate Primary")).toBeInTheDocument();
     expect(within(panel).getByText("Loan instalment due 01 Dec: Kibuli Secondary")).toBeInTheDocument();
-    expect(within(panel).getAllByText(/Liabilities ·/)).toHaveLength(3);
+    expect(within(panel).getAllByText(/Assets & Liabilities ·/)).toHaveLength(3);
   });
 
   it("marks everything read and remembers it", async () => {
@@ -69,7 +69,7 @@ describe("NotificationBell", () => {
     const item = screen.getByText("Cash cover below 1.5×: Buwaate Primary").closest("li")!;
     fireEvent.click(within(item).getByRole("button", { name: "View" }));
 
-    expect(onSelectPage).toHaveBeenCalledWith("liabilities-management");
+    expect(onSelectPage).toHaveBeenCalledWith("assets-liabilities");
     expect(screen.getByRole("button", { name: "Notifications, 2 unread" })).toBeInTheDocument();
   });
 
@@ -101,7 +101,7 @@ describe("NotificationBell", () => {
 
   it("shows only the alerts that belong on the screen", async () => {
     const onScreens: FinanceAlert[] = [
-      { ...alerts[0], pages: ["liabilities-management", "assets-liabilities", "finance-overview"] },
+      { ...alerts[0], pages: ["assets-liabilities", "liabilities-management", "finance-overview"] },
       { ...alerts[1], id: "collection-9", title: "Fee collection behind", page: "revenue-fee-collection",
         pages: ["revenue-fee-collection"] },
     ];
