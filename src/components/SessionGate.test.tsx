@@ -45,6 +45,22 @@ afterEach(() => {
 });
 
 describe("SessionGate", () => {
+  it("checks silently without showing protected content", () => {
+    mockedVerifySession.mockReturnValue(new Promise(() => {}));
+    const { container } = renderGate();
+    expect(container).toBeEmptyDOMElement();
+    expect(screen.queryByText(/Checking your session/)).not.toBeInTheDocument();
+    expect(screen.queryByText("dashboard")).not.toBeInTheDocument();
+  });
+
+  it("does not repeat the initial check on a normal pageshow", async () => {
+    mockedVerifySession.mockResolvedValue("signed-in");
+    renderGate();
+    await screen.findByText("dashboard");
+    act(() => window.dispatchEvent(new Event("pageshow")));
+    expect(mockedVerifySession).toHaveBeenCalledTimes(1);
+  });
+
   it("starts sign-in on direct entry even with an existing session", () => {
     window.history.replaceState(null, "", "/");
     mockedVerifySession.mockResolvedValue("signed-in");

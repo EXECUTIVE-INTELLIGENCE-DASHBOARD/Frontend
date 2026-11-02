@@ -34,7 +34,6 @@ export function SessionGate({ children }: { children: ReactNode }) {
 
   // The first `pageshow` of a normal load arrives just after mount, which is
   // already being checked. Ignoring it avoids asking twice on every cold start.
-  const settledOnce = useRef(false);
 
   // A re-check hides the content before it asks, so the state is no longer
   // "open" by the time the answer arrives. Remembering that it *was* open is
@@ -67,7 +66,6 @@ export function SessionGate({ children }: { children: ReactNode }) {
       setState(confirmed.current ? "open" : "unreachable");
     } finally {
       checking.current = false;
-      settledOnce.current = true;
     }
   }, []);
 
@@ -84,7 +82,7 @@ export function SessionGate({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     function handlePageShow(event: PageTransitionEvent) {
-      if (!event.persisted && settledOnce.current) {
+      if (!event.persisted) {
         // A re-load, not a restore: React mounted again, and the mount effect
         // above is already checking.
         return;
@@ -115,14 +113,11 @@ export function SessionGate({ children }: { children: ReactNode }) {
   }, [revalidate]);
 
   if (state === "open") return <>{children}</>;
+  if (state === "checking") return null;
 
   return (
     <div className="session-gate" role="status" aria-live="polite">
       <div className="session-gate__card">
-        {state === "checking" && (
-          <p className="session-gate__text">Checking your session...</p>
-        )}
-
         {state === "signed-out" && (
           <>
             <h1 className="session-gate__title">You have been signed out</h1>
