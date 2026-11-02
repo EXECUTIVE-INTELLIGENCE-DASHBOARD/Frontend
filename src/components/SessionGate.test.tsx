@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, render, screen, waitFor } from "@testing-library/react";
 
 import { SessionGate } from "./SessionGate";
-import { verifySession } from "../lib/session";
+import { signInUrl, verifySession } from "../lib/session";
 
 /**
  * The gate's whole job is to make the server's answer, not the browser's
@@ -11,7 +11,7 @@ import { verifySession } from "../lib/session";
  */
 vi.mock("../lib/session", () => ({
   verifySession: vi.fn(),
-  signInUrl: () => "/api/auth/login/",
+  signInUrl: vi.fn(() => "/api/auth/login/"),
 }));
 
 const mockedVerifySession = vi.mocked(verifySession);
@@ -37,6 +37,7 @@ function restoreFromHistory() {
 
 beforeEach(() => {
   mockedVerifySession.mockReset();
+  window.history.replaceState(null, "", "/?signin=complete");
 });
 
 afterEach(() => {
@@ -44,6 +45,22 @@ afterEach(() => {
 });
 
 describe("SessionGate", () => {
+  it("starts sign-in on direct entry even with an existing session", () => {
+    window.history.replaceState(null, "", "/");
+    mockedVerifySession.mockResolvedValue("signed-in");
+    renderGate();
+    expect(signInUrl).toHaveBeenCalled();
+    expect(mockedVerifySession).not.toHaveBeenCalled();
+    expect(screen.queryByText("dashboard")).not.toBeInTheDocument();
+  });
+
+  it("removes the callback marker after returning from sign-in", async () => {
+    mockedVerifySession.mockResolvedValue("signed-in");
+    renderGate();
+    expect(await screen.findByText("dashboard")).toBeInTheDocument();
+    expect(window.location.search).toBe("");
+  });
+
   it("renders the application when the server confirms a session", async () => {
     mockedVerifySession.mockResolvedValue("signed-in");
 
