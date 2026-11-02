@@ -293,8 +293,8 @@ export default function FacilitiesMaintenance() {
               <MonthlyChart orders={orders} start={start} end={end} />
               <Legend
                 items={[
-                  { label: "Logged", tone: "over", line: "solid" },
-                  { label: "Completed", tone: "done", line: "dash" },
+                  { label: "Logged", tone: "over" },
+                  { label: "Completed (dashed)", tone: "done" },
                 ]}
               />
             </section>
