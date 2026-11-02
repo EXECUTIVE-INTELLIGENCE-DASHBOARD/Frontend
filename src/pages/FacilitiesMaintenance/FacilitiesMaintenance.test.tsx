@@ -2,6 +2,13 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import FacilitiesMaintenance from "./FacilitiesMaintenance";
 
+const loaded = () => screen.findByText("Work Orders Logged");
+
+const logged = () =>
+  Number(
+    screen.getByText("Work Orders Logged").parentElement?.querySelector("strong")?.textContent?.replace(/,/g, "")
+  );
+
 describe("FacilitiesMaintenance", () => {
   it("shows Campus, Section and a date range, without Employment, term or year", async () => {
     render(<FacilitiesMaintenance />);
@@ -9,56 +16,72 @@ describe("FacilitiesMaintenance", () => {
     expect(screen.getByLabelText("Start date")).toBeTruthy();
     expect(screen.queryByLabelText("Employment")).toBeNull();
     expect(screen.queryByLabelText("Term")).toBeNull();
-    expect(await screen.findByText("Work Orders Logged")).toBeTruthy();
+    expect(await loaded()).toBeTruthy();
   });
 
   it("keeps GSL out of the Campus list", async () => {
     render(<FacilitiesMaintenance />);
-    await screen.findByText("Work Orders Logged");
+    await loaded();
     const campus = screen.getByLabelText("Campus") as HTMLSelectElement;
     expect([...campus.options].map((o) => o.value)).not.toContain("GSL");
   });
 
   it("offers Nursery in the Section filter", async () => {
     render(<FacilitiesMaintenance />);
-    await screen.findByText("Work Orders Logged");
+    await loaded();
     const section = screen.getByLabelText("Section") as HTMLSelectElement;
     expect([...section.options].map((o) => o.value)).toContain("Nursery");
   });
 
-  it("shows the completed, outstanding and overdue cards", async () => {
+  it("shows the logged, completed, outstanding and overdue KPI cards", async () => {
     render(<FacilitiesMaintenance />);
-    await screen.findByText("Work Orders Logged");
-    for (const title of ["Completed", "Outstanding", "Overdue"]) {
-      expect(screen.getByRole("heading", { name: title })).toBeTruthy();
+    await loaded();
+    for (const label of ["Completed", "Outstanding", "Overdue"]) {
+      expect(screen.getAllByText(label).length).toBeGreaterThan(0);
     }
   });
 
-  it("opens the work orders list and closes it again", async () => {
+  it("shows the four work order graphs", async () => {
     render(<FacilitiesMaintenance />);
-    fireEvent.click((await screen.findAllByRole("button", { name: /View all/ }))[0]);
-    expect(screen.getByRole("dialog", { name: "Work Orders" })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Close" }));
-    expect(screen.queryByRole("dialog")).toBeNull();
+    await loaded();
+    for (const name of [
+      "Status share",
+      "Work orders by category",
+      "Logged vs completed by month",
+      "Completion rate by category",
+    ]) {
+      expect(screen.getByRole("heading", { name })).toBeTruthy();
+    }
+    expect(screen.getByRole("img", { name: /Status share of \d+ work orders/ })).toBeTruthy();
+    expect(screen.getByRole("img", { name: /Work orders by category/ })).toBeTruthy();
+    expect(screen.getByRole("img", { name: /logged and completed each month/ })).toBeTruthy();
+    expect(screen.getByRole("img", { name: /Completion rate by category/ })).toBeTruthy();
   });
 
-  it("closes the work orders list with Escape", async () => {
+  it("labels the x and y axes of the graphs", async () => {
     render(<FacilitiesMaintenance />);
-    fireEvent.click((await screen.findAllByRole("button", { name: /View all/ }))[0]);
-    expect(screen.getByRole("dialog", { name: "Work Orders" })).toBeTruthy();
-    fireEvent.keyDown(window, { key: "Escape" });
-    expect(screen.queryByRole("dialog")).toBeNull();
+    await loaded();
+    expect(screen.getAllByText("Category").length).toBe(2);
+    expect(screen.getAllByText("Work orders").length).toBe(2);
+    expect(screen.getByText("Completion rate (%)")).toBeTruthy();
+    expect(screen.getByText(/Month logged/)).toBeTruthy();
   });
 
-  it("expands the furniture row to show chairs and desks, and collapses it again", async () => {
+  it("has no tables, lists or View all popups", async () => {
     render(<FacilitiesMaintenance />);
-    const furniture = await screen.findByRole("button", { name: "Furniture" });
-    expect(furniture.getAttribute("aria-expanded")).toBe("false");
-    fireEvent.click(furniture);
-    expect(furniture.getAttribute("aria-expanded")).toBe("true");
-    expect(screen.getByText(/Chairs and desks ·/)).toBeTruthy();
-    expect(screen.getByLabelText("Date")).toBeTruthy();
-    fireEvent.click(furniture);
-    expect(screen.queryByText(/Chairs and desks ·/)).toBeNull();
+    await loaded();
+    expect(screen.queryByRole("table")).toBeNull();
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.queryByRole("button", { name: /View all/ })).toBeNull();
+  });
+
+  it("narrows the work orders when a location is chosen", async () => {
+    render(<FacilitiesMaintenance />);
+    await loaded();
+    const before = logged();
+    const location = screen.getByLabelText("Location") as HTMLSelectElement;
+    const pick = [...location.options].find((o) => o.value !== "");
+    fireEvent.change(location, { target: { value: pick?.value } });
+    expect(logged()).toBeLessThan(before);
   });
 });

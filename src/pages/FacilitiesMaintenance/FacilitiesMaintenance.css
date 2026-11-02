@@ -96,3 +96,33 @@
 @media (max-width: 1180px) { .fm-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 900px) { .fm-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } .fm-lists { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 720px) { .fm-kpis { grid-template-columns: minmax(0, 1fr); } }
+/* Work order graphs */
+.fm-page { --wo-blue: #5fa2db; --wo-gold: var(--fm-gold); --wo-navy: var(--chart-navy, #1f2d5c); }
+.wo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.wo-note { font-size: 12px; color: var(--color-text-muted); }
+.wo-svg { width: 100%; height: auto; display: block; }
+.wo-svg text { fill: var(--color-text-muted); font-size: 10.5px; }
+.wo-svg .wo-title { fill: var(--color-heading); font-size: 11px; }
+.wo-svg .wo-val { fill: var(--color-heading); font-size: 11px; font-weight: 700; }
+.wo-svg .wo-big { fill: var(--color-heading); font-size: 30px; font-weight: 700; }
+.wo-grid-line { stroke: var(--color-border); stroke-width: 1; }
+.wo-axis { stroke: var(--color-text-muted); stroke-width: 1; }
+.wo-done { fill: var(--wo-blue); }
+.wo-open { fill: var(--wo-gold); }
+.wo-over { fill: var(--wo-navy); }
+.wo-mark { stroke: var(--color-surface); stroke-width: 2; }
+.wo-ring { fill: none; }
+.wo-ring--done { stroke: var(--wo-blue); }
+.wo-ring--open { stroke: var(--wo-gold); }
+.wo-ring--over { stroke: var(--wo-navy); }
+.wo-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.wo-line--done { stroke: var(--wo-blue); }
+.wo-line--over { stroke: var(--wo-navy); }
+.wo-line--dash { stroke-dasharray: 6 4; }
+.wo-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; font-size: 11.5px; color: var(--color-text-muted); }
+.wo-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.wo-legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.wo-sw--done { background: var(--wo-blue); }
+.wo-sw--open { background: var(--wo-gold); }
+.wo-sw--over { background: var(--wo-navy); }
+@media (max-width: 900px) { .wo-grid { grid-template-columns: 1fr; } }
