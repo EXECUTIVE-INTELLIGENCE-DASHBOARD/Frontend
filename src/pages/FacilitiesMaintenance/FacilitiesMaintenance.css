@@ -126,3 +126,4 @@
 .wo-sw--open { background: var(--wo-gold); }
 .wo-sw--over { background: var(--wo-navy); }
 @media (max-width: 900px) { .wo-grid { grid-template-columns: 1fr; } }
+.wo-grid .fm-card__head { min-height: 52px; }

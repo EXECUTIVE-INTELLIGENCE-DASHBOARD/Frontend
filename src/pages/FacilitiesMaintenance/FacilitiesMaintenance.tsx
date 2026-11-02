@@ -288,7 +288,7 @@ export default function FacilitiesMaintenance() {
             <section className="fm-card">
               <div className="fm-card__head">
                 <h3>Logged vs completed by month</h3>
-                <span className="wo-note">Completed = done, of orders logged that month</span>
+                <span className="wo-note" title="Completed = done, of the orders logged that month">By month logged</span>
               </div>
               <MonthlyChart orders={orders} start={start} end={end} />
               <Legend

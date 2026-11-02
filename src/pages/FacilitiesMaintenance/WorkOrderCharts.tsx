@@ -1,11 +1,11 @@
 import type { CategoryRow, WorkOrder } from "./facilities.types";
 
-const VB_W = 360;
-const VB_H = 232;
-const PL = 46;
-const PR = 12;
-const PT = 20;
-const PB = 182;
+const VB_W = 560;
+const VB_H = 238;
+const PL = 52;
+const PR = 14;
+const PT = 16;
+const PB = 190;
 const PW = VB_W - PL - PR;
 const PH = PB - PT;
 
@@ -133,7 +133,7 @@ export function CategoryChart({ rows }: { rows: CategoryRow[] }) {
   if (!rows.length) return <p className="fm-empty">No work orders</p>;
   const { top, ticks } = scale(Math.max(...rows.map((r) => r.logged)));
   const k = PH / top;
-  const bw = Math.min(34, (PW / rows.length) * 0.62);
+  const bw = Math.min(44, (PW / rows.length) * 0.62);
   return (
     <svg className="wo-svg" viewBox={`0 0 ${VB_W} ${VB_H}`} role="img" aria-label="Work orders by category: done, open on time and overdue">
       <Frame top={top} ticks={ticks} xTitle="Category" yTitle="Work orders" />
@@ -161,6 +161,8 @@ export function CategoryChart({ rows }: { rows: CategoryRow[] }) {
   );
 }
 
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 const monthKey = (ts: number) => {
   const d = new Date(ts);
   return d.getFullYear() * 12 + d.getMonth();
@@ -175,7 +177,7 @@ function monthBuckets(start: number, end: number) {
   while (y < e.getFullYear() || (y === e.getFullYear() && m <= e.getMonth())) {
     out.push({
       key: y * 12 + m,
-      label: new Date(y, m, 1).toLocaleString("en-GB", { month: "short" }),
+      label: MONTHS[m],
       year: y,
     });
     m += 1;
@@ -231,7 +233,7 @@ export function CompletionChart({ rows }: { rows: CategoryRow[] }) {
     .sort((a, b) => b.rate - a.rate);
   if (!data.length) return <p className="fm-empty">No work orders</p>;
   const ticks = [0, 25, 50, 75, 100];
-  const bw = Math.min(34, (PW / data.length) * 0.62);
+  const bw = Math.min(44, (PW / data.length) * 0.62);
   return (
     <svg className="wo-svg" viewBox={`0 0 ${VB_W} ${VB_H}`} role="img" aria-label="Completion rate by category">
       <Frame top={100} ticks={ticks} xTitle="Category" yTitle="Completion rate (%)" fmt={(v) => `${v}%`} />
