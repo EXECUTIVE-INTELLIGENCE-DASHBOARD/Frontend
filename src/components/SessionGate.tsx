@@ -28,6 +28,9 @@ export function SessionGate({ children }: { children: ReactNode }) {
 
   // Two events can fire for the same restore; one request per answer is enough.
   const checking = useRef(false);
+  const returnedFromLogin = useRef(
+    new URLSearchParams(window.location.search).get("signin") === "complete",
+  );
 
   // The first `pageshow` of a normal load arrives just after mount, which is
   // already being checked. Ignoring it avoids asking twice on every cold start.
@@ -39,7 +42,7 @@ export function SessionGate({ children }: { children: ReactNode }) {
   const confirmed = useRef(false);
 
   const revalidate = useCallback(async (hideContentFirst: boolean) => {
-    if (checking.current) return;
+    if (!returnedFromLogin.current || checking.current) return;
     checking.current = true;
 
     if (hideContentFirst) setState("checking");
@@ -69,6 +72,13 @@ export function SessionGate({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (!returnedFromLogin.current) {
+      window.location.replace(signInUrl());
+      return;
+    }
+    const url = new URL(window.location.href);
+    url.searchParams.delete("signin");
+    window.history.replaceState(null, "", url.pathname + url.search + url.hash);
     void revalidate(true);
   }, [revalidate]);
 
