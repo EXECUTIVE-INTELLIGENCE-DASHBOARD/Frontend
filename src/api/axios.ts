@@ -5,10 +5,12 @@ import axios, {
 } from "axios";
 
 import { signInUrl } from "../lib/session";
+import { readCookie } from "../lib/api/client";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "/api",
   timeout: 15000,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -21,6 +23,10 @@ let redirectingToSignIn = false;
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("access_token");
+    if (!["get", "head", "options", "trace"].includes((config.method ?? "get").toLowerCase())) {
+      const csrfToken = readCookie("csrftoken");
+      if (csrfToken) config.headers.set("X-CSRFToken", csrfToken);
+    }
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
