@@ -8,19 +8,26 @@ import react from "@vitejs/plugin-react";
 
 /* --------------------------------------------------------------- Dev proxy
  *
- * The browser used to call the Django backend directly, which made every
- * request depend on the *system* resolver. On networks where that resolver
- * cannot answer for `eid-backend-4mrm.onrender.com` the browser fails with
- * `net::ERR_NAME_NOT_RESOLVED` and Node fails with `ENOTFOUND`, even though
- * public resolvers return the host fine (216.24.57.16 / 216.24.57.18).
+ * This must stay in step with VITE_API_URL in `.env.development`. Two files
+ * describing "where the API lives" that disagree is what produced a sign-in
+ * that worked for a while and then started answering
+ * `{"error": "Sign-in could not be started. Please try again."}` — the proxy
+ * was still reaching the deployed backend while the app itself was reaching
+ * the local one, so half the traffic went to each.
  *
- * Serving the API from the dev server removes the browser's dependency on
- * DNS entirely: the page only ever talks to localhost:5173, and the outbound
- * lookup below runs inside Node against resolvers that are known to work.
+ * The local Django server is the default here because that is what `npm run
+ * dev` is for. Set DEV_PROXY_TARGET to forward somewhere else instead.
+ *
+ * When the target is TLS the outbound lookup runs inside Node against public
+ * resolvers, because the *system* resolver on some networks cannot answer for
+ * the Render host: the browser then fails with `net::ERR_NAME_NOT_RESOLVED`
+ * and Node with `ENOTFOUND`, even though public resolvers return the address
+ * fine (216.24.57.16 / 216.24.57.18). Plain-http localhost needs none of that.
  *
  * Nothing here ships to production — `vite build` ignores `server.proxy`.
  */
-const backendOrigin = "https://eid-backend-4mrm.onrender.com";
+const backendOrigin = process.env.DEV_PROXY_TARGET ?? "http://localhost:8001";
+const backendUsesTls = backendOrigin.startsWith("https:");
 
 const resolver = new dns.promises.Resolver({ timeout: 5000, tries: 3 });
 resolver.setServers(["1.1.1.1", "8.8.8.8"]);
@@ -78,11 +85,15 @@ export default defineConfig({
       "/api": {
         target: backendOrigin,
         changeOrigin: true,
-        secure: true,
-        agent: new https.Agent({
-          keepAlive: true,
-          lookup: publicDnsLookup,
-        }),
+        secure: backendUsesTls,
+        ...(backendUsesTls
+          ? {
+              agent: new https.Agent({
+                keepAlive: true,
+                lookup: publicDnsLookup,
+              }),
+            }
+          : {}),
       },
     },
   },
