@@ -30,9 +30,9 @@ export function SessionGate({ children }: { children: ReactNode }) {
   // A response from before a history move must never reopen a newer session check.
   const requestVersion = useRef(0);
   const returnedFromLogin = useRef(
-    new URLSearchParams(window.location.search).get("signin") === "complete" ||
+    new URLSearchParams(window.location.search).get("signin") === "complete" &&
       (performance.getEntriesByType("navigation")[0] as
-        PerformanceNavigationTiming | undefined)?.type === "back_forward",
+        PerformanceNavigationTiming | undefined)?.type !== "back_forward",
   );
 
   const revalidate = useCallback(async () => {
@@ -73,8 +73,7 @@ export function SessionGate({ children }: { children: ReactNode }) {
 
       // Hide the content first. `event.persisted` means the browser put the
       // old screen back, so it is on screen right now.
-      conceal();
-      void revalidate();
+      restartSignIn();
     }
 
     function conceal() {
@@ -86,9 +85,14 @@ export function SessionGate({ children }: { children: ReactNode }) {
       conceal();
     }
 
-    function handlePopState() {
+    function restartSignIn() {
       conceal();
-      void revalidate();
+      returnedFromLogin.current = false;
+      window.location.replace(signInUrl());
+    }
+
+    function handlePopState() {
+      restartSignIn();
     }
 
     function handleVisibilityChange() {
