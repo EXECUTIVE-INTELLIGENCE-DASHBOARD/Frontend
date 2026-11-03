@@ -26,7 +26,7 @@ No business workflows, sample people, or dashboard metrics have been invented. A
 ## Start locally
 
 1. Install Node.js 24 LTS.
-2. Copy .env.example to .env and adjust VITE_API_BASE_URL if the API is not at http://localhost:8000/api.
+2. Start the EID API and the identity provider, each on its own port. See Local ports below for the ports and for the `runserver` trap.
 3. Install dependencies and start Vite:
 
        npm ci
@@ -34,7 +34,26 @@ No business workflows, sample people, or dashboard metrics have been invented. A
 
 4. Open http://localhost:5173.
 
+No environment file has to be created for local work. `.env.development` is committed and already points at the local API, and Vite loads it automatically in dev. Copy `.env.example` to `.env` only if one machine has to be aimed somewhere else. Note the precedence: `.env` overrides `.env.development`, and `.env.local` / `.env.development.local` override both, so a forgotten local override silently wins over the committed values.
+
 Vite reads variables prefixed with VITE_ and exposes them to browser code. Never place passwords, private keys, or server-only secrets in a VITE_ variable; browser bundles are public to anyone who can load the page.
+
+## Local ports
+
+Three separate servers run side by side, and two of them are Django, so they are easy to confuse:
+
+| Port | Service | Started with |
+| --- | --- | --- |
+| 5173 | This frontend (Vite) | `npm run dev` |
+| 8001 | EID API — Django backend, serves `/api/...` | `python manage.py runserver localhost:8001` |
+| 8000 | Identity provider — serves `/o/...` and `/auth/...` | `python manage.py runserver 127.0.0.1:8000` in Auth-backend |
+| 5174 | Identity provider sign-in UI (Vite) | `vite --host 127.0.0.1 --port 5174` in Auth-frontend |
+
+Port 8000 is **not** the dashboard API. `/api/health/`, `/api/expenses/` and `/api/auth/me/` all answer 404 there, so pointing the frontend at 8000 makes every data request fail in a way that reads like a database outage.
+
+Always pass the backend port explicitly. A bare `python manage.py runserver` defaults to 8000, and Django on Windows sets `allow_reuse_address`, so it binds the port the identity provider already holds **without any "address already in use" error**. It then receives no traffic at all, because every connection goes to whichever process bound the port first. The visible result is either 404s on `/api/...` or a 500 from sign-in, depending on which process won the port.
+
+If Vite reports "Port 5173 is already in use", a dev server is already running; `strictPort` makes the second one fail loudly instead of quietly moving to another port. Stop the old one rather than letting two servers share the port. Vite reads environment files once at startup, so the older server keeps serving stale configuration and requests appear to alternate between two different backends.
 
 ## Start with Docker
 
@@ -78,9 +97,9 @@ There are two clients, both driven by environment variables and both defaulting 
 - `src/api/axios.ts` reads `VITE_API_URL`.
 - `src/lib/api/client.ts` reads `VITE_API_BASE_URL`, falling back to `VITE_API_URL`.
 
-In development `vite.config.ts` proxies `/api` to the backend, and the Docker production image uses nginx to do the same, so the browser stays same-origin. The Render static-site deployment has no API proxy; its build-time `VITE_API_URL` and `VITE_API_BASE_URL` settings point directly to the backend. The backend must allow the deployed frontend origin for cross-origin requests. TanStack Query is configured in src/main.tsx; feature-specific hooks should be added alongside the feature that uses them.
+In development `vite.config.ts` proxies `/api` to `http://localhost:8001` (override with `DEV_PROXY_TARGET`), and the Docker production image uses nginx to do the same, so the browser stays same-origin. Because `.env.development` sets an absolute `VITE_API_URL`, the local app actually calls the API directly at `localhost:8001` rather than through the proxy; the proxy still covers anyone who leaves the variable unset or uses relative paths. A direct call is cross-origin, so the backend must allow `http://localhost:5173` with credentials, and unsafe methods must send the CSRF header. The Render static-site deployment has no API proxy; its build-time `VITE_API_URL` and `VITE_API_BASE_URL` settings point directly to the backend. The backend must allow the deployed frontend origin for cross-origin requests. TanStack Query is configured in src/main.tsx; feature-specific hooks should be added alongside the feature that uses them.
 
-For local work, start the Backend repository too. The Backend foundation exposes GET /api/health/. Ensure the backend CORS allowlist includes local development origins and the deployed frontend origin.
+For local work, start the Backend repository too, on port 8001 as described in Local ports. The Backend foundation exposes GET /api/health/. Ensure the backend CORS allowlist includes local development origins and the deployed frontend origin.
 
 ## Branch and review workflow
 
