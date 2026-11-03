@@ -23,15 +23,6 @@ export type SessionVerdict = "signed-in" | "signed-out" | "unknown";
 
 export { signInUrl };
 
-const DEFAULT_PROVIDER_URL = "https://greenhill-auth-backend2.onrender.com";
-
-/** The identity provider itself, for asking about the shared session. */
-function providerBaseUrl(): string {
-  const configured = import.meta.env.VITE_SSO_BASE_URL || DEFAULT_PROVIDER_URL;
-
-  return String(configured).replace(/\/+$/, "");
-}
-
 async function ask(url: string): Promise<SessionVerdict> {
   try {
     const response = await fetch(url, {
@@ -39,6 +30,7 @@ async function ask(url: string): Promise<SessionVerdict> {
       credentials: "include",
       cache: "no-store",
       headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(10_000),
     });
 
     // Both services answer 401 with `{authenticated: false}`, which is a
@@ -58,31 +50,7 @@ async function ask(url: string): Promise<SessionVerdict> {
   }
 }
 
-/**
- * Ask the server whether the session behind this browser is still live.
- *
- * Two sources, because there are two sessions in play and either one being
- * live is enough to let the dashboard open:
- *
- * 1. This app's own backend, which is the fast, same-origin answer.
- * 2. The identity provider, because that is the session that actually decides
- *    whether the person is signed in to GreenHill at all. This is what keeps
- *    the gate working before EID's own callback has been exercised.
- *
- * The gate only closes on two definite "no" answers. A 5xx from a cold Render
- * instance says nothing about the person's credentials, so it is reported as
- * "unknown" rather than "signed-out" -- bouncing a signed-in user to a
- * sign-in page on a cold start would be its own bug.
- */
+/** EID's own backend is authoritative for access to the EID dashboard. */
 export async function verifySession(): Promise<SessionVerdict> {
-  const own = await ask(apiUrl("auth/me/"));
-
-  if (own === "signed-in") return "signed-in";
-
-  const provider = await ask(`${providerBaseUrl()}/auth/me/`);
-
-  if (provider === "signed-in") return "signed-in";
-  if (own === "signed-out" && provider === "signed-out") return "signed-out";
-
-  return "unknown";
+  return ask(apiUrl("auth/me/"));
 }
