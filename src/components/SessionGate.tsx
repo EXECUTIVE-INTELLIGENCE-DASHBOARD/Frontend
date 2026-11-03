@@ -17,6 +17,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
+import { flushSync } from "react-dom";
 
 import { signInUrl, verifySession } from "../lib/session";
 import "./SessionGate.css";
@@ -26,47 +27,29 @@ type GateState = "checking" | "open" | "signed-out" | "unreachable";
 export function SessionGate({ children }: { children: ReactNode }) {
   const [state, setState] = useState<GateState>("checking");
 
-  // Two events can fire for the same restore; one request per answer is enough.
-  const checking = useRef(false);
+  // A response from before a history move must never reopen a newer session check.
+  const requestVersion = useRef(0);
   const returnedFromLogin = useRef(
-    new URLSearchParams(window.location.search).get("signin") === "complete",
+    new URLSearchParams(window.location.search).get("signin") === "complete" ||
+      (performance.getEntriesByType("navigation")[0] as
+        PerformanceNavigationTiming | undefined)?.type === "back_forward",
   );
 
-  // The first `pageshow` of a normal load arrives just after mount, which is
-  // already being checked. Ignoring it avoids asking twice on every cold start.
-
-  // A re-check hides the content before it asks, so the state is no longer
-  // "open" by the time the answer arrives. Remembering that it *was* open is
-  // what lets an unreachable server leave a working dashboard alone.
-  const confirmed = useRef(false);
-
-  const revalidate = useCallback(async (hideContentFirst: boolean) => {
-    if (!returnedFromLogin.current || checking.current) return;
-    checking.current = true;
-
-    if (hideContentFirst) setState("checking");
-
+  const revalidate = useCallback(async () => {
+    if (!returnedFromLogin.current) return;
+    const version = ++requestVersion.current;
+    setState("checking");
+    let verdict;
     try {
-      const verdict = await verifySession();
-
-      if (verdict === "signed-in") {
-        confirmed.current = true;
-        setState("open");
-        return;
-      }
-
-      if (verdict === "signed-out") {
-        confirmed.current = false;
-        setState("signed-out");
-        return;
-      }
-
-      // Could not tell. A session that was already confirmed stays confirmed so
-      // a cold backend does not sign everybody out; anything else is held.
-      setState(confirmed.current ? "open" : "unreachable");
-    } finally {
-      checking.current = false;
+      verdict = await verifySession();
+    } catch {
+      verdict = "unknown";
     }
+    if (version !== requestVersion.current) return;
+    setState(
+      verdict === "signed-in" ? "open" :
+        verdict === "signed-out" ? "signed-out" : "unreachable",
+    );
   }, []);
 
   useEffect(() => {
@@ -77,7 +60,7 @@ export function SessionGate({ children }: { children: ReactNode }) {
     const url = new URL(window.location.href);
     url.searchParams.delete("signin");
     window.history.replaceState(null, "", url.pathname + url.search + url.hash);
-    void revalidate(true);
+    void revalidate();
   }, [revalidate]);
 
   useEffect(() => {
@@ -90,22 +73,37 @@ export function SessionGate({ children }: { children: ReactNode }) {
 
       // Hide the content first. `event.persisted` means the browser put the
       // old screen back, so it is on screen right now.
-      void revalidate(event.persisted);
+      conceal();
+      void revalidate();
+    }
+
+    function conceal() {
+      ++requestVersion.current;
+      flushSync(() => setState("checking"));
+    }
+
+    function handlePageHide() {
+      conceal();
     }
 
     function handlePopState() {
-      void revalidate(false);
+      conceal();
+      void revalidate();
     }
 
     function handleVisibilityChange() {
-      if (document.visibilityState === "visible") void revalidate(false);
+      conceal();
+      if (document.visibilityState === "visible") void revalidate();
     }
 
+    window.addEventListener("pagehide", handlePageHide);
     window.addEventListener("pageshow", handlePageShow);
     window.addEventListener("popstate", handlePopState);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
+      ++requestVersion.current;
+      window.removeEventListener("pagehide", handlePageHide);
       window.removeEventListener("pageshow", handlePageShow);
       window.removeEventListener("popstate", handlePopState);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
@@ -142,7 +140,7 @@ export function SessionGate({ children }: { children: ReactNode }) {
             <button
               className="session-gate__button"
               type="button"
-              onClick={() => void revalidate(true)}
+              onClick={() => void revalidate()}
             >
               Try again
             </button>

@@ -45,6 +45,46 @@ afterEach(() => {
 });
 
 describe("SessionGate", () => {
+  it("conceals the dashboard before saving a page in browser history", async () => {
+    mockedVerifySession.mockResolvedValue("signed-in");
+    renderGate();
+    await screen.findByText("dashboard");
+    act(() => window.dispatchEvent(new Event("pagehide")));
+    expect(screen.queryByText("dashboard")).not.toBeInTheDocument();
+    expect(mockedVerifySession).toHaveBeenCalledTimes(1);
+  });
+
+  it("checks a history navigation without forcing a new login", async () => {
+    window.history.replaceState(null, "", "/");
+    vi.spyOn(performance, "getEntriesByType").mockReturnValue([
+      { type: "back_forward" } as PerformanceNavigationTiming,
+    ]);
+    mockedVerifySession.mockResolvedValue("signed-in");
+    renderGate();
+    expect(await screen.findByText("dashboard")).toBeInTheDocument();
+    expect(signInUrl).not.toHaveBeenCalled();
+  });
+
+  it("does not reopen from an old response after a history check rejects access", async () => {
+    let finishOld!: (value: "signed-in") => void;
+    mockedVerifySession.mockReturnValueOnce(new Promise((resolve) => { finishOld = resolve; }));
+    mockedVerifySession.mockResolvedValueOnce("signed-out");
+    renderGate();
+    restoreFromHistory();
+    await screen.findByText("You have been signed out");
+    await act(async () => { finishOld("signed-in"); });
+    expect(screen.queryByText("dashboard")).not.toBeInTheDocument();
+  });
+
+  it("hides content immediately while a back/forward check is pending", async () => {
+    mockedVerifySession.mockResolvedValueOnce("signed-in");
+    renderGate();
+    await screen.findByText("dashboard");
+    mockedVerifySession.mockReturnValueOnce(new Promise(() => {}));
+    act(() => window.dispatchEvent(new Event("popstate")));
+    expect(screen.queryByText("dashboard")).not.toBeInTheDocument();
+  });
+
   it("checks silently without showing protected content", () => {
     mockedVerifySession.mockReturnValue(new Promise(() => {}));
     const { container } = renderGate();
@@ -169,7 +209,7 @@ describe("SessionGate", () => {
     });
   });
 
-  it("keeps a confirmed session when the check cannot reach the server", async () => {
+  it("hides a restored session when the check cannot reach the server", async () => {
     mockedVerifySession.mockResolvedValueOnce("signed-in");
 
     renderGate();
@@ -184,6 +224,7 @@ describe("SessionGate", () => {
       expect(mockedVerifySession).toHaveBeenCalledTimes(2);
     });
 
-    expect(screen.getByText("dashboard")).toBeInTheDocument();
+    expect(await screen.findByText("We could not confirm your session")).toBeInTheDocument();
+    expect(screen.queryByText("dashboard")).not.toBeInTheDocument();
   });
 });
