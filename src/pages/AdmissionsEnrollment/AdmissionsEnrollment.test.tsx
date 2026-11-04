@@ -129,7 +129,7 @@ describe("AdmissionsEnrollment", () => {
   it("offers the same filters as the other academic screens", async () => {
     render(<AdmissionsEnrollment />);
 
-    expect(selectByName("Section")).toBeInTheDocument();
+    expect(selectByName("School section")).toBeInTheDocument();
     expect(selectByName("Term")).toBeInTheDocument();
     expect(selectByName("Academic Year")).toBeInTheDocument();
 
@@ -142,9 +142,9 @@ describe("AdmissionsEnrollment", () => {
           .map((option) => option.textContent),
       ).toEqual([
         "All Campuses",
+        "Kibuli Main",
         "Buwaate",
         "Greenhill International (GIS)",
-        "Kibuli Main",
       ]),
     );
   });
@@ -153,12 +153,12 @@ describe("AdmissionsEnrollment", () => {
     render(<AdmissionsEnrollment />);
 
     await waitFor(() => {
-      expect(selectByName("Campus")).toHaveValue("");
+      expect(selectByName("Campus")).toHaveValue("All Campuses");
       expect(selectByName("Term")).toHaveValue("");
     });
 
     fireEvent.change(selectByName("Campus"), {
-      target: { value: "kibuli" },
+      target: { value: "Kibuli Main Campus" },
     });
     fireEvent.change(selectByName("Term"), {
       target: { value: "6" },
@@ -211,8 +211,8 @@ describe("AdmissionsEnrollment", () => {
     render(<AdmissionsEnrollment />);
 
     // The row is the same set of filters the academic screens share.
-    expect(selectByName("Campus")).toHaveValue("");
-    expect(selectByName("Section")).toHaveValue("");
+    expect(selectByName("Campus")).toHaveValue("All Campuses");
+    expect(selectByName("School section")).toHaveValue("All Sections");
     expect(selectByName("Term")).toBeInTheDocument();
     expect(selectByName("Academic Year")).toBeInTheDocument();
 
@@ -569,6 +569,10 @@ describe("AdmissionsEnrollment", () => {
       target: { value: "Achieng Mercy" },
     });
 
-    expect(screen.getByRole("status")).toHaveTextContent("Achieng Mercy");
+    const searchBanner = screen
+      .getByText(/Searching every learner in scope for/)
+      .closest('[role="status"]');
+
+    expect(searchBanner).toHaveTextContent("Achieng Mercy");
   });
 });

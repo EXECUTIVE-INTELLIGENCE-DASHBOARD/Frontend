@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
@@ -267,7 +273,7 @@ describe("CoCurricularActivities", () => {
     await screen.findByRole("heading", { name: "Activities" });
 
     fireEvent.change(screen.getByRole("combobox", { name: "Campus" }), {
-      target: { value: "kibuli" },
+      target: { value: "Kibuli Main Campus" },
     });
 
     await screen.findByRole("heading", { name: "Activities" });
@@ -301,7 +307,7 @@ describe("CoCurricularActivities", () => {
     expect(screen.getByText("Baby Class")).toBeInTheDocument();
 
     fireEvent.change(screen.getByRole("combobox", { name: "Campus" }), {
-      target: { value: "kibuli" },
+      target: { value: "Kibuli Main Campus" },
     });
 
     const unassignedStream = await screen.findByText("Unassigned");
@@ -312,26 +318,27 @@ describe("CoCurricularActivities", () => {
   it("keeps the shared academic filters and sends supported filters", async () => {
     render(<CoCurricularActivities />);
     await screen.findByRole("heading", { name: "Activities" });
-    await screen.findByRole("option", { name: "Kibuli Main Campus" });
-    await screen.findByRole("option", { name: "Term 1 · 2026" });
+    await screen.findByRole("option", { name: "Kibuli Main" });
+    await screen.findByRole("option", { name: "Term 1" });
     expect(screen.getByRole("combobox", { name: "Academic Year" })).toBeInTheDocument();
     expect(screen.queryByRole("combobox", { name: "School" })).not.toBeInTheDocument();
 
     fireEvent.change(screen.getByRole("combobox", { name: "Campus" }), {
-      target: { value: "kibuli" },
+      target: { value: "Kibuli Main Campus" },
     });
-    fireEvent.change(screen.getByRole("combobox", { name: "Section" }), {
-      target: { value: "secondary" },
+    fireEvent.change(screen.getByRole("combobox", { name: "School section" }), {
+      target: { value: "Secondary" },
     });
     fireEvent.change(screen.getByRole("combobox", { name: "Term" }), {
       target: { value: "7" },
     });
 
-    await screen.findByRole("heading", { name: "Activities" });
-    expect(academicsApi.getCoCurricularDashboard).toHaveBeenLastCalledWith(
-      { campus: "kibuli", level: "secondary", term: 7 },
-      expect.any(AbortSignal),
-    );
+    await waitFor(() => {
+      expect(academicsApi.getCoCurricularDashboard).toHaveBeenLastCalledWith(
+        { campus: "kibuli", level: "secondary", term: 7 },
+        expect.any(AbortSignal),
+      );
+    });
     expect(
       vi.mocked(academicsApi.getCoCurricularDashboard).mock.calls[
         vi.mocked(academicsApi.getCoCurricularDashboard).mock.calls.length - 1
