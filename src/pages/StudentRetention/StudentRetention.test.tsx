@@ -1,5 +1,11 @@
-
-import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import api from "../../api/axios";
@@ -197,16 +203,14 @@ describe("StudentRetention", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole("option", { name: "Kibuli Main Campus" }),
+      screen.getByRole("option", { name: "Kibuli Main" }),
     ).toBeInTheDocument();
 
-    expect(
-      screen.getByRole("option", { name: "Buwaate Campus" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Buwaate" })).toBeInTheDocument();
 
     expect(
       screen.getByRole("option", {
-        name: "Annex / Preschool Branch",
+        name: "Greenhill International (GIS)",
       }),
     ).toBeInTheDocument();
   });
@@ -300,7 +304,7 @@ describe("StudentRetention", () => {
   it("updates the retention metrics when a campus is selected", async () => {
     await renderDashboard();
 
-    await chooseCampus("", "buwaate");
+    await chooseCampus("All Campuses", "Buwaate Campus");
 
     const cards = screen.getAllByRole("article");
 
@@ -310,15 +314,14 @@ describe("StudentRetention", () => {
 
     expect(screen.queryByText("Ugandan")).not.toBeInTheDocument();
 
-    expect(
-      screen.getByRole("combobox", { name: "Campus" }),
-    ).toHaveValue("buwaate");
+    expect(screen.getByRole("combobox", { name: "Campus" })).toHaveValue(
+      "Buwaate Campus",
+    );
   });
 
   it("explains when a campus has no retention records", async () => {
     await renderDashboard();
-
-    await chooseCampus("", "annex");
+    await chooseCampus("All Campuses", "Annex / Preschool Branch");
 
     expect(
       screen.getByText("No retention records match the selected filters."),
