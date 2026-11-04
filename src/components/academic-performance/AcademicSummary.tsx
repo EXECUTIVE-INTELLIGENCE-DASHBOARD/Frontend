@@ -267,7 +267,7 @@ function CambridgeCard() {
   );
 }
 
-function PrimaryKpi({
+function SummaryKpi({
   icon: Icon,
   label,
   value,
@@ -296,6 +296,7 @@ export function AcademicSummary({ filters }: AcademicSummaryProps) {
   const { school, campus, section, year, term } = filters;
 
   const dashboardQuery = useAcademicPerformanceDashboard(filters);
+  const summary = dashboardQuery.data?.summary;
 
   const examsQuery = useQuery({
     queryKey: [
@@ -354,85 +355,82 @@ export function AcademicSummary({ filters }: AcademicSummaryProps) {
     term.toLowerCase() === "term 3" ||
     selectedTerm?.number === 3;
 
-  const isPrimary = section.toLowerCase() === "primary";
-
-  if (isPrimary) {
-    const summary = dashboardQuery.data?.summary;
-
-    return (
-      <section
-        className="academic-summary academic-summary--primary"
-        aria-label="Primary academic summary"
+  return (
+    <section className="academic-summary" aria-label="Academic performance summary">
+      <div
+        className="academic-summary__kpis"
+        aria-label="Selected academic performance metrics"
       >
-        <PrimaryKpi
+        <SummaryKpi
           icon={Award}
           label="Average mark"
           value={formatPercent(summary?.average_mark)}
           detail="Across assessed learners"
         />
 
-        <PrimaryKpi
+        <SummaryKpi
           icon={TrendingUp}
           label="Pass rate"
           value={formatPercent(summary?.student_performance)}
           detail={`${formatNumber(summary?.students_passing)} learners passing`}
         />
 
-        <PrimaryKpi
+        <SummaryKpi
           icon={GraduationCap}
           label="Learners assessed"
           value={formatNumber(summary?.students_assessed)}
           detail="For the selected filters"
         />
+      </div>
+
+      <section
+        className="academic-summary__examinations"
+        aria-label="Academic examinations"
+      >
+        <header className="academic-summary__section-heading">
+          <div>
+            <h2>National and Cambridge examinations over the years</h2>
+            <p>
+              Examination outcomes, candidate numbers and historical pass-rate
+              trends
+            </p>
+          </div>
+        </header>
+
+        {!isTermThree ? (
+          <div className="academic-summary__term-notice">
+            <strong>External examinations are reported in Term 3.</strong>
+            <p>
+              Select Term 3 to view PLE, UCE, UACE and Cambridge Checkpoint
+              examination results. Internal assessments remain available for
+              the selected term.
+            </p>
+          </div>
+        ) : examsQuery.isLoading || termsQuery.isLoading ? (
+          <div className="academic-summary__status">
+            Loading examination results...
+          </div>
+        ) : examsQuery.isError ? (
+          <div className="academic-summary__status" role="alert">
+            Unable to load national examination results. Please try again.
+          </div>
+        ) : (
+          <div className="academic-summary__exam-grid">
+            {EXAMS.map((exam) => (
+              <ExamCard
+                key={exam.key}
+                label={exam.label}
+                description={exam.description}
+                summaries={examSummaries.filter(
+                  (item) => item.exam === exam.key,
+                )}
+              />
+            ))}
+
+            <CambridgeCard />
+          </div>
+        )}
       </section>
-    );
-  }
-
-  return (
-    <section className="academic-summary" aria-label="Academic examinations">
-      <header className="academic-summary__section-heading">
-        <div>
-          <h2>National and Cambridge examinations over the years</h2>
-          <p>
-            Examination outcomes, candidate numbers and historical pass-rate
-            trends
-          </p>
-        </div>
-      </header>
-
-      {!isTermThree ? (
-        <div className="academic-summary__term-notice">
-          <strong>External examinations are reported in Term 3.</strong>
-          <p>
-            Select Term 3 to view PLE, UCE, UACE and Cambridge Checkpoint
-            examination results. Internal assessments remain available for
-            the selected term.
-          </p>
-        </div>
-      ) : examsQuery.isLoading || termsQuery.isLoading ? (
-        <div className="academic-summary__status">
-          Loading examination results...
-        </div>
-      ) : examsQuery.isError ? (
-        <div className="academic-summary__status" role="alert">
-          Unable to load national examination results. Please try again.
-        </div>
-      ) : (
-        <div className="academic-summary__exam-grid">
-          {EXAMS.map((exam) => (
-            <ExamCard
-              key={exam.key}
-              label={exam.label}
-              description={exam.description}
-              summaries={examSummaries.filter(
-                (item) => item.exam === exam.key,
-              )}
-            />
-          ))}
-
-          <CambridgeCard />
-        </div>
-      )}
     </section>
   );
 }

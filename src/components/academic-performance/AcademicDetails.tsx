@@ -1,11 +1,5 @@
 import { useMemo } from "react";
-import {
-  AlertCircle,
-  BookOpen,
-  GraduationCap,
-  Users,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { AlertCircle, BookOpen } from "lucide-react";
 
 import type { AcademicFilterValues } from "../filters/academicFilters.types";
 import { useAcademicPerformanceDashboard } from "./useAcademicPerformanceDashboard";
@@ -40,24 +34,9 @@ interface GradeDistribution {
   grades?: GradeResult[];
 }
 
-interface DashboardSummary {
-  students_assessed?: number | string | null;
-  students_passing?: number | string | null;
-  average_mark?: number | string | null;
-  student_performance?: number | string | null;
-}
-
 interface DashboardData {
-  summary?: DashboardSummary;
   subjects?: SubjectResult[];
   grade_distribution?: GradeDistribution[];
-}
-
-interface MetricCardProps {
-  label: string;
-  value: string;
-  detail: string;
-  icon: LucideIcon;
 }
 
 const toNumber = (value: unknown): number | null => {
@@ -127,35 +106,6 @@ const matchesSection = (
   return actual === selected;
 };
 
-function MetricCard({
-  label,
-  value,
-  detail,
-  icon: Icon,
-}: MetricCardProps) {
-  return (
-    <article className="academic-details__metric">
-      <div className="academic-details__metric-icon">
-        <Icon size={17} strokeWidth={1.8} />
-      </div>
-
-      <div className="academic-details__metric-copy">
-        <span className="academic-details__metric-label">
-          {label}
-        </span>
-
-        <strong className="academic-details__metric-value">
-          {value}
-        </strong>
-
-        <span className="academic-details__metric-detail">
-          {detail}
-        </span>
-      </div>
-    </article>
-  );
-}
-
 export function AcademicDetails({
   filters,
 }: AcademicDetailsProps) {
@@ -166,7 +116,6 @@ export function AcademicDetails({
     | DashboardData
     | undefined;
 
-  const summary = dashboard?.summary;
   const subjects = dashboard?.subjects ?? [];
   const gradeDistribution = dashboard?.grade_distribution ?? [];
 
@@ -209,16 +158,6 @@ export function AcademicDetails({
       ),
     );
   }, [gradeDistribution, filters.section]);
-
-  const learnersAssessed = toNumber(
-    summary?.students_assessed,
-  );
-
-  const averageMark = toNumber(summary?.average_mark);
-
-  const studentPerformance = toNumber(
-    summary?.student_performance,
-  );
 
   const hasSubjectData = visibleSubjects.length > 0;
   const hasGradeData = visibleGradeDistribution.some(
@@ -269,29 +208,6 @@ export function AcademicDetails({
         </div>
       ) : (
         <>
-          <div className="academic-details__metrics">
-            <MetricCard
-              label="Learners assessed"
-              value={formatNumber(learnersAssessed)}
-              detail="For the selected academic filters"
-              icon={Users}
-            />
-
-            <MetricCard
-              label="Average mark"
-              value={formatPercent(averageMark)}
-              detail="Overall recorded average"
-              icon={GraduationCap}
-            />
-
-            <MetricCard
-              label="Student performance"
-              value={formatPercent(studentPerformance)}
-              detail="Reported by the academic dashboard"
-              icon={BookOpen}
-            />
-          </div>
-
           {hasSubjectData && (
             <div className="academic-details__card">
               <div className="academic-details__card-header">

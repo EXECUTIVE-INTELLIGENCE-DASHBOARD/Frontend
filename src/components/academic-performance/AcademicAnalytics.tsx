@@ -1,12 +1,9 @@
 import { useMemo, useState } from "react";
 import {
-  Activity,
   AlertCircle,
   BookOpen,
   TrendingDown,
-  TrendingUp,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 import type { AcademicFilterValues } from "../filters/academicFilters.types";
 import { useAcademicPerformanceDashboard } from "./useAcademicPerformanceDashboard";
@@ -40,13 +37,6 @@ interface AssessmentRow {
   averageMark: number | null;
   passRate: number | null;
   studentsAssessed: number | null;
-}
-
-interface MetricCardProps {
-  label: string;
-  value: string;
-  detail: string;
-  icon: LucideIcon;
 }
 
 const toNumber = (value: unknown): number | null => {
@@ -150,35 +140,6 @@ const getAssessmentRows = (
     });
 };
 
-function MetricCard({
-  label,
-  value,
-  detail,
-  icon: Icon,
-}: MetricCardProps) {
-  return (
-    <article className="academic-analytics__metric">
-      <div className="academic-analytics__metric-icon">
-        <Icon size={17} strokeWidth={1.8} />
-      </div>
-
-      <div className="academic-analytics__metric-copy">
-        <span className="academic-analytics__metric-label">
-          {label}
-        </span>
-
-        <strong className="academic-analytics__metric-value">
-          {value}
-        </strong>
-
-        <span className="academic-analytics__metric-detail">
-          {detail}
-        </span>
-      </div>
-    </article>
-  );
-}
-
 export function AcademicAnalytics({
   filters,
 }: AcademicAnalyticsProps) {
@@ -203,47 +164,6 @@ export function AcademicAnalytics({
       ),
     [tests, assessment, filters.section],
   );
-
-  const summary = useMemo(() => {
-    const averageMarks = rows
-      .map((row) => row.averageMark)
-      .filter((value): value is number => value !== null);
-
-    const passRates = rows
-      .map((row) => row.passRate)
-      .filter((value): value is number => value !== null);
-
-    const assessedCounts = rows
-      .map((row) => row.studentsAssessed)
-      .filter((value): value is number => value !== null);
-
-    const averageMark =
-      averageMarks.length > 0
-        ? averageMarks.reduce(
-            (total, value) => total + value,
-            0,
-          ) / averageMarks.length
-        : null;
-
-    const averagePassRate =
-      passRates.length > 0
-        ? passRates.reduce(
-            (total, value) => total + value,
-            0,
-          ) / passRates.length
-        : null;
-
-    const totalAssessed =
-      assessedCounts.length > 0
-        ? Math.max(...assessedCounts)
-        : null;
-
-    return {
-      averageMark,
-      averagePassRate,
-      totalAssessed,
-    };
-  }, [rows]);
 
   const weakestSubject = rows.find(
     (row) => row.averageMark !== null,
@@ -348,31 +268,6 @@ export function AcademicAnalytics({
         </div>
       ) : (
         <>
-          <div className="academic-analytics__metrics">
-            <MetricCard
-              label="Average mark"
-              value={formatPercent(summary.averageMark)}
-              detail={`Across ${rows.length} subject${
-                rows.length === 1 ? "" : "s"
-              }`}
-              icon={Activity}
-            />
-
-            <MetricCard
-              label="Average pass rate"
-              value={formatPercent(summary.averagePassRate)}
-              detail="Across subjects with recorded pass rates"
-              icon={TrendingUp}
-            />
-
-            <MetricCard
-              label="Learners assessed"
-              value={formatCount(summary.totalAssessed)}
-              detail="Highest subject-level assessed count"
-              icon={BookOpen}
-            />
-          </div>
-
           <div className="academic-analytics__table-card">
             <div className="academic-analytics__table-header">
               <div>
