@@ -96,8 +96,26 @@ function formatNumber(value: number | null | undefined): string {
 export function shouldShowExternalExams(
   termId: string,
   terms: Term[],
+  filters: Pick<AcademicFilterValues, "school" | "campus" | "section">,
 ): boolean {
-  if (!termId) return true;
+  const isSpecificSelection = (value: string) => {
+    const selection = value.trim().toLowerCase();
+    return Boolean(
+      selection &&
+        !["all", "all schools", "all campuses", "all sections"].includes(
+          selection,
+        ),
+    );
+  };
+
+  if (
+    !termId ||
+    isSpecificSelection(filters.school) ||
+    isSpecificSelection(filters.campus) ||
+    isSpecificSelection(filters.section)
+  ) {
+    return false;
+  }
 
   return terms.some(
     (term) => String(term.id) === termId && term.number === 3,
@@ -399,9 +417,8 @@ export function AcademicSummary({ filters }: AcademicSummaryProps) {
   });
 
   const isExternalExamTerm =
-    !term ||
-    !termsQuery.isSuccess ||
-    shouldShowExternalExams(term, termsQuery.data ?? []);
+    termsQuery.isSuccess &&
+    shouldShowExternalExams(term, termsQuery.data, filters);
 
   const examsQuery = useQuery({
     queryKey: [

@@ -16,6 +16,10 @@ import {
 } from "recharts";
 
 import type { AcademicFilterValues } from "../filters/academicFilters.types";
+import {
+  AllCampusesAssessmentOverview,
+  isAllCampusAndSectionSelection,
+} from "./AllCampusesAssessmentOverview";
 import { useAcademicPerformanceDashboard } from "./useAcademicPerformanceDashboard";
 import "./AcademicAnalytics.css";
 
@@ -768,6 +772,10 @@ export function AcademicAnalytics({
   const campusLabel = comparisonCampus
     ? comparisonCampus[0].toUpperCase() + comparisonCampus.slice(1)
     : "other campus";
+
+  if (isAllCampusAndSectionSelection(filters)) {
+    return <AllCampusesAssessmentOverview filters={filters} />;
+  }
 
   return (
     <section

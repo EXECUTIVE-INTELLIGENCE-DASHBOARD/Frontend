@@ -32,16 +32,6 @@ interface PerformanceDashboard {
     average_mark: number | null;
     average_grade: string | null;
   };
-  grade_distribution?: {
-    level: string;
-    level_display: string;
-    students: number;
-    grades: {
-      grade: string;
-      students: number;
-      share: number | null;
-    }[];
-  }[];
   classes?: {
     class_level?: string;
     class_level_display?: string;
