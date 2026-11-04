@@ -94,7 +94,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 20px;
+  padding: 15px;
   border: 1px solid var(--color-border);
   border-radius: 14px;
   background: var(--color-surface);
@@ -120,11 +120,11 @@
 }
 
 .academic-summary__exam-heading h3 {
-  margin: 5px 0 0;
+  margin: 4px 0 0;
   color: var(--color-heading);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 650;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .academic-summary__exam-result {
@@ -132,7 +132,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 21px;
+  margin-top: 13px;
 }
 
 .academic-summary__exam-result > div {
@@ -143,7 +143,7 @@
 
 .academic-summary__exam-result strong {
   color: var(--color-heading);
-  font-size: 27px;
+  font-size: 24px;
   font-weight: 700;
   line-height: 1.15;
   font-variant-numeric: tabular-nums;
@@ -176,26 +176,26 @@
 }
 
 .academic-summary__candidates {
-  margin: 7px 0 0;
+  margin: 5px 0 0;
 }
 
 .academic-summary__history {
-  margin-top: 20px;
-  padding-top: 15px;
+  margin-top: 13px;
+  padding-top: 10px;
   border-top: 1px solid var(--color-border);
 }
 
 .academic-summary__chart {
   width: 100%;
-  height: 190px;
-  margin-top: 10px;
+  height: 150px;
+  margin-top: 7px;
 }
 
 .academic-summary__legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 13px;
-  margin-top: 11px;
+  gap: 6px 10px;
+  margin-top: 8px;
 }
 
 .academic-summary__legend span {
@@ -300,12 +300,12 @@
   display: flex;
   align-items: baseline;
   gap: 8px;
-  margin-top: 21px;
+  margin-top: 13px;
 }
 
 .academic-summary__cambridge-content strong {
   color: var(--color-heading);
-  font-size: 27px;
+  font-size: 24px;
 }
 
 .academic-summary__cambridge-content span,
@@ -345,9 +345,9 @@
 .academic-summary__cambridge-placeholder {
   display: grid;
   flex: 1;
-  min-height: 190px;
-  margin-top: 18px;
-  padding: 18px;
+  min-height: 145px;
+  margin-top: 12px;
+  padding: 12px;
   place-items: center;
   border: 1px dashed var(--color-border);
   border-radius: 8px;
@@ -414,6 +414,6 @@
   }
 
   .academic-summary__exam-card {
-    padding: 17px;
+    padding: 14px;
   }
 }
