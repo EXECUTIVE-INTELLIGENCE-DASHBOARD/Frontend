@@ -25,7 +25,6 @@ export default function AcademicPerformance() {
         values={filters}
         onChange={setFilters}
         showCampusFilter
-        showSchoolFilter
       />
       <div className="academic-performance__content">
         <AcademicSummary filters={filters} />
