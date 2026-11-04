@@ -3,7 +3,6 @@ import { useState } from "react";
 import { AcademicFilters } from "../../components/filters/AcademicFilters";
 import { AcademicSummary } from "../../components/academic-performance/AcademicSummary";
 import { AcademicAnalytics } from "../../components/academic-performance/AcademicAnalytics";
-import { AcademicDetails } from "../../components/academic-performance/AcademicDetails";
 
 import type { AcademicFilterValues } from "../../components/filters/academicFilters.types";
 
@@ -25,13 +24,12 @@ export default function AcademicPerformance() {
       <AcademicFilters
         values={filters}
         onChange={setFilters}
-        showCampusFilter={false}
+        showCampusFilter
         showSchoolFilter
       />
       <div className="academic-performance__content">
         <AcademicSummary filters={filters} />
         <AcademicAnalytics filters={filters} />
-        <AcademicDetails filters={filters} />
       </div>
     </main>
   );
