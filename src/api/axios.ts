@@ -4,29 +4,18 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from "axios";
 
-import { signInUrl } from "../lib/session";
-import { readCookie } from "../lib/api/client";
-
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "/api",
   timeout: 15000,
-  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
 });
 
-// Set once, the first time a request comes back unauthorised.
-let redirectingToSignIn = false;
-
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("access_token");
-    if (!["get", "head", "options", "trace"].includes((config.method ?? "get").toLowerCase())) {
-      const csrfToken = readCookie("csrftoken");
-      if (csrfToken) config.headers.set("X-CSRFToken", csrfToken);
-    }
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -44,15 +33,8 @@ api.interceptors.response.use(
       localStorage.removeItem("access_token");
       localStorage.removeItem("user");
 
-      // `/login` was never a route in this app, so the redirect used to land
-      // back on the dashboard it was trying to leave. `auth/login/` is the
-      // route that actually starts a sign-in.
-      //
-      // Several requests can fail at once; the first 401 starts the navigation
-      // and the rest must not fight it or they bounce the browser in a loop.
-      if (!redirectingToSignIn) {
-        redirectingToSignIn = true;
-        window.location.assign(signInUrl());
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
       }
     }
 

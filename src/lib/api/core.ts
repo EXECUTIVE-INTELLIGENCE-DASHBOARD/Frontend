@@ -30,9 +30,6 @@ export async function fetchCurrentUser(
   try {
     const response = await apiClient.get<AuthState>("auth/me/", {
       signal: options?.signal,
-      // A cached "signed in" answer would survive a sign-out and be reused
-      // when the browser restores the page.
-      headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
     });
 
     return response.data.authenticated ? response.data.user ?? null : null;
