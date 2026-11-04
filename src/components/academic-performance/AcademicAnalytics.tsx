@@ -578,7 +578,11 @@ function AssessmentChart({
                   tickLine={false}
                   axisLine={false}
                   interval={0}
-                  tick={{ fill: "var(--color-text-muted)", fontSize: 10 }}
+                  angle={-55}
+                  textAnchor="end"
+                  height={92}
+                  tickMargin={8}
+                  tick={{ fill: "var(--color-text-muted)", fontSize: 9 }}
                 />
                 <YAxis
                   domain={[40, 85]}
