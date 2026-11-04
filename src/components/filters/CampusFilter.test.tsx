@@ -37,6 +37,33 @@ describe("CampusFilter", () => {
     expect(campusSelect).toHaveValue("All Campuses");
   });
 
+  it("supports page-specific campus options and display names", () => {
+    render(
+      <CampusFilter
+        campusOptions={[
+          { value: "All Campuses", label: "All Campuses" },
+          { value: "Buwaate Campus", label: "Buwaate" },
+          {
+            value: "Annex / Preschool Branch",
+            label: "Greenhill International (GIS)",
+            sections: ["All Sections"],
+          },
+          { value: "Kibuli Main Campus", label: "Kibuli Main" },
+        ]}
+        showLabels
+      />,
+    );
+
+    const campusSelect = screen.getByRole("combobox", { name: "Campus" });
+    expect(campusSelect.querySelectorAll("option")).toHaveLength(4);
+    expect(screen.getByRole("option", { name: "Buwaate" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("option", { name: "Greenhill International (GIS)" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Kibuli Main" })).toBeInTheDocument();
+    expect(screen.getByText("Section")).toBeVisible();
+  });
+
   it("selects a campus", () => {
     render(<CampusFilter />);
 

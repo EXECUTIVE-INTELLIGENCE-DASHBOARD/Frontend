@@ -2,6 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 import api from "../../api/axios";
+import {
+  CampusFilter,
+  type CampusOption,
+  type SectionOption,
+} from "./CampusFilter";
 
 import type {
   AcademicFilterValues,
@@ -32,11 +37,6 @@ interface PaginatedResponse<T> {
 
 type ApiList<T> = T[] | PaginatedResponse<T>;
 
-interface CampusOption {
-  value: string;
-  label: string;
-}
-
 export function isInternationalSchool(school: Pick<School, "name" | "campus" | "campus_display">): boolean {
   const identity = [
     school.name,
@@ -54,12 +54,6 @@ export function isInternationalSchool(school: Pick<School, "name" | "campus" | "
   );
 }
 
-const sections = [
-  { value: "nursery", label: "Nursery" },
-  { value: "primary", label: "Primary" },
-  { value: "secondary", label: "Secondary" },
-];
-
 function getResults<T>(data: ApiList<T>): T[] {
   if (Array.isArray(data)) {
     return data;
@@ -68,31 +62,125 @@ function getResults<T>(data: ApiList<T>): T[] {
   return data.results ?? [];
 }
 
-function getCampusLabel(school: School): string {
-  return school.campus_display?.trim() || school.campus.trim();
+function campusOptionForValue(value: string): CampusOption {
+  const campus = value.trim().toLowerCase();
+
+  if (
+    campus.includes("international") ||
+    campus.includes("gis") ||
+    campus.includes("kansanga") ||
+    campus.includes("annex")
+  ) {
+    return "Annex / Preschool Branch";
+  }
+  if (campus.includes("buwaate")) {
+    return "Buwaate Campus";
+  }
+  if (campus.includes("kibuli")) {
+    return "Kibuli Main Campus";
+  }
+  return "All Campuses";
 }
 
-function getTermLabel(term: Term): string {
-  return `Term ${term.number}`;
+function campusValueForOption(campus: CampusOption): string {
+  const values: Record<CampusOption, string> = {
+    "All Campuses": "",
+    "Kibuli Main Campus": "kibuli",
+    "Buwaate Campus": "buwaate",
+    "Annex / Preschool Branch": "gis_kansanga",
+  };
+  return values[campus];
+}
+
+function sectionOptionForValue(value: string): SectionOption {
+  const section = value.trim().toLowerCase();
+
+  if (section === "nursery") return "Nursery";
+  if (section === "primary") return "Primary";
+  if (section === "secondary") return "Secondary";
+  return "All Sections";
 }
 
 function sortYearsDescending(a: string, b: string): number {
   return b.localeCompare(a, undefined, { numeric: true });
 }
 
+export function getAcademicYears(
+  terms: Term[],
+  currentYear = new Date().getFullYear(),
+): string[] {
+  const years = new Set<string>();
+
+  for (let year = 2020; year <= currentYear; year += 1) {
+    years.add(String(year));
+  }
+
+  terms.forEach((term) => {
+    const year = String(term.academic_year);
+    if (/^\d{4}$/.test(year) && Number(year) >= 2020) {
+      years.add(year);
+    }
+  });
+
+  return Array.from(years).sort((a, b) =>
+    a.localeCompare(b, undefined, { numeric: true }),
+  );
+}
+
+export function sortAcademicTerms(terms: Term[]): Term[] {
+  return terms
+    .filter((term) => Number(term.academic_year) >= 2020)
+    .sort((a, b) => {
+      const yearComparison = sortYearsDescending(
+        String(a.academic_year),
+        String(b.academic_year),
+      );
+
+      return yearComparison || a.number - b.number;
+    });
+}
+
+export function getAcademicTermOptions(
+  terms: Term[],
+  selectedYear: string,
+  currentYear = new Date().getFullYear(),
+): Array<{ value: string; number: number }> {
+  const validTerms = sortAcademicTerms(terms);
+  const targetYear =
+    selectedYear ||
+    (validTerms.some((term) => Number(term.academic_year) === currentYear)
+      ? String(currentYear)
+      : String(
+          Math.max(
+            currentYear,
+            ...validTerms.map((term) => Number(term.academic_year)),
+          ),
+        ));
+  const termsByNumber = new Map(
+    validTerms
+      .filter((term) => String(term.academic_year) === targetYear)
+      .map((term) => [term.number, term]),
+  );
+
+  return [1, 2, 3].map((number) => ({
+    value: String(termsByNumber.get(number)?.id ?? `term-number-${number}`),
+    number,
+  }));
+}
+
 export function AcademicFilters({
   values,
   onChange,
   showCampusFilter = true,
+  showSectionFilter = true,
   showSchoolFilter = false,
   showAcademicYearFilter = true,
+  showFilterLabels = false,
 }: AcademicFiltersProps) {
   const [schools, setSchools] = useState<School[]>([]);
   const [terms, setTerms] = useState<Term[]>([]);
 
   const [loadingSchools, setLoadingSchools] = useState(true);
-  const [loadingTerms, setLoadingTerms] = useState(true);
-
   const [schoolsError, setSchoolsError] = useState(false);
   const [termsError, setTermsError] = useState(false);
 
@@ -134,10 +222,6 @@ export function AcademicFilters({
         if (active) {
           setTermsError(true);
         }
-      } finally {
-        if (active) {
-          setLoadingTerms(false);
-        }
       }
     }
 
@@ -149,60 +233,21 @@ export function AcademicFilters({
     };
   }, []);
 
-  const campuses = useMemo<CampusOption[]>(() => {
-    const campusMap = new Map<string, string>();
-
-    schools.forEach((school) => {
-      const value = school.campus?.trim();
-
-      if (!value) {
-        return;
-      }
-
-      const label = getCampusLabel(school);
-
-      if (!campusMap.has(value)) {
-        campusMap.set(value, label);
-      }
-    });
-
-    return Array.from(campusMap, ([value, label]) => ({
-      value,
-      label,
-    })).sort((a, b) => a.label.localeCompare(b.label));
-  }, [schools]);
-
   const academicYears = useMemo(() => {
-    return Array.from(
-      new Set(terms.map((term) => String(term.academic_year))),
-    ).sort(sortYearsDescending);
+    return getAcademicYears(terms);
   }, [terms]);
 
-  const filteredTerms = useMemo(() => {
-    return terms
-      .filter(
-        (term) => !values.year || String(term.academic_year) === values.year,
-      )
-      .sort((a, b) => {
-        const yearComparison = sortYearsDescending(
-          String(a.academic_year),
-          String(b.academic_year),
-        );
-
-        return yearComparison || b.number - a.number;
-      });
-  }, [terms, values.year]);
-
-  const selectedSchool = schools.find(
-    (school) => String(school.id) === values.school,
+  const termOptions = useMemo(
+    () => getAcademicTermOptions(terms, values.year),
+    [terms, values.year],
   );
-  const internationalSchool =
-    Boolean(selectedSchool && isInternationalSchool(selectedSchool)) ||
-    isInternationalSchool({
-      name: "",
-      campus: values.campus,
-      campus_display: "",
-    });
+  const hasUnavailableTermOptions = termOptions.some(
+    (term) => !/^\d+$/.test(term.value),
+  );
+
+  const filterLabelClass = showFilterLabels
+    ? "academic-performance__filter-label"
+    : "academic-performance__filter-label academic-performance__filter-label--sr-only";
 
   function updateFilter(field: keyof AcademicFilterValues, value: string) {
     const updatedFilters: AcademicFilterValues = {
@@ -249,6 +294,18 @@ export function AcademicFilters({
     onChange(updatedFilters);
   }
 
+  function updateCampusAndSection(
+    campus: CampusOption,
+    section: SectionOption,
+  ) {
+    onChange({
+      ...values,
+      school: "",
+      campus: campusValueForOption(campus),
+      section: section === "All Sections" ? "" : section.toLowerCase(),
+    });
+  }
+
   return (
     <section
       className="academic-performance__filters"
@@ -256,7 +313,7 @@ export function AcademicFilters({
     >
       {showSchoolFilter && (
         <label className="academic-performance__filter">
-          <span className="academic-performance__filter-label">School</span>
+          <span className={filterLabelClass}>School</span>
 
           <div className="academic-performance__select-wrapper">
             <select
@@ -287,91 +344,47 @@ export function AcademicFilters({
         </label>
       )}
 
-      {showCampusFilter && (
-        <label className="academic-performance__filter">
-          <span className="academic-performance__filter-label">Campus</span>
-
-          <div className="academic-performance__select-wrapper">
-            <select
-              name="campus"
-              aria-label="Campus"
-              value={values.campus}
-              onChange={(event) => updateFilter("campus", event.target.value)}
-            >
-              <option value="">
-                {loadingSchools
-                  ? "Loading campuses..."
-                  : schoolsError
-                    ? "All Campuses (campus list unavailable)"
-                    : "All Campuses"}
-              </option>
-
-              {campuses.map((campus) => (
-                <option key={campus.value} value={campus.value}>
-                  {campus.label}
-                </option>
-              ))}
-            </select>
-
-            <ChevronDown
-              className="academic-performance__select-icon"
-              size={18}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-          </div>
-        </label>
+      {(showCampusFilter || showSectionFilter) && (
+        <CampusFilter
+          selectedCampus={campusOptionForValue(values.campus)}
+          selectedSection={sectionOptionForValue(values.section)}
+          onScopeChange={updateCampusAndSection}
+          showCampus={showCampusFilter}
+          showSection={showSectionFilter}
+          showLabels={showFilterLabels}
+          campusOptions={[
+            {
+              value: "All Campuses",
+              label: "All Campuses",
+              sections: ["All Sections", "Nursery", "Primary", "Secondary"],
+            },
+            { value: "Kibuli Main Campus", label: "Kibuli Main" },
+            { value: "Buwaate Campus", label: "Buwaate" },
+            {
+              value: "Annex / Preschool Branch",
+              label: "Greenhill International (GIS)",
+              sections: ["All Sections"],
+            },
+          ]}
+        />
       )}
-
-      {/* SECTION DROPDOWN */}
-      <label className="academic-performance__filter">
-        <span className="academic-performance__filter-label">Section</span>
-
-        <div className="academic-performance__select-wrapper">
-          <select
-            name="section"
-            aria-label="Section"
-            value={values.section}
-            disabled={internationalSchool}
-            onChange={(event) => updateFilter("section", event.target.value)}
-          >
-            <option value="">All Sections</option>
-
-            {sections.map((section) => (
-              <option key={section.value} value={section.value}>
-                {section.label}
-              </option>
-            ))}
-          </select>
-
-          <ChevronDown
-            className="academic-performance__select-icon"
-            size={18}
-            strokeWidth={2}
-            aria-hidden="true"
-          />
-        </div>
-      </label>
 
       {/* TERM DROPDOWN */}
       <label className="academic-performance__filter">
-        <span className="academic-performance__filter-label">Term</span>
+        <span className={filterLabelClass}>Term</span>
 
         <div className="academic-performance__select-wrapper">
           <select
             name="term"
             aria-label="Term"
             value={values.term}
-            disabled={loadingTerms || termsError}
             onChange={(event) => updateFilter("term", event.target.value)}
           >
-            <option value="">
-              {loadingTerms ? "Loading terms..." : "All Terms"}
-            </option>
+            <option value="">All Terms</option>
 
-            {filteredTerms.map((term) => (
-              <option key={term.id} value={String(term.id)}>
-                {getTermLabel(term)} · {term.academic_year}
+            {termOptions.map((term) => (
+              <option key={term.number} value={term.value}>
+                Term {term.number}
               </option>
             ))}
           </select>
@@ -388,7 +401,7 @@ export function AcademicFilters({
       {/* ACADEMIC YEAR DROPDOWN */}
       {showAcademicYearFilter && (
         <label className="academic-performance__filter">
-          <span className="academic-performance__filter-label">
+          <span className={filterLabelClass}>
             Academic Year
           </span>
 
@@ -397,7 +410,6 @@ export function AcademicFilters({
               name="year"
               aria-label="Academic Year"
               value={values.year}
-              disabled={loadingTerms || termsError}
               onChange={(event) => updateFilter("year", event.target.value)}
             >
               <option value="">All Years</option>
@@ -420,24 +432,26 @@ export function AcademicFilters({
       )}
 
       {/* ERROR AND EMPTY STATES */}
-      {schoolsError && (
+      {showSchoolFilter && schoolsError && (
         <p className="academic-performance__filter-message" role="alert">
-          Could not load campuses. Check your connection and try again.
+          Could not load school options. Check your connection and try again.
         </p>
       )}
 
       {termsError && (
         <p className="academic-performance__filter-message" role="alert">
-          Could not load terms and academic years. Check your connection
-          and try again.
+          Could not load term data. Term 1-3 are shown, but cannot filter results
+          until term data is available.
         </p>
       )}
 
-      {!loadingSchools && !schoolsError && campuses.length === 0 && (
+      {!termsError && hasUnavailableTermOptions && (
         <p className="academic-performance__filter-message" role="status">
-          No campuses were returned by the backend.
+          Term 1-3 are shown, but term filtering is unavailable for this year
+          because no matching term records were returned.
         </p>
       )}
+
     </section>
   );
 }

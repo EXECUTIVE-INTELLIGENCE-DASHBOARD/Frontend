@@ -10,6 +10,8 @@ export interface AcademicFiltersProps {
   values: AcademicFilterValues;
   onChange: (values: AcademicFilterValues) => void;
   showCampusFilter?: boolean;
+  showSectionFilter?: boolean;
   showSchoolFilter?: boolean;
   showAcademicYearFilter?: boolean;
+  showFilterLabels?: boolean;
 }
