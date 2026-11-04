@@ -1,10 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, within, waitFor } from "@testing-library/react";
+
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import api from "../../api/axios";
-import type { AcademicFilterValues } from "../filters/academicFilters.types";
 import { AcademicSummary } from "./AcademicSummary";
+
+import type { AcademicFilterValues } from "../filters/academicFilters.types";
+
+import "@testing-library/jest-dom/vitest";
 
 vi.mock("../../api/axios", () => ({
   default: {
@@ -12,464 +15,307 @@ vi.mock("../../api/axios", () => ({
   },
 }));
 
-const testFilters: AcademicFilterValues = {
-  school: "9",
-  campus: "kibuli",
-  section: "secondary",
-  term: "1",
+vi.mock("./useAcademicPerformanceDashboard", () => ({
+  useAcademicPerformanceDashboard: vi.fn(),
+}));
+
+const mockedApiGet = vi.mocked(api.get);
+
+const defaultFilters: AcademicFilterValues = {
+  school: "",
+  campus: "",
+  section: "",
+  term: "3",
   year: "2026",
 };
 
-interface DashboardSummaryMock {
-  syllabus_coverage: number | null;
-  topics_covered: number;
-  topics_planned: number;
-  student_performance: number | null;
-  students_passing: number;
-  students_assessed: number;
-  average_mark: number | null;
-  average_grade: string | null;
-}
 
-interface DashboardResponseMock {
-  term: {
-    id: number;
-    label: string;
-  } | null;
-  compared_with: {
-    id: number;
-    label: string;
-  } | null;
-  summary: DashboardSummaryMock | undefined;
-  grade_distribution: unknown[];
-  national_exams: unknown[];
-  subjects: unknown[];
-  tests: unknown[];
-}
 
-const dashboardResponse: DashboardResponseMock = {
-  term: {
-    id: 1,
-    label: "Term 1, 2026",
-  },
-  compared_with: null,
-  summary: {
-    syllabus_coverage: 75,
-    topics_covered: 150,
-    topics_planned: 200,
-    student_performance: 82,
-    students_passing: 820,
-    students_assessed: 1000,
-    average_mark: 78.5,
-    average_grade: "B+",
-  },
-  grade_distribution: [],
-  national_exams: [],
-  subjects: [],
-  tests: [],
-};
-
-const assessmentsResponse = [
+const terms = [
   {
     id: 1,
-    kind: "test_1",
-    term: 1,
-    school: 9,
-    class_level: "secondary",
+    number: 1,
+    academic_year: "2026",
   },
   {
     id: 2,
-    kind: "test_2",
-    term: 1,
-    school: 9,
-    class_level: "secondary",
+    number: 2,
+    academic_year: "2026",
   },
   {
     id: 3,
-    kind: "end_of_term",
-    term: 1,
-    school: 9,
-    class_level: "secondary",
-  },
-  {
-    id: 4,
-    kind: "test_1",
-    term: 1,
-    school: 9,
-    class_level: "secondary",
+    number: 3,
+    academic_year: "2026",
   },
 ];
 
-let currentDashboardResponse: DashboardResponseMock = dashboardResponse;
-let currentAssessmentsResponse = assessmentsResponse;
 
-function mockApiResponses() {
-  vi.mocked(api.get).mockImplementation(async (url) => {
-    if (url === "/academics/assessments/") {
-      return {
-        data: currentAssessmentsResponse,
-      } as never;
-    }
 
-    return {
-      data: currentDashboardResponse,
-    } as never;
-  });
-}
-
-function renderAcademicSummary(filters: AcademicFilterValues = testFilters) {
+function renderComponent(
+  filters: AcademicFilterValues = defaultFilters,
+) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
         retry: false,
-        refetchInterval: false,
         gcTime: 0,
       },
     },
   });
 
-  return {
-    queryClient,
-    ...render(
-      <QueryClientProvider client={queryClient}>
-        <AcademicSummary filters={filters} />
-      </QueryClientProvider>,
-    ),
-  };
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <AcademicSummary filters={filters} />
+    </QueryClientProvider>,
+  );
 }
 
-async function waitForSummary() {
-  await screen.findByText("Assessments Recorded");
-  await screen.findByRole("heading", { name: "B+" });
-}
+
 
 describe("AcademicSummary", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  
 
-    currentDashboardResponse = dashboardResponse;
-    currentAssessmentsResponse = assessmentsResponse;
-
-    mockApiResponses();
+  afterEach(() => {
+    cleanup();
   });
 
-  it("renders the academic performance summary section", async () => {
-    renderAcademicSummary();
+  it("renders the national and Cambridge examinations heading", async () => {
+    renderComponent();
 
     expect(
-      screen.getByRole("region", {
-        name: "Academic performance summary",
+      screen.getByRole("heading", {
+        name: /national and cambridge examinations over the years/i,
       }),
     ).toBeInTheDocument();
 
-    await waitForSummary();
-  });
-
-  it("renders all three summary metric cards", async () => {
-    renderAcademicSummary();
-
-    const summary = screen.getByRole("region", {
-      name: "Academic performance summary",
-    });
-
     expect(
-      await within(summary).findByText("Assessments Recorded"),
-    ).toBeInTheDocument();
-
-    expect(
-      within(summary).getByText("Student Performance"),
-    ).toBeInTheDocument();
-
-    expect(within(summary).getByText("Average Grade")).toBeInTheDocument();
-  });
-
-  it("renders exactly three metric cards", async () => {
-    renderAcademicSummary();
-
-    await waitForSummary();
-
-    const summary = screen.getByRole("region", {
-      name: "Academic performance summary",
-    });
-
-    expect(within(summary).getAllByRole("article")).toHaveLength(3);
-  });
-
-  it("displays the assessment count returned by the assessments API", async () => {
-    renderAcademicSummary();
-
-    const summary = screen.getByRole("region", {
-      name: "Academic performance summary",
-    });
-
-    await within(summary).findByText("Assessments Recorded");
-
-    expect(
-      await within(summary).findByRole("heading", {
-        name: "4",
-      }),
+      screen.getByText(/examination outcomes, candidate numbers/i),
     ).toBeInTheDocument();
   });
 
-  it("does not display description text under the Assessments Recorded value", async () => {
-    renderAcademicSummary();
-
-    await waitForSummary();
-
-    const summary = screen.getByRole("region", {
-      name: "Academic performance summary",
-    });
-
-    const assessmentCard = within(summary)
-      .getByText("Assessments Recorded")
-      .closest("article");
-
-    expect(assessmentCard).not.toBeNull();
-
-    expect(
-      assessmentCard?.querySelector(".acad-metric__detail"),
-    ).toBeEmptyDOMElement();
-  });
-
-  it("shows zero when the assessments API returns an empty list", async () => {
-    currentAssessmentsResponse = [];
-
-    renderAcademicSummary();
-
-    await waitForSummary();
-
-    const summary = screen.getByRole("region", {
-      name: "Academic performance summary",
-    });
-
-    const assessmentCard = within(summary)
-      .getByText("Assessments Recorded")
-      .closest("article");
-
-    expect(assessmentCard).not.toBeNull();
-
-    expect(
-      within(assessmentCard as HTMLElement).getByRole("heading", {
-        name: "0",
-      }),
-    ).toBeInTheDocument();
-  });
-
-  it("keeps decorative icons hidden from assistive technology", async () => {
-    const { container } = renderAcademicSummary();
-
-    await waitForSummary();
+  it("loads national examination results from the API", async () => {
+    renderComponent();
 
     await waitFor(() => {
-      expect(
-        container.querySelectorAll(".acad-metric__icon[aria-hidden='true']"),
-      ).toHaveLength(3);
+      expect(mockedApiGet).toHaveBeenCalledWith(
+        "/academics/national-exam-results/",
+        expect.objectContaining({
+          params: expect.any(Object),
+          signal: expect.any(AbortSignal),
+        }),
+      );
     });
   });
 
-  it("displays student performance and assessment details", async () => {
-    currentDashboardResponse = {
-      ...dashboardResponse,
-      summary: {
-        ...dashboardResponse.summary!,
-        student_performance: 82,
-        students_passing: 820,
-        students_assessed: 1000,
-      },
-    };
+  it("loads academic terms from the API", async () => {
+    renderComponent();
 
-    renderAcademicSummary();
+    await waitFor(() => {
+      expect(mockedApiGet).toHaveBeenCalledWith(
+        "/academics/terms/",
+        expect.objectContaining({
+          signal: expect.any(AbortSignal),
+        }),
+      );
+    });
+  });
 
-    await waitForSummary();
+  it("displays the PLE, UCE, UACE and Cambridge cards", async () => {
+    renderComponent();
 
     expect(
-      await screen.findByRole("heading", { name: "82.0%" }),
+      await screen.findByRole("heading", {
+        name: "Primary Leaving Examination",
+      }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText("820 of 1,000 students passing"),
+      screen.getByRole("heading", {
+        name: "Uganda Certificate of Education",
+      }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("heading", {
+        name: "Uganda Advanced Certificate",
+      }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("heading", {
+        name: "Cambridge Checkpoint",
+      }),
     ).toBeInTheDocument();
   });
 
-  it("displays the average grade and average mark returned by the API", async () => {
-    renderAcademicSummary();
+  it("calculates the PLE pass rate using the returned results", async () => {
+    renderComponent();
 
-    await waitForSummary();
-
-    expect(screen.getByText("Average mark: 78.5%")).toBeInTheDocument();
-  });
-
-  it("displays a dash when student performance is unavailable", async () => {
-    currentDashboardResponse = {
-      ...dashboardResponse,
-      summary: {
-        ...dashboardResponse.summary!,
-        student_performance: null,
-      },
-    };
-
-    renderAcademicSummary();
-
-    await screen.findByRole("heading", { name: "B+" });
-
-    const summary = screen.getByRole("region", {
-      name: "Academic performance summary",
+    await screen.findByRole("heading", {
+      name: "Primary Leaving Examination",
     });
 
-    const performanceCard = within(summary)
-      .getByText("Student Performance")
-      .closest("article");
+    expect(screen.getByText("67%")).toBeInTheDocument();
+    expect(screen.getByText("3 candidates")).toBeInTheDocument();
+  });
 
-    expect(performanceCard).not.toBeNull();
+  it("calculates the UCE pass rate using the returned results", async () => {
+    renderComponent();
+
+    await screen.findByRole("heading", {
+      name: "Uganda Certificate of Education",
+    });
+
+    expect(screen.getByText("50%")).toBeInTheDocument();
+    expect(screen.getByText("2 candidates")).toBeInTheDocument();
+  });
+
+  it("displays UACE principal passes", async () => {
+    renderComponent();
+
+    await screen.findByRole("heading", {
+      name: "Uganda Advanced Certificate",
+    });
+
+    expect(screen.getByText("3 principal passes")).toBeInTheDocument();
+  });
+
+  it("displays historical examination results", async () => {
+    renderComponent();
+
+    await screen.findByRole("heading", {
+      name: "Primary Leaving Examination",
+    });
 
     expect(
-      within(performanceCard as HTMLElement).getByRole("heading", {
-        name: "—",
-      }),
+      screen.getByText("Historical pass rate"),
+    ).toBeInTheDocument();
+
+    expect(screen.getByText("2024")).toBeInTheDocument();
+    expect(screen.getByText("2025")).toBeInTheDocument();
+  });
+
+  it("displays candidate division information", async () => {
+    renderComponent();
+
+    await screen.findByRole("heading", {
+      name: "Primary Leaving Examination",
+    });
+
+    expect(
+      screen.getAllByText("Candidate divisions").length,
+    ).toBeGreaterThan(0);
+
+    expect(screen.getAllByText("Division 1").length).toBeGreaterThan(0);
+  });
+
+  it("shows the Cambridge results unavailable message", async () => {
+    renderComponent();
+
+    await screen.findByRole("heading", {
+      name: "Cambridge Checkpoint",
+    });
+
+    expect(
+      screen.getByText(
+        /cambridge checkpoint results are not yet available/i,
+      ),
     ).toBeInTheDocument();
   });
 
-  it("falls back to the average mark when no average grade is available", async () => {
-    currentDashboardResponse = {
-      ...dashboardResponse,
-      summary: {
-        ...dashboardResponse.summary!,
-        average_grade: null,
-        average_mark: 76.4,
-      },
-    };
-
-    renderAcademicSummary();
-
-    expect(
-      await screen.findByRole("heading", { name: "76.4" }),
-    ).toBeInTheDocument();
-
-    expect(screen.getByText("Average assessment mark (%)")).toBeInTheDocument();
-  });
-
-  it("requests the dashboard using the selected school, campus, section, and term ID", async () => {
-    renderAcademicSummary();
-
-    await waitForSummary();
-
-    expect(api.get).toHaveBeenCalledWith(
-      "/academics/performance/dashboard/",
-      expect.objectContaining({
-        params: {
-          school: 9,
-          campus: "kibuli",
-          level: "secondary",
-          term: 1,
-          year: "2026",
-        },
-        signal: expect.any(AbortSignal),
-      }),
-    );
-  });
-
-  it("requests assessments using the selected filters", async () => {
-    renderAcademicSummary();
-
-    await waitForSummary();
-
-    expect(api.get).toHaveBeenCalledWith(
-      "/academics/assessments/",
-      expect.objectContaining({
-        params: {
-          school: 9,
-          campus: "kibuli",
-          level: "secondary",
-          term: 1,
-        },
-        signal: expect.any(AbortSignal),
-      }),
-    );
-  });
-
-  it("does not send a school ID when All Schools is selected", async () => {
-    const allSchoolsFilters: AcademicFilterValues = {
-      school: "",
-      campus: "",
-      section: "",
+  it("shows the Term 3 notice when Term 1 is selected", () => {
+    renderComponent({
+      ...defaultFilters,
       term: "1",
-      year: "2026",
-    };
-
-    renderAcademicSummary(allSchoolsFilters);
-
-    await waitForSummary();
-
-    expect(api.get).toHaveBeenCalledWith(
-      "/academics/performance/dashboard/",
-      expect.objectContaining({
-        params: {
-          term: 1,
-          year: "2026",
-        },
-        signal: expect.any(AbortSignal),
-      }),
-    );
-
-    expect(api.get).toHaveBeenCalledWith(
-      "/academics/assessments/",
-      expect.objectContaining({
-        params: {
-          term: 1,
-        },
-        signal: expect.any(AbortSignal),
-      }),
-    );
-  });
-
-  it("does not send the term when the selected term is a display label instead of a database ID", async () => {
-    const filtersWithDisplayLabel: AcademicFilterValues = {
-      ...testFilters,
-      term: "Term 1",
-    };
-
-    renderAcademicSummary(filtersWithDisplayLabel);
-
-    await waitForSummary();
-
-    expect(api.get).toHaveBeenCalledWith(
-      "/academics/performance/dashboard/",
-      expect.objectContaining({
-        params: {
-          school: 9,
-          campus: "kibuli",
-          level: "secondary",
-          year: "2026",
-        },
-        signal: expect.any(AbortSignal),
-      }),
-    );
-  });
-
-  it("shows an error message when the dashboard request fails", async () => {
-    vi.mocked(api.get).mockRejectedValue({
-      response: {
-        status: 500,
-      },
     });
 
-    renderAcademicSummary();
+    expect(
+      screen.getByText(/external examinations are reported in term 3/i),
+    ).toBeInTheDocument();
 
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Unable to load academic performance (HTTP 500).",
-    );
+    expect(
+      screen.queryByRole("heading", {
+        name: "Primary Leaving Examination",
+      }),
+    ).not.toBeInTheDocument();
   });
 
-  it("shows an error message when the API response has no summary", async () => {
-    currentDashboardResponse = {
-      ...dashboardResponse,
-      summary: undefined,
-    };
+  it("shows the Term 3 notice when Term 2 is selected", () => {
+    renderComponent({
+      ...defaultFilters,
+      term: "2",
+    });
 
-    renderAcademicSummary();
+    expect(
+      screen.getByText(/external examinations are reported in term 3/i),
+    ).toBeInTheDocument();
+  });
 
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "The dashboard returned no summary data for these filters.",
-    );
+  it("displays primary academic summary cards when Primary is selected", () => {
+    renderComponent({
+      ...defaultFilters,
+      section: "Primary",
+    });
+
+    expect(screen.getByText("Average mark")).toBeInTheDocument();
+    expect(screen.getByText("Pass rate")).toBeInTheDocument();
+    expect(screen.getByText("Learners assessed")).toBeInTheDocument();
+
+    expect(screen.getByText("68.5%")).toBeInTheDocument();
+    expect(screen.getByText("78.0%")).toBeInTheDocument();
+    expect(screen.getByText("200")).toBeInTheDocument();
+  });
+
+  it("does not display the examination heading in the primary summary view", () => {
+    renderComponent({
+      ...defaultFilters,
+      section: "Primary",
+    });
+
+    expect(
+      screen.queryByRole("heading", {
+        name: /national and cambridge examinations over the years/i,
+      }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("displays an error message when examination results fail to load", async () => {
+    mockedApiGet.mockImplementation((url) => {
+      if (url === "/academics/national-exam-results/") {
+        return Promise.reject(new Error("Network error"));
+      }
+
+      return Promise.resolve({
+        data: terms,
+      });
+    });
+
+    renderComponent();
+
+    expect(
+      await screen.findByRole("alert"),
+    ).toHaveTextContent(/unable to load national examination results/i);
+  });
+
+  it("displays an empty state when no examination results are returned", async () => {
+    mockedApiGet.mockImplementation((url) => {
+      if (url === "/academics/national-exam-results/") {
+        return Promise.resolve({
+          data: [],
+        });
+      }
+
+      return Promise.resolve({
+        data: terms,
+      });
+    });
+
+    renderComponent();
+
+    expect(
+      await screen.findAllByText(
+        /no examination results are available for these filters/i,
+      ),
+    ).toHaveLength(3);
   });
 });

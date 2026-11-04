@@ -1,380 +1,290 @@
-.acad-analytics {
+.academic-analytics {
   display: flex;
   flex-direction: column;
-  gap: 26px;
-  width: 100%;
+  gap: 16px;
   min-width: 0;
-}
-
-.acad-analytics__card {
-  min-width: 0;
-  padding: clamp(20px, 3vw, 32px);
-  overflow: hidden;
   color: var(--color-text);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 18px;
 }
 
-.acad-analytics__header {
+.academic-analytics__header,
+.academic-analytics__table-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 24px;
 }
 
-.acad-analytics__grade-columns {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
-  gap: 24px;
-}
-
-.acad-analytics__grade-level {
-  min-width: 0;
-  padding: 20px;
-  border-radius: 14px;
-  background: var(--color-surface-subtle, var(--color-bg));
-}
-
-.acad-analytics__grade-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.acad-analytics__grade-heading h3 {
-  margin: 0;
-  color: var(--color-heading);
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.acad-analytics__grade-heading > span {
-  color: var(--color-text-secondary);
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-.acad-analytics__grade-chart {
-  min-width: 0;
-}
-
-.acad-analytics__grade-bars {
-  display: flex;
-  align-items: stretch;
-  justify-content: space-around;
-  gap: 10px;
-  height: 250px;
-  padding: 12px 12px 0;
-  border-bottom: 1px solid var(--color-border);
-  background-image: linear-gradient(
-    to top,
-    var(--color-border) 1px,
-    transparent 1px
-  );
-  background-size: 100% 25%;
-}
-
-.acad-analytics__grade-column {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  min-width: 0;
-}
-
-.acad-analytics__grade-count {
-  min-height: 18px;
-  color: var(--color-text-secondary);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-}
-
-.acad-analytics__grade-track {
-  position: relative;
-  display: flex;
-  flex: 1;
-  align-items: flex-end;
-  justify-content: center;
-  width: 100%;
-  min-height: 0;
-  cursor: help;
-}
-
-.acad-analytics__grade-track:focus-visible,
-.acad-exams__pass-track:focus-visible {
-  outline: 2px solid var(--brand-sky);
-  outline-offset: 3px;
-}
-
-.acad-analytics__grade-fill {
-  position: relative;
-  display: block;
-  width: min(54px, 72%);
-  min-height: 3px;
-  border-radius: 7px 7px 0 0;
-  background: var(--chart-navy);
-  transition: height 180ms ease;
-}
-
-.acad-analytics__grade-tooltip,
-.acad-exams__tooltip {
-  position: absolute;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  width: max-content;
-  max-width: 220px;
-  padding: 10px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  color: var(--color-heading);
-  background: var(--color-surface);
-  box-shadow: 0 3px 10px rgba(32, 52, 104, 0.12);
-  font-size: 12px;
-  line-height: 1.4;
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, 4px);
-  transition:
-    opacity 120ms ease,
-    transform 120ms ease;
-  visibility: hidden;
-}
-
-.acad-analytics__grade-tooltip {
-  left: 50%;
-  bottom: calc(100% + 10px);
-}
-
-.acad-analytics__grade-tooltip::after {
-  position: absolute;
-  top: 100%;
-  left: calc(50% - 5px);
-  width: 9px;
-  height: 9px;
-  border-right: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface);
-  content: "";
-  transform: translateY(-5px) rotate(45deg);
-}
-
-.acad-analytics__grade-tooltip strong {
-  font-size: 13px;
-}
-
-.acad-analytics__grade-track:hover .acad-analytics__grade-tooltip,
-.acad-analytics__grade-track:focus-visible .acad-analytics__grade-tooltip,
-.acad-exams__pass-track:hover .acad-exams__tooltip,
-.acad-exams__pass-track:focus-visible .acad-exams__tooltip {
-  opacity: 1;
-  transform: translate(-50%, 0);
-  visibility: visible;
-}
-
-.acad-analytics__grade-level--o-level .acad-analytics__grade-fill {
-  background: var(--brand-sky);
-}
-
-.acad-analytics__grade-level--a-level .acad-analytics__grade-fill {
-  background: var(--brand-gold);
-}
-
-.acad-analytics__grade-label {
-  padding: 9px 0 10px;
-  color: var(--color-text-secondary);
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.acad-exams {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
-  gap: 16px;
-  width: 100%;
-  min-width: 0;
-}
-
-.acad-exams__result {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  min-width: 0;
-  padding: 22px;
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--brand-gold) 8%, var(--color-surface));
-}
-
-.acad-exams__rate-ring {
-  position: relative;
-  display: flex;
-  flex: 0 0 82px;
-  align-items: center;
-  justify-content: center;
-  width: 82px;
-  height: 82px;
-  border-radius: 50%;
-}
-
-.acad-exams__rate-ring::before {
-  position: absolute;
-  inset: 8px;
-  border-radius: inherit;
-  background: var(--color-surface);
-  content: "";
-}
-
-.acad-exams__rate-ring strong {
-  position: relative;
-  color: var(--color-heading);
-  font-size: 15px;
-  font-variant-numeric: tabular-nums;
-}
-
-.acad-exams__result-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.acad-exams__result-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.acad-exams__result-heading h3 {
-  min-width: 0;
+.academic-analytics__header h2,
+.academic-analytics__table-header h3 {
   margin: 0;
   color: var(--color-heading);
   font-size: 17px;
-  font-weight: 600;
-  overflow-wrap: anywhere;
+  font-weight: 650;
+  letter-spacing: -0.02em;
 }
 
-.acad-exams__result-heading > span {
-  flex-shrink: 0;
-  padding: 5px 12px;
-  border-radius: 999px;
-  color: var(--color-surface);
-  background: var(--chart-navy);
+.academic-analytics__header p,
+.academic-analytics__table-header p {
+  margin: 5px 0 0;
+  color: var(--color-text-muted);
   font-size: 12px;
+  line-height: 1.5;
+}
+
+.academic-analytics__switch {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface-subtle);
+}
+
+.academic-analytics__switch button {
+  border: 0;
+  border-radius: 6px;
+  padding: 7px 11px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 11px;
   font-weight: 600;
-  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease;
 }
 
-.acad-exams__pass-track {
-  position: relative;
-  display: flex;
-  height: 12px;
-  overflow: visible;
-  border-radius: 999px;
-  background: var(--color-border);
-  cursor: help;
-}
-
-.acad-exams__passed-fill {
-  height: 100%;
-  background: var(--brand-sky);
-}
-
-.acad-exams__failed-fill {
-  height: 100%;
-  background: var(--brand-gold);
-}
-
-.acad-exams__tooltip {
-  top: calc(100% + 10px);
-  left: 50%;
-  white-space: nowrap;
-}
-
-.acad-exams__result-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 20px;
-  margin-top: 10px;
-  color: var(--color-text-secondary);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-}
-
-.acad-exams__passed-label {
-  color: var(--brand-sky);
-}
-
-.acad-exams__failed-label {
+.academic-analytics__switch button:hover {
   color: var(--color-heading);
 }
 
-.acad-analytics__card > p {
-  margin: 0;
-  color: var(--color-text-secondary);
-  font-size: 14px;
-  line-height: 1.7;
+.academic-analytics__switch button.is-active {
+  background: var(--color-surface);
+  color: var(--color-accent);
+  box-shadow: 0 1px 3px rgb(15 23 42 / 9%);
 }
 
-@media (max-width: 700px) {
-  .acad-analytics {
-    gap: 18px;
-  }
+.academic-analytics__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
 
-  .acad-analytics__grade-level {
-    padding: 16px 12px;
-  }
+.academic-analytics__metric {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+}
 
-  .acad-analytics__grade-bars {
-    gap: 4px;
-    height: 215px;
-    padding-right: 4px;
-    padding-left: 4px;
-  }
+.academic-analytics__metric-icon {
+  display: grid;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--color-surface-subtle);
+  color: var(--color-accent);
+}
 
-  .acad-exams {
-    grid-template-columns: minmax(0, 1fr);
-  }
+.academic-analytics__metric-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
 
-  .acad-exams__result {
-    align-items: flex-start;
-    gap: 14px;
-    padding: 16px 12px;
-  }
+.academic-analytics__metric-label {
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 500;
+}
 
-  .acad-exams__rate-ring {
-    flex-basis: 68px;
-    width: 68px;
-    height: 68px;
-  }
+.academic-analytics__metric-value {
+  color: var(--color-heading);
+  font-size: 21px;
+  font-weight: 650;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
 
-  .acad-exams__rate-ring::before {
-    inset: 7px;
-  }
+.academic-analytics__metric-detail {
+  color: var(--color-text-muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
 
-  .acad-exams__rate-ring strong {
-    font-size: 12px;
-  }
+.academic-analytics__table-card {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+}
 
-  .acad-exams__result-heading {
+.academic-analytics__table-header {
+  padding: 15px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.academic-analytics__table-header h3 {
+  font-size: 14px;
+}
+
+.academic-analytics__weakest {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+
+.academic-analytics__weakest svg {
+  color: var(--color-warning, #d99a35);
+}
+
+.academic-analytics__weakest strong {
+  color: var(--color-heading);
+  font-weight: 650;
+}
+
+.academic-analytics__table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.academic-analytics__table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.academic-analytics__table th {
+  padding: 11px 16px;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.academic-analytics__table td {
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.academic-analytics__table tbody tr:hover {
+  background: var(--color-surface-subtle);
+}
+
+.academic-analytics__table td strong {
+  color: var(--color-heading);
+  font-weight: 650;
+}
+
+.academic-analytics__subject {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-heading) !important;
+  font-weight: 600;
+}
+
+.academic-analytics__subject small {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: rgb(217 154 53 / 12%);
+  color: var(--color-warning, #bd8125);
+  font-size: 9px;
+  font-weight: 650;
+  text-transform: uppercase;
+}
+
+.academic-analytics__state {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 22px 18px;
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.academic-analytics__state > svg {
+  flex-shrink: 0;
+  color: var(--color-accent);
+}
+
+.academic-analytics__state strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--color-heading);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.academic-analytics__state p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.academic-analytics__state--error > svg {
+  color: var(--color-danger, #d45c5c);
+}
+
+.academic-analytics__loader {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: academic-analytics-spin 700ms linear infinite;
+}
+
+@keyframes academic-analytics-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 760px) {
+  .academic-analytics__header,
+  .academic-analytics__table-header {
     align-items: flex-start;
     flex-direction: column;
-    gap: 7px;
-    margin-bottom: 12px;
   }
 
-  .acad-exams__result-heading h3 {
-    font-size: 14px;
+  .academic-analytics__metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .academic-analytics__switch {
+    align-self: flex-start;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .acad-analytics__grade-fill {
+  .academic-analytics__loader {
+    animation: none;
+  }
+
+  .academic-analytics__switch button {
     transition: none;
   }
 }
