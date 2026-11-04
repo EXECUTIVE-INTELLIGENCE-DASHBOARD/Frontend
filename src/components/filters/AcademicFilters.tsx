@@ -37,6 +37,23 @@ interface CampusOption {
   label: string;
 }
 
+export function isInternationalSchool(school: Pick<School, "name" | "campus" | "campus_display">): boolean {
+  const identity = [
+    school.name,
+    school.campus,
+    school.campus_display,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return (
+    identity.includes("international") ||
+    identity.includes("gis") ||
+    identity.includes("kansanga")
+  );
+}
+
 const sections = [
   { value: "nursery", label: "Nursery" },
   { value: "primary", label: "Primary" },
@@ -66,6 +83,7 @@ function sortYearsDescending(a: string, b: string): number {
 export function AcademicFilters({
   values,
   onChange,
+  showCampusFilter = true,
   showSchoolFilter = false,
   showAcademicYearFilter = true,
 }: AcademicFiltersProps) {
@@ -154,16 +172,6 @@ export function AcademicFilters({
     })).sort((a, b) => a.label.localeCompare(b.label));
   }, [schools]);
 
-  const filteredSchools = useMemo(
-    () =>
-      schools.filter(
-        (school) =>
-          (!values.campus || school.campus === values.campus) &&
-          (!values.section || school.level === values.section),
-      ),
-    [schools, values.campus, values.section],
-  );
-
   const academicYears = useMemo(() => {
     return Array.from(
       new Set(terms.map((term) => String(term.academic_year))),
@@ -185,6 +193,17 @@ export function AcademicFilters({
       });
   }, [terms, values.year]);
 
+  const selectedSchool = schools.find(
+    (school) => String(school.id) === values.school,
+  );
+  const internationalSchool =
+    Boolean(selectedSchool && isInternationalSchool(selectedSchool)) ||
+    isInternationalSchool({
+      name: "",
+      campus: values.campus,
+      campus_display: "",
+    });
+
   function updateFilter(field: keyof AcademicFilterValues, value: string) {
     const updatedFilters: AcademicFilterValues = {
       ...values,
@@ -199,6 +218,34 @@ export function AcademicFilters({
       updatedFilters.school = "";
     }
 
+    if (field === "campus") {
+      updatedFilters.section = isInternationalSchool({
+        name: "",
+        campus: value,
+        campus_display: "",
+      })
+        ? ""
+        : updatedFilters.section;
+    }
+
+    if (field === "school" && value) {
+      const school = schools.find(
+        (school) => String(school.id) === value,
+      );
+
+      if (school) {
+        updatedFilters.campus = school.campus;
+        updatedFilters.section = isInternationalSchool(school)
+          ? ""
+          : school.level;
+      }
+    }
+
+    if (field === "school" && !value) {
+      updatedFilters.campus = "";
+      updatedFilters.section = "";
+    }
+
     onChange(updatedFilters);
   }
 
@@ -207,40 +254,74 @@ export function AcademicFilters({
       className="academic-performance__filters"
       aria-label="Academic performance filters"
     >
-      {/* CAMPUS DROPDOWN */}
-      <label className="academic-performance__filter">
-        <span className="academic-performance__filter-label">Campus</span>
+      {showSchoolFilter && (
+        <label className="academic-performance__filter">
+          <span className="academic-performance__filter-label">School</span>
 
-        <div className="academic-performance__select-wrapper">
-          <select
-            name="campus"
-            aria-label="Campus"
-            value={values.campus}
-            onChange={(event) => updateFilter("campus", event.target.value)}
-          >
-            <option value="">
-              {loadingSchools
-                ? "Loading campuses..."
-                : schoolsError
-                  ? "All Campuses (campus list unavailable)"
-                  : "All Campuses"}
-            </option>
-
-            {campuses.map((campus) => (
-              <option key={campus.value} value={campus.value}>
-                {campus.label}
+          <div className="academic-performance__select-wrapper">
+            <select
+              name="school"
+              aria-label="School"
+              value={values.school}
+              disabled={loadingSchools || schoolsError}
+              onChange={(event) => updateFilter("school", event.target.value)}
+            >
+              <option value="">
+                {loadingSchools ? "Loading schools..." : "All Schools"}
               </option>
-            ))}
-          </select>
 
-          <ChevronDown
-            className="academic-performance__select-icon"
-            size={18}
-            strokeWidth={2}
-            aria-hidden="true"
-          />
-        </div>
-      </label>
+              {schools.map((school) => (
+                <option key={school.id} value={String(school.id)}>
+                  {school.name}
+                </option>
+              ))}
+            </select>
+
+            <ChevronDown
+              className="academic-performance__select-icon"
+              size={18}
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+          </div>
+        </label>
+      )}
+
+      {showCampusFilter && (
+        <label className="academic-performance__filter">
+          <span className="academic-performance__filter-label">Campus</span>
+
+          <div className="academic-performance__select-wrapper">
+            <select
+              name="campus"
+              aria-label="Campus"
+              value={values.campus}
+              onChange={(event) => updateFilter("campus", event.target.value)}
+            >
+              <option value="">
+                {loadingSchools
+                  ? "Loading campuses..."
+                  : schoolsError
+                    ? "All Campuses (campus list unavailable)"
+                    : "All Campuses"}
+              </option>
+
+              {campuses.map((campus) => (
+                <option key={campus.value} value={campus.value}>
+                  {campus.label}
+                </option>
+              ))}
+            </select>
+
+            <ChevronDown
+              className="academic-performance__select-icon"
+              size={18}
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+          </div>
+        </label>
+      )}
 
       {/* SECTION DROPDOWN */}
       <label className="academic-performance__filter">
@@ -251,6 +332,7 @@ export function AcademicFilters({
             name="section"
             aria-label="Section"
             value={values.section}
+            disabled={internationalSchool}
             onChange={(event) => updateFilter("section", event.target.value)}
           >
             <option value="">All Sections</option>
@@ -302,39 +384,6 @@ export function AcademicFilters({
           />
         </div>
       </label>
-
-      {showSchoolFilter && (
-        <label className="academic-performance__filter">
-          <span className="academic-performance__filter-label">School</span>
-
-          <div className="academic-performance__select-wrapper">
-            <select
-              name="school"
-              aria-label="School"
-              value={values.school}
-              disabled={loadingSchools || schoolsError}
-              onChange={(event) => updateFilter("school", event.target.value)}
-            >
-              <option value="">
-                {loadingSchools ? "Loading schools..." : "All Schools"}
-              </option>
-
-              {filteredSchools.map((school) => (
-                <option key={school.id} value={String(school.id)}>
-                  {school.name}
-                </option>
-              ))}
-            </select>
-
-            <ChevronDown
-              className="academic-performance__select-icon"
-              size={18}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-          </div>
-        </label>
-      )}
 
       {/* ACADEMIC YEAR DROPDOWN */}
       {showAcademicYearFilter && (
