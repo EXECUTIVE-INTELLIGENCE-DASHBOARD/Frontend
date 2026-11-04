@@ -13,6 +13,15 @@ interface DashboardParams {
 }
 
 interface PerformanceDashboard {
+  term?: {
+    id?: number;
+    number?: number;
+    label?: string;
+  };
+  compared_with?: {
+    id?: number;
+    label?: string;
+  } | null;
   summary?: {
     syllabus_coverage: number | null;
     topics_covered: number;
@@ -33,6 +42,22 @@ interface PerformanceDashboard {
       share: number | null;
     }[];
   }[];
+  classes?: {
+    class_level?: string;
+    class_level_display?: string;
+    level?: string;
+    level_display?: string;
+    test_1_average?: number | string | null;
+    test_2_average?: number | string | null;
+  }[];
+  by_class?: {
+    class_level?: string;
+    class_level_display?: string;
+    level?: string;
+    level_display?: string;
+    test_1_average?: number | string | null;
+    test_2_average?: number | string | null;
+  }[];
   subjects?: {
     id?: number;
     subject?: string;
@@ -44,6 +69,7 @@ interface PerformanceDashboard {
     average_mark?: number | string | null;
     pass_rate?: number | string | null;
     previous_pass_rate?: number | string | null;
+    previous_average_mark?: number | string | null;
     results?: unknown[];
   }[];
   [key: string]: unknown;
@@ -89,7 +115,10 @@ export function buildAcademicDashboardParams(
   return params;
 }
 
-export function useAcademicPerformanceDashboard(filters: AcademicFilterValues) {
+export function useAcademicPerformanceDashboard(
+  filters: AcademicFilterValues,
+  enabled = true,
+) {
   const { school, campus, section, term, year } = filters;
   const params = useMemo(
     () => buildAcademicDashboardParams(filters),
@@ -110,5 +139,6 @@ export function useAcademicPerformanceDashboard(filters: AcademicFilterValues) {
     refetchOnWindowFocus: true,
     staleTime: 10_000,
     retry: false,
+    enabled,
   });
 }
