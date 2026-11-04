@@ -574,14 +574,20 @@ export function AllCampusesAssessmentOverview({
               <>
                 <div className="all-campus-overview__chart">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={learnerTrend} margin={{ top: 16, right: 12, bottom: 4, left: 0 }}>
+                    <LineChart data={learnerTrend} margin={{ top: 10, right: 10, bottom: 2, left: -4 }}>
                       <CartesianGrid vertical={false} stroke="#dce4ef" />
-                      <XAxis dataKey="term" tickLine={false} axisLine={false} />
+                      <XAxis
+                        dataKey="term"
+                        tickLine={false}
+                        axisLine={false}
+                        tick={{ fill: "var(--color-text-muted)", fontSize: 10 }}
+                      />
                       <YAxis
                         tickLine={false}
                         axisLine={false}
-                        width={36}
+                        width={30}
                         allowDecimals={false}
+                        tick={{ fill: "var(--color-text-muted)", fontSize: 9 }}
                       />
                       <Tooltip
                         formatter={(value) => [

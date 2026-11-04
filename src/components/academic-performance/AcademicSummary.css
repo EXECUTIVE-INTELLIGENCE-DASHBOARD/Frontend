@@ -102,51 +102,39 @@
 
 .academic-summary__exam-heading {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 14px;
-}
-
-.academic-summary__exam-heading > svg {
-  flex: 0 0 auto;
-  color: var(--color-accent);
+  gap: 8px;
 }
 
 .academic-summary__exam-label {
+  margin: 0;
   color: var(--color-accent);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.02em;
 }
 
-.academic-summary__exam-heading h3 {
-  margin: 4px 0 0;
+.academic-summary__exam-rate {
   color: var(--color-heading);
-  font-size: 14px;
-  font-weight: 650;
-  line-height: 1.35;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
 }
 
 .academic-summary__exam-result {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 13px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 3px;
 }
 
 .academic-summary__exam-result > div {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-}
-
-.academic-summary__exam-result strong {
-  color: var(--color-heading);
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.15;
-  font-variant-numeric: tabular-nums;
+  gap: 2px;
 }
 
 .academic-summary__exam-result > div > span,
@@ -159,7 +147,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 5px 8px;
+  padding: 2px 4px;
   border-radius: 7px;
   font-size: 11px;
   font-weight: 650;
@@ -300,7 +288,7 @@
   display: flex;
   align-items: baseline;
   gap: 8px;
-  margin-top: 13px;
+  margin-top: 3px;
 }
 
 .academic-summary__cambridge-content strong {

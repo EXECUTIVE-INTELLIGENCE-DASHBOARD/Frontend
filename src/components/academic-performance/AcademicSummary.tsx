@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Award, BookOpen, GraduationCap, TrendingDown, TrendingUp } from "lucide-react";
+import { Award, GraduationCap, TrendingDown, TrendingUp } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -58,17 +58,14 @@ const EXAMS = [
   {
     key: "ple",
     label: "PLE",
-    description: "Primary Leaving Examination",
   },
   {
     key: "uce",
     label: "UCE",
-    description: "Uganda Certificate of Education",
   },
   {
     key: "uace",
     label: "UACE",
-    description: "Uganda Advanced Certificate",
   },
 ] as const;
 
@@ -204,11 +201,9 @@ function getExamChartRows(summaries: ExamSummary[]) {
 
 function ExamCard({
   label,
-  description,
   summaries,
 }: {
   label: string;
-  description: string;
   summaries: ExamSummary[];
 }) {
   const latest = summaries[summaries.length - 1];
@@ -223,18 +218,18 @@ function ExamCard({
   return (
     <article className="academic-summary__exam-card">
       <div className="academic-summary__exam-heading">
-        <div>
-          <span className="academic-summary__exam-label">{label}</span>
-          <h3>{description}</h3>
-        </div>
-        <Award size={19} aria-hidden="true" />
+        <h3 className="academic-summary__exam-label">{label}</h3>
+        {latest && (
+          <strong className="academic-summary__exam-rate">
+            {Math.round(latest.passRate)}%
+          </strong>
+        )}
       </div>
 
       {latest ? (
         <>
           <div className="academic-summary__exam-result">
             <div>
-              <strong>{Math.round(latest.passRate)}%</strong>
               <span>Pass rate · {latest.year}</span>
             </div>
 
@@ -352,21 +347,10 @@ function CambridgeCard() {
   return (
     <article className="academic-summary__exam-card academic-summary__cambridge">
       <div className="academic-summary__exam-heading">
-        <div>
-          <span className="academic-summary__exam-label">CAMBRIDGE</span>
-          <h3>Cambridge Checkpoint</h3>
-        </div>
-        <BookOpen size={19} aria-hidden="true" />
+        <h3 className="academic-summary__exam-label">CC</h3>
       </div>
 
-      <p className="academic-summary__empty">
-        Cambridge Checkpoint results are not yet available from the connected
-        examination data.
-      </p>
-
-      <div className="academic-summary__cambridge-placeholder" aria-hidden="true">
-        <span>Cambridge results will appear here when available</span>
-      </div>
+      <div className="academic-summary__cambridge-placeholder" aria-hidden="true" />
     </article>
   );
 }
@@ -513,7 +497,6 @@ export function AcademicSummary({ filters }: AcademicSummaryProps) {
                 <ExamCard
                   key={exam.key}
                   label={exam.label}
-                  description={exam.description}
                   summaries={examSummaries.filter(
                     (item) => item.exam === exam.key,
                   )}
