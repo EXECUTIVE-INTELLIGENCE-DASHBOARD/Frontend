@@ -1,6 +1,15 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Award, BookOpen, GraduationCap, TrendingDown, TrendingUp } from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import api from "../../api/axios";
 import { useAcademicPerformanceDashboard } from "./useAcademicPerformanceDashboard";
@@ -42,7 +51,7 @@ interface ExamSummary {
   candidates: number;
   passed: number;
   passRate: number;
-  divisions: { label: string; count: number }[];
+  divisions: { label: string; count: number; share: number }[];
 }
 
 const EXAMS = [
@@ -63,6 +72,15 @@ const EXAMS = [
   },
 ] as const;
 
+const DIVISION_COLOURS = [
+  "#203468",
+  "#2aa4dd",
+  "#79c6e8",
+  "#c8d3e6",
+  "#f2b719",
+  "#75a88b",
+];
+
 function getResults<T>(data: ApiResponse<T>): T[] {
   return Array.isArray(data) ? data : data.results ?? [];
 }
@@ -73,6 +91,17 @@ function formatPercent(value: number | null | undefined): string {
 
 function formatNumber(value: number | null | undefined): string {
   return value == null ? "—" : value.toLocaleString();
+}
+
+export function shouldShowExternalExams(
+  termId: string,
+  terms: Term[],
+): boolean {
+  if (!termId) return true;
+
+  return terms.some(
+    (term) => String(term.id) === termId && term.number === 3,
+  );
 }
 
 function buildExamSummaries(results: ExamResult[]): ExamSummary[] {
@@ -94,7 +123,15 @@ function buildExamSummaries(results: ExamResult[]): ExamSummary[] {
       group.forEach((result) => {
         const label =
           first.exam === "uace"
-            ? `${result.principal_passes ?? 0} principal passes`
+            ? (result.principal_passes ?? 0) >= 3
+              ? "3 principal"
+              : result.principal_passes === 2
+                ? "2 principal"
+                : result.principal_passes === 1
+                  ? "1 principal"
+                  : result.passed
+                    ? "Subsidiary"
+                    : "Fail"
             : result.division_display?.trim() ||
               result.division?.trim() ||
               "Unclassified";
@@ -112,15 +149,39 @@ function buildExamSummaries(results: ExamResult[]): ExamSummary[] {
         passed,
         passRate: group.length ? (passed / group.length) * 100 : 0,
         divisions: Array.from(divisionCounts.entries())
-          .map(([label, count]) => ({ label, count }))
+          .map(([label, count]) => ({
+            label,
+            count,
+            share: group.length ? (count / group.length) * 100 : 0,
+          }))
           .sort((a, b) =>
-            a.label.localeCompare(b.label, undefined, {
-              numeric: true,
-            }),
+            first.exam === "uace"
+              ? ["3 principal", "2 principal", "1 principal", "Subsidiary", "Fail"].indexOf(a.label) -
+                ["3 principal", "2 principal", "1 principal", "Subsidiary", "Fail"].indexOf(b.label)
+              : a.label.localeCompare(b.label, undefined, { numeric: true }),
           ),
       };
     })
     .sort((a, b) => a.year - b.year);
+}
+
+function getExamChartRows(summaries: ExamSummary[]) {
+  const labels = Array.from(
+    new Set(summaries.flatMap((summary) => summary.divisions.map((item) => item.label))),
+  );
+
+  return {
+    labels,
+    rows: summaries.map((summary) => ({
+      year: summary.year,
+      ...Object.fromEntries(
+        labels.map((label) => [
+          label,
+          summary.divisions.find((division) => division.label === label)?.share ?? 0,
+        ]),
+      ),
+    })),
+  };
 }
 
 function ExamCard({
@@ -134,6 +195,7 @@ function ExamCard({
 }) {
   const latest = summaries[summaries.length - 1];
   const previous = summaries[summaries.length - 2];
+  const chart = getExamChartRows(summaries);
 
   const change =
     latest && previous
@@ -181,52 +243,83 @@ function ExamCard({
 
           <div className="academic-summary__history">
             <div className="academic-summary__history-title">
-              <span>Historical pass rate</span>
-              <span>{summaries.length} years</span>
+              <span>Results by division</span>
+              <span>Pass rate · {Math.round(latest.passRate)}%</span>
             </div>
 
-            <div className="academic-summary__history-bars">
-              {summaries.map((item) => (
-                <div
-                  className="academic-summary__history-item"
-                  key={item.year}
-                >
-                  <span className="academic-summary__history-value">
-                    {Math.round(item.passRate)}%
-                  </span>
-
-                  <div className="academic-summary__history-track">
-                    <span
-                      className="academic-summary__history-fill"
-                      style={{ height: `${item.passRate}%` }}
+            {chart.rows.length > 0 ? (
+              <div className="academic-summary__chart">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={chart.rows}
+                    margin={{ top: 8, right: 2, left: -20, bottom: 0 }}
+                    barCategoryGap="22%"
+                  >
+                    <CartesianGrid
+                      vertical={false}
+                      stroke="var(--color-border)"
+                      strokeDasharray="3 3"
                     />
-                  </div>
+                    <XAxis
+                      dataKey="year"
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{ fill: "var(--color-text-muted)", fontSize: 10 }}
+                    />
+                    <YAxis
+                      domain={[0, 100]}
+                      ticks={[0, 50, 100]}
+                      tickFormatter={(value: number) => `${value}%`}
+                      tickLine={false}
+                      axisLine={false}
+                      width={38}
+                      tick={{ fill: "var(--color-text-muted)", fontSize: 9 }}
+                    />
+                    <Tooltip
+                      formatter={(value) => [`${Number(value).toFixed(1)}%`, "Share"]}
+                      labelFormatter={(value) => `Year ${value}`}
+                      contentStyle={{
+                        border: "1px solid var(--color-border)",
+                        borderRadius: 8,
+                        background: "var(--color-surface)",
+                        color: "var(--color-text)",
+                        fontSize: 11,
+                      }}
+                    />
+                    {chart.labels.map((division, index) => (
+                      <Bar
+                        key={division}
+                        dataKey={division}
+                        stackId="division"
+                        fill={DIVISION_COLOURS[index % DIVISION_COLOURS.length]}
+                        isAnimationActive={false}
+                      />
+                    ))}
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="academic-summary__empty">
+                Division breakdowns are not available for these results.
+              </p>
+            )}
 
-                  <span className="academic-summary__history-year">
-                    {item.year}
+            {chart.labels.length > 0 && (
+              <div className="academic-summary__legend" aria-label="Result divisions">
+                {chart.labels.map((division, index) => (
+                  <span key={division}>
+                    <i
+                      style={{
+                        background: DIVISION_COLOURS[index % DIVISION_COLOURS.length],
+                      }}
+                    />
+                    {division}
                   </span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {latest.divisions.length > 0 && (
-            <div className="academic-summary__divisions">
-              <span className="academic-summary__divisions-title">
-                Candidate divisions
-              </span>
-
-              {latest.divisions.slice(0, 4).map((division) => (
-                <div
-                  className="academic-summary__division"
-                  key={division.label}
-                >
-                  <span>{division.label}</span>
-                  <strong>{division.count}</strong>
-                </div>
-              ))}
-            </div>
-          )}
         </>
       ) : (
         <p className="academic-summary__empty">
@@ -248,20 +341,13 @@ function CambridgeCard() {
         <BookOpen size={19} aria-hidden="true" />
       </div>
 
-      <div className="academic-summary__cambridge-content">
-        <strong>—</strong>
-        <span>30+ out of 50</span>
-      </div>
-
       <p className="academic-summary__empty">
         Cambridge Checkpoint results are not yet available from the connected
         examination data.
       </p>
 
-      <div className="academic-summary__cambridge-bands">
-        <span>Performance bands</span>
-        <div><span>40–50</span><span>30–39</span></div>
-        <div><span>20–29</span><span>Below 20</span></div>
+      <div className="academic-summary__cambridge-placeholder" aria-hidden="true">
+        <span>Cambridge results will appear here when available</span>
       </div>
     </article>
   );
@@ -293,38 +379,10 @@ function SummaryKpi({
 }
 
 export function AcademicSummary({ filters }: AcademicSummaryProps) {
-  const { school, campus, section, year, term } = filters;
+  const { school, campus, section, term } = filters;
 
   const dashboardQuery = useAcademicPerformanceDashboard(filters);
   const summary = dashboardQuery.data?.summary;
-
-  const examsQuery = useQuery({
-    queryKey: [
-      "academic-summary-examinations",
-      school,
-      campus,
-      section,
-      year,
-    ],
-    queryFn: async ({ signal }) => {
-      const params: Record<string, string> = {};
-
-      if (school) params.school = school;
-      if (campus) params.campus = campus;
-      if (section) params.level = section;
-      if (year) params.year = year;
-
-      const response = await api.get<ApiResponse<ExamResult>>(
-        "/academics/national-exam-results/",
-        { params, signal },
-      );
-
-      return getResults(response.data);
-    },
-    staleTime: 10_000,
-    refetchOnWindowFocus: true,
-    retry: false,
-  });
 
   const termsQuery = useQuery({
     queryKey: ["academic-summary-terms"],
@@ -340,20 +398,42 @@ export function AcademicSummary({ filters }: AcademicSummaryProps) {
     retry: false,
   });
 
+  const isExternalExamTerm =
+    !term ||
+    !termsQuery.isSuccess ||
+    shouldShowExternalExams(term, termsQuery.data ?? []);
+
+  const examsQuery = useQuery({
+    queryKey: [
+      "academic-summary-examinations",
+      school,
+      campus,
+      section,
+    ],
+    queryFn: async ({ signal }) => {
+      const params: Record<string, string> = {};
+
+      if (school) params.school = school;
+      if (campus) params.campus = campus;
+      if (section) params.level = section;
+
+      const response = await api.get<ApiResponse<ExamResult>>(
+        "/academics/national-exam-results/",
+        { params, signal },
+      );
+
+      return getResults(response.data);
+    },
+    staleTime: 10_000,
+    refetchOnWindowFocus: true,
+    retry: false,
+    enabled: isExternalExamTerm,
+  });
+
   const examSummaries = useMemo(
     () => buildExamSummaries(examsQuery.data ?? []),
     [examsQuery.data],
   );
-
-  const selectedTerm = termsQuery.data?.find(
-    (item) => String(item.id) === term,
-  );
-
-  const isTermThree =
-    !term ||
-    term === "3" ||
-    term.toLowerCase() === "term 3" ||
-    selectedTerm?.number === 3;
 
   return (
     <section className="academic-summary" aria-label="Academic performance summary">
@@ -383,54 +463,51 @@ export function AcademicSummary({ filters }: AcademicSummaryProps) {
         />
       </div>
 
-      <section
-        className="academic-summary__examinations"
-        aria-label="Academic examinations"
-      >
-        <header className="academic-summary__section-heading">
-          <div>
-            <h2>National and Cambridge examinations over the years</h2>
-            <p>
-              Examination outcomes, candidate numbers and historical pass-rate
-              trends
-            </p>
-          </div>
-        </header>
+      {isExternalExamTerm && (
+        <section
+          className="academic-summary__examinations"
+          aria-label="Academic examinations"
+        >
+          <header className="academic-summary__section-heading">
+            <div>
+              <h2>National and Cambridge examinations over the years</h2>
+              <p>
+                Examination outcomes, candidate numbers and historical pass-rate
+                trends
+              </p>
+            </div>
+          </header>
 
-        {!isTermThree ? (
-          <div className="academic-summary__term-notice">
-            <strong>External examinations are reported in Term 3.</strong>
-            <p>
-              Select Term 3 to view PLE, UCE, UACE and Cambridge Checkpoint
-              examination results. Internal assessments remain available for
-              the selected term.
-            </p>
-          </div>
-        ) : examsQuery.isLoading || termsQuery.isLoading ? (
-          <div className="academic-summary__status">
-            Loading examination results...
-          </div>
-        ) : examsQuery.isError ? (
-          <div className="academic-summary__status" role="alert">
-            Unable to load national examination results. Please try again.
-          </div>
-        ) : (
-          <div className="academic-summary__exam-grid">
-            {EXAMS.map((exam) => (
-              <ExamCard
-                key={exam.key}
-                label={exam.label}
-                description={exam.description}
-                summaries={examSummaries.filter(
-                  (item) => item.exam === exam.key,
-                )}
-              />
-            ))}
+          {termsQuery.isError ? (
+            <div className="academic-summary__status" role="alert">
+              Unable to determine whether external examinations apply to the selected term.
+            </div>
+          ) : examsQuery.isLoading ? (
+            <div className="academic-summary__status">
+              Loading examination results...
+            </div>
+          ) : examsQuery.isError ? (
+            <div className="academic-summary__status" role="alert">
+              Unable to load national examination results. Please try again.
+            </div>
+          ) : (
+            <div className="academic-summary__exam-grid">
+              {EXAMS.map((exam) => (
+                <ExamCard
+                  key={exam.key}
+                  label={exam.label}
+                  description={exam.description}
+                  summaries={examSummaries.filter(
+                    (item) => item.exam === exam.key,
+                  )}
+                />
+              ))}
 
-            <CambridgeCard />
-          </div>
-        )}
-      </section>
+              <CambridgeCard />
+            </div>
+          )}
+        </section>
+      )}
     </section>
   );
 }
