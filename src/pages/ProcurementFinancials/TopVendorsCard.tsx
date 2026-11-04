@@ -3,16 +3,17 @@ import { ArrowRight } from "lucide-react";
 
 import { AllVendorsDialog } from "./AllVendorsDialog";
 import {
+  categoryLabels,
   formatUgx,
-  spendCategories,
-  topVendors,
-  totalVendorCount,
 } from "./procurementFinancials.data";
+import type { Vendor as VendorSpend } from "./procurementFinancials.types";
 
-const categoryLabel = (id: string) =>
-  spendCategories.find((category) => category.id === id)?.shortLabel ?? id;
+interface TopVendorsCardProps {
+  vendors: VendorSpend[];
+  totalSpend: number;
+}
 
-export function TopVendorsCard() {
+export function TopVendorsCard({ vendors, totalSpend }: TopVendorsCardProps) {
   const [showAll, setShowAll] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -34,14 +35,14 @@ export function TopVendorsCard() {
       </div>
 
       <ol className="pf-vendors">
-        {topVendors.map((vendor) => (
+        {vendors.slice(0, 5).map((vendor) => (
           <li key={vendor.id} className="pf-vendor">
             <span className="pf-vendor__rank">#{vendor.rank}</span>
 
             <span className="pf-vendor__name">{vendor.name}</span>
 
             <span className={`pf-badge pf-tone--${vendor.category}`}>
-              {categoryLabel(vendor.category)}
+              {categoryLabels[vendor.category]}
             </span>
 
             <span className="pf-vendor__amount">{formatUgx(vendor.spend)}</span>
@@ -57,12 +58,17 @@ export function TopVendorsCard() {
           aria-haspopup="dialog"
           onClick={() => setShowAll(true)}
         >
-          View All {totalVendorCount} Vendors
+          View All {vendors.length} Vendors
           <ArrowRight size={15} aria-hidden="true" />
         </button>
       </div>
 
-      <AllVendorsDialog open={showAll} onClose={closeAllVendors} />
+      <AllVendorsDialog
+        open={showAll}
+        onClose={closeAllVendors}
+        vendors={vendors}
+        totalSpend={totalSpend}
+      />
     </section>
   );
 }

@@ -1,193 +1,189 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
+import type { PropsWithChildren } from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { procurementApi } from "../../lib/api/procurement";
+import type {
+  ProcurementTransaction,
+  Vendor,
+} from "../../lib/api/types";
 import { ProcurementFinancials } from "./ProcurementFinancials";
-import { allVendors, vendorsTotalSpend } from "./procurementFinancials.data";
+
+vi.mock("../../lib/api/procurement", () => ({
+  procurementApi: {
+    vendors: { list: vi.fn() },
+    procurementTransactions: { list: vi.fn() },
+  },
+}));
+
+const vendorRows: Vendor[] = [
+  { id: 1, name: "BuildTech Contractors Ltd", primary_category: "works" },
+  { id: 2, name: "Equator Catering Services", primary_category: "services" },
+  { id: 3, name: "Scholastic Publishers Ltd", primary_category: "goods" },
+];
+
+const transactionRows: ProcurementTransaction[] = [
+  {
+    id: 1,
+    vendor: 1,
+    fiscal_year: 1,
+    category: "works",
+    status: "paid",
+    amount: "100000000.00",
+    currency: "UGX",
+    transaction_date: "2026-10-01",
+    reference_number: "PROC-001",
+    description: "",
+  },
+  {
+    id: 2,
+    vendor: 1,
+    fiscal_year: 1,
+    category: "goods",
+    status: "outstanding",
+    amount: "20000000.00",
+    currency: "UGX",
+    transaction_date: "2026-10-02",
+    reference_number: "PROC-002",
+    description: "",
+  },
+  {
+    id: 3,
+    vendor: 2,
+    fiscal_year: 1,
+    category: "services",
+    status: "committed",
+    amount: "50000000.00",
+    currency: "UGX",
+    transaction_date: "2026-10-03",
+    reference_number: "PROC-003",
+    description: "",
+  },
+];
+
+function renderPage() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  const wrapper = ({ children }: PropsWithChildren) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+
+  return render(<ProcurementFinancials />, { wrapper });
+}
 
 describe("ProcurementFinancials", () => {
-  it("renders the campus filter", () => {
-    render(<ProcurementFinancials />);
-
-    expect(screen.getByLabelText("Select Campus")).toBeInTheDocument();
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(procurementApi.vendors.list).mockResolvedValue(vendorRows);
+    vi.mocked(
+      procurementApi.procurementTransactions.list,
+    ).mockResolvedValue(transactionRows);
   });
 
-  it("renders the three spend category cards", () => {
-    render(<ProcurementFinancials />);
+  it("uses live transaction values for the category summaries and charts", async () => {
+    renderPage();
+
+    await screen.findByText("Live data · refreshes every 30 seconds");
 
     const cards = screen.getAllByRole("article");
-
     expect(cards).toHaveLength(3);
-
-    const expected: Array<[string, string]> = [
-      ["Works (Capital)", "UGX 180.0M"],
-      ["Services (Operations)", "UGX 145.0M"],
-      ["Goods", "UGX 155.0M"],
-    ];
-
-    expected.forEach(([label, value], index) => {
-      expect(within(cards[index]).getByText(label)).toBeInTheDocument();
-      expect(within(cards[index]).getByText(value)).toBeInTheDocument();
-    });
-  });
-
-  it("lists the top five vendors with a link to all vendors", () => {
-    render(<ProcurementFinancials />);
+    expect(within(cards[0]).getByText("UGX 100.0M")).toBeInTheDocument();
+    expect(within(cards[1]).getByText("UGX 50.0M")).toBeInTheDocument();
+    expect(within(cards[2]).getByText("UGX 20.0M")).toBeInTheDocument();
 
     expect(
-      screen.getByRole("heading", { name: /Top 5 Vendors by Total Spend/i }),
+      screen.getByText(/Total outflow UGX 170\.0M/),
     ).toBeInTheDocument();
-
-    const vendors = screen.getAllByRole("listitem").filter((item) =>
-      item.classList.contains("pf-vendor"),
-    );
-
-    expect(vendors).toHaveLength(5);
-    expect(screen.getByText("Scholastic Publishers Ltd")).toBeInTheDocument();
-    expect(screen.getByText("Vivo Energy (Shell)")).toBeInTheDocument();
-
-    expect(
-      screen.getByRole("button", { name: /View All 34 Vendors/i }),
-    ).toBeInTheDocument();
-  });
-
-  it("shows the spend allocation total and shares", () => {
-    render(<ProcurementFinancials />);
-
-    const section = screen
-      .getByRole("heading", { name: /Spend Allocation by Category/i })
-      .closest("section") as HTMLElement;
-
-    expect(section).not.toBeNull();
-
-    expect(
-      within(section).getByRole("img", {
-        name: /Spend allocation by category/i,
-      }),
-    ).toBeInTheDocument();
-
-    expect(
-      within(section).getByText(/Total outflow UGX 480\.0M/),
-    ).toBeInTheDocument();
-    expect(within(section).getByText(/37\.5%/)).toBeInTheDocument();
-    expect(within(section).getByText(/32\.3%/)).toBeInTheDocument();
-    expect(within(section).getByText(/30\.2%/)).toBeInTheDocument();
-  });
-
-  it("renders the settlement and liability analysis chart", () => {
-    render(<ProcurementFinancials />);
-
     expect(
       screen.getByRole("heading", {
         name: /Procurement Settlement & Liability Analysis/i,
       }),
     ).toBeInTheDocument();
-
-    expect(
-      screen.getByRole("img", {
-        name: /Paid, committed and outstanding amounts/i,
-      }),
-    ).toBeInTheDocument();
-
     expect(screen.getByText("Outstanding AP (Unpaid)")).toBeInTheDocument();
   });
 
-  it("lets the user change the campus", () => {
-    render(<ProcurementFinancials />);
+  it("ranks vendors from API transactions and lists zero-spend API vendors", async () => {
+    renderPage();
 
-    const campus = screen.getByLabelText("Select Campus");
+    await screen.findByText("BuildTech Contractors Ltd");
+    expect(screen.getByText("Equator Catering Services")).toBeInTheDocument();
 
-    expect(campus).toHaveValue("All Campuses");
+    fireEvent.click(screen.getByRole("button", { name: /View All 3 Vendors/i }));
 
-    fireEvent.change(campus, { target: { value: "Kibuli Main Campus" } });
-
-    expect(campus).toHaveValue("Kibuli Main Campus");
-  });
-});
-
-describe("all vendors dialog", () => {
-  const openDialog = () => {
-    render(<ProcurementFinancials />);
-
-    const trigger = screen.getByRole("button", {
-      name: /View All 34 Vendors/i,
-    });
-
-    fireEvent.click(trigger);
-
-    return trigger;
-  };
-
-  it("is closed until View All Vendors is clicked", () => {
-    render(<ProcurementFinancials />);
-
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-  });
-
-  it("lists all 34 vendors and their total", () => {
-    openDialog();
-
-    const dialog = screen.getByRole("dialog", { name: "All 34 Vendors" });
-
-    // One header row plus 34 vendors.
-    expect(within(dialog).getAllByRole("row")).toHaveLength(35);
+    const dialog = screen.getByRole("dialog", { name: "All 3 Vendors" });
+    expect(within(dialog).getAllByRole("row")).toHaveLength(4);
     expect(
       within(dialog).getByText("Scholastic Publishers Ltd"),
     ).toBeInTheDocument();
     expect(
-      within(dialog).getByText("Wakiso Garden Services"),
-    ).toBeInTheDocument();
-    expect(
-      within(dialog).getByText(/34 vendors · UGX 480\.0M total spend/),
+      within(dialog).getByText(/3 vendors · UGX 170\.0M total spend/),
     ).toBeInTheDocument();
   });
 
-  it("closes with Escape and returns focus to the button", () => {
-    const trigger = openDialog();
+  it("closes the vendor dialog with Escape and returns focus", async () => {
+    renderPage();
 
+    const trigger = await screen.findByRole("button", {
+      name: /View All 3 Vendors/i,
+    });
+    fireEvent.click(trigger);
     expect(
       screen.getByRole("button", { name: "Close vendor list" }),
     ).toHaveFocus();
 
     fireEvent.keyDown(document, { key: "Escape" });
 
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+    );
     expect(trigger).toHaveFocus();
   });
 
-  it("closes with the close button", () => {
-    openDialog();
+  it("shows loading while both backend resources are pending", () => {
+    vi.mocked(procurementApi.vendors.list).mockReturnValue(
+      new Promise(() => {}),
+    );
+    vi.mocked(procurementApi.procurementTransactions.list).mockReturnValue(
+      new Promise(() => {}),
+    );
 
-    fireEvent.click(screen.getByRole("button", { name: "Close vendor list" }));
+    renderPage();
 
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Loading procurement financials",
+    );
   });
 
-  it("closes when the backdrop is clicked, but not when the panel is", () => {
-    openDialog();
+  it("reports API errors instead of showing sample financials", async () => {
+    vi.mocked(procurementApi.procurementTransactions.list).mockRejectedValue(
+      new Error("Backend unavailable"),
+    );
 
-    fireEvent.click(screen.getByRole("dialog"));
+    renderPage();
 
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
-
-    fireEvent.click(screen.getByTestId("vendors-backdrop"));
-
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-  });
-});
-
-describe("vendor data", () => {
-  it("has 34 vendors that add up to the UGX 480.0M outflow", () => {
-    expect(allVendors).toHaveLength(34);
-    expect(vendorsTotalSpend).toBeCloseTo(480, 5);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Backend unavailable",
+    );
+    expect(screen.queryByText("UGX 180.0M")).not.toBeInTheDocument();
   });
 
-  it("ranks vendors from highest to lowest spend", () => {
-    allVendors.forEach((vendor, index) => {
-      expect(vendor.rank).toBe(index + 1);
+  it("shows an empty state when the API has no transactions", async () => {
+    vi.mocked(
+      procurementApi.procurementTransactions.list,
+    ).mockResolvedValue([]);
 
-      if (index > 0) {
-        expect(vendor.spend).toBeLessThanOrEqual(allVendors[index - 1].spend);
-      }
-    });
+    renderPage();
+
+    expect(
+      await screen.findByText("No procurement transactions are available yet."),
+    ).toBeInTheDocument();
   });
 });

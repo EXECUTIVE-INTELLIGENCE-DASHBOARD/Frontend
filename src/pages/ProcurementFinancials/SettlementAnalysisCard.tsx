@@ -1,22 +1,38 @@
-import { settlementSeries, spendCategories } from "./procurementFinancials.data";
+import { settlementSeries } from "./procurementFinancials.data";
+import type { SpendCategory } from "./procurementFinancials.types";
 
 const WIDTH = 760;
 const HEIGHT = 240;
 const PAD = { top: 22, right: 14, bottom: 30, left: 62 };
-const MAX = 200;
-const TICKS = [0, 50, 100, 150, 200];
 const BAR_WIDTH = 34;
 const BAR_GAP = 8;
 
 const plotWidth = WIDTH - PAD.left - PAD.right;
 const plotHeight = HEIGHT - PAD.top - PAD.bottom;
-const slotWidth = plotWidth / spendCategories.length;
 const groupWidth =
   settlementSeries.length * BAR_WIDTH + (settlementSeries.length - 1) * BAR_GAP;
 
-const toY = (value: number) => PAD.top + plotHeight - (value / MAX) * plotHeight;
+interface SettlementAnalysisCardProps {
+  categories: SpendCategory[];
+}
 
-export function SettlementAnalysisCard() {
+export function SettlementAnalysisCard({
+  categories,
+}: SettlementAnalysisCardProps) {
+  const maxValue = Math.max(
+    50,
+    ...categories.flatMap((category) =>
+      settlementSeries.map((series) => category[series.id]),
+    ),
+  );
+  const maxTick = Math.ceil(maxValue / 50) * 50;
+  const ticks = Array.from({ length: 5 }, (_, index) =>
+    Math.round((maxTick * index) / 4),
+  );
+  const slotWidth = plotWidth / categories.length;
+  const toY = (value: number) =>
+    PAD.top + plotHeight - (value / maxTick) * plotHeight;
+
   return (
     <section className="pf-card">
       <div className="pf-card__header">
@@ -47,7 +63,7 @@ export function SettlementAnalysisCard() {
           role="img"
           aria-label="Paid, committed and outstanding amounts by procurement category"
         >
-          {TICKS.map((tick) => (
+          {ticks.map((tick) => (
             <g key={tick}>
               <line
                 className="pf-chart__grid"
@@ -66,7 +82,7 @@ export function SettlementAnalysisCard() {
             </g>
           ))}
 
-          {spendCategories.map((category, categoryIndex) => {
+          {categories.map((category, categoryIndex) => {
             const groupX =
               PAD.left + categoryIndex * slotWidth + (slotWidth - groupWidth) / 2;
 

@@ -36,10 +36,12 @@ export const apiKeys = {
 function useListQuery<TRow>(
   queryKey: readonly unknown[],
   load: (options: RequestOptions) => Promise<TRow[]>,
+  refetchInterval?: number,
 ): UseQueryResult<TRow[]> {
   return useQuery<TRow[]>({
     queryKey,
     queryFn: ({ signal }) => load({ signal }),
+    refetchInterval,
   });
 }
 
@@ -183,6 +185,7 @@ export function useRevenueRecords(params?: QueryParams) {
 export function useVendors(params?: QueryParams) {
   return useListQuery(apiKeys.resource("procurement", "vendors", params), (o) =>
     procurementApi.vendors.list(params, o),
+    30_000,
   );
 }
 
@@ -190,6 +193,7 @@ export function useProcurementTransactions(params?: QueryParams) {
   return useListQuery(
     apiKeys.resource("procurement", "procurementTransactions", params),
     (o) => procurementApi.procurementTransactions.list(params, o),
+    30_000,
   );
 }
 

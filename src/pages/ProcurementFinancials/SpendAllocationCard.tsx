@@ -2,9 +2,8 @@ import { DonutChart } from "../../components/DonutChart";
 import {
   formatUgx,
   shareOfTotal,
-  spendCategories,
-  totalSpend,
 } from "./procurementFinancials.data";
+import type { SpendCategory } from "./procurementFinancials.types";
 
 /* Navy, steel blue and amber, as in the design reference. */
 const COLORS = {
@@ -13,9 +12,17 @@ const COLORS = {
   goods: "var(--pal-amber)",
 } as const;
 
-const ranked = [...spendCategories].sort((a, b) => b.spend - a.spend);
+interface SpendAllocationCardProps {
+  categories: SpendCategory[];
+  totalSpend: number;
+}
 
-export function SpendAllocationCard() {
+export function SpendAllocationCard({
+  categories,
+  totalSpend,
+}: SpendAllocationCardProps) {
+  const ranked = [...categories].sort((a, b) => b.spend - a.spend);
+
   return (
     <section className="pf-card">
       <div className="pf-card__header">
@@ -57,7 +64,7 @@ export function SpendAllocationCard() {
 
                 <span className="pf-allocation__meta">
                   {formatUgx(category.spend)} (
-                  {shareOfTotal(category.spend).toFixed(1)}%)
+                  {shareOfTotal(category.spend, totalSpend).toFixed(1)}%)
                 </span>
               </span>
             </li>

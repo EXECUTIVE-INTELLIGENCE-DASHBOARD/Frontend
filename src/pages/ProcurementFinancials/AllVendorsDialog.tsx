@@ -3,23 +3,26 @@ import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 import {
-  allVendors,
+  categoryLabels,
   formatUgx,
-  spendCategories,
-  vendorsTotalSpend,
 } from "./procurementFinancials.data";
-
-const categoryLabel = (id: string) =>
-  spendCategories.find((category) => category.id === id)?.shortLabel ?? id;
+import type { Vendor as VendorSpend } from "./procurementFinancials.types";
 
 interface AllVendorsDialogProps {
   open: boolean;
   onClose: () => void;
+  vendors: VendorSpend[];
+  totalSpend: number;
 }
 
 const FOCUSABLE = 'button, [href], [tabindex]:not([tabindex="-1"])';
 
-export function AllVendorsDialog({ open, onClose }: AllVendorsDialogProps) {
+export function AllVendorsDialog({
+  open,
+  onClose,
+  vendors,
+  totalSpend,
+}: AllVendorsDialogProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const onCloseRef = useRef(onClose);
@@ -103,7 +106,7 @@ export function AllVendorsDialog({ open, onClose }: AllVendorsDialogProps) {
         <div className="pf-dialog__header">
           <div>
             <h2 id="pf-vendors-title" className="pf-dialog__title">
-              All {allVendors.length} Vendors
+              All {vendors.length} Vendors
             </h2>
             <p className="pf-dialog__subtitle">Ranked by total spend</p>
           </div>
@@ -141,20 +144,23 @@ export function AllVendorsDialog({ open, onClose }: AllVendorsDialogProps) {
             </thead>
 
             <tbody>
-              {allVendors.map((vendor) => (
+              {vendors.map((vendor) => (
                 <tr key={vendor.id}>
                   <td className="pf-dialog__rank">#{vendor.rank}</td>
                   <td className="pf-dialog__name">{vendor.name}</td>
                   <td>
                     <span className={`pf-badge pf-tone--${vendor.category}`}>
-                      {categoryLabel(vendor.category)}
+                      {categoryLabels[vendor.category]}
                     </span>
                   </td>
                   <td className="pf-dialog__num pf-dialog__amount">
                     {formatUgx(vendor.spend)}
                   </td>
                   <td className="pf-dialog__num">
-                    {((vendor.spend / vendorsTotalSpend) * 100).toFixed(1)}%
+                    {(
+                      (totalSpend > 0 ? vendor.spend / totalSpend : 0) *
+                      100
+                    ).toFixed(1)}%
                   </td>
                 </tr>
               ))}
@@ -163,7 +169,7 @@ export function AllVendorsDialog({ open, onClose }: AllVendorsDialogProps) {
         </div>
 
         <div className="pf-dialog__footer">
-          {allVendors.length} vendors · {formatUgx(vendorsTotalSpend)} total
+          {vendors.length} vendors · {formatUgx(totalSpend)} total
           spend
         </div>
       </div>
