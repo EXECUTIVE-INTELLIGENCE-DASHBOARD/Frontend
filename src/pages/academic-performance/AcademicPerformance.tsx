@@ -22,7 +22,12 @@ export default function AcademicPerformance() {
 
   return (
     <main className="academic-performance">
-      <AcademicFilters values={filters} onChange={setFilters} />
+      <AcademicFilters
+        values={filters}
+        onChange={setFilters}
+        showCampusFilter={false}
+        showSchoolFilter
+      />
       <div className="academic-performance__content">
         <AcademicSummary filters={filters} />
         <AcademicAnalytics filters={filters} />
