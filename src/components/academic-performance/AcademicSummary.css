@@ -50,8 +50,8 @@
 
 .academic-summary__kpi-content strong {
   color: var(--color-heading);
-  font-size: clamp(24px, 2.2vw, 30px);
-  font-weight: 700;
+  font-size: clamp(20px, 1.65vw, 23px);
+  font-weight: 600;
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
