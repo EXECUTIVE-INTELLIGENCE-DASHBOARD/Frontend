@@ -158,14 +158,20 @@
 
 .academic-analytics__table-wrap {
   width: 100%;
-  overflow-x: auto;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 .academic-analytics__table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   text-align: left;
-  white-space: nowrap;
+}
+
+.academic-analytics__table th,
+.academic-analytics__table td {
+  overflow-wrap: anywhere;
 }
 
 .academic-analytics__table th {
@@ -476,16 +482,25 @@
 }
 
 .academic-analytics__comparison-table {
-  min-width: 540px;
+  min-width: 0;
 }
 
 .academic-analytics__comparison-table th,
 .academic-analytics__comparison-table td {
-  padding: 10px 12px;
-  font-size: 11px;
+  padding: 8px 7px;
+  font-size: 10px;
 }
 
 .academic-analytics__comparison-table th {
+  white-space: normal;
+}
+
+.academic-analytics__comparison-table th:first-child,
+.academic-analytics__comparison-table td:first-child {
+  width: 34%;
+}
+
+.academic-analytics__comparison-table .academic-analytics__difference {
   white-space: normal;
 }
 
