@@ -1,19 +1,10 @@
-import {
-  cleanup,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import api from "../../api/axios";
-import { AcademicAnalytics } from "./AcademicAnalytics";
-import {
-  getSecondaryLevel,
-  isInternationalCampus,
-} from "./AcademicAnalytics";
+import { AcademicAnalytics, getSecondaryLevel, isInternationalCampus } from "./AcademicAnalytics";
 
 vi.mock("../../api/axios", () => ({
   default: {
@@ -25,6 +16,28 @@ afterEach(() => {
   cleanup();
   vi.clearAllMocks();
 });
+
+function renderAnalytics(section: string, term: string) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+
+  render(
+    createElement(
+      QueryClientProvider,
+      { client: queryClient },
+      createElement(AcademicAnalytics, {
+        filters: {
+          school: "",
+          campus: "",
+          section,
+          term,
+          year: "2023",
+        },
+      }),
+    ),
+  );
+}
 
 describe("AcademicAnalytics helpers", () => {
   it("recognizes international campuses by their name", () => {
@@ -87,42 +100,108 @@ describe("all-campus secondary analytics", () => {
         throw new Error(`Unexpected API endpoint: ${url}`);
       });
 
-      const queryClient = new QueryClient({
-        defaultOptions: { queries: { retry: false } },
-      });
+      renderAnalytics("secondary", term);
 
-      render(
-        createElement(
-          QueryClientProvider,
-          { client: queryClient },
-          createElement(AcademicAnalytics, {
-            filters: {
-              school: "",
-              campus: "",
-              section: "secondary",
-              term,
-              year: "2023",
-            },
-          }),
-        ),
-      );
-
-      expect(await screen.findByRole("region", {
-        name: "O Level",
-      })).toBeInTheDocument();
+      expect(await screen.findByRole("region", { name: "O Level" })).toBeInTheDocument();
       expect(screen.getByRole("region", { name: "A Level" })).toBeInTheDocument();
-      expect(
-        screen.getAllByRole("heading", { name: "By class" }),
-      ).toHaveLength(2);
-      expect(
-        screen.getAllByRole("heading", { name: "By subject" }),
-      ).toHaveLength(2);
+      expect(screen.getAllByRole("heading", { name: "By class" })).toHaveLength(2);
+      expect(screen.getAllByRole("heading", { name: "By subject" })).toHaveLength(2);
 
       await waitFor(() => {
         expect(api.get).toHaveBeenCalledWith(
           "/academics/performance/dashboard/",
           expect.objectContaining({
             params: { level: "secondary", term: Number(term), year: "2023" },
+          }),
+        );
+      });
+    },
+  );
+});
+
+describe("all-campus primary analytics", () => {
+  it.each(["1", "2", "3"])(
+    "loads campus comparison charts from live school data for Term %s",
+    async (term) => {
+      vi.mocked(api.get).mockImplementation(async (url, config) => {
+        if (url === "/academics/schools/") {
+          return {
+            data: [
+              {
+                id: 11,
+                name: "Kibuli Primary",
+                level: "primary",
+                campus: "kibuli",
+                campus_display: "Kibuli Primary",
+              },
+              {
+                id: 12,
+                name: "Buwaate Primary",
+                level: "primary",
+                campus: "buwaate",
+                campus_display: "Buwaate Primary",
+              },
+            ],
+          };
+        }
+
+        if (url === "/academics/performance/dashboard/") {
+          const params = config?.params as { school?: number } | undefined;
+          const offset = params?.school === 12 ? 2 : 0;
+          return {
+            data: {
+              tests: [
+                {
+                  subject: "Mathematics",
+                  level: "primary",
+                  class_level: "P.1",
+                  test_1_average: 58 + offset,
+                  test_2_average: 60 + offset,
+                },
+              ],
+              by_class: [
+                {
+                  class_level: "P.1",
+                  level: "primary",
+                  test_1_average: 58 + offset,
+                  test_2_average: 60 + offset,
+                },
+              ],
+            },
+          };
+        }
+
+        throw new Error(`Unexpected API endpoint: ${url}`);
+      });
+
+      renderAnalytics("primary", term);
+
+      expect(
+        await screen.findByRole("heading", {
+          name: "Internal assessments · by class and by subject",
+        }),
+      ).toBeInTheDocument();
+      expect(screen.getByText(/All campuses · Primary/)).toBeInTheDocument();
+      expect(
+        await screen.findByRole("heading", { name: "By class" }),
+      ).toBeInTheDocument();
+      expect(
+        await screen.findByRole("heading", { name: "By subject" }),
+      ).toBeInTheDocument();
+      expect(await screen.findAllByText("Kibuli Primary")).toHaveLength(2);
+      expect(await screen.findAllByText("Buwaate Primary")).toHaveLength(2);
+
+      await waitFor(() => {
+        expect(api.get).toHaveBeenCalledWith(
+          "/academics/performance/dashboard/",
+          expect.objectContaining({
+            params: { school: 11, level: "primary", term: Number(term), year: "2023" },
+          }),
+        );
+        expect(api.get).toHaveBeenCalledWith(
+          "/academics/performance/dashboard/",
+          expect.objectContaining({
+            params: { school: 12, level: "primary", term: Number(term), year: "2023" },
           }),
         );
       });

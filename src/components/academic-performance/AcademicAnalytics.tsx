@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
   BookOpen,
@@ -15,6 +16,7 @@ import {
   YAxis,
 } from "recharts";
 
+import api from "../../api/axios";
 import type { AcademicFilterValues } from "../filters/academicFilters.types";
 import {
   AllCampusesAssessmentOverview,
@@ -108,6 +110,20 @@ interface DashboardData {
   };
 }
 
+interface AcademicSchool {
+  id: number;
+  name: string;
+  level: string;
+  campus?: string;
+  campus_display?: string;
+}
+
+interface ApiList<T> {
+  results?: T[];
+}
+
+type ApiResponse<T> = T[] | ApiList<T>;
+
 interface AssessmentRow {
   subject: string;
   level: string;
@@ -119,6 +135,17 @@ interface ChartRow {
   name: string;
   midterm: number | null;
   endOfTerm: number | null;
+}
+
+interface CampusChartRow {
+  name: string;
+  values: Record<string, number | null>;
+}
+
+interface CampusChartSeries {
+  key: string;
+  label: string;
+  color: string;
 }
 
 interface ComparisonRow {
@@ -136,6 +163,12 @@ const SERIES_COLOURS = {
   midterm: "#79c6e8",
   endOfTerm: "#203468",
 };
+
+const CAMPUS_SERIES_COLOURS = ["#2aa4dd", "#203468", "#79c6e8", "#f2b719"];
+
+function getApiResults<T>(data: ApiResponse<T>): T[] {
+  return Array.isArray(data) ? data : data.results ?? [];
+}
 
 const toNumber = (value: unknown): number | null => {
   if (value === null || value === undefined || value === "") {
@@ -660,6 +693,327 @@ function AssessmentChart({
   );
 }
 
+function PrimaryCampusChart({
+  rows,
+  series,
+  title,
+  highlight,
+  emptyMessage,
+}: {
+  rows: CampusChartRow[];
+  series: CampusChartSeries[];
+  title: string;
+  highlight: AssessmentKey;
+  emptyMessage: string;
+}) {
+  return (
+    <article className="academic-analytics__chart-card">
+      <header className="academic-analytics__chart-header">
+        <h3>{title}</h3>
+        <span>
+          Average mark · {highlight === "test_1" ? "Midterm" : "End of term"}
+        </span>
+      </header>
+      {rows.length ? (
+        <>
+          <div className="academic-analytics__chart">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={rows}
+                margin={{ top: 16, right: 8, left: 0, bottom: 4 }}
+                barGap={3}
+                barCategoryGap="24%"
+              >
+                <CartesianGrid vertical={false} stroke="var(--color-border)" />
+                <XAxis
+                  dataKey="name"
+                  tickLine={false}
+                  axisLine={false}
+                  interval={0}
+                  angle={-55}
+                  textAnchor="end"
+                  height={92}
+                  tickMargin={8}
+                  tick={{ fill: "var(--color-text-muted)", fontSize: 9 }}
+                />
+                <YAxis
+                  domain={[40, 85]}
+                  ticks={[40, 55, 70, 85]}
+                  tickFormatter={(value: number) => `${value}%`}
+                  tickLine={false}
+                  axisLine={false}
+                  width={42}
+                  tick={{ fill: "var(--color-text-muted)", fontSize: 10 }}
+                />
+                <ReferenceLine
+                  y={60}
+                  stroke="#2aa4dd"
+                  strokeDasharray="5 5"
+                />
+                <Tooltip
+                  formatter={(value) =>
+                    value == null ? "—" : `${Number(value).toFixed(1)}%`
+                  }
+                  contentStyle={{
+                    border: "1px solid var(--color-border)",
+                    borderRadius: 8,
+                    background: "var(--color-surface)",
+                    color: "var(--color-text)",
+                    fontSize: 11,
+                  }}
+                />
+                {series.map((item) => (
+                  <Bar
+                    key={item.key}
+                    dataKey={`values.${item.key}`}
+                    name={item.label}
+                    fill={item.color}
+                    maxBarSize={42}
+                    isAnimationActive={false}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="academic-analytics__legend">
+            {series.map((item) => (
+              <span key={item.key}>
+                <i style={{ background: item.color }} />
+                {item.label}
+              </span>
+            ))}
+            <span>
+              <i className="academic-analytics__target-key" />
+              60% target
+            </span>
+          </div>
+        </>
+      ) : (
+        <div className="academic-analytics__chart-empty">
+          <BookOpen size={19} />
+          <p>{emptyMessage}</p>
+        </div>
+      )}
+    </article>
+  );
+}
+
+function AllCampusesPrimaryAnalytics({
+  filters,
+}: {
+  filters: AcademicFilterValues;
+}) {
+  const [highlight, setHighlight] = useState<AssessmentKey>("test_1");
+  const schoolsQuery = useQuery({
+    queryKey: ["academic-primary-schools"],
+    queryFn: async ({ signal }) => {
+      const response = await api.get<ApiResponse<AcademicSchool>>(
+        "/academics/schools/",
+        { signal },
+      );
+      return getApiResults(response.data).filter((school) =>
+        normalise(school.level).includes("primary"),
+      );
+    },
+    staleTime: 60_000,
+    retry: false,
+  });
+  const schools = schoolsQuery.data ?? [];
+  const dashboardQueries = useQueries({
+    queries: schools.map((school) => ({
+      queryKey: [
+        "academic-primary-school-dashboard",
+        school.id,
+        filters.term,
+        filters.year,
+      ],
+      queryFn: async ({ signal }: { signal: AbortSignal }) => {
+        const params: { school: number; level: string; term?: number; year?: string } = {
+          school: school.id,
+          level: "primary",
+        };
+        if (/^\d+$/.test(filters.term) && Number(filters.term) > 0) {
+          params.term = Number(filters.term);
+        }
+        if (/^\d{4}$/.test(filters.year)) {
+          params.year = filters.year;
+        }
+        const response = await api.get<DashboardData>(
+          "/academics/performance/dashboard/",
+          { params, signal },
+        );
+        return response.data;
+      },
+      staleTime: 10_000,
+      retry: false as const,
+    })),
+  });
+
+  const chartData = useMemo(() => {
+    const campusMap = new Map<
+      string,
+      {
+        label: string;
+        classValues: Map<string, number[]>;
+        subjectValues: Map<string, number[]>;
+      }
+    >();
+
+    schools.forEach((school, index) => {
+      const campusKey =
+        normalise(school.campus) || `school-${school.id}`;
+      const campusLabel =
+        school.campus_display?.trim() ||
+        (school.campus
+          ? `${school.campus[0].toUpperCase()}${school.campus.slice(1)}`
+          : school.name);
+      const campus = campusMap.get(campusKey) ?? {
+        label: campusLabel,
+        classValues: new Map<string, number[]>(),
+        subjectValues: new Map<string, number[]>(),
+      };
+      const dashboard = dashboardQueries[index]?.data;
+      const selectedKey = highlight === "test_1" ? "midterm" : "endOfTerm";
+
+      getClassRows(dashboard, "primary").forEach((row) => {
+        const value = row[selectedKey];
+        if (value === null) return;
+        const values = campus.classValues.get(row.name) ?? [];
+        values.push(value);
+        campus.classValues.set(row.name, values);
+      });
+
+      getSubjectRows(dashboard, "primary").forEach((row) => {
+        const value = row[selectedKey];
+        if (value === null) return;
+        const values = campus.subjectValues.get(row.name) ?? [];
+        values.push(value);
+        campus.subjectValues.set(row.name, values);
+      });
+
+      campusMap.set(campusKey, campus);
+    });
+
+    const series = Array.from(campusMap, ([key, campus], index) => ({
+      key,
+      label: campus.label,
+      color: CAMPUS_SERIES_COLOURS[index % CAMPUS_SERIES_COLOURS.length],
+    }));
+
+    const buildRows = (
+      field: "classValues" | "subjectValues",
+    ): CampusChartRow[] => {
+      const names = new Set<string>();
+      campusMap.forEach((campus) => {
+        campus[field].forEach((_values, name) => names.add(name));
+      });
+
+      return Array.from(names)
+        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+        .map((name) => ({
+          name,
+          values: Object.fromEntries(
+            Array.from(campusMap, ([key, campus]) => {
+              const values = campus[field].get(name) ?? [];
+              return [
+                key,
+                values.length
+                  ? values.reduce((total, value) => total + value, 0) /
+                      values.length
+                  : null,
+              ];
+            }),
+          ),
+        }));
+    };
+
+    return {
+      series,
+      classRows: buildRows("classValues"),
+      subjectRows: buildRows("subjectValues"),
+    };
+  }, [dashboardQueries, filters.term, filters.year, highlight, schools]);
+
+  const hasError =
+    schoolsQuery.isError || dashboardQueries.some((query) => query.isError);
+  const isLoading =
+    schoolsQuery.isLoading || dashboardQueries.some((query) => query.isLoading);
+
+  return (
+    <section
+      className="academic-analytics"
+      aria-labelledby="academic-analytics-title"
+    >
+      <div className="academic-analytics__header">
+        <div>
+          <h2 id="academic-analytics-title">
+            Internal assessments · by class and by subject
+          </h2>
+          <p>
+            All campuses · Primary
+            {filters.term ? ` · Term ${filters.term}` : ""}
+            {filters.year ? ` · ${filters.year}` : ""}
+          </p>
+        </div>
+        <div
+          className="academic-analytics__switch"
+          role="group"
+          aria-label="Emphasise assessment period"
+        >
+          <button
+            type="button"
+            className={highlight === "test_1" ? "is-active" : ""}
+            aria-pressed={highlight === "test_1"}
+            onClick={() => setHighlight("test_1")}
+          >
+            Midterm
+          </button>
+          <button
+            type="button"
+            className={highlight === "test_2" ? "is-active" : ""}
+            aria-pressed={highlight === "test_2"}
+            onClick={() => setHighlight("test_2")}
+          >
+            End of term
+          </button>
+        </div>
+      </div>
+      {hasError ? (
+        <div className="academic-analytics__state academic-analytics__state--error" role="alert">
+          <AlertCircle size={19} />
+          <span>Unable to load primary assessment data for all campuses.</span>
+        </div>
+      ) : isLoading ? (
+        <div className="academic-analytics__state" role="status">
+          Loading primary assessment results...
+        </div>
+      ) : chartData.classRows.length === 0 &&
+        chartData.subjectRows.length === 0 ? (
+        <div className="academic-analytics__state">
+          No primary assessment results are available for these filters.
+        </div>
+      ) : (
+        <div className="academic-analytics__chart-grid academic-analytics__secondary-chart-grid">
+          <PrimaryCampusChart
+            rows={chartData.classRows}
+            series={chartData.series}
+            title="By class"
+            highlight={highlight}
+            emptyMessage="Primary class results are not available for these filters."
+          />
+          <PrimaryCampusChart
+            rows={chartData.subjectRows}
+            series={chartData.series}
+            title="By subject"
+            highlight={highlight}
+            emptyMessage="Primary subject results are not available for these filters."
+          />
+        </div>
+      )}
+    </section>
+  );
+}
+
 export function AcademicAnalytics({
   filters,
 }: AcademicAnalyticsProps) {
@@ -676,6 +1030,12 @@ export function AcademicAnalytics({
   const isSecondary = normalise(filters.section).includes("secondary");
   const isAllCampusesSecondary =
     isSecondary &&
+    (!filters.school.trim() ||
+      normalise(filters.school) === "all schools") &&
+    (!filters.campus.trim() ||
+      normalise(filters.campus) === "all campuses");
+  const isAllCampusesPrimary =
+    isPrimary &&
     (!filters.school.trim() ||
       normalise(filters.school) === "all schools") &&
     (!filters.campus.trim() ||
@@ -785,6 +1145,9 @@ export function AcademicAnalytics({
 
   if (isAllCampusAndSectionSelection(filters)) {
     return <AllCampusesAssessmentOverview filters={filters} />;
+  }
+  if (isAllCampusesPrimary) {
+    return <AllCampusesPrimaryAnalytics filters={filters} />;
   }
 
   return (
