@@ -12,7 +12,6 @@ import {
 } from "recharts";
 
 import api from "../../api/axios";
-import { useAcademicPerformanceDashboard } from "./useAcademicPerformanceDashboard";
 
 import type { AcademicFilterValues } from "../filters/academicFilters.types";
 
@@ -44,6 +43,38 @@ interface ApiList<T> {
 }
 
 type ApiResponse<T> = T[] | ApiList<T>;
+
+interface InternalSchoolResult {
+  school_id: number;
+  school: string;
+  average_mark: number | null;
+  pass_rate: number | null;
+  previous_average_mark: number | null;
+  previous_pass_rate: number | null;
+  average_mark_change: number | null;
+  pass_rate_change: number | null;
+}
+
+interface InternalPerformanceResponse {
+  term?: { id: number; label: string };
+  compared_with?: { id: number; label: string } | null;
+  schools?: InternalSchoolResult[];
+}
+
+interface LearnerTrendYear {
+  academic_year: string;
+  total_learners_assessed: number;
+  terms: {
+    term: { id: number; label: string };
+    learners_assessed: number;
+  }[];
+}
+
+interface LearnerTrendResponse {
+  current_academic_year: string;
+  previous_academic_year: string;
+  years: LearnerTrendYear[];
+}
 
 interface ExamSummary {
   exam: ExamResult["exam"];
@@ -88,6 +119,47 @@ function formatPercent(value: number | null | undefined): string {
 
 function formatNumber(value: number | null | undefined): string {
   return value == null ? "—" : value.toLocaleString();
+}
+
+function getMean(
+  schools: InternalSchoolResult[],
+  field: keyof Pick<
+    InternalSchoolResult,
+    "average_mark" | "pass_rate" | "average_mark_change" | "pass_rate_change"
+  >,
+): number | null {
+  const values = schools
+    .map((school) => school[field])
+    .filter((value): value is number => value !== null);
+  return values.length
+    ? values.reduce((total, value) => total + value, 0) / values.length
+    : null;
+}
+
+export function getLearnersAssessed(
+  data: LearnerTrendResponse | undefined,
+  terms: Term[],
+  termId: string,
+  year: string,
+): number | null {
+  if (!data) return null;
+
+  const selectedTerm = terms.find((term) => String(term.id) === termId);
+  const targetYear =
+    year || String(selectedTerm?.academic_year ?? data.current_academic_year);
+  const yearData = data.years.find(
+    (item) => item.academic_year === targetYear,
+  );
+  if (!yearData) return null;
+
+  if (termId) {
+    return (
+      yearData.terms.find((item) => String(item.term.id) === termId)
+        ?.learners_assessed ?? null
+    );
+  }
+
+  return yearData.total_learners_assessed;
 }
 
 export function shouldShowExternalExams(
@@ -383,9 +455,6 @@ function SummaryKpi({
 export function AcademicSummary({ filters }: AcademicSummaryProps) {
   const { school, campus, section, term } = filters;
 
-  const dashboardQuery = useAcademicPerformanceDashboard(filters);
-  const summary = dashboardQuery.data?.summary;
-
   const termsQuery = useQuery({
     queryKey: ["academic-summary-terms"],
     queryFn: async ({ signal }) => {
@@ -399,6 +468,89 @@ export function AcademicSummary({ filters }: AcademicSummaryProps) {
     staleTime: 60_000,
     retry: false,
   });
+
+  const internalParams: Record<string, string | number> = {};
+  if (/^\d+$/.test(school) && Number(school) > 0) {
+    internalParams.school = Number(school);
+  }
+  if (campus) internalParams.campus = campus;
+  if (section) internalParams.level = section;
+  if (/^\d+$/.test(term) && Number(term) > 0) {
+    internalParams.term = Number(term);
+  }
+
+  const internalQuery = useQuery({
+    queryKey: ["academic-summary-internal", internalParams],
+    queryFn: async ({ signal }) => {
+      const response = await api.get<InternalPerformanceResponse>(
+        "/academics/performance/internal/",
+        { params: internalParams, signal },
+      );
+      return response.data;
+    },
+    staleTime: 10_000,
+    retry: false,
+  });
+
+  const trendParams: Record<string, string | number> = {};
+  if (/^\d+$/.test(school) && Number(school) > 0) {
+    trendParams.school = Number(school);
+  }
+  if (campus) trendParams.campus = campus;
+  if (section) trendParams.level = section;
+
+  const learnerTrendQuery = useQuery({
+    queryKey: ["academic-summary-learners-trend", trendParams],
+    queryFn: async ({ signal }) => {
+      const response = await api.get<LearnerTrendResponse>(
+        "/academics/performance/learners-trend/",
+        { params: trendParams, signal },
+      );
+      return response.data;
+    },
+    staleTime: 10_000,
+    retry: false,
+  });
+
+  const terms = termsQuery.data ?? [];
+  const internalTermId = internalQuery.data?.term?.id;
+  const internalTerm = terms.find((item) => item.id === internalTermId);
+  const isMatchingInternalYear =
+    !filters.year ||
+    (internalTerm &&
+      String(internalTerm.academic_year) === filters.year);
+  const isMatchingInternalTerm =
+    !term || String(internalTermId ?? "") === term;
+  const internalSchools =
+    isMatchingInternalYear && isMatchingInternalTerm
+      ? internalQuery.data?.schools ?? []
+      : [];
+  const averageMark = getMean(internalSchools, "average_mark");
+  const passRate = getMean(internalSchools, "pass_rate");
+  const schoolCount = internalSchools.length;
+  const learnerCount = getLearnersAssessed(
+    learnerTrendQuery.data,
+    terms,
+    term,
+    filters.year,
+  );
+  const meanDetail =
+    schoolCount > 1
+      ? `Unweighted mean across ${schoolCount} schools`
+      : internalQuery.isError
+        ? "Internal performance data unavailable"
+        : schoolCount === 1
+          ? internalQuery.data?.term?.label ?? "Selected school's result"
+          : "No internal results for these filters";
+  const learnerDetail = learnerTrendQuery.isError
+    ? "Learner trend data unavailable"
+    : learnerCount === null
+      ? "No learner trend data for these filters"
+      : term
+        ? terms.find((item) => String(item.id) === term)?.academic_year
+          ? `Term result · ${terms.find((item) => String(item.id) === term)?.academic_year}`
+          : "For the selected term"
+        : `Total assessed · ${filters.year || learnerTrendQuery.data?.current_academic_year}`;
 
   const isExternalExamTerm =
     termsQuery.isSuccess &&
@@ -445,22 +597,22 @@ export function AcademicSummary({ filters }: AcademicSummaryProps) {
         <SummaryKpi
           icon={Award}
           label="Average mark"
-          value={formatPercent(summary?.average_mark)}
-          detail="Across assessed learners"
+          value={formatPercent(averageMark)}
+          detail={meanDetail}
         />
 
         <SummaryKpi
           icon={TrendingUp}
           label="Pass rate"
-          value={formatPercent(summary?.student_performance)}
-          detail={`${formatNumber(summary?.students_passing)} learners passing`}
+          value={formatPercent(passRate)}
+          detail={meanDetail}
         />
 
         <SummaryKpi
           icon={GraduationCap}
           label="Learners assessed"
-          value={formatNumber(summary?.students_assessed)}
-          detail="For the selected filters"
+          value={formatNumber(learnerCount)}
+          detail={learnerDetail}
         />
       </div>
 
