@@ -586,6 +586,10 @@
   font-weight: 650;
 }
 
+.academic-analytics__secondary-chart-grid {
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.25fr);
+}
+
 .academic-analytics__secondary-insights {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -635,6 +639,10 @@
 }
 
 @media (max-width: 760px) {
+  .academic-analytics__secondary-chart-grid {
+    grid-template-columns: 1fr;
+  }
+
   .academic-analytics__secondary-insights {
     grid-template-columns: 1fr;
   }

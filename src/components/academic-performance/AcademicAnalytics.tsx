@@ -670,6 +670,12 @@ export function AcademicAnalytics({
 
   const isPrimary = normalise(filters.section).includes("primary");
   const isSecondary = normalise(filters.section).includes("secondary");
+  const isAllCampusesSecondary =
+    isSecondary &&
+    (!filters.school.trim() ||
+      normalise(filters.school) === "all schools") &&
+    (!filters.campus.trim() ||
+      normalise(filters.campus) === "all campuses");
   const isInternational = isInternationalCampus(filters.campus);
   const comparisonCampus = getComparisonCampus(filters.campus);
   const previousTermId = dashboard?.compared_with?.id;
@@ -937,6 +943,32 @@ export function AcademicAnalytics({
                 emptyMessage="Subject averages are not available for these filters."
                 showCampusComparison={Boolean(comparisonCampus)}
               />
+            </div>
+          ) : isSecondary && isAllCampusesSecondary ? (
+            <div className="academic-analytics__secondary-groups">
+              {secondaryGroups.map((group) => (
+                <section
+                  className="academic-analytics__secondary-group"
+                  key={group.level}
+                  aria-label={group.level}
+                >
+                  <h3>{group.level}</h3>
+                  <div className="academic-analytics__chart-grid academic-analytics__secondary-chart-grid">
+                    <AssessmentChart
+                      rows={group.classRows}
+                      label="By class"
+                      highlight={highlight}
+                      emptyMessage={`Class-level averages are not available for ${group.level} across all campuses for this term.`}
+                    />
+                    <AssessmentChart
+                      rows={group.subjectRows}
+                      label="By subject"
+                      highlight={highlight}
+                      emptyMessage={`Subject averages are not available for ${group.level} across all campuses for this term.`}
+                    />
+                  </div>
+                </section>
+              ))}
             </div>
           ) : isSecondary ? (
             <>
