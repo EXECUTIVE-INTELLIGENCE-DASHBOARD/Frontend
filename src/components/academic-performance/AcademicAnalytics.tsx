@@ -9,6 +9,8 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Line,
+  LineChart,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -123,6 +125,19 @@ interface ApiList<T> {
 }
 
 type ApiResponse<T> = T[] | ApiList<T>;
+
+interface AcademicTerm {
+  id: number;
+  number: number;
+  academic_year: string | number;
+}
+
+interface LearnerTrendPoint {
+  term: string;
+  termNumber: number;
+  currentYear: number | null;
+  previousYear: number | null;
+}
 
 interface AssessmentRow {
   subject: string;
@@ -1014,6 +1029,215 @@ function AllCampusesPrimaryAnalytics({
   );
 }
 
+function PrimaryCampusInsights({
+  filters,
+}: {
+  filters: AcademicFilterValues;
+}) {
+  const termsQuery = useQuery({
+    queryKey: ["primary-campus-insight-terms"],
+    queryFn: async ({ signal }) => {
+      const response = await api.get<ApiResponse<AcademicTerm>>(
+        "/academics/terms/",
+        { signal },
+      );
+      return getApiResults(response.data);
+    },
+    staleTime: 60_000,
+    retry: false,
+  });
+
+  const terms = termsQuery.data ?? [];
+  const selectedTerm = terms.find(
+    (term) => String(term.id) === filters.term,
+  );
+  const selectedYear =
+    filters.year || String(selectedTerm?.academic_year ?? "");
+  const priorYearNumber = Number(selectedYear) - 1;
+  const priorYear = Number.isFinite(priorYearNumber)
+    ? String(priorYearNumber)
+    : "";
+  const currentYearTerms = terms.filter(
+    (term) => String(term.academic_year) === selectedYear,
+  );
+  const previousYearTerms = terms.filter(
+    (term) => String(term.academic_year) === priorYear,
+  );
+  const trendTerms = [...currentYearTerms, ...previousYearTerms];
+  const trendQueries = useQueries({
+    queries: trendTerms.map((term) => ({
+      queryKey: [
+        "primary-campus-learner-trend",
+        filters.campus,
+        term.id,
+      ],
+      queryFn: async ({ signal }: { signal: AbortSignal }) => {
+        const response = await api.get<DashboardData>(
+          "/academics/performance/dashboard/",
+          {
+            params: {
+              campus: filters.campus,
+              level: "primary",
+              term: term.id,
+            },
+            signal,
+          },
+        );
+        return response.data;
+      },
+      staleTime: 10_000,
+      retry: false as const,
+      enabled: Boolean(filters.campus && selectedYear),
+    })),
+  });
+
+  const learnerTrend = useMemo<LearnerTrendPoint[]>(
+    () =>
+      [1, 2, 3].map((number) => {
+        const currentIndex = trendTerms.findIndex(
+          (term) =>
+            term.number === number &&
+            String(term.academic_year) === selectedYear,
+        );
+        const previousIndex = trendTerms.findIndex(
+          (term) =>
+            term.number === number &&
+            String(term.academic_year) === priorYear,
+        );
+        return {
+          term: `Term ${number}`,
+          termNumber: number,
+          currentYear:
+            currentIndex >= 0
+              ? toNumber(
+                  trendQueries[currentIndex].data?.summary?.students_assessed,
+                )
+              : null,
+          previousYear:
+            previousIndex >= 0
+              ? toNumber(
+                  trendQueries[previousIndex].data?.summary?.students_assessed,
+                )
+              : null,
+        };
+      }),
+    [trendTerms, trendQueries, selectedYear, priorYear],
+  );
+
+  const dataLoading =
+    termsQuery.isLoading || trendQueries.some((query) => query.isLoading);
+  const dataError =
+    termsQuery.isError || trendQueries.some((query) => query.isError);
+  const selectedTrend = learnerTrend.find(
+    (point) => point.termNumber === selectedTerm?.number,
+  );
+  const learnerDifference =
+    selectedTrend?.currentYear != null &&
+    selectedTrend.previousYear != null
+      ? selectedTrend.currentYear - selectedTrend.previousYear
+      : null;
+
+  return (
+    <div className="academic-analytics__secondary-insights">
+      <article className="academic-analytics__table-card academic-analytics__insight-card">
+        <h3>Learners assessed</h3>
+        {termsQuery.isError ? (
+          <p role="alert">Unable to load term history for this campus.</p>
+        ) : dataLoading ? (
+          <p>Loading learner history...</p>
+        ) : dataError ? (
+          <p role="alert">Unable to load learner assessment history.</p>
+        ) : learnerTrend.some(
+            (point) =>
+              point.currentYear !== null || point.previousYear !== null,
+          ) ? (
+          <>
+            <div className="academic-analytics__insight-chart">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={learnerTrend}
+                  margin={{ top: 14, right: 12, bottom: 4, left: -12 }}
+                >
+                  <CartesianGrid vertical={false} stroke="#dce4ef" />
+                  <XAxis
+                    dataKey="term"
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fill: "var(--color-text-muted)", fontSize: 10 }}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    width={40}
+                    allowDecimals={false}
+                    tick={{ fill: "var(--color-text-muted)", fontSize: 9 }}
+                  />
+                  <Tooltip
+                    formatter={(value) => [
+                      value == null ? "—" : Number(value).toLocaleString(),
+                      "Learners assessed",
+                    ]}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="currentYear"
+                    name={selectedYear}
+                    stroke="#2aa4dd"
+                    strokeWidth={3}
+                    connectNulls
+                    dot={{ r: 4 }}
+                    isAnimationActive={false}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="previousYear"
+                    name={priorYear}
+                    stroke="#9aa8bd"
+                    strokeWidth={2}
+                    strokeDasharray="5 4"
+                    connectNulls
+                    dot={{ r: 3 }}
+                    isAnimationActive={false}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="academic-analytics__insight-legend">
+              <span><i className="current" />{selectedYear}</span>
+              <span><i className="previous" />{priorYear}</span>
+            </div>
+            {learnerDifference !== null && selectedTerm && (
+              <p>
+                Term {selectedTerm.number}:{" "}
+                <strong
+                  className={
+                    learnerDifference >= 0
+                      ? "academic-analytics__difference positive"
+                      : "academic-analytics__difference negative"
+                  }
+                >
+                  {learnerDifference > 0 ? "+" : ""}
+                  {learnerDifference.toLocaleString()} learners
+                </strong>{" "}
+                against Term {selectedTerm.number} {priorYear}.
+              </p>
+            )}
+          </>
+        ) : (
+          <p>Learner history is unavailable for these academic years.</p>
+        )}
+      </article>
+      <article className="academic-analytics__table-card academic-analytics__insight-card">
+        <h3>Girls vs boys</h3>
+        <p>
+          Gender-disaggregated assessment counts and averages are not provided
+          by the performance dashboard API.
+        </p>
+      </article>
+    </div>
+  );
+}
+
 export function AcademicAnalytics({
   filters,
 }: AcademicAnalyticsProps) {
@@ -1292,25 +1516,30 @@ export function AcademicAnalytics({
               </div>
             </>
           ) : isPrimary ? (
-            <div className="academic-analytics__comparison-grid">
-              <ComparisonTable
-                title="By class"
-                rows={classRows}
-                assessment={highlight}
-                campusLabel={campusLabel}
-                emptyMessage="Class-level averages are not available for these filters."
-                showCampusComparison={Boolean(comparisonCampus)}
-              />
-              <ComparisonTable
-                title="By subject"
-                rows={subjectRows}
-                assessment={highlight}
-                lowestName={lowestRow?.name}
-                campusLabel={campusLabel}
-                emptyMessage="Subject averages are not available for these filters."
-                showCampusComparison={Boolean(comparisonCampus)}
-              />
-            </div>
+            <>
+              <div className="academic-analytics__comparison-grid">
+                <ComparisonTable
+                  title="By class"
+                  rows={classRows}
+                  assessment={highlight}
+                  campusLabel={campusLabel}
+                  emptyMessage="Class-level averages are not available for these filters."
+                  showCampusComparison={Boolean(comparisonCampus)}
+                />
+                <ComparisonTable
+                  title="By subject"
+                  rows={subjectRows}
+                  assessment={highlight}
+                  lowestName={lowestRow?.name}
+                  campusLabel={campusLabel}
+                  emptyMessage="Subject averages are not available for these filters."
+                  showCampusComparison={Boolean(comparisonCampus)}
+                />
+              </div>
+              {["kibuli", "buwaate"].includes(normalise(filters.campus)) && (
+                <PrimaryCampusInsights filters={filters} />
+              )}
+            </>
           ) : isSecondary && isAllCampusesSecondary ? (
             <div className="academic-analytics__secondary-groups">
               {secondaryGroups.map((group) => (

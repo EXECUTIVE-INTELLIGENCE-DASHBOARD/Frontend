@@ -17,7 +17,7 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-function renderAnalytics(section: string, term: string) {
+function renderAnalytics(section: string, term: string, campus = "") {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
@@ -29,7 +29,7 @@ function renderAnalytics(section: string, term: string) {
       createElement(AcademicAnalytics, {
         filters: {
           school: "",
-          campus: "",
+          campus,
           section,
           term,
           year: "2023",
@@ -202,6 +202,95 @@ describe("all-campus primary analytics", () => {
           "/academics/performance/dashboard/",
           expect.objectContaining({
             params: { school: 12, level: "primary", term: Number(term), year: "2023" },
+          }),
+        );
+      });
+
+    },
+  );
+});
+
+describe("primary campus assessment insights", () => {
+  it.each(["kibuli", "buwaate"])(
+    "loads real learner history for the %s campus and does not invent gender data",
+    async (campus) => {
+      vi.mocked(api.get).mockImplementation(async (url, config) => {
+        if (url === "/academics/terms/") {
+          return {
+            data: [
+              { id: 1, number: 1, academic_year: "2023" },
+              { id: 2, number: 2, academic_year: "2023" },
+              { id: 3, number: 3, academic_year: "2023" },
+              { id: 4, number: 1, academic_year: "2022" },
+              { id: 5, number: 2, academic_year: "2022" },
+              { id: 6, number: 3, academic_year: "2022" },
+            ],
+          };
+        }
+
+        if (url === "/academics/performance/dashboard/") {
+          const params = config?.params as { term?: number } | undefined;
+          const termId = params?.term ?? 1;
+          const termNumber = ((termId - 1) % 3) + 1;
+          return {
+            data: {
+              term: {
+                id: termId,
+                number: termNumber,
+                label: `Term ${termNumber}`,
+              },
+              summary: {
+                students_assessed:
+                  termId <= 3 ? 290 + termNumber : 280 + termNumber,
+              },
+              tests: [
+                {
+                  subject: "Mathematics",
+                  level: "primary",
+                  class_level: "P.1",
+                  test_1_average: 58,
+                  test_2_average: 60,
+                },
+              ],
+              by_class: [
+                {
+                  class_level: "P.1",
+                  level: "primary",
+                  test_1_average: 58,
+                  test_2_average: 60,
+                },
+              ],
+            },
+          };
+        }
+
+        throw new Error(`Unexpected API endpoint: ${url}`);
+      });
+
+      renderAnalytics("primary", "1", campus);
+
+      expect(
+        await screen.findByRole("heading", { name: "Learners assessed" }),
+      ).toBeInTheDocument();
+      expect(await screen.findByText(/Term 1:/)).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Girls vs boys" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /Gender-disaggregated assessment counts and averages are not provided/,
+        ),
+      ).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(api.get).toHaveBeenCalledWith(
+          "/academics/performance/dashboard/",
+          expect.objectContaining({
+            params: expect.objectContaining({
+              campus,
+              level: "primary",
+              term: 1,
+            }),
           }),
         );
       });
