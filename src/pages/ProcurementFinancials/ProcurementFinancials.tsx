@@ -55,12 +55,6 @@ export function ProcurementFinancials() {
 
   return (
     <div className="pf-page">
-      <p className="pf-live-status" role="status" aria-live="polite">
-        Live data · refreshes every 30 seconds
-        {(transactionsQuery.isFetching || vendorsQuery.isFetching) &&
-          " · Refreshing…"}
-      </p>
-
       <div className="pf-metrics">
         {procurementData.categories.map((category) => (
           <SpendSummaryCard

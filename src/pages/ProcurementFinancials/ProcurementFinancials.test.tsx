@@ -91,7 +91,7 @@ describe("ProcurementFinancials", () => {
   it("uses live transaction values for the category summaries and charts", async () => {
     renderPage();
 
-    await screen.findByText("Live data · refreshes every 30 seconds");
+    await screen.findByText("UGX 100.0M");
 
     const cards = screen.getAllByRole("article");
     expect(cards).toHaveLength(3);
