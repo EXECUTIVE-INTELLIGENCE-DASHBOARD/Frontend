@@ -257,7 +257,7 @@ export function AssetsEquipment() {
 
       try {
         const [assetResponse, dashboardResponse] = await Promise.all([
-          api.get<AssetListResponse>("/assets/", {
+          api.get<AssetListResponse>("/operations/assets/", {
             signal: controller.signal,
           }),
           api.get<AssetDashboardResponse>("/operations/assets/dashboard/", {

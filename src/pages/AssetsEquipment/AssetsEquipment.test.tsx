@@ -1,3 +1,4 @@
+
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -95,8 +96,10 @@ const originalRevokeObjectURL = Object.getOwnPropertyDescriptor(
 
 describe("AssetsEquipment", () => {
   beforeEach(() => {
+    vi.clearAllMocks();
+
     vi.mocked(api.get).mockImplementation((url) => {
-      if (url === "/assets/") {
+      if (url === "/operations/assets/") {
         return Promise.resolve({
           data: mockAssets,
         } as never);
@@ -108,7 +111,9 @@ describe("AssetsEquipment", () => {
         } as never);
       }
 
-      return Promise.reject(new Error(`Unexpected endpoint: ${url}`));
+      return Promise.reject(
+        new Error(`Unexpected endpoint: ${url}`),
+      );
     });
   });
 
@@ -116,13 +121,21 @@ describe("AssetsEquipment", () => {
     vi.restoreAllMocks();
 
     if (originalCreateObjectURL) {
-      Object.defineProperty(URL, "createObjectURL", originalCreateObjectURL);
+      Object.defineProperty(
+        URL,
+        "createObjectURL",
+        originalCreateObjectURL,
+      );
     } else {
       Reflect.deleteProperty(URL, "createObjectURL");
     }
 
     if (originalRevokeObjectURL) {
-      Object.defineProperty(URL, "revokeObjectURL", originalRevokeObjectURL);
+      Object.defineProperty(
+        URL,
+        "revokeObjectURL",
+        originalRevokeObjectURL,
+      );
     } else {
       Reflect.deleteProperty(URL, "revokeObjectURL");
     }
@@ -137,23 +150,33 @@ describe("AssetsEquipment", () => {
     expect(screen.getByText("80.0%")).toBeTruthy();
     expect(screen.getByText("UGX 5,000,000")).toBeTruthy();
 
-    expect(api.get).toHaveBeenCalledWith("/assets/", expect.any(Object));
+    expect(api.get).toHaveBeenCalledWith(
+      "/operations/assets/",
+      expect.objectContaining({
+        signal: expect.any(AbortSignal),
+      }),
+    );
 
     expect(api.get).toHaveBeenCalledWith(
       "/operations/assets/dashboard/",
-      expect.any(Object),
+      expect.objectContaining({
+        signal: expect.any(AbortSignal),
+      }),
     );
   });
 
   it("displays asset records returned by the API", async () => {
     render(<AssetsEquipment />);
 
-    expect(await screen.findByText("Dell Desktop Computers")).toBeTruthy();
+    expect(
+      await screen.findByText("Dell Desktop Computers"),
+    ).toBeTruthy();
 
     expect(screen.getByText("Smart Projectors")).toBeTruthy();
     expect(screen.getByText("Chemistry Lab Benches")).toBeTruthy();
 
     expect(screen.getByText("132,000,000")).toBeTruthy();
+
     expect(
       screen.getByText("Servicing Required", {
         selector: "span.ae-status",
@@ -173,7 +196,6 @@ describe("AssetsEquipment", () => {
     expect(screen.getByText("Chemistry Lab Benches")).toBeTruthy();
 
     expect(screen.queryByText("Dell Desktop Computers")).toBeNull();
-
     expect(screen.queryByText("Smart Projectors")).toBeNull();
   });
 
@@ -189,6 +211,7 @@ describe("AssetsEquipment", () => {
     expect(screen.getByText("Smart Projectors")).toBeTruthy();
 
     expect(screen.queryByText("Dell Desktop Computers")).toBeNull();
+    expect(screen.queryByText("Chemistry Lab Benches")).toBeNull();
   });
 
   it("resets the selected filters", async () => {
@@ -200,11 +223,17 @@ describe("AssetsEquipment", () => {
       target: { value: "buwaate" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /Reset Filters/i }));
+    expect(screen.queryByText("Dell Desktop Computers")).toBeNull();
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: /Reset Filters/i,
+      }),
+    );
 
     expect(screen.getByText("Dell Desktop Computers")).toBeTruthy();
-
     expect(screen.getByText("Chemistry Lab Benches")).toBeTruthy();
+    expect(screen.getByText("Smart Projectors")).toBeTruthy();
   });
 
   it("exports the visible asset records", async () => {
@@ -231,7 +260,11 @@ describe("AssetsEquipment", () => {
 
     await screen.findByText("Dell Desktop Computers");
 
-    fireEvent.click(screen.getByRole("button", { name: /Export Register/i }));
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: /Export Register/i,
+      }),
+    );
 
     await waitFor(() => {
       expect(createObjectURL).toHaveBeenCalledTimes(1);
@@ -241,7 +274,9 @@ describe("AssetsEquipment", () => {
   });
 
   it("displays an error when the API request fails", async () => {
-    vi.mocked(api.get).mockRejectedValueOnce(new Error("Network error"));
+    vi.mocked(api.get).mockRejectedValue(
+      new Error("Network error"),
+    );
 
     render(<AssetsEquipment />);
 
