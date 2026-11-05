@@ -66,8 +66,15 @@
 .ae-cards {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  gap: 18px;
   margin-bottom: 16px;
+}
+
+:root body .ae-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  justify-content: stretch;
+  gap: 18px;
 }
 
 .ae-card,
@@ -78,50 +85,54 @@
   box-shadow: var(--shadow-card);
 }
 
-.ae-card {
-  min-width: 0;
-  padding: 17px 18px;
-}
-
-.ae-card-heading {
+:root body .ae-cards .ae-card {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 15px;
+  width: 100%;
+  min-width: 0;
+  min-height: 124px;
+  padding: 21px;
+  border-radius: 14px;
 }
 
 .ae-card-icon {
-  width: 34px;
-  height: 34px;
   display: grid;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
   place-items: center;
-  flex-shrink: 0;
-  border-radius: 9px;
-  color: var(--pal-steel);
-  background: color-mix(in srgb, var(--pal-steel) 13%, transparent);
+  border-radius: 11px;
+  background: var(--color-surface-subtle);
+  color: var(--color-accent);
+}
+
+.ae-card-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 5px;
 }
 
 .ae-card-label {
-  color: var(--color-text);
-  opacity: 0.72;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.045em;
-  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 550;
 }
 
 .ae-card-value {
-  margin-top: 13px;
   color: var(--color-heading);
-  font-size: clamp(20px, 2vw, 27px);
-  font-weight: 700;
-  overflow-wrap: anywhere;
+  font-size: clamp(18px, 1.65vw, 23px);
+  font-weight: 600;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: break-word;
 }
 
 .ae-card-description {
-  margin-top: 5px;
-  color: var(--color-text);
-  opacity: 0.68;
-  font-size: 12px;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  line-height: 1.45;
 }
 
 .ae-panel {
@@ -438,6 +449,10 @@
 }
 
 @media (max-width: 900px) {
+  :root body .ae-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .ae-cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -461,6 +476,15 @@
   .ae-condition-list,
   .ae-filters {
     grid-template-columns: 1fr;
+  }
+
+  :root body .ae-cards {
+    grid-template-columns: 1fr;
+  }
+
+  :root body .ae-cards .ae-card {
+    min-height: 0;
+    padding: 17px;
   }
 
   .ae table,

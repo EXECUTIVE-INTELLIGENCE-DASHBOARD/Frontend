@@ -140,16 +140,15 @@ function MetricCard({
 }) {
   return (
     <article className="ae-card">
-      <div className="ae-card-heading">
-        <span className="ae-card-icon">
-          <Icon size={19} strokeWidth={1.8} />
-        </span>
+      <span className="ae-card-icon" aria-hidden="true">
+        <Icon size={19} strokeWidth={1.8} />
+      </span>
 
+      <div className="ae-card-content">
         <span className="ae-card-label">{label}</span>
+        <strong className="ae-card-value">{value}</strong>
+        <span className="ae-card-description">{description}</span>
       </div>
-
-      <div className="ae-card-value">{value}</div>
-      <div className="ae-card-description">{description}</div>
     </article>
   );
 }
