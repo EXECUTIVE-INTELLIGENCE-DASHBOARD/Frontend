@@ -10,7 +10,6 @@ import type {
 import {
   classLabelFor,
   formatNumber,
-  formatPercent,
   intakeBySchool,
   levelLabels,
   schoolShortNameFor,
@@ -71,8 +70,6 @@ function CountCell({ value }: { value: number }) {
 
 export function SchoolIntakePanel({
   rows,
-  school,
-  onSelect,
 }: SchoolIntakePanelProps) {
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
@@ -141,11 +138,11 @@ export function SchoolIntakePanel({
     (item) => item.classId === selectedClass,
   );
 
-  const selectedTierRows = rows.filter(
-    (row) =>
-      activeTier?.levels.includes(row.level) &&
-      row.classId === selectedClass,
-  );
+  // const selectedTierRows = rows.filter(
+  //   (row) =>
+  //     activeTier?.levels.includes(row.level) &&
+  //     row.classId === selectedClass,
+  // );
 
   const classStreams = selectedClassData?.streams ?? [];
 
