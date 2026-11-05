@@ -1,3 +1,4 @@
+
 import { useMemo } from "react";
 
 import { formatNumber, formatPercent } from "./admissionsEnrollment.data";
@@ -32,123 +33,121 @@ function axisFor(max: number, tickCount = 4): Axis {
   return { top: top || step, ticks };
 }
 
-/* ------------------------------------------------------------------ Geometry */
+/* -------------------------------------------------------------- Pie geometry */
 
-/* A short, wide frame keeps the trend readable alongside its dashboard axis. */
-const W = 560;
-const H = 212;
-const L = 46;
-const R = 12;
-const T = 14;
-const B = 42;
+/** Creates one slice of a pie chart using SVG arc geometry. */
+function pieSlicePath(
+  startAngle: number,
+  endAngle: number,
+  radius: number,
+): string {
+  const centre = 60;
 
-const plotWidth = W - L - R;
-const plotHeight = H - T - B;
-const baseline = T + plotHeight;
+  const startRadians = (startAngle * Math.PI) / 180;
+  const endRadians = (endAngle * Math.PI) / 180;
+
+  const startX = centre + radius * Math.cos(startRadians);
+  const startY = centre + radius * Math.sin(startRadians);
+  const endX = centre + radius * Math.cos(endRadians);
+  const endY = centre + radius * Math.sin(endRadians);
+
+  const angleDifference = endAngle - startAngle;
+  const largeArc = angleDifference > 180 ? 1 : 0;
+
+  return [
+    `M ${centre} ${centre}`,
+    `L ${startX} ${startY}`,
+    `A ${radius} ${radius} 0 ${largeArc} 1 ${endX} ${endY}`,
+    "Z",
+  ].join(" ");
+}
 
 /* -------------------------------------------------------------- Gender chart */
 
-/** Grouped columns: girls beside boys for every period. */
-function GenderTrendChart({ points }: { points: EnrollmentTrendPoint[] }) {
-  const axis = axisFor(Math.max(...points.flatMap((p) => [p.boys, p.girls])));
-  const y = (value: number) => baseline - (value / axis.top) * plotHeight;
+/** One pie chart showing the latest selected term's gender distribution. */
+function GenderPieChart({ point }: { point: EnrollmentTrendPoint }) {
+  const total = point.boys + point.girls;
 
-  const slot = plotWidth / Math.max(points.length, 1);
-  const barWidth = Math.min(22, slot * 0.28);
-  const gap = Math.max(3, barWidth * 0.25);
+  if (total <= 0) {
+    return (
+      <p className="ae-trend__empty">
+        No gender distribution data is available for this term.
+      </p>
+    );
+  }
+
+  const boysPercentage = (point.boys / total) * 100;
+  const girlsPercentage = (point.girls / total) * 100;
+
+  const boysEndAngle = -90 + (boysPercentage / 100) * 360;
 
   return (
-    <svg
-      className="ae-trend__svg"
-      viewBox={`0 0 ${W} ${H}`}
-      role="img"
-      aria-label="Girls and boys enrolled in each period"
-    >
-      {axis.ticks.map((tick) => (
-        <g key={tick}>
-          <line
-            className="ae-trend__gridline"
-            x1={L}
-            x2={W - R}
-            y1={y(tick)}
-            y2={y(tick)}
-          />
-          <text
-            className="ae-trend__tick"
-            x={L - 8}
-            y={y(tick) + 3}
-            textAnchor="end"
-          >
-            {formatNumber(tick)}
-          </text>
-        </g>
-      ))}
+    <div className="ae-gender-pie">
+      <div className="ae-gender-pie__chart">
+        <svg
+          viewBox="0 0 120 120"
+          role="img"
+          aria-label={`${point.description}: ${formatNumber(point.boys)} boys (${boysPercentage.toFixed(1)}%) and ${formatNumber(point.girls)} girls (${girlsPercentage.toFixed(1)}%)`}
+        >
+          {point.boys > 0 && point.girls > 0 ? (
+            <>
+              <path
+                d={pieSlicePath(-90, boysEndAngle, 54)}
+                className="ae-trend__pie-slice ae-trend__pie-slice--boys"
+              />
 
-      <line className="ae-trend__axis" x1={L} x2={L} y1={T} y2={baseline} />
-      <line
-        className="ae-trend__axis"
-        x1={L}
-        x2={W - R}
-        y1={baseline}
-        y2={baseline}
-      />
+              <path
+                d={pieSlicePath(boysEndAngle, 270, 54)}
+                className="ae-trend__pie-slice ae-trend__pie-slice--girls"
+              />
+            </>
+          ) : point.boys > 0 ? (
+            <circle
+              cx="60"
+              cy="60"
+              r="54"
+              className="ae-trend__pie-slice ae-trend__pie-slice--boys"
+            />
+          ) : (
+            <circle
+              cx="60"
+              cy="60"
+              r="54"
+              className="ae-trend__pie-slice ae-trend__pie-slice--girls"
+            />
+          )}
+        </svg>
+      </div>
 
-      {points.map((point, index) => {
-        const centre = L + slot * (index + 0.5);
-        const girlsX = centre - barWidth - gap / 2;
-        const boysX = centre + gap / 2;
+      <div className="ae-gender-pie__details">
+        <div className="ae-gender-pie__total">
+          <span>Total Students</span>
+          <strong>{formatNumber(total)}</strong>
+        </div>
 
-        return (
-          <g key={point.id}>
-            <rect
-              className="ae-trend__bar ae-trend__bar--girls"
-              x={girlsX}
-              y={y(point.girls)}
-              width={barWidth}
-              height={Math.max(1, baseline - y(point.girls))}
-              rx={3}
-            >
-              <title>{`${point.description} · ${formatNumber(
-                point.girls,
-              )} girls`}</title>
-            </rect>
+        <div className="ae-gender-pie__legend">
+          <div className="ae-gender-pie__item">
+            <span className="ae-trend__swatch ae-trend__swatch--boys" />
 
-            <rect
-              className="ae-trend__bar ae-trend__bar--boys"
-              x={boysX}
-              y={y(point.boys)}
-              width={barWidth}
-              height={Math.max(1, baseline - y(point.boys))}
-              rx={3}
-            >
-              <title>{`${point.description} · ${formatNumber(
-                point.boys,
-              )} boys`}</title>
-            </rect>
+            <div>
+              <span>Boys</span>
+              <strong>{formatNumber(point.boys)}</strong>
+              <small>{boysPercentage.toFixed(1)}%</small>
+            </div>
+          </div>
 
-            <text
-              className="ae-trend__label"
-              x={centre}
-              y={baseline + 16}
-              textAnchor="middle"
-            >
-              {point.label}
-            </text>
+          <div className="ae-gender-pie__item">
+            <span className="ae-trend__swatch ae-trend__swatch--girls" />
 
-            {point.subLabel ? (
-              <text
-                className="ae-trend__sublabel"
-                x={centre}
-                y={baseline + 29}
-                textAnchor="middle"
-              >
-                {point.subLabel}
-              </text>
-            ) : null}
-          </g>
-        );
-      })}
-    </svg>
+            <div>
+              <span>Girls</span>
+              <strong>{formatNumber(point.girls)}</strong>
+              <small>{girlsPercentage.toFixed(1)}%</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -197,7 +196,7 @@ function EntrantTrendChart({ points }: { points: EnrollmentTrendPoint[] }) {
         <g key={tick}>
           <line
             className="ae-trend__gridline"
-            x1={L}
+            x1={left}
             x2={plotRight}
             y1={y(tick)}
             y2={y(tick)}
@@ -405,10 +404,11 @@ interface EnrollmentTrendsProps {
 }
 
 export function EnrollmentTrends({ filters }: EnrollmentTrendsProps) {
-  // The page filter row already carries the Term and Academic Year pickers, so
-  // the charts just follow them and plot the trailing terms; there is no second
-  // grain switch to disagree with them.
-  const points = useMemo(() => enrollmentTrend(filters, "term"), [filters]);
+  // Follow the existing shared term, year and campus filters.
+  const points = useMemo(
+    () => enrollmentTrend(filters, "term"),
+    [filters],
+  );
 
   const latest = points[points.length - 1];
   const change = trendDelta(points);
@@ -420,28 +420,16 @@ export function EnrollmentTrends({ filters }: EnrollmentTrendsProps) {
           <article className="ae-trend-card">
             <header className="ae-trend-card__head">
               <div>
-                <h3 className="ae-trend-card__title">Girls vs boys</h3>
+                <h3 className="ae-trend-card__title">
+                  Gender Distribution
+                </h3>
+                <p className="ae-trend-card__subtitle">
+                  {latest.description}
+                </p>
               </div>
-
-              <ul className="ae-trend__legend">
-                <li>
-                  <span
-                    className="ae-trend__swatch ae-trend__swatch--girls"
-                    aria-hidden="true"
-                  />
-                  Girls
-                </li>
-                <li>
-                  <span
-                    className="ae-trend__swatch ae-trend__swatch--boys"
-                    aria-hidden="true"
-                  />
-                  Boys
-                </li>
-              </ul>
             </header>
 
-            <GenderTrendChart points={points} />
+            <GenderPieChart point={latest} />
 
             <p className="ae-trend-card__foot">
               <strong>{formatNumber(latest.girls)}</strong> girls and{" "}
@@ -452,7 +440,9 @@ export function EnrollmentTrends({ filters }: EnrollmentTrendsProps) {
                   {" · "}
                   <span
                     className={
-                      change >= 0 ? "ae-trend__delta is-up" : "ae-trend__delta is-down"
+                      change >= 0
+                        ? "ae-trend__delta is-up"
+                        : "ae-trend__delta is-down"
                     }
                   >
                     {change >= 0 ? "+" : ""}
@@ -463,11 +453,10 @@ export function EnrollmentTrends({ filters }: EnrollmentTrendsProps) {
               )}
             </p>
           </article>
-
         </div>
       ) : (
         <p className="ae-trend__empty">
-          No history to plot for the current filters.
+          No gender distribution history is available for the current filters.
         </p>
       )}
     </section>

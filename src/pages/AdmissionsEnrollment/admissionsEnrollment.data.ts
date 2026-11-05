@@ -93,23 +93,27 @@ export const schools: readonly SchoolProfile[] = [
 export const schoolCount = schools.length;
 
 const allSchools: SchoolId[] = schools.map((school) => school.id);
+
 const nurserySchools: SchoolId[] = [
   "kibuli-nursery",
   "buwaate-nursery",
-  "kansanga-gis",
 ];
+
 const primarySchools: SchoolId[] = [
   "kibuli-primary",
   "buwaate-primary",
-  "kansanga-gis",
 ];
-const secondarySchools: SchoolId[] = ["kibuli-secondary", "kansanga-gis"];
+
+const secondarySchools: SchoolId[] = ["kibuli-secondary"];
+
+const internationalSchools: SchoolId[] = ["kansanga-gis"];
 
 export const levelLabels: Record<LevelId, string> = {
   nursery: "Nursery",
   primary: "Primary",
   olevel: "O-Level",
   alevel: "A-Level",
+  general: "General",
 };
 
 export const classDefinitions: ClassDefinition[] = [
@@ -132,6 +136,15 @@ export const classDefinitions: ClassDefinition[] = [
 
   { id: "s5", label: "S.5", level: "alevel", schools: secondarySchools, base: 30, withdrawal: 0.09, boarding: 0.72 },
   { id: "s6", label: "S.6", level: "alevel", schools: secondarySchools, base: 28, withdrawal: 0.09, boarding: 0.72 },
+{
+  id: "general",
+  label: "General",
+  level: "general",
+  schools: internationalSchools,
+  base: 300,
+  withdrawal: 0.08,
+  boarding: 0,
+},
 ];
 
 export const streams = ["A", "B"];
@@ -469,9 +482,21 @@ function buildRow(
 const baseRows: CohortRow[] = schools.flatMap((school) =>
   classDefinitions
     .filter((definition) => definition.schools.includes(school.id))
-    .flatMap((definition) =>
-      streams.map((stream) => buildRow(school, definition, stream)),
-    ),
+    .flatMap((definition) => {
+      let classStreams = streams;
+
+      if (definition.level === "primary") {
+        classStreams = ["Red", "Green", "Purple"];
+      } else if (definition.level === "alevel") {
+        classStreams = ["Sciences", "Arts"];
+      } else if (definition.level === "general") {
+        classStreams = ["General"];
+      }
+
+      return classStreams.map((stream) =>
+        buildRow(school, definition, stream),
+      );
+    }),
 );
 
 /* --------------------------------------------------------------- Period data */

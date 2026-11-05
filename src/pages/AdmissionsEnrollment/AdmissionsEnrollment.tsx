@@ -3,8 +3,8 @@ import {
   Building2,
   Search,
   TrendingUp,
-  UserPlus,
   Users,
+  Target,
   X,
 } from "lucide-react";
 import { AcademicFilters } from "../../components/filters/AcademicFilters";
@@ -242,73 +242,58 @@ export function AdmissionsEnrollment() {
       ) : null}
 
       <section className="ae-kpis" aria-label="Enrolment summary">
-        <KpiCard
-          icon={Users}
-          label="Total students"
-          value={isLive ? formatNumber(summary.learners) : "—"}
-          detail={
-            !isLive
-              ? "Waiting on the API"
-              : summary.girls + summary.boys === 0
-                ? "Gender split not reported by the API"
-                : `${formatNumber(summary.girls)} girls · ${formatNumber(summary.boys)} boys`
-          }
-          tone="navy"
-        />
 
-        <KpiCard
-          icon={Building2}
-          label="Capacity"
-          value={isLive ? formatNumber(summary.capacity) : "—"}
-          detail={
-            isLive
-              ? `${formatPercent(summary.utilization)} utilised`
-              : "Waiting on the API"
-          }
-          tone="sky"
-        />
+  <KpiCard
+    icon={Users}
+    label="Total Students"
+    value={isLive ? formatNumber(summary.learners) : "—"}
+    detail={
+      isLive
+        ? "Active enrolment reported by the API"
+        : "Waiting on confirmed enrolment data"
+    }
+    tone="navy"
+  />
 
-        <KpiCard
-          icon={UserPlus}
-          label="New students"
-          value={isLive ? formatNumber(summary.newLearners) : "—"}
-          detail={
-            isLive
-              ? `${formatPercent(
-                  summary.learners === 0
-                    ? 0
-                    : (summary.newLearners / summary.learners) * 100,
-                )} of the roll`
-              : "Waiting on the API"
-          }
-          tone="sky"
-        />
+  <KpiCard
+    icon={Building2}
+    label="School Capacity"
+    value={isLive ? formatNumber(summary.capacity) : "—"}
+    detail="Maximum school capacity"
+    tone="sky"
+  />
 
-        <KpiCard
-          icon={TrendingUp}
-          label="Join rate"
-          value={isLive ? formatPercent(summary.conversionRate) : "—"}
-          detail={
-            isLive
-              ? `${formatNumber(summary.reported)} of ${formatNumber(
-                  summary.applicants,
-                )} applicants`
-              : "Waiting on the API"
-          }
-          tone="amber"
-        />
-      </section>
+  <KpiCard
+    icon={Target}
+    label="Minimum Enrolment"
+    value="—"
+    detail="Awaiting minimum figures from Finance"
+    tone="amber"
+  />
+
+  <KpiCard
+    icon={TrendingUp}
+    label="Capacity Utilisation"
+    value={isLive ? formatPercent(summary.utilization) : "—"}
+    detail="Percentage of school capacity occupied"
+    tone="sky"
+  />
+
+</section>
 
       <div className="ae-analysis-row">
         <EnrollmentTrends filters={filters} />
         <AdmissionsFunnel summary={summary} live={isLive} />
       </div>
 
-      <SchoolIntakePanel
+      
+        <SchoolIntakePanel
         rows={intakeRows}
         school={filters.school}
         onSelect={selectSchool}
       />
+
+      
 
       {searchMode ? (
         <DrillPanel
