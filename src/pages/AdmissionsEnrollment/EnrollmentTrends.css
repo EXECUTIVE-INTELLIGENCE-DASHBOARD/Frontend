@@ -1,290 +1,253 @@
-/* --------------------------------------------------------------- Trends block */
+
+/* ---------------------------------------------------------------
+   ENROLMENT TRENDS
+---------------------------------------------------------------- */
 
 .ae-trends {
-  display: flex;
+  width: 100%;
   min-width: 0;
-  min-height: 0;
-  flex-direction: column;
 }
-
-.ae-analysis-row .ae-trends {
-  min-height: 100%;
-}
-
-.ae-trends__sub {
-  margin: 2px 0 0;
-  color: var(--ae-muted);
-  font-size: 11.5px;
-}
-
-/*
- * The Term and Academic Year pickers live in the page filter row, so the trends
- * card has no period switch of its own.
- */
 
 .ae-trends__grid {
   display: grid;
-  flex: 1;
   grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
-  min-height: 0;
-}
-
-.ae-analysis-row .ae-trends__grid {
+  width: 100%;
   height: 100%;
 }
-
-.ae-trends__note {
-  margin: 0;
-  color: var(--ae-muted);
-  font-size: 10.5px;
-  font-style: italic;
-}
-
-.ae-trend__empty {
-  margin: 0;
-  padding: 28px 16px;
-  border: 1px dashed var(--ae-border);
-  border-radius: 14px;
-  color: var(--ae-muted);
-  font-size: 12px;
-  text-align: center;
-}
-
-/* --------------------------------------------------------------------- Card */
 
 .ae-trend-card {
-  --ae-heading: var(--color-heading);
-  --ae-muted: var(--color-text-muted);
-  --ae-soft: var(--color-text-soft);
-  --ae-border: var(--color-border);
-  --ae-f0: #203468;
-  --ae-f2: #2aa4dd;
-  --ae-f4: #f1ba1b;
-
   display: flex;
-  height: 100%;
-  box-sizing: border-box;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
   min-width: 0;
-  padding: 15px 16px 16px;
-  border: 1px solid var(--ae-border);
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 1px solid var(--ae-border, #e2e8f0);
   border-radius: 14px;
-  background: var(--color-surface);
+  background: var(--color-surface, #ffffff);
   box-shadow: var(--shadow-card);
-}
-
-.ae-analysis-row .ae-trend-card,
-.ae-analysis-card {
-  min-height: 100%;
 }
 
 .ae-trend-card__head {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
   align-items: flex-start;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .ae-trend-card__title {
   margin: 0;
-  color: var(--color-heading);
-  font-size: 13.5px;
+  color: var(--ae-heading, #203468);
+  font-size: 14px;
   font-weight: 700;
 }
 
-.ae-trend-card__sub {
-  margin: 2px 0 0;
-  color: var(--ae-muted);
-  font-size: 11.5px;
-}
-
-.ae-trend-card__foot {
-  margin: 0;
-  padding-top: 2px;
-  border-top: 1px solid var(--color-border-soft);
-  color: var(--color-text-secondary);
-  font-size: 11px;
-  line-height: 1.5;
-}
-
-.ae-trend-card__foot strong {
-  color: var(--color-heading);
-  font-weight: 700;
-}
-
-/* ------------------------------------------------------------------- Legend */
-
-.ae-trend__legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  color: var(--ae-muted);
-  font-size: 10.5px;
-  font-weight: 600;
-}
-
-.ae-trend__legend li {
-  display: inline-flex;
-  gap: 5px;
-  align-items: center;
-}
-
-.ae-trend__swatch {
-  width: 9px;
-  height: 9px;
-  border-radius: 2px;
-}
-
-.ae-trend__swatch--girls {
-  background: var(--ae-f4);
-}
-
-.ae-trend__swatch--boys {
-  background: var(--ae-f0);
-}
-
-.ae-trend__swatch--new {
-  background: var(--ae-f2);
-}
-
-.ae-trend__swatch--continuing {
-  background: var(--ae-f0);
-}
-
-.ae-trend__swatch--rate {
-  border-radius: 999px;
-  background: var(--pal-amber);
-}
-
-/* ---------------------------------------------------------------------- Svg */
-
-.ae-trend__svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-.sr-retention-trend .ae-trend__svg {
-  width: calc(100% + 16px);
-  height: auto;
-  max-width: none;
-  margin-inline: -8px;
-}
-
-.sr-retention-trend .ae-trend__tick {
-  font-size: 11px;
-}
-
-.sr-retention-trend .ae-trend__label {
+.ae-trend-card__subtitle {
+  margin: 5px 0 0;
+  color: var(--ae-muted, #718096);
   font-size: 12px;
 }
 
-.sr-retention-trend .ae-trend__sublabel,
-.sr-retention-trend .ae-trend__total {
-  font-size: 11px;
+/* ---------------------------------------------------------------
+   BOYS VS GIRLS PIE CHART
+---------------------------------------------------------------- */
+
+.ae-gender-pie {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+  width: 100%;
+  min-height: 220px;
+  padding: 12px 0;
+  box-sizing: border-box;
 }
 
-.ae-trend__gridline {
-  stroke: var(--color-border-soft);
-  stroke-width: 1;
+.ae-gender-pie__chart {
+  width: 210px;
+  height: 210px;
+  flex: 0 0 210px;
 }
 
-.ae-trend__axis {
-  stroke: var(--color-border-strong);
-  stroke-width: 1;
+.ae-gender-pie__chart svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-.ae-trend__tick {
-  fill: var(--ae-muted);
-  font-size: 9.5px;
-  font-variant-numeric: tabular-nums;
-}
-
-.ae-trend__tick--rate {
-  fill: var(--pal-amber);
-  font-weight: 700;
-}
-
-.ae-trend__label {
-  fill: var(--color-text-secondary);
-  font-size: 10px;
-  font-weight: 600;
-}
-
-.ae-trend__sublabel {
-  fill: var(--ae-muted);
-  font-size: 9px;
-}
-
-.ae-trend__total {
-  fill: var(--color-heading);
-  font-size: 9.5px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.ae-trend__bar {
-  transition: opacity 120ms ease;
-}
-
-.ae-trend__bar--girls {
-  fill: var(--ae-f4);
-}
-
-.ae-trend__bar--boys {
-  fill: var(--ae-f0);
-}
-
-.ae-trend__bar--new {
-  fill: var(--ae-f2);
-}
-
-.ae-trend__bar--continuing {
-  fill: var(--ae-f0);
-}
-
-.ae-trend__svg:hover .ae-trend__bar {
-  opacity: 0.55;
-}
-
-.ae-trend__svg .ae-trend__bar:hover {
-  opacity: 1;
-}
-
-.ae-trend__line {
-  fill: none;
-  stroke: var(--pal-amber);
-  stroke-width: 2;
-  stroke-linecap: round;
+.ae-trend__pie-slice {
+  stroke: var(--color-surface, #ffffff);
+  stroke-width: 1.5;
   stroke-linejoin: round;
 }
 
-.ae-trend__dot {
-  fill: var(--color-surface);
-  stroke: var(--pal-amber);
-  stroke-width: 2;
+.ae-trend__pie-slice--boys {
+  fill: #203468;
 }
 
-/* -------------------------------------------------------------------- Delta */
+.ae-trend__pie-slice--girls {
+  fill: #F1BA1B;
+}
 
-.ae-trend__delta {
+/* ---------------------------------------------------------------
+   PIE CHART DETAILS AND LEGEND
+---------------------------------------------------------------- */
+
+.ae-gender-pie__details {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 150px;
+}
+
+.ae-gender-pie__total {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ae-gender-pie__total span {
+  color: var(--ae-muted, #718096);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.ae-gender-pie__total strong {
+  color: var(--ae-heading, #203468);
+  font-size: 28px;
+  font-weight: 750;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.ae-gender-pie__legend {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ae-gender-pie__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.ae-trend__swatch {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  flex: 0 0 11px;
+  margin-top: 3px;
+  border-radius: 50%;
+}
+
+.ae-trend__swatch--boys {
+  background: #203468;
+}
+
+.ae-trend__swatch--girls {
+  background: #F1BA1B;
+}
+
+.ae-gender-pie__item > div {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 4px 12px;
+}
+
+.ae-gender-pie__item > div > span {
+  grid-column: 1 / -1;
+  color: var(--ae-heading, #203468);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.ae-gender-pie__item strong {
+  color: var(--ae-heading, #203468);
+  font-size: 15px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
+.ae-gender-pie__item small {
+  color: var(--ae-muted, #718096);
+  font-size: 11px;
+}
+
+/* ---------------------------------------------------------------
+   FOOTNOTE AND EMPTY STATE
+---------------------------------------------------------------- */
+
+.ae-trend-card__foot {
+  margin: auto 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--ae-border, #e2e8f0);
+  color: var(--ae-muted, #718096);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.ae-trend-card__foot strong {
+  color: var(--ae-heading, #203468);
+  font-weight: 700;
+}
+
+.ae-trend__delta {
+  font-weight: 700;
+}
+
 .ae-trend__delta.is-up {
-  color: var(--color-positive);
+  color: #16834a;
 }
 
 .ae-trend__delta.is-down {
-  color: var(--color-critical);
+  color: #d04444;
 }
 
-/* --------------------------------------------------------------- Responsive */
+.ae-trend__empty {
+  margin: 0;
+  padding: 24px 12px;
+  color: var(--ae-muted, #718096);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------
+   RESPONSIVE
+---------------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  .ae-trend-card {
+    padding: 15px;
+  }
+
+  .ae-gender-pie {
+    gap: 20px;
+  }
+
+  .ae-gender-pie__chart {
+    width: 175px;
+    height: 175px;
+    flex-basis: 175px;
+  }
+
+  .ae-gender-pie__details {
+    width: 100%;
+    max-width: 220px;
+  }
+}
+
+/* ---------------------------------------------------------------
+   DARK THEME
+---------------------------------------------------------------- */
+
+[data-theme="dark"] .ae-trend-card {
+  background: var(--color-surface);
+}
+
+[data-theme="dark"] .ae-trend__pie-slice {
+  stroke: var(--color-surface);
+}

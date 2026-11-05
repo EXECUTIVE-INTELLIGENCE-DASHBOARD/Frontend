@@ -435,57 +435,68 @@
 
 /* Compact metric card: the icon sits above the heading so the heading can use
    the full width of the card and always stay on one line. */
-.ae-kpis {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+/* -------------------------------------------------------------------- KPIs */
+
+.ae-page .ae-kpis {
+  display: flex;
+  flex-direction: row;
   align-items: stretch;
+  gap: 12px;
+  width: 100%;
+  margin: 20px 0 28px;
 }
 
-.ae-kpi {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
+.ae-page .ae-kpi {
+  width: 100%;
+  max-width: none;
   min-width: 0;
-  padding: 11px 12px 12px;
+  box-sizing: border-box;
+  border-radius: 10px !important;
+}
+
+.ae-page .ae-kpi {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  max-width: none;
+  min-height: 120px;
+  padding: 20px;
+  box-sizing: border-box;
   border: 1px solid var(--ae-border);
-  border-radius: 12px;
+  border-radius: 18px;
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
   text-align: left;
+  transition: box-shadow 180ms ease, transform 180ms ease;
+}
+.ae-page .ae-kpi:hover {
+  box-shadow: 0 6px 18px rgba(32, 52, 104, 0.10);
+  transform: translateY(-2px);
 }
 
-.ae-kpi__icon {
+.ae-page .ae-kpi__icon {
   display: grid;
-  width: 24px;
-  height: 24px;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
   place-items: center;
-  border-radius: 7px;
-  background: var(--color-surface-tint);
-  color: var(--ae-heading);
+  border-radius: 13px;
+  background: #E8F4FC !important;
+  color: #203468 !important;
 }
 
-.ae-kpi--sky .ae-kpi__icon {
-  background: color-mix(in srgb, var(--color-accent) 16%, transparent);
-  color: var(--color-accent-strong);
-}
-
-.ae-kpi--green .ae-kpi__icon {
-  background: color-mix(in srgb, var(--pal-green) 16%, transparent);
-  color: var(--pal-green);
-}
-
-.ae-kpi--amber .ae-kpi__icon {
-  background: color-mix(in srgb, var(--pal-amber) 24%, transparent);
-  color: var(--pal-amber-ink);
-}
-
-.ae-kpi__body {
+.ae-page .ae-kpi__body {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 5px;
   min-width: 0;
 }
+
+
+
 
 .ae-kpi__label {
   overflow: hidden;
@@ -1529,3 +1540,5 @@
   color: var(--color-heading);
   box-shadow: none;
 }
+
+

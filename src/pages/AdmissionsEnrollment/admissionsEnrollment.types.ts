@@ -24,7 +24,7 @@ export type SchoolId =
 
 export type SchoolSelection = SchoolId | "all";
 
-export type LevelId = "nursery" | "primary" | "olevel" | "alevel";
+export type LevelId = "nursery" | "primary" | "olevel" | "alevel" | "general";
 
 export type GenderId = "boys" | "girls";
 
