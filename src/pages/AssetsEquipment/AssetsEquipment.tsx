@@ -45,8 +45,14 @@ const formatNumber = (value: number | string | null | undefined) =>
     maximumFractionDigits: 0,
   });
 
-const formatCurrency = (value: number | string | null | undefined) =>
-  `UGX ${formatNumber(value)}`;
+const formatCompactNumber = (value: number | string | null | undefined) =>
+  new Intl.NumberFormat("en-UG", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(Number(value ?? 0));
+
+const formatCompactCurrency = (value: number | string | null | undefined) =>
+  `UGX ${formatCompactNumber(value)}`;
 
 const getAssetRows = (response: AssetListResponse): Asset[] =>
   Array.isArray(response) ? response : (response.results ?? []);
@@ -363,13 +369,6 @@ export function AssetsEquipment() {
   return (
     <div className="ae">
       <div className="ae-page-heading">
-        <div>
-          <h1>Assets &amp; Equipment</h1>
-          <p>
-            Institutional asset register, valuation and condition monitoring.
-          </p>
-        </div>
-
         <button
           className="ae-btn"
           onClick={() => downloadCsv(filteredAssets)}
@@ -398,8 +397,8 @@ export function AssetsEquipment() {
             <MetricCard
               icon={Boxes}
               label="Total Assets"
-              value={formatNumber(summary.total_assets)}
-              description={`${formatNumber(summary.in_use)} in use`}
+              value={formatCompactNumber(summary.total_assets)}
+              description={`${formatCompactNumber(summary.in_use)} in use`}
             />
 
             <MetricCard
@@ -410,13 +409,13 @@ export function AssetsEquipment() {
                   ? "—"
                   : `${Number(summary.operational_rate).toFixed(1)}%`
               }
-              description="Operational units against in-service assets"
+              description="Of in-service assets"
             />
 
             <MetricCard
               icon={ShieldAlert}
               label="Capital at Risk"
-              value={formatCurrency(summary.capital_at_risk_value)}
+              value={formatCompactCurrency(summary.capital_at_risk_value)}
               description={
                 summary.capital_risk == null
                   ? "Risk percentage unavailable"
@@ -427,8 +426,8 @@ export function AssetsEquipment() {
             <MetricCard
               icon={Gauge}
               label="Total Asset Value"
-              value={formatCurrency(summary.total_value)}
-              description={`${formatNumber(summary.out_of_use)} units out of use`}
+              value={formatCompactCurrency(summary.total_value)}
+              description={`${formatCompactNumber(summary.out_of_use)} out of use`}
             />
           </section>
 

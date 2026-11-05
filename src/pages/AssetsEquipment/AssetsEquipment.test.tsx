@@ -148,7 +148,16 @@ describe("AssetsEquipment", () => {
 
     expect(screen.getByText("80")).toBeTruthy();
     expect(screen.getByText("80.0%")).toBeTruthy();
-    expect(screen.getByText("UGX 5,000,000")).toBeTruthy();
+    expect(screen.getByText("UGX 5M")).toBeTruthy();
+    expect(screen.getAllByRole("article")).toHaveLength(4);
+    expect(
+      screen.queryByRole("heading", { name: "Assets & Equipment" }),
+    ).toBeNull();
+    expect(
+      screen.queryByText(
+        "Institutional asset register, valuation and condition monitoring.",
+      ),
+    ).toBeNull();
 
     expect(api.get).toHaveBeenCalledWith(
       "/operations/assets/",
