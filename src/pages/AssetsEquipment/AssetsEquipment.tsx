@@ -545,30 +545,41 @@ export function AssetsEquipment() {
                   <tbody>
                     {filteredAssets.map((asset) => (
                       <tr key={asset.id}>
-                        <td className="ae-asset-name">{asset.name}</td>
+                        <td className="ae-asset-name" data-label="Asset Name">
+                          {asset.name}
+                        </td>
 
-                        <td>{asset.category_display || asset.category}</td>
+                        <td data-label="Category">
+                          {asset.category_display || asset.category}
+                        </td>
 
-                        <td>
+                        <td data-label="Facility & Campus">
                           <strong>{asset.facility_name}</strong>
                           <span className="ae-campus">
                             {asset.campus_display || asset.campus}
                           </span>
                         </td>
 
-                        <td className="r">{formatNumber(asset.quantity)}</td>
+                        <td className="r" data-label="Quantity">
+                          {formatNumber(asset.quantity)}
+                        </td>
 
-                        <td className="r">
+                        <td className="r" data-label="Available">
                           {formatNumber(asset.available_quantity)}
                         </td>
 
-                        <td className="r">{formatNumber(asset.unit_value)}</td>
+                        <td className="r" data-label="Unit Value">
+                          {formatNumber(asset.unit_value)}
+                        </td>
 
-                        <td className="r ae-value">
+                        <td
+                          className="r ae-value"
+                          data-label="Total Value"
+                        >
                           {formatNumber(asset.total_value)}
                         </td>
 
-                        <td>
+                        <td data-label="Condition">
                           <span className={`ae-status ${asset.condition}`}>
                             {getConditionLabel(asset)}
                           </span>
