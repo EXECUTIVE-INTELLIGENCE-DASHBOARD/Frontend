@@ -36,8 +36,97 @@
 
 .at-state { margin: 0; color: var(--color-text-muted); }
 
-/* Second tier: KPI cards, icon stays in the existing blue */
-.at-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 30px; }
+
+/* Second tier: KPI cards — standardized with Academic Enrolment KPI styling */
+.at-page .at-kpis {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+  margin: 20px 0 28px;
+}
+
+.at-page .at-kpi {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  min-height: 120px;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  border-radius: 10px !important;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  text-align: left;
+  transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.at-page .at-kpi:hover {
+  box-shadow: 0 6px 18px rgba(32, 52, 104, 0.10);
+  transform: translateY(-2px);
+}
+
+.at-page .at-kpi__icon {
+  display: grid;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 13px;
+  background: #E8F4FC !important;
+  color: #203468 !important;
+}
+
+.at-page .at-kpi__body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.at-page .at-kpi__label {
+  overflow: hidden;
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.at-page .at-kpi__value {
+  overflow: hidden;
+  margin: 0;
+  color: var(--color-heading);
+  font-size: clamp(17px, 1.55vw, 21px);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.at-page .at-kpi__detail {
+  grid-column: auto;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
+/* .at-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 30px; }
 .at-kpi {
   display: grid;
   grid-template-columns: 38px minmax(0, 1fr);
@@ -61,7 +150,7 @@
 }
 .at-kpi__label { margin: 0; align-self: center; font-size: 13px; font-weight: 600; color: var(--color-text-secondary); }
 .at-kpi__value { margin: 0; font-size: 1.55rem; font-weight: 700; line-height: 1.1; color: var(--color-heading); font-variant-numeric: tabular-nums; }
-.at-kpi__detail { grid-column: 2; margin: 0; font-size: 12px; color: var(--color-text-muted); }
+.at-kpi__detail { grid-column: 2; margin: 0; font-size: 12px; color: var(--color-text-muted); } */
 
 /* Cards */
 .at-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); gap: 12px; }
