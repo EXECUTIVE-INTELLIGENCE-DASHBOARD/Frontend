@@ -1,6 +1,11 @@
-import { useState } from "react";
 import type { ReactElement } from "react";
-
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import "./layout.css";
 import { Hero } from "./components/Hero";
 import { Sidebar } from "./components/Sidebar";
@@ -53,7 +58,7 @@ const pages: Record<string, ReactElement> = {
   "liabilities-management": <Liabilities />,
   "revenue-fee-collection": <Revenue />,
   "expense-management": <ExpenseManagement />,
-
+  "assets-liabilities": <AssetsLiabilities />,
   // New procurement page
   "procurement-financials": <ProcurementFinancials />,
   "purchase-orders-approvals": <PurchaseOrdersApprovals />,
@@ -75,28 +80,44 @@ const pages: Record<string, ReactElement> = {
   "trading-performance": <TradingPerformance />,
 };
 
-// Screens that link to other screens are given the way to open them.
-const linkedPages: Record<string, (open: (pageId: string) => void) => ReactElement> = {
-  "assets-liabilities": (open) => <AssetsLiabilities onSelectPage={open} />,
-};
-
 const defaultPageId = "academic-performance";
 
 export function App() {
-  const [activePage, setActivePage] = useState(defaultPageId);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const currentPage = linkedPages[activePage]?.(setActivePage) ?? pages[activePage];
+  const activePage =
+    location.pathname.replace(/^\/+|\/+$/g, "") || defaultPageId;
+  // Navigate to another page using its page ID.
+  const openPage = (pageId: string) => {
+    navigate(`/${pageId}`);
+  };
+
   const pageLabel = findNavigationLabel(activePage) ?? "Dashboard";
 
   return (
     <div className="layout">
-      <Sidebar activeItem={activePage} onSelectItem={setActivePage} />
+      <Sidebar activeItem={activePage} onSelectItem={openPage} />
 
       <div className="layout-main">
-        <Hero activePage={activePage} onSelectPage={setActivePage} />
+        <Hero activePage={activePage} onSelectPage={openPage} />
 
         <main className="app-shell layout-content">
-          {currentPage ?? <PlaceholderPage title={pageLabel} />}
+          <Routes>
+            {/* Default page when someone opens the application root URL. */}
+            <Route
+              path="/"
+              element={<Navigate to={`/${defaultPageId}`} replace />}
+            />
+
+            {/* Pages from the existing pages mapping. */}
+            {Object.entries(pages).map(([pageId, page]) => (
+              <Route key={pageId} path={`/${pageId}`} element={page} />
+            ))}
+
+            {/* Fallback for navigation items without a dedicated page yet. */}
+            <Route path="*" element={<PlaceholderPage title={pageLabel} />} />
+          </Routes>
         </main>
       </div>
     </div>
