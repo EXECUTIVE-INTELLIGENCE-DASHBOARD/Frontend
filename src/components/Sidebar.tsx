@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 
 import {
@@ -16,23 +17,21 @@ interface SidebarProps {
   onSelectItem?: (id: string) => void;
 }
 
-export function Sidebar({ activeItem, onSelectItem }: SidebarProps = {}) {
+export function Sidebar({ activeItem }: SidebarProps = {}) {
   const [openSection, setOpenSection] = useState<string | null>(() =>
     activeItem ? (findNavigationParentId(activeItem) ?? null) : null,
   );
-  const [internalActive, setInternalActive] = useState<string | null>(null);
 
-  const selectedItem = activeItem ?? internalActive;
+  const selectedItem = activeItem;
+  useEffect(() => {
+    const parentId = activeItem ? findNavigationParentId(activeItem) : null;
 
+    setOpenSection(parentId ?? null);
+  }, [activeItem]);
   const handleSectionToggle = (sectionId: string) => {
     setOpenSection((currentSection) =>
       currentSection === sectionId ? null : sectionId,
     );
-  };
-
-  const handleSelect = (id: string) => {
-    setInternalActive(id);
-    onSelectItem?.(id);
   };
 
   return (
@@ -64,29 +63,25 @@ export function Sidebar({ activeItem, onSelectItem }: SidebarProps = {}) {
 
           return (
             <li className="sidebar__item" key={item.id}>
-              <button
-                type="button"
-                className={[
-                  "sidebar__button",
-                  isOpen ? "sidebar__button--open" : "",
-                  !isExpandable && isActive ? "sidebar__button--active" : "",
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
-                onClick={() =>
-                  isExpandable
-                    ? handleSectionToggle(item.id)
-                    : handleSelect(item.id)
-                }
-                aria-expanded={isExpandable ? isOpen : undefined}
-                aria-controls={isExpandable ? `${item.id}-submenu` : undefined}
-                aria-current={!isExpandable && isActive ? "page" : undefined}
-              >
-                <Icon className="sidebar__icon" size={20} aria-hidden="true" />
-
-                <span className="sidebar__label">{item.label}</span>
-
-                {isExpandable && (
+              {isExpandable ? (
+                <button
+                  type="button"
+                  className={[
+                    "sidebar__button",
+                    isOpen ? "sidebar__button--open" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  onClick={() => handleSectionToggle(item.id)}
+                  aria-expanded={isOpen}
+                  aria-controls={`${item.id}-submenu`}
+                >
+                  <Icon
+                    className="sidebar__icon"
+                    size={20}
+                    aria-hidden="true"
+                  />
+                  <span className="sidebar__label">{item.label}</span>
                   <ChevronDown
                     className={
                       isOpen
@@ -96,27 +91,44 @@ export function Sidebar({ activeItem, onSelectItem }: SidebarProps = {}) {
                     size={16}
                     aria-hidden="true"
                   />
-                )}
-              </button>
+                </button>
+              ) : (
+                <Link
+                  to={`/${item.id}`}
+                  className={[
+                    "sidebar__button",
+                    isActive ? "sidebar__button--active" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <Icon
+                    className="sidebar__icon"
+                    size={20}
+                    aria-hidden="true"
+                  />
+                  <span className="sidebar__label">{item.label}</span>
+                </Link>
+              )}
 
               {isExpandable && isOpen && (
                 <ul id={`${item.id}-submenu`} className="sidebar__submenu">
                   {item.children.map((child) => (
                     <li className="sidebar__submenu-item" key={child.id}>
-                      <button
-                        type="button"
+                      <Link
+                        to={`/${child.id}`}
                         className={
                           selectedItem === child.id
                             ? "sidebar__submenu-button sidebar__submenu-button--active"
                             : "sidebar__submenu-button"
                         }
-                        onClick={() => handleSelect(child.id)}
                         aria-current={
                           selectedItem === child.id ? "page" : undefined
                         }
                       >
                         {child.label}
-                      </button>
+                      </Link>
                     </li>
                   ))}
                 </ul>
