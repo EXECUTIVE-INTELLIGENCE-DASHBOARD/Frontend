@@ -1,45 +1,23 @@
 /*
  * Expense Management page styles.
- *
- * Every class here is prefixed `exp-` so it can never collide with another
- * page's styles. The prefix matches the file name and the `exp-` groups in
- * `src/styles.css` that handle theme plumbing.
- *
- * Colours are never hard-coded. They come from the shared custom properties
- * declared in `src/styles.css`, which already hold separate light- and
- * dark-theme values. The small `--exp-*` aliases below map the generic tokens
- * onto page-specific names, so a single edit here can retheme the whole page.
- *
- * The brand palette is also declared here, on `.exp-page` only. Two reasons it
- * is page-local rather than in `src/styles.css`: the other dashboard pages are
- * deliberately left on the existing blue ramp, and a local declaration cannot
- * leak into them. Every palette colour used on this page resolves through one
- * of these six properties, so re-tinting the page is a six-line edit.
  */
 
 .exp-page {
-  /* Page-local aliases. Keeping them in one place means the rules below read
-     `.exp-heading` instead of `--color-heading`, which makes it obvious the
-     value is a deliberate local decision rather than an arbitrary global one. */
   --exp-heading: var(--color-heading);
   --exp-muted: var(--color-text-muted);
   --exp-soft: var(--color-text-soft);
   --exp-border: var(--color-border);
   --exp-accent: var(--color-accent);
 
-  /* Brand palette (primary: navy / gold / cyan, secondary: grey / purple /
-     off-white). These are the raw brand values and stay identical in both
-     themes — legibility in dark mode is handled by the mixes below, which
-     blend toward `--color-surface` and so darken automatically. */
+  /* Brand colours */
   --exp-navy: #203468;
   --exp-gold: #f1ba1b;
   --exp-cyan: #2aa4dd;
   --exp-grey: #d3d4d6;
-  --exp-purple: #733089;
+  --exp-baby-blue: #8ed8f8;
+  --exp-purple: var(--exp-baby-blue);
   --exp-offwhite: #f5f5f5;
 
-  /* The page is a vertical stack of blocks; the gap here is the global
-     rhythm between breadcrumb, heading, controls and the card rows. */
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -80,7 +58,6 @@
 
 .exp-page .exp-heading__title {
   margin: 0;
-
   color: var(--exp-heading);
   font-size: clamp(1.6rem, 2.4vw, 2.1rem);
   font-weight: 700;
@@ -91,7 +68,6 @@
 .exp-page .exp-heading__subtitle {
   max-width: 46rem;
   margin: 8px 0 0;
-
   color: var(--exp-muted);
   font-size: 0.9rem;
   line-height: 1.55;
@@ -101,19 +77,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   width: 36px;
   height: 36px;
   flex-shrink: 0;
-
   border: 1px solid var(--exp-border);
   border-radius: 10px;
-
   background: var(--color-surface);
   color: var(--color-text-secondary);
-
   cursor: pointer;
-
   transition:
     background-color 0.2s ease,
     color 0.2s ease,
@@ -125,58 +96,37 @@
   background: var(--color-surface-hover);
   color: var(--exp-heading);
 }
+
 /* ------------------------------------------------- Controls (filters) */
 
-/*
- * The filter sits on its own line above the KPI cards and is pushed to the
- * right, matching the reference layout. A column stack rather than the old
- * two-column grid: the cards below now use the full page width instead of
- * giving up 236px to a filter rail, which is what makes them read as the
- * page's main content.
- */
 .exp-controls {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-/* `justify-content` is what floats the filter to the right edge. It stays
-   first in the DOM so it is reached before the figures it controls. */
 .exp-filters {
-  display: flex;
-  justify-content: flex-end;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
-/*
- * The visible filter card. The real control is the absolutely positioned
- * `<select>` added further down — this element only paints the label and the
- * selected value.
- *
- * `flex: 0 1 auto` overrides the shared dropdown plumbing elsewhere: the card
- * is sized to its content and sits neatly at the right, rather than stretching
- * to fill a rail.
- */
 .exp-filter {
   display: flex;
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   flex-direction: column;
   align-items: flex-start;
   gap: 3px;
-
-  min-width: 200px;
-  max-width: 260px;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
   padding: 9px 13px;
-
   border: 1px solid var(--exp-border);
   border-radius: 11px;
-
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
-
   cursor: pointer;
   text-align: left;
-
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
@@ -201,9 +151,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-
   width: 100%;
-
   color: var(--exp-heading);
   font-size: 12.5px;
   font-weight: 700;
@@ -211,96 +159,74 @@
 
 /* -------------------------------------------------- Overhead KPI cards */
 
-/* Three headline figures per row, collapsing to two then one as the page
-   narrows. */
 .exp-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
 }
 
-/* A single KPI card: a white surface, a palette-tinted icon chip and the
-   figure. No accent bar or coloured rule anywhere on it. */
 .exp-metric {
-  /* Fallback triplet for a card rendered without a tone modifier, so the
-     border and the icon chip degrade to navy rather than to nothing. The
-     `.exp-metric--<tone>` blocks below override all three. */
   --tone: var(--exp-navy);
-  --tone-soft: color-mix(in srgb, var(--exp-navy) 10%, #ffffff);
+  --tone-soft: #e8f4fc;
   --tone-text: var(--exp-navy);
 
   display: flex;
+  flex: 1 1 0;
+  flex-direction: row;
   align-items: center;
   gap: 14px;
-
-  padding: 16px 18px;
-
-  border: 1px solid var(--exp-border);
-  border-radius: 14px;
-
+  min-width: 0;
+  min-height: 120px;
+  padding: 20px;
+  border: none;
+  border-radius: 10px !important;
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
-
   overflow: hidden;
-
-  /* Only colour properties transition — no movement or lift on hover. */
   transition:
     background-color 0.25s ease,
-    border-color 0.25s ease;
+    border-color 0.25s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-/*
- * No accent bar on these cards.
- *
- * The shared metric card in the rest of the dashboard paints a coloured bar
- * down its left edge, and `src/styles.css` already hides it in light mode.
- * This page wants the bar gone in *both* themes, so there is deliberately no
- * `.exp-metric::before` rule here at all. With no `content` declared the
- * pseudo-element is never generated, whichever rule in `src/styles.css`
- * happens to win.
- *
- * `--tone` is still used: it tints the card's border and its icon chip.
- */
+.exp-metric:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-elevated);
+}
 
-/* Per-tone triplets, every one derived from the brand palette.
-   `--tone` is the palette colour itself, `--tone-soft` tints the icon chip and
-   `--tone-text` colours the glyph. The mixes are measured against white so the
-   chip stays a tint rather than a solid block of brand colour. */
+/* KPI icon backgrounds use a consistent faint sky blue. */
 .exp-metric--navy {
-  --tone: var(--exp-navy);
-  --tone-soft: color-mix(in srgb, var(--exp-navy) 10%, #ffffff);
-  --tone-text: var(--exp-navy);
+  --tone-soft: #e8f4fc;
+  --tone-text: #203468;
 }
 
+/* Sky-blue icon */
 .exp-metric--cyan {
-  --tone: var(--exp-cyan);
-  --tone-soft: color-mix(in srgb, var(--exp-cyan) 14%, #ffffff);
-  --tone-text: color-mix(in srgb, var(--exp-cyan) 72%, #203468);
+  --tone-soft: #e8f4fc;
+  --tone-text: #2aa4dd;
 }
 
+/* Gold icon */
 .exp-metric--gold {
-  --tone: var(--exp-gold);
-  --tone-soft: color-mix(in srgb, var(--exp-gold) 20%, #ffffff);
-  --tone-text: #8a6a05;
+  --tone-soft: #e8f4fc;
+  --tone-text: #b58a08;
 }
 
-/* Gold and cyan are too light to carry a glyph on a dark surface, so each tone
-   gets an explicit dark-mode triplet rather than another mix. */
+/* Dark theme */
 [data-theme="dark"] .exp-metric--navy {
-  --tone: #7f9ae0;
-  --tone-soft: #1e2748;
+  --tone-soft: #e8f4fc;
   --tone-text: #a8bdf0;
 }
 
 [data-theme="dark"] .exp-metric--cyan {
-  --tone: #4cc0f0;
-  --tone-soft: #123142;
+  --tone-soft: #e8f4fc;
   --tone-text: #7fd4f7;
 }
 
 [data-theme="dark"] .exp-metric--gold {
-  --tone: var(--exp-gold);
-  --tone-soft: #3a2f10;
+  --tone-soft: #e8f4fc;
   --tone-text: #f7d15e;
 }
 
@@ -308,62 +234,45 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  width: 38px;
-  height: 38px;
-  flex-shrink: 0;
-
-  border-radius: 11px;
-
-  background: var(--tone-soft);
-  color: var(--tone-text);
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: 13px;
+  background: #E8F4FC !important;
+  color: #203468 !important;
 }
 
 .exp-metric__body {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: 4px;
-
+  justify-content: center;
+  gap: 5px;
   min-width: 0;
 }
 
-/* Uppercase category label, e.g. "TOTAL YTD EXPENDITURE". */
 .exp-metric__label {
   color: var(--exp-muted);
-  font-size: 10.5px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  line-height: 1.5;
+  letter-spacing: 0.7px;
+  line-height: 1.4;
   text-transform: uppercase;
 }
 
-/* The headline figure. `line-height: 1` and negative letter-spacing keep a
-   long string like "UGX 540.0M" tight on one line. */
 .exp-metric__value {
   color: var(--exp-heading);
-  font-size: 1.9rem;
+  font-size: clamp(17px, 1.55vw, 21px);
   font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.03em;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
 }
 
 /* ------------------------------------------------- KPI cards, light theme */
 
-/*
- * White cards, not the shared tinted ones.
- *
- * `src/styles.css` paints every metric card in the dashboard with a blue tint
- * (its list B) and flattens the per-tone icon chip to a single blue (list D).
- * These cards are meant to be white with their own palette accents instead, so
- * the rules below undo both — for `.exp-metric` alone.
- *
- * Two selectors are needed to win: `:root:not([data-theme="dark"])` matches the
- * shared rules' specificity and `.exp-page` adds one more level, so (0,4,0)
- * beats (0,3,0) whichever stylesheet loads first. Keeping `.exp-page` in the
- * selector is also what leaves every other page's cards untouched.
- */
 :root:not([data-theme="dark"]) .exp-page .exp-metric {
-  border-color: color-mix(in srgb, var(--tone) 18%, #dbe8fa);
+  border: none;
   background: #ffffff;
 }
 
@@ -375,12 +284,6 @@
 
 /* ------------------------------------------------------------------ Cards */
 
-/*
- * A row of two cards: a narrow one on the left, a wider one on the right.
- * `align-items: stretch` (the default) makes both cards the same height, so
- * the two rows line up even when their contents differ in length.
- * Collapses to a single column at <=1180px — see the media query at the end.
- */
 .exp-split {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.9fr);
@@ -388,39 +291,21 @@
   align-items: stretch;
 }
 
-/*
- * Shared shell for the detail cards.
- *
- * Each card carries one palette colour through `--card-accent`, which paints a
- * slim rule across the top edge and tints the header. The tints are mixed
- * toward `--color-surface` rather than toward a fixed white, so the same
- * declaration produces a pale wash in light mode and a deeper one in dark mode
- * without needing a second set of rules.
- */
 .exp-card {
   --card-accent: var(--exp-navy);
 
   display: flex;
   flex-direction: column;
-
   border: 1px solid var(--exp-border);
   border-radius: 16px;
-
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
-
   overflow: hidden;
-
   transition:
     background-color 0.25s ease,
     border-color 0.25s ease;
 }
 
-/* Palette assignment: the donut card takes the primary cyan, and the budget
-   bars and the requisition table both take navy — the table sits on its own
-   row below, so repeating navy there reads as bookending the page rather than
-   as two cards competing. The gold and purple in the palette appear in the
-   donut ring and the status pills. */
 .exp-card--navy {
   --card-accent: var(--exp-navy);
 }
@@ -429,15 +314,10 @@
   --card-accent: var(--exp-cyan);
 }
 
-/* The accent rule, drawn as the card's first flex child. A gradient rather
-   than a flat bar so the edge fades out instead of stopping abruptly at the
-   right corner. */
 .exp-card::before {
   content: "";
-
   height: 3px;
   flex-shrink: 0;
-
   background: linear-gradient(
     90deg,
     var(--card-accent),
@@ -450,16 +330,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-
   padding: 14px 18px;
-
   background: color-mix(in srgb, var(--card-accent) 7%, var(--color-surface));
   border-bottom: 1px solid var(--exp-border);
 }
 
 .exp-card__title {
   margin: 0;
-
   color: var(--color-heading-alt);
   font-size: 11px;
   font-weight: 700;
@@ -473,7 +350,6 @@
   flex: 1;
   flex-direction: column;
   gap: 14px;
-
   min-width: 0;
   padding: 14px 18px 16px;
 }
@@ -482,7 +358,6 @@
 
 .exp-card__subtitle {
   margin: 4px 0 0;
-
   color: var(--exp-muted);
   font-size: 11.5px;
   font-weight: 400;
@@ -495,12 +370,9 @@
   align-items: center;
   justify-content: center;
   gap: 18px;
-
   padding: 16px 18px;
 }
 
-/* The shared donut uses a 30px centre value, which is too big for a
-   compact ring. Scale it down here without touching the shared component. */
 .exp-allocation .donut__value {
   font-size: 19px;
   font-weight: 700;
@@ -508,7 +380,6 @@
 
 .exp-allocation .donut__label {
   margin-top: 3px;
-
   font-size: 9px;
   font-weight: 600;
 }
@@ -517,10 +388,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-
   margin: 0;
   padding: 0;
-
   list-style: none;
 }
 
@@ -535,7 +404,6 @@
   height: 9px;
   margin-top: 4px;
   flex-shrink: 0;
-
   border-radius: 999px;
 }
 
@@ -564,7 +432,6 @@
   display: flex;
   align-items: center;
   gap: 14px;
-
   margin: 0;
   padding: 0;
   list-style: none;
@@ -574,7 +441,6 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-
   color: var(--exp-muted);
   font-size: 10.5px;
   font-weight: 600;
@@ -583,7 +449,6 @@
 .exp-legend__dot {
   width: 9px;
   height: 9px;
-
   border-radius: 50%;
   background: var(--chart-blue);
 }
@@ -591,7 +456,6 @@
 .exp-legend__dash {
   width: 16px;
   height: 0;
-
   border-top: 2px dashed var(--color-text-soft);
 }
 
@@ -650,10 +514,8 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
-
   max-width: none;
   margin: 0;
-
   color: var(--exp-muted);
   font-size: 11.5px;
   line-height: 1.5;
@@ -665,7 +527,6 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-
   margin: 0;
   padding: 0;
   list-style: none;
@@ -694,7 +555,6 @@
   display: inline-flex;
   align-items: baseline;
   gap: 8px;
-
   color: var(--exp-heading);
   font-size: 12px;
   font-weight: 700;
@@ -711,7 +571,6 @@
 .exp-bars__track {
   width: 100%;
   height: 8px;
-
   border-radius: 999px;
   background: color-mix(in srgb, var(--exp-navy) 8%, var(--color-surface));
   overflow: hidden;
@@ -720,10 +579,8 @@
 .exp-bars__fill {
   display: block;
   height: 100%;
-
   border-radius: 999px;
   background: var(--exp-navy);
-
   transition: width 0.6s ease;
 }
 
@@ -731,10 +588,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
-
   max-width: none;
   margin: 0;
-
   color: var(--exp-muted);
   font-size: 11.5px;
   line-height: 1.5;
@@ -755,10 +610,8 @@
 
 .exp-table th {
   padding: 10px 18px;
-
   background: color-mix(in srgb, var(--card-accent) 6%, var(--color-surface));
   border-bottom: 1px solid var(--exp-border);
-
   color: var(--exp-soft);
   font-size: 10px;
   font-weight: 700;
@@ -769,7 +622,6 @@
 
 .exp-table td {
   padding: 12px 18px;
-
   border-bottom: 1px solid var(--color-border-soft);
   vertical-align: middle;
   white-space: nowrap;
@@ -821,11 +673,8 @@
 .exp-pill {
   display: inline-flex;
   align-items: center;
-
   padding: 4px 10px;
-
   border-radius: 999px;
-
   font-size: 10.5px;
   font-weight: 700;
   white-space: nowrap;
@@ -848,13 +697,9 @@
 
 /* ----------------------------------------------- Requisition table */
 
-/* The description is the only column allowed to wrap. The other four hold
-   short, fixed-shape values, and letting them wrap as well would leave every
-   row a different height for no benefit. */
 .exp-table__item {
   display: block;
   max-width: 340px;
-
   color: var(--exp-heading);
   font-size: 12.5px;
   font-weight: 600;
@@ -867,15 +712,6 @@
   font-weight: 600;
 }
 
-/*
- * Approval-chain pills. `attention` borrows the palette's gold because that
- * row is the one waiting on a signature; `queued` is deliberately quiet, since
- * nothing is expected of anyone yet.
- *
- * Each pill mixes its palette colour toward `--color-heading` for the text, so
- * the label is dark-on-pale in light mode and pale-on-dark in dark mode from a
- * single declaration.
- */
 .exp-pill--attention {
   background: color-mix(in srgb, var(--exp-gold) 22%, var(--color-surface));
   color: color-mix(in srgb, var(--exp-gold) 55%, var(--color-heading));
@@ -893,9 +729,6 @@
 
 /* -------------------------------------------- Departmental budget bars */
 
-/* Each row stacks two tracks: budget on top, expenditure underneath. The
-   budget bar takes the palette's neutral grey and expenditure the navy-to-cyan
-   gradient, so the eye lands on what has actually been spent. */
 .exp-bars__fill--budget {
   background: var(--exp-grey);
 }
@@ -906,12 +739,23 @@
 
 /* ------------------------------------------------------------- Responsive */
 
-/* Below 1180px the two detail cards stop fitting side by side. The controls
-   block needs nothing here: dropping the filter rail already made it a
-   full-width row that stacks at every size. */
 @media (max-width: 1180px) {
   .exp-split {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .exp-metrics {
+    flex-wrap: wrap;
+  }
+
+  .exp-metric {
+    flex: 1 1 calc(33.333% - 12px);
+  }
+}
+
+@media (max-width: 900px) {
+  .exp-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -923,11 +767,18 @@
 
 @media (max-width: 560px) {
   .exp-metrics {
+    flex-direction: column;
+  }
+
+  .exp-metric {
+    flex: 1 1 100%;
+    min-height: 100px;
+  }
+
+  .exp-filters {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* A right-aligned 200px control would be cramped on a phone, so it takes
-     the full width instead. */
   .exp-filter {
     width: 100%;
     min-width: 0;
