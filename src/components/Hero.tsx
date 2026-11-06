@@ -1,5 +1,6 @@
 import "./Hero.css";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { Search, Mic, Sun, Moon, ChevronRight } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { userProfile } from "../lib/userProfile";
@@ -163,11 +164,7 @@ export function Hero({ activePage, onSelectPage }: HeroProps) {
       {/* Search */}
       <div className="hero__search-wrapper" ref={searchRef}>
         <div className="hero__search">
-          <Search
-            className="hero__search-icon"
-            size={15}
-            aria-hidden="true"
-          />
+          <Search className="hero__search-icon" size={15} aria-hidden="true" />
 
           <input
             className="hero__search-input"
@@ -220,10 +217,13 @@ export function Hero({ activePage, onSelectPage }: HeroProps) {
                 <ul className="hero__search-list">
                   {results.map((result) => (
                     <li key={result.id}>
-                      <button
+                      <Link
+                        to={`/${result.id}`}
                         className="hero__search-result"
-                        type="button"
-                        onClick={() => goToPage(result.id)}
+                        onClick={() => {
+                          setQuery("");
+                          setSearchOpen(false);
+                        }}
                       >
                         <span className="hero__search-result-label">
                           {result.label}
@@ -232,7 +232,7 @@ export function Hero({ activePage, onSelectPage }: HeroProps) {
                         <span className="hero__search-result-group">
                           {result.group}
                         </span>
-                      </button>
+                      </Link>
                     </li>
                   ))}
                 </ul>
