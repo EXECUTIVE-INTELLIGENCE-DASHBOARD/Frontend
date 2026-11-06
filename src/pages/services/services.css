@@ -1,34 +1,339 @@
-/* Services screens. Scoped under .svc so it won't clash with the rest of the app. */
-.svc{--svc-bg:#f4f6fb;--svc-card:#fff;--svc-ink:#1a2347;--svc-mut:#7a839c;--svc-line:#e8ecf4;--svc-blue:#6f98e6;--svc-chip:#eef1f8;--svc-gok:#e6f0fd;--svc-tok:#2d63c2;--svc-tbad:#d9483f;
-  padding:10px 24px 12px;color:var(--svc-ink)}
-.svc *{box-sizing:border-box}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .svc{--svc-bg:#0f1530;--svc-card:#18204a;--svc-ink:#eef1fb;--svc-mut:#97a1c2;--svc-line:#2a3463;--svc-chip:#232d5c;--svc-gok:#1c3558;--svc-tok:#8cc2ff;--svc-tbad:#ff8f89}}
-.svc-fl{display:flex;justify-content:flex-end;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-.svc select{font-size:13.5px;font-weight:500;background:var(--svc-card);color:var(--svc-ink);border:1px solid var(--svc-line);border-radius:12px;padding:10px 14px}
-.svc-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:10px}
-@media(max-width:700px){.svc-kpis{grid-template-columns:1fr}.svc{padding-left:16px;padding-right:16px}}
-.svc-kpi{background:var(--svc-card);border:1px solid var(--svc-line);border-radius:20px;padding:10px 16px;display:flex;align-items:center;gap:14px;min-width:0;box-shadow:0 2px 10px rgba(20,27,59,.04)}
-.svc-kic{width:48px;height:48px;border-radius:14px;background:var(--svc-blue);display:grid;place-items:center;flex-shrink:0}
-.svc-kic svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.svc-kt{color:var(--svc-mut);font-weight:600;font-size:11px;letter-spacing:.05em;text-transform:uppercase}
-.svc-kv{font-size:26px;font-weight:800;margin-top:2px;letter-spacing:-.02em;line-height:1.1;display:flex;align-items:baseline;gap:6px}
-.svc-kv small{font-size:13px;font-weight:600;letter-spacing:0}
-.svc-kd{font-size:11.5px;margin-top:3px;font-weight:500;color:var(--svc-mut)}.svc-kd.bad{color:var(--svc-tbad)}.svc-kd.ok{color:var(--svc-tok)}
-.svc-panel{background:var(--svc-card);border:1px solid var(--svc-line);border-radius:20px;overflow:hidden;margin-bottom:10px}
-.svc-ph{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;gap:12px;flex-wrap:wrap}
-.svc-ph h2{margin:0;font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px}
-.svc-ph h2::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--svc-blue)}
-.svc-btn{background:var(--svc-blue);color:#fff;border:0;border-radius:12px;padding:10px 18px;font-size:13.5px;font-weight:600;cursor:pointer}
-.svc-scroll{overflow-x:auto}
-.svc-va{display:block;border:0;border-top:1px solid var(--svc-line);background:none;color:var(--svc-tok);font-size:13.5px;font-weight:600;padding:13px;cursor:pointer;width:100%}
-.svc table{width:100%;border-collapse:collapse;min-width:860px}
-.svc th{background:var(--svc-bg);position:sticky;top:0;text-align:left;font-size:11px;letter-spacing:.06em;color:var(--svc-mut);text-transform:uppercase;padding:8px 20px;font-weight:700}
-.svc th span{text-transform:none;letter-spacing:0;font-weight:500}
-.svc td{padding:10px 20px;border-top:1px solid var(--svc-line);font-size:14px;color:var(--svc-ink)}
-.svc td small{color:var(--svc-mut);margin-left:3px}
-.svc th.r,.svc td.r{text-align:right}
-.svc-nm{display:flex;align-items:center;gap:12px}
-.svc-ic{width:34px;height:34px;border-radius:10px;background:var(--svc-chip);display:grid;place-items:center;font-size:16px}
-.svc-pill{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12.5px;font-weight:600;white-space:nowrap;background:var(--svc-chip);color:var(--svc-ink)}
-.svc-leg{padding:0 20px 12px;color:var(--svc-mut);font-size:12.5px}
-.svc button:focus-visible,.svc select:focus-visible{outline:3px solid var(--svc-blue);outline-offset:2px}
+/* =========================================================
+   SERVICES SCREENS
+   All styles are scoped under .svc to avoid app-wide clashes.
+========================================================= */
+
+/* ---------------------------------------------------------
+   1. SERVICES THEME AND BASE STYLES
+--------------------------------------------------------- */
+
+.svc {
+  --svc-bg: #f4f6fb;
+  --svc-card: #fff;
+  --svc-ink: #1a2347;
+  --svc-mut: #7a839c;
+  --svc-line: #e8ecf4;
+  --svc-blue: #6f98e6;
+  --svc-chip: #eef1f8;
+  --svc-gok: #e6f0fd;
+  --svc-tok: #2d63c2;
+  --svc-tbad: #d9483f;
+
+  padding: 10px 24px 12px;
+  color: var(--svc-ink);
+}
+
+.svc * {
+  box-sizing: border-box;
+}
+
+/* Dark theme */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .svc {
+    --svc-bg: #0f1530;
+    --svc-card: #18204a;
+    --svc-ink: #eef1fb;
+    --svc-mut: #97a1c2;
+    --svc-line: #2a3463;
+    --svc-chip: #232d5c;
+    --svc-gok: #1c3558;
+    --svc-tok: #8cc2ff;
+    --svc-tbad: #ff8f89;
+  }
+}
+
+/* ---------------------------------------------------------
+   2. FILTERS
+--------------------------------------------------------- */
+
+.svc-fl {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.svc select {
+  padding: 10px 14px;
+  border: 1px solid var(--svc-line);
+  border-radius: 12px;
+  background: var(--svc-card);
+  color: var(--svc-ink);
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------------
+   3. KPI CARDS
+--------------------------------------------------------- */
+
+.svc-kpis {
+  display: flex;
+  width: 100%;
+  gap: 15px;
+  margin-bottom: 10px;
+  align-items: stretch;
+}
+
+.svc-kpi {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 100px;
+  padding: 16px;
+  border: none;
+  border-radius: 10px !important;
+  background: var(--svc-card);
+  box-shadow: var(--shadow-card);
+}
+
+.svc-kic {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 13px;
+  background: #E8F4FC !important;
+  color: #203468 !important;
+}
+
+.svc-kic svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: #203468 !important;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.svc-kt {
+  color: var(--svc-mut);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.svc-kv {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 2px;
+  color: var(--svc-ink);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.svc-kv small {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.svc-kd {
+  margin-top: 3px;
+  color: var(--svc-mut);
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.svc-kd.bad {
+  color: var(--svc-tbad);
+}
+
+.svc-kd.ok {
+  color: var(--svc-tok);
+}
+
+/* ---------------------------------------------------------
+   4. PANELS AND PANEL HEADERS
+--------------------------------------------------------- */
+
+.svc-panel {
+  margin-bottom: 10px;
+  overflow: hidden;
+  border: 1px solid var(--svc-line);
+  border-radius: 20px;
+  background: var(--svc-card);
+}
+
+.svc-ph {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px;
+  flex-wrap: wrap;
+}
+
+.svc-ph h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.svc-ph h2::before {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--svc-blue);
+  content: "";
+}
+
+/* ---------------------------------------------------------
+   5. BUTTONS AND ACTIONS
+--------------------------------------------------------- */
+
+.svc-btn {
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--svc-blue);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.svc-va {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  border: 0;
+  border-top: 1px solid var(--svc-line);
+  background: none;
+  color: var(--svc-tok);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------
+   6. TABLES
+--------------------------------------------------------- */
+
+.svc-scroll {
+  overflow-x: auto;
+}
+
+.svc table {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+}
+
+.svc th {
+  position: sticky;
+  top: 0;
+  padding: 8px 20px;
+  background: var(--svc-bg);
+  color: var(--svc-mut);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.svc th span {
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.svc td {
+  padding: 10px 20px;
+  border-top: 1px solid var(--svc-line);
+  color: var(--svc-ink);
+  font-size: 14px;
+}
+
+.svc td small {
+  margin-left: 3px;
+  color: var(--svc-mut);
+}
+
+.svc th.r,
+.svc td.r {
+  text-align: right;
+}
+
+/* ---------------------------------------------------------
+   7. TABLE CONTENT AND STATUS ELEMENTS
+--------------------------------------------------------- */
+
+.svc-nm {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.svc-ic {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--svc-chip);
+  font-size: 16px;
+}
+
+.svc-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--svc-chip);
+  color: var(--svc-ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.svc-leg {
+  padding: 0 20px 12px;
+  color: var(--svc-mut);
+  font-size: 12.5px;
+}
+
+/* ---------------------------------------------------------
+   8. ACCESSIBILITY
+--------------------------------------------------------- */
+
+.svc button:focus-visible,
+.svc select:focus-visible {
+  outline: 3px solid var(--svc-blue);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------
+   9. RESPONSIVE STYLES
+--------------------------------------------------------- */
+
+@media (max-width: 700px) {
+  .svc {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .svc-kpis {
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .svc-kpi {
+    min-height: 100px;
+    padding: 16px;
+  }
+}

@@ -1,4 +1,90 @@
-.academic-summary {
+
+/* KPI cards — standardized with Attendance */
+.academic-summary__kpis {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+  margin: 20px 0 28px;
+}
+
+.academic-summary__kpi {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  min-height: 120px;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  text-align: left;
+  transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.academic-summary__kpi:hover {
+  box-shadow: 0 6px 18px rgba(32, 52, 104, 0.10);
+  transform: translateY(-2px);
+}
+
+.academic-summary__kpi-icon {
+  display: grid;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 13px;
+  background: #E8F4FC;
+  color: #203468;
+}
+
+.academic-summary__kpi-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.academic-summary__kpi-content > span {
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.academic-summary__kpi-content strong {
+  overflow: hidden;
+  color: var(--color-heading);
+  font-size: clamp(17px, 1.55vw, 21px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.academic-summary__kpi-content small {
+  color: var(--color-text-muted);
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
+/* .academic-summary {
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -60,7 +146,7 @@
   color: var(--color-text-muted);
   font-size: 11px;
   line-height: 1.45;
-}
+} */
 
 .academic-summary__examinations {
   display: flex;

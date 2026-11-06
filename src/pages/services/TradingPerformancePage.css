@@ -78,59 +78,70 @@
   min-width: 135px;
 }
 
+/* KPI CARDS */
 .tp-kpis {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  display: flex;
+  width: 100%;
+  gap: 15px;
   margin-bottom: 16px;
+  align-items: stretch;
 }
 
 .tp-kpi {
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr);
+  grid-template-columns: 48px minmax(0, 1fr);
   grid-template-rows: auto auto auto;
-  column-gap: 10px;
-  align-content: start;
-  align-items: start;
+  grid-template-areas:
+    "icon heading"
+    "icon value"
+    "icon note";
+  column-gap: 14px;
+  row-gap: 3px;
+  align-content: center;
+  align-items: center;
+  flex: 1 1 0;
   min-width: 0;
-  min-height: 76px;
-  padding: 14px;
+  min-height: 100px;
+  padding: 16px;
+  box-sizing: border-box;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px !important;
   background: #ffffff;
-  box-shadow: none;
+  box-shadow: var(--shadow-card);
 }
 
 .tp-kpi-heading {
   display: contents;
   color: #5b7190;
-  font-size: 11px;
-  font-weight: 650;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
 }
 
 .tp-kpi-icon {
   grid-column: 1;
   grid-row: 1 / span 3;
   display: grid;
-  width: 30px;
-  height: 30px;
+  width: 48px;
+  height: 48px;
   flex-shrink: 0;
   place-items: center;
   border: none;
-  border-radius: 9px;
-  background: #25a5dc;
-  color: #ffffff;
-  font-size: 15px;
+  border-radius: 13px;
+  background: #E8F4FC !important;
+  color: #203468 !important;
+  font-size: 18px;
 }
 
 .tp-kpi-value {
   grid-column: 2;
   grid-row: 2;
   overflow-wrap: anywhere;
-  margin: 3px 0 4px;
+  margin: 0;
   color: #193b68;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
   letter-spacing: -0.3px;
 }
 
@@ -142,6 +153,7 @@
   line-height: 1.5;
 }
 
+/* PANELS */
 .tp-panels {
   display: grid;
   grid-template-columns: minmax(0, 1.18fr) minmax(260px, 0.82fr);
@@ -476,12 +488,12 @@
   }
 
   .tp-kpi {
-    min-height: auto;
-    padding: 13px 15px;
+    min-height: 100px;
+    padding: 16px;
   }
 
   .tp-kpi-value {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .tp-filters {
