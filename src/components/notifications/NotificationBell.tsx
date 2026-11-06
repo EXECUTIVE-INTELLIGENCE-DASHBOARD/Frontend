@@ -1,9 +1,20 @@
-import { Bell, CalendarClock, TrendingDown, TriangleAlert, X, type LucideIcon } from "lucide-react";
+import {
+  Bell,
+  CalendarClock,
+  TrendingDown,
+  TriangleAlert,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-
+import { Link } from "react-router-dom";
 import { shortSchoolName } from "../../lib/finance.format";
 import { findNavigationLabel } from "../../navigation/navigation.config";
-import { getFinanceAlerts, type AlertSeverity, type FinanceAlert } from "./notifications.api";
+import {
+  getFinanceAlerts,
+  type AlertSeverity,
+  type FinanceAlert,
+} from "./notifications.api";
 
 import "./NotificationBell.css";
 
@@ -45,7 +56,9 @@ const heading = (alert: FinanceAlert) =>
 
 const showDate = (value: string) =>
   new Date(`${value}T00:00:00`).toLocaleDateString("en-GB", {
-    day: "numeric", month: "short", year: "numeric",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
   });
 
 /** "Liabilities" for liabilities-management: where the alert came from. */
@@ -68,12 +81,15 @@ interface NotificationBellProps {
  * pop-up for urgent ones, all for the screen being shown. Alerts live here rather than on
  * the screens.
  */
-export function NotificationBell({ pageId, onSelectPage }: NotificationBellProps) {
+export function NotificationBell({ pageId }: NotificationBellProps) {
   const [alerts, setAlerts] = useState<FinanceAlert[]>([]);
   const [read, setRead] = useState(() => loadIds(local, READ_KEY));
   const [open, setOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
-  const [toast, setToast] = useState<{ alert: FinanceAlert; more: number } | null>(null);
+  const [toast, setToast] = useState<{
+    alert: FinanceAlert;
+    more: number;
+  } | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -97,9 +113,16 @@ export function NotificationBell({ pageId, onSelectPage }: NotificationBellProps
   useEffect(() => {
     const shown = loadIds(session, SHOWN_KEY);
     const alreadyRead = loadIds(local, READ_KEY);
-    const fresh = alerts.filter((a) => a.severity === "critical" && belongsOn(a, pageId)
-      && !shown.has(a.id) && !alreadyRead.has(a.id));
-    setToast(fresh.length > 0 ? { alert: fresh[0], more: fresh.length - 1 } : null);
+    const fresh = alerts.filter(
+      (a) =>
+        a.severity === "critical" &&
+        belongsOn(a, pageId) &&
+        !shown.has(a.id) &&
+        !alreadyRead.has(a.id),
+    );
+    setToast(
+      fresh.length > 0 ? { alert: fresh[0], more: fresh.length - 1 } : null,
+    );
     if (fresh.length > 0) {
       fresh.forEach((a) => shown.add(a.id));
       saveIds(session, SHOWN_KEY, shown);
@@ -146,11 +169,10 @@ export function NotificationBell({ pageId, onSelectPage }: NotificationBellProps
     saveIds(local, READ_KEY, next);
   }
 
-  function view(alert: FinanceAlert) {
-    markRead([alert.id]);
+  function markAlertViewed(alertId: string) {
+    markRead([alertId]);
     setOpen(false);
     setToast(null);
-    onSelectPage?.(alert.page);
   }
 
   const here = alerts.filter((a) => belongsOn(a, pageId));
@@ -162,25 +184,36 @@ export function NotificationBell({ pageId, onSelectPage }: NotificationBellProps
       <button
         className="hero__notify"
         type="button"
-        aria-label={unread ? `Notifications, ${unread} unread` : "Notifications"}
+        aria-label={
+          unread ? `Notifications, ${unread} unread` : "Notifications"
+        }
         aria-expanded={open}
         aria-controls="notify-panel"
         onClick={() => setOpen((o) => !o)}
       >
         <Bell size={15} aria-hidden="true" />
         {unread > 0 && (
-          <span className="notify__count" aria-hidden="true">{unread > 9 ? "9+" : unread}</span>
+          <span className="notify__count" aria-hidden="true">
+            {unread > 9 ? "9+" : unread}
+          </span>
         )}
       </button>
 
       {open && (
-        <section className="notify__panel" id="notify-panel" aria-label="Notifications">
+        <section
+          className="notify__panel"
+          id="notify-panel"
+          aria-label="Notifications"
+        >
           <header className="notify__head">
             <strong>
               Notifications {unread > 0 && <span>{unread} unread</span>}
             </strong>
             {unread > 0 && (
-              <button type="button" onClick={() => markRead(here.map((a) => a.id))}>
+              <button
+                type="button"
+                onClick={() => markRead(here.map((a) => a.id))}
+              >
                 Mark all as read
               </button>
             )}
@@ -189,22 +222,36 @@ export function NotificationBell({ pageId, onSelectPage }: NotificationBellProps
           {here.length === 0 ? (
             <p className="notify__empty">No alerts for this screen.</p>
           ) : (
-            <ul className={`notify__list${showAll ? " notify__list--all" : ""}`}>
+            <ul
+              className={`notify__list${showAll ? " notify__list--all" : ""}`}
+            >
               {listed.map((alert) => {
                 const Icon = icons[alert.severity];
                 const isRead = read.has(alert.id);
                 return (
-                  <li key={alert.id} className={`notify__item notify__item--${alert.severity}${isRead ? " is-read" : ""}`}>
-                    <span className="notify__icon" aria-hidden="true"><Icon size={15} /></span>
+                  <li
+                    key={alert.id}
+                    className={`notify__item notify__item--${alert.severity}${isRead ? " is-read" : ""}`}
+                  >
+                    <span className="notify__icon" aria-hidden="true">
+                      <Icon size={15} />
+                    </span>
                     <div className="notify__text">
                       <strong>{heading(alert)}</strong>
                       <span>{alert.message}</span>
                       <span className="notify__meta">
                         {pageLabel(alert.page)} · {showDate(alert.date)} ·{" "}
-                        <button type="button" onClick={() => view(alert)}>View</button>
+                        <Link
+                          to={`/${alert.page}`}
+                          onClick={() => markAlertViewed(alert.id)}
+                        >
+                          View
+                        </Link>
                       </span>
                     </div>
-                    {!isRead && <span className="notify__dot" aria-label="Unread" />}
+                    {!isRead && (
+                      <span className="notify__dot" aria-label="Unread" />
+                    )}
                   </li>
                 );
               })}
@@ -212,8 +259,14 @@ export function NotificationBell({ pageId, onSelectPage }: NotificationBellProps
           )}
 
           {here.length > PANEL_LIMIT && (
-            <button type="button" className="notify__foot" onClick={() => setShowAll((all) => !all)}>
-              {showAll ? "Show fewer" : `View all notifications (${here.length})`}
+            <button
+              type="button"
+              className="notify__foot"
+              onClick={() => setShowAll((all) => !all)}
+            >
+              {showAll
+                ? "Show fewer"
+                : `View all notifications (${here.length})`}
             </button>
           )}
         </section>
@@ -221,19 +274,40 @@ export function NotificationBell({ pageId, onSelectPage }: NotificationBellProps
 
       {toast && (
         <div className="notify__toast" role="status">
-          <button type="button" className="notify__toast-close" aria-label="Close" onClick={() => setToast(null)}>
+          <button
+            type="button"
+            className="notify__toast-close"
+            aria-label="Close"
+            onClick={() => setToast(null)}
+          >
             <X size={14} />
           </button>
           <strong>Compliance alert</strong>
           <p>
             {heading(toast.alert)}. {toast.alert.message}
-            {toast.more > 0 && ` And ${toast.more} more urgent alert${toast.more === 1 ? "" : "s"} in the bell.`}
+            {toast.more > 0 &&
+              ` And ${toast.more} more urgent alert${toast.more === 1 ? "" : "s"} in the bell.`}
           </p>
           <div className="notify__toast-actions">
-            <button type="button" className="notify__toast-view" onClick={() => view(toast.alert)}>View</button>
-            <button type="button" className="notify__toast-dismiss" onClick={() => setToast(null)}>Dismiss</button>
+            <Link
+              to={`/${toast.alert.page}`}
+              className="notify__toast-view"
+              onClick={() => markAlertViewed(toast.alert.id)}
+            >
+              View
+            </Link>
+            <button
+              type="button"
+              className="notify__toast-dismiss"
+              onClick={() => setToast(null)}
+            >
+              Dismiss
+            </button>
           </div>
-          <span className="notify__toast-timer" style={{ animationDuration: `${TOAST_MS}ms` }} />
+          <span
+            className="notify__toast-timer"
+            style={{ animationDuration: `${TOAST_MS}ms` }}
+          />
         </div>
       )}
     </div>
